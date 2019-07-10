@@ -1,0 +1,10 @@
+89a90
+> import org.apache.ambari.server.api.services.LoggingService;
+5083a5085,5091
+>   @Override
+>   public LoggingService getLoggingService(String clusterName) {
+>     LoggingService loggingService = new LoggingService(clusterName);
+>     injector.injectMembers(loggingService);
+>     return loggingService;
+>   }
+> 

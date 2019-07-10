@@ -1,0 +1,75 @@
+18a19,20
+> import java.io.IOException;
+> import java.lang.reflect.Field;
+21a24
+> import org.apache.accumulo.server.rpc.TServerUtils;
+22a26,27
+> import org.apache.thrift.server.TNonblockingServer;
+> import org.apache.thrift.transport.TNonblockingServerTransport;
+29d33
+< 
+31a36,37
+>   private final Field selectAcceptThreadField;
+> 
+33a40,46
+> 
+>     try {
+>       selectAcceptThreadField = TNonblockingServer.class.getDeclaredField("selectAcceptThread_");
+>       selectAcceptThreadField.setAccessible(true);
+>     } catch (Exception e) {
+>       throw new RuntimeException("Failed to access required field in Thrift code.", e);
+>     }
+36,37c49,67
+<   protected FrameBuffer createFrameBuffer(final TNonblockingTransport trans, final SelectionKey selectionKey, final AbstractSelectThread selectThread) {
+<     return new CustomAsyncFrameBuffer(trans, selectionKey, selectThread);
+---
+>   @Override
+>   protected boolean startThreads() {
+>     
+> 
+>     
+>     try {
+>       
+>       SelectAcceptThread selectAcceptThread_ = new CustomSelectAcceptThread((TNonblockingServerTransport) serverTransport_);
+>       
+>       selectAcceptThreadField.set(this, selectAcceptThread_);
+> 
+>       selectAcceptThread_.start();
+>       return true;
+>     } catch (IOException e) {
+>       LOGGER.error("Failed to start selector thread!", e);
+>       return false;
+>     } catch (IllegalAccessException | IllegalArgumentException e) {
+>       throw new RuntimeException("Exception setting customer select thread in Thrift");
+>     }
+40c70,93
+<   private class CustomAsyncFrameBuffer extends AsyncFrameBuffer {
+---
+>   
+> 
+> 
+>   private class CustomSelectAcceptThread extends SelectAcceptThread {
+> 
+>     public CustomSelectAcceptThread(TNonblockingServerTransport serverTransport) throws IOException {
+>       super(serverTransport);
+>     }
+> 
+>     @Override
+>     protected FrameBuffer createFrameBuffer(final TNonblockingTransport trans, final SelectionKey selectionKey, final AbstractSelectThread selectThread) {
+>       if (processorFactory_.isAsyncProcessor()) {
+>         throw new IllegalStateException("This implementation does not support AsyncProcessors");
+>       }
+> 
+>       return new CustomFrameBuffer(trans, selectionKey, selectThread);
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+>   private class CustomFrameBuffer extends FrameBuffer {
+42c95
+<     public CustomAsyncFrameBuffer(TNonblockingTransport trans, SelectionKey selectionKey, AbstractSelectThread selectThread) {
+---
+>     public CustomFrameBuffer(TNonblockingTransport trans, SelectionKey selectionKey, AbstractSelectThread selectThread) {

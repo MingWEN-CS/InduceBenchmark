@@ -1,0 +1,129 @@
+27a28
+> import javax.servlet.ServletContext;
+186,187d186
+<   private boolean randomSecret;
+<   private boolean customSecretProvider;
+229d227
+< 
+240,244c238,239
+<     } catch (ClassNotFoundException ex) {
+<       throw new ServletException(ex);
+<     } catch (InstantiationException ex) {
+<       throw new ServletException(ex);
+<     } catch (IllegalAccessException ex) {
+---
+>     } catch (ClassNotFoundException | InstantiationException |
+>         IllegalAccessException ex) {
+254,262c249,250
+<       Class<? extends SignerSecretProvider> providerClass
+<               = getProviderClass(config);
+<       try {
+<         secretProvider = providerClass.newInstance();
+<       } catch (InstantiationException ex) {
+<         throw new ServletException(ex);
+<       } catch (IllegalAccessException ex) {
+<         throw new ServletException(ex);
+<       }
+---
+>       
+>       
+264c252,254
+<         secretProvider.init(config, filterConfig.getServletContext(), validity);
+---
+>         secretProvider = constructSecretProvider(
+>             filterConfig.getServletContext(),
+>             config, false);
+268,269d257
+<     } else {
+<       customSecretProvider = true;
+274,289c262,288
+<   @SuppressWarnings("unchecked")
+<   private Class<? extends SignerSecretProvider> getProviderClass(Properties config)
+<           throws ServletException {
+<     String providerClassName;
+<     String signerSecretProviderName
+<             = config.getProperty(SIGNER_SECRET_PROVIDER, null);
+<     
+<     if (signerSecretProviderName == null) {
+<       String signatureSecretFile = config.getProperty(
+<           SIGNATURE_SECRET_FILE, null);
+<       
+<       if (signatureSecretFile != null) {
+<         providerClassName = FileSignerSecretProvider.class.getName();
+<       } else {
+<         providerClassName = RandomSignerSecretProvider.class.getName();
+<         randomSecret = true;
+---
+>   public static SignerSecretProvider constructSecretProvider(
+>       ServletContext ctx, Properties config,
+>       boolean disallowFallbackToRandomSecretProvider) throws Exception {
+>     String name = config.getProperty(SIGNER_SECRET_PROVIDER, "file");
+>     long validity = Long.parseLong(config.getProperty(AUTH_TOKEN_VALIDITY,
+>                                                       "36000")) * 1000;
+> 
+>     if (!disallowFallbackToRandomSecretProvider
+>         && "file".equals(name)
+>         && config.getProperty(SIGNATURE_SECRET_FILE) == null) {
+>       name = "random";
+>     }
+> 
+>     SignerSecretProvider provider;
+>     if ("file".equals(name)) {
+>       provider = new FileSignerSecretProvider();
+>       try {
+>         provider.init(config, ctx, validity);
+>       } catch (Exception e) {
+>         if (!disallowFallbackToRandomSecretProvider) {
+>           LOG.info("Unable to initialize FileSignerSecretProvider, " +
+>                        "falling back to use random secrets.");
+>           provider = new RandomSignerSecretProvider();
+>           provider.init(config, ctx, validity);
+>         } else {
+>           throw e;
+>         }
+290a290,295
+>     } else if ("random".equals(name)) {
+>       provider = new RandomSignerSecretProvider();
+>       provider.init(config, ctx, validity);
+>     } else if ("zookeeper".equals(name)) {
+>       provider = new ZKSignerSecretProvider();
+>       provider.init(config, ctx, validity);
+292,308c297,299
+<       if ("random".equals(signerSecretProviderName)) {
+<         providerClassName = RandomSignerSecretProvider.class.getName();
+<         randomSecret = true;
+<       } else if ("file".equals(signerSecretProviderName)) {
+<         providerClassName = FileSignerSecretProvider.class.getName();
+<       } else if ("zookeeper".equals(signerSecretProviderName)) {
+<         providerClassName = ZKSignerSecretProvider.class.getName();
+<       } else {
+<         providerClassName = signerSecretProviderName;
+<         customSecretProvider = true;
+<       }
+<     }
+<     try {
+<       return (Class<? extends SignerSecretProvider>) Thread.currentThread().
+<               getContextClassLoader().loadClass(providerClassName);
+<     } catch (ClassNotFoundException ex) {
+<       throw new ServletException(ex);
+---
+>       provider = (SignerSecretProvider) Thread.currentThread().
+>           getContextClassLoader().loadClass(name).newInstance();
+>       provider.init(config, ctx, validity);
+309a301
+>     return provider;
+338c330
+<     return randomSecret;
+---
+>     return secretProvider.getClass() == RandomSignerSecretProvider.class;
+347c339,342
+<     return customSecretProvider;
+---
+>     Class<?> clazz = secretProvider.getClass();
+>     return clazz != FileSignerSecretProvider.class && clazz !=
+>         RandomSignerSecretProvider.class && clazz != ZKSignerSecretProvider
+>         .class;
+388,390d382
+<     if (secretProvider != null) {
+<       secretProvider.destroy();
+<     }

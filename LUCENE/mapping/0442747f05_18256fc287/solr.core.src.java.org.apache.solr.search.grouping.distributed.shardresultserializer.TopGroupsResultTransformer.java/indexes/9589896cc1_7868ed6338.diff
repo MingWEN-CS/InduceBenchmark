@@ -1,0 +1,6 @@
+20a21
+> import java.lang.invoke.MethodHandles;
+57c58
+<   private static final Logger log = LoggerFactory.getLogger(TopGroupsResultTransformer.class);
+---
+>   private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

@@ -1,0 +1,12 @@
+145c145
+<     return super.lookup(key, contexts, onlyMorePopular, num * numFactor);
+---
+>     return super.lookup(key, contexts, onlyMorePopular, num);
+151c151
+<     return super.lookup(key, contexts, num * numFactor, allTermsRequired, doHighlight);
+---
+>     return super.lookup(key, contexts, num, allTermsRequired, doHighlight);
+157c157
+<     return super.lookup(key, contextInfo, num * numFactor, allTermsRequired, doHighlight);
+---
+>     return super.lookup(key, contextInfo, num, allTermsRequired, doHighlight);

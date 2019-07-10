@@ -1,0 +1,41 @@
+425a426,428
+>                   if (zkSys.getZkController() != null) {
+>                     preRegisterInZk(p);
+>                   }
+632,647d634
+< 
+<     if (zkSys.getZkController() != null) {
+<       
+<       try {
+<         zkSys.getZkController().preRegister(core.getCoreDescriptor());
+<       } catch (KeeperException e) {
+<         log.error("", e);
+<         throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<             "", e);
+<       } catch (InterruptedException e) {
+<         Thread.currentThread().interrupt();
+<         log.error("", e);
+<         throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<             "", e);
+<       }
+<     }
+993a981,983
+>         if (zkSys.getZkController() != null) {
+>           preRegisterInZk(desc);
+>         }
+1187a1178,1192
+>   
+>   public void preRegisterInZk(final CoreDescriptor p) {
+>     try {
+>       zkSys.getZkController().preRegister(p);
+>     } catch (KeeperException e) {
+>       log.error("", e);
+>       throw new ZooKeeperException(
+>           SolrException.ErrorCode.SERVER_ERROR, "", e);
+>     } catch (InterruptedException e) {
+>       Thread.currentThread().interrupt();
+>       log.error("", e);
+>       throw new ZooKeeperException(
+>           SolrException.ErrorCode.SERVER_ERROR, "", e);
+>     }
+>   }

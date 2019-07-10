@@ -1,0 +1,292 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.fs;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringReader;
+
+import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.util.Shell;
+import org.apache.hadoop.util.Shell.ExitCodeException;
+import org.apache.hadoop.util.Shell.ShellCommandExecutor;
+
+import com.google.common.annotations.VisibleForTesting;
+
+import static java.nio.file.Files.createLink;
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class HardLink { 
+
+  private static HardLinkCommandGetter getHardLinkCommand;
+  
+  public final LinkStats linkStats; 
+  
+  
+  
+  static { 
+    if (Shell.WINDOWS) {
+      
+      getHardLinkCommand = new HardLinkCGWin();
+    } else {
+      
+      getHardLinkCommand = new HardLinkCGUnix();
+      
+      
+      if (Shell.MAC || Shell.FREEBSD) {
+        String[] linkCountCmdTemplate = {"/usr/bin/stat","-f%l", null};
+        HardLinkCGUnix.setLinkCountCmdTemplate(linkCountCmdTemplate);
+      } else if (Shell.SOLARIS) {
+        String[] linkCountCmdTemplate = {"ls","-l", null};
+        HardLinkCGUnix.setLinkCountCmdTemplate(linkCountCmdTemplate);        
+      }
+    }
+  }
+
+  public HardLink() {
+    linkStats = new LinkStats();
+  }
+  
+  
+
+
+
+
+
+
+  private static abstract class HardLinkCommandGetter {
+    
+
+
+    abstract String[] linkCount(File file) throws IOException;
+  }
+  
+  
+
+
+  private static class HardLinkCGUnix extends HardLinkCommandGetter {
+    private static String[] getLinkCountCommand = {"stat","-c%h", null};
+    private static synchronized 
+    void setLinkCountCmdTemplate(String[] template) {
+      
+      
+      getLinkCountCommand = template;
+    }
+
+    
+
+
+    @Override
+    String[] linkCount(File file) 
+    throws IOException {
+      String[] buf = new String[getLinkCountCommand.length];
+      System.arraycopy(getLinkCountCommand, 0, buf, 0, 
+                       getLinkCountCommand.length);
+      buf[getLinkCountCommand.length - 1] = FileUtil.makeShellPath(file, true);
+      return buf;
+    }
+  }
+  
+  
+
+
+  @VisibleForTesting
+  static class HardLinkCGWin extends HardLinkCommandGetter {
+
+    static String[] getLinkCountCommand = {
+        Shell.WINUTILS, "hardlink", "stat", null};
+
+    
+
+
+    @Override
+    String[] linkCount(File file) throws IOException {
+      String[] buf = new String[getLinkCountCommand.length];
+      System.arraycopy(getLinkCountCommand, 0, buf, 0, 
+                       getLinkCountCommand.length);
+      buf[getLinkCountCommand.length - 1] = file.getCanonicalPath();
+      return buf;
+    }
+  }
+
+  
+
+
+
+
+
+  
+
+
+
+
+  public static void createHardLink(File file, File linkName) 
+      throws IOException {
+    if (file == null) {
+      throw new IOException(
+          "invalid arguments to createHardLink: source file is null");
+    }
+    if (linkName == null) {
+      throw new IOException(
+          "invalid arguments to createHardLink: link name is null");
+    }
+    createLink(linkName.toPath(), file.toPath());
+  }
+
+  
+
+
+
+
+
+
+
+  public static void createHardLinkMult(File parentDir, String[] fileBaseNames,
+      File linkDir) throws IOException {
+    if (parentDir == null) {
+      throw new IOException(
+          "invalid arguments to createHardLinkMult: parent directory is null");
+    }
+    if (linkDir == null) {
+      throw new IOException(
+          "invalid arguments to createHardLinkMult: link directory is null");
+    }
+    if (fileBaseNames == null) {
+      throw new IOException(
+          "invalid arguments to createHardLinkMult: "
+          + "filename list can be empty but not null");
+    }
+    if (!linkDir.exists()) {
+      throw new FileNotFoundException(linkDir + " not found.");
+    }
+    for (String name : fileBaseNames) {
+      createLink(linkDir.toPath().resolve(name),
+                 parentDir.toPath().resolve(name));
+    }
+  }
+
+   
+
+
+  public static int getLinkCount(File fileName) throws IOException {
+    if (fileName == null) {
+      throw new IOException(
+          "invalid argument to getLinkCount: file name is null");
+    }
+    if (!fileName.exists()) {
+      throw new FileNotFoundException(fileName + " not found.");
+    }
+
+    
+    String[] cmd = getHardLinkCommand.linkCount(fileName);
+    String inpMsg = null;
+    String errMsg = null;
+    int exitValue = -1;
+    BufferedReader in = null;
+
+    ShellCommandExecutor shexec = new ShellCommandExecutor(cmd);
+    try {
+      shexec.execute();
+      in = new BufferedReader(new StringReader(shexec.getOutput()));
+      inpMsg = in.readLine();
+      exitValue = shexec.getExitCode();
+      if (inpMsg == null || exitValue != 0) {
+        throw createIOException(fileName, inpMsg, errMsg, exitValue, null);
+      }
+      if (Shell.SOLARIS) {
+        String[] result = inpMsg.split("\\s+");
+        return Integer.parseInt(result[1]);
+      } else {
+        return Integer.parseInt(inpMsg);
+      }
+    } catch (ExitCodeException e) {
+      inpMsg = shexec.getOutput();
+      errMsg = e.getMessage();
+      exitValue = e.getExitCode();
+      throw createIOException(fileName, inpMsg, errMsg, exitValue, e);
+    } catch (NumberFormatException e) {
+      throw createIOException(fileName, inpMsg, errMsg, exitValue, e);
+    } finally {
+      IOUtils.closeStream(in);
+    }
+  }
+  
+  
+  private static IOException createIOException(File f, String message,
+      String error, int exitvalue, Exception cause) {
+
+    final String s = "Failed to get link count on file " + f
+        + ": message=" + message
+        + "; error=" + error
+        + "; exit value=" + exitvalue;
+    return (cause == null) ? new IOException(s) : new IOException(s, cause);
+  }
+  
+  
+  
+
+
+
+
+
+
+
+
+  public static class LinkStats {
+    public int countDirs = 0; 
+    public int countSingleLinks = 0; 
+    public int countMultLinks = 0; 
+    public int countFilesMultLinks = 0; 
+    public int countEmptyDirs = 0; 
+    public int countPhysicalFileCopies = 0;
+  
+    public void clear() {
+      countDirs = 0; 
+      countSingleLinks = 0; 
+      countMultLinks = 0; 
+      countFilesMultLinks = 0; 
+      countEmptyDirs = 0; 
+      countPhysicalFileCopies = 0;
+    }
+    
+    public String report() {
+      return "HardLinkStats: " + countDirs + " Directories, including " 
+      + countEmptyDirs + " Empty Directories, " 
+      + countSingleLinks 
+      + " single Link operations, " + countMultLinks 
+      + " multi-Link operations, linking " + countFilesMultLinks 
+      + " files, total " + (countSingleLinks + countFilesMultLinks) 
+      + " linkable files.  Also physically copied " 
+      + countPhysicalFileCopies + " other files.";
+    }
+  }
+}

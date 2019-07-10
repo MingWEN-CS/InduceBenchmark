@@ -1,0 +1,59 @@
+56d55
+< import org.apache.hadoop.fs.Path;
+63d61
+< import org.apache.hadoop.security.authentication.util.KerberosName;
+196,197d193
+<   private static boolean isInitialized = false;
+<   
+216,217c212,213
+<     if (!isInitialized) {
+<         initialize(new Configuration(), KerberosName.hasRulesBeenSet());
+---
+>     if (conf == null) {
+>       initialize(new Configuration(), false);
+225,229c221,225
+<   private static synchronized void initialize(Configuration conf, boolean skipRulesSetting) {
+<     initUGI(conf);
+<     
+<     try {
+<       if (!skipRulesSetting) {
+---
+>   private static synchronized void initialize(Configuration conf,
+>                                               boolean overrideNameRules) {
+>     authenticationMethod = SecurityUtil.getAuthenticationMethod(conf);
+>     if (overrideNameRules || !HadoopKerberosName.hasRulesBeenSet()) {
+>       try {
+230a227,229
+>       } catch (IOException ioe) {
+>         throw new RuntimeException(
+>             "Problem with Kerberos auth_to_local name configuration", ioe);
+232,234d230
+<     } catch (IOException ioe) {
+<       throw new RuntimeException("Problem with Kerberos auth_to_local name " +
+<           "configuration", ioe);
+236,243d231
+<   }
+<   
+<   
+< 
+< 
+< 
+<   private static synchronized void initUGI(Configuration conf) {
+<     authenticationMethod = SecurityUtil.getAuthenticationMethod(conf);
+258d245
+<     isInitialized = true;
+271c258,269
+<     initialize(conf, false);
+---
+>     initialize(conf, true);
+>   }
+>   
+>   @InterfaceAudience.Private
+>   @VisibleForTesting
+>   static void reset() {
+>     authenticationMethod = null;
+>     conf = null;
+>     groups = null;
+>     kerberosMinSecondsBeforeRelogin = 0;
+>     setLoginUser(null);
+>     HadoopKerberosName.setRules(null);

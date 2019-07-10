@@ -1,0 +1,35 @@
+4917a4918,4951
+>   public void testDeleteUnsedFiles2() throws Exception {
+>     
+>     
+>     Directory dir = new MockRAMDirectory();
+>     SnapshotDeletionPolicy sdp = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(
+>         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+>         .setIndexDeletionPolicy(sdp));
+>     
+>     
+>     Document doc = new Document();
+>     doc.add(new Field("c", "val", Store.YES, Index.ANALYZED, TermVector.WITH_POSITIONS_OFFSETS));
+>     writer.addDocument(doc);
+>     writer.commit();
+>     assertEquals(1, IndexReader.listCommits(dir).size());
+> 
+>     
+>     sdp.snapshot();
+>     
+>     
+>     doc = new Document();
+>     doc.add(new Field("c", "val", Store.YES, Index.ANALYZED, TermVector.WITH_POSITIONS_OFFSETS));
+>     writer.addDocument(doc);
+>     writer.commit();
+>     assertEquals(2, IndexReader.listCommits(dir).size());
+> 
+>     
+>     sdp.release();
+>     writer.deleteUnusedFiles();
+>     assertEquals(1, IndexReader.listCommits(dir).size());
+>     
+>     writer.close();
+>   }
+>   

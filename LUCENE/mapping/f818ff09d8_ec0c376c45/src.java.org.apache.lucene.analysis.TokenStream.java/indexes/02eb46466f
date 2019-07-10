@@ -1,0 +1,263 @@
+package org.apache.lucene.analysis;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+import java.util.Iterator;
+
+import org.apache.lucene.index.Payload;
+import org.apache.lucene.util.Attribute;
+import org.apache.lucene.util.AttributeSource;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public abstract class TokenStream extends AttributeSource {
+  private static boolean useNewAPIDefault = false;
+  private boolean useNewAPI = useNewAPIDefault;
+  
+  protected TokenStream() {
+    super();
+  }
+  
+  protected TokenStream(AttributeSource input) {
+    super(input);
+  }
+
+  
+
+
+
+
+  public static boolean useNewAPIDefault() {
+    return useNewAPIDefault;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public static void setUseNewAPIDefault(boolean use) {
+    useNewAPIDefault = use;
+  }
+  
+  
+
+
+
+
+  public boolean useNewAPI() {
+    return useNewAPI;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setUseNewAPI(boolean use) {
+    useNewAPI = use;
+  }
+    	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public boolean incrementToken() throws IOException {
+	  
+	  return false;
+	}
+	
+  
+
+
+
+  public Token next() throws IOException {
+    final Token reusableToken = new Token();
+    Token nextToken = next(reusableToken);
+
+    if (nextToken != null) {
+      Payload p = nextToken.getPayload();
+      if (p != null) {
+        nextToken.setPayload((Payload) p.clone());
+      }
+    }
+
+    return nextToken;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public Token next(final Token reusableToken) throws IOException {
+    
+    assert reusableToken != null;
+    return next();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public void reset() throws IOException {}
+  
+  
+  public void close() throws IOException {}
+  
+  public String toString() {
+    StringBuffer sb = new StringBuffer();
+    sb.append('(');
+    
+    if (hasAttributes()) {
+      
+      
+      Iterator it = getAttributesIterator();
+      if (it.hasNext()) {
+        sb.append(it.next().toString());
+      }
+      while (it.hasNext()) {
+        sb.append(',');
+        sb.append(it.next().toString());
+      }
+    }
+    sb.append(')');
+    return sb.toString();
+  }
+
+}

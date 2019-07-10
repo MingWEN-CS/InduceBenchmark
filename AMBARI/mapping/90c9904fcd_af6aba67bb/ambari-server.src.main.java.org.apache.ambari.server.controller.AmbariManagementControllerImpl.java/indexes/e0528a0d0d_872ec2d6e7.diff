@@ -1,0 +1,4 @@
+2312c2312
+<     execCmd.setAvailableServices(ambariMetaInfo.getServices(stackId.getStackName(), stackId.getStackVersion()).keySet());
+---
+>     execCmd.setAvailableServicesFromServiceInfoMap(ambariMetaInfo.getServices(stackId.getStackName(), stackId.getStackVersion()));

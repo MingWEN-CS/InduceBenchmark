@@ -1,0 +1,77 @@
+100c100
+< import org.apache.solr.schema.SchemaAware;
+---
+> import org.apache.solr.schema.SimilarityFactory;
+150c150
+<   private final IndexSchema schema;
+---
+>   private volatile IndexSchema schema;
+209c209
+<     return schema.getResourceName();
+---
+>     return getLatestSchema().getResourceName();
+213,215c213
+< 
+< 
+<   public IndexSchema getSchema() { 
+---
+>   public IndexSchema getLatestSchema() { 
+218a217,221
+>   
+>   public void setLatestSchema(IndexSchema replacementSchema) {
+>     schema = replacementSchema;
+>   }
+>   
+399c402
+<     IndexSchema schema = IndexSchemaFactory.buildIndexSchema(getSchema().getResourceName(), config);
+---
+>     IndexSchema schema = IndexSchemaFactory.buildIndexSchema(getLatestSchema().getResourceName(), config);
+422c425,426
+<     return new SolrIndexSearcher(this, getNewIndexDir(), schema, getSolrConfig().indexConfig, name, false, directoryFactory);
+---
+>     return new SolrIndexSearcher(this, getNewIndexDir(), getLatestSchema(), getSolrConfig().indexConfig, 
+>                                  name, false, directoryFactory);
+499c503,504
+<         SolrIndexWriter writer = SolrIndexWriter.create("SolrCore.initIndex", indexDir, getDirectoryFactory(), true, schema, solrConfig.indexConfig, solrDelPolicy, codec);
+---
+>         SolrIndexWriter writer = SolrIndexWriter.create("SolrCore.initIndex", indexDir, getDirectoryFactory(), true, 
+>                                                         getLatestSchema(), solrConfig.indexConfig, solrDelPolicy, codec);
+682,685d686
+<     if (schema==null) {
+<       schema = IndexSchemaFactory.buildIndexSchema(IndexSchema.DEFAULT_SCHEMA_FILE, config);
+<     }
+< 
+714a716,718
+>     if (schema==null) {
+>       schema = IndexSchemaFactory.buildIndexSchema(IndexSchema.DEFAULT_SCHEMA_FILE, config);
+>     }
+715a720,725
+>     final SimilarityFactory similarityFactory = schema.getSimilarityFactory(); 
+>     if (similarityFactory instanceof SolrCoreAware) {
+>       
+>       ((SolrCoreAware)similarityFactory).inform(this);
+>     }
+> 
+857,858c867,870
+<     if (factory instanceof SchemaAware) {
+<       ((SchemaAware)factory).inform(schema);
+---
+>     if (factory instanceof SolrCoreAware) {
+>       
+>       
+>       ((SolrCoreAware)factory).inform(this);
+1396c1408,1409
+<         tmp = new SolrIndexSearcher(this, newIndexDir, schema, getSolrConfig().indexConfig, (realtime ? "realtime":"main"), newReader, true, !realtime, true, directoryFactory);
+---
+>         tmp = new SolrIndexSearcher(this, newIndexDir, getLatestSchema(), getSolrConfig().indexConfig, 
+>             (realtime ? "realtime":"main"), newReader, true, !realtime, true, directoryFactory);
+1406c1419,1420
+<           tmp = new SolrIndexSearcher(this, newIndexDir, schema, getSolrConfig().indexConfig, (realtime ? "realtime":"main"), newReader, true, !realtime, true, directoryFactory);
+---
+>           tmp = new SolrIndexSearcher(this, newIndexDir, getLatestSchema(), getSolrConfig().indexConfig, 
+>               (realtime ? "realtime":"main"), newReader, true, !realtime, true, directoryFactory);
+1410c1424,1425
+<         tmp = new SolrIndexSearcher(this, newIndexDir, schema, getSolrConfig().indexConfig, "main", true, directoryFactory);
+---
+>         tmp = new SolrIndexSearcher(this, newIndexDir, getLatestSchema(), getSolrConfig().indexConfig,
+>                                     "main", true, directoryFactory);

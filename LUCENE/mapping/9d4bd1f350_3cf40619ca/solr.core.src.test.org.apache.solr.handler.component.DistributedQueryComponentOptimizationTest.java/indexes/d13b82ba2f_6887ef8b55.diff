@@ -1,0 +1,43 @@
+134a135,146
+> 
+>     
+>     queryWithAsserts("q", "*:*", "sort", "payload desc", ShardParams.DISTRIB_SINGLE_PASS, "true");
+>     queryWithAsserts("q", "*:*", "sort", "payload desc");
+> 
+>     
+>     queryWithAsserts("q", "*:*", "fl", "*", "sort", "payload desc", ShardParams.DISTRIB_SINGLE_PASS, "true");
+>     queryWithAsserts("q", "*:*", "fl", "*", "sort", "payload desc");
+> 
+>     
+>     queryWithAsserts("q", "*:*", "fl", "*,score", "sort", "payload desc", ShardParams.DISTRIB_SINGLE_PASS, "true");
+>     queryWithAsserts("q", "*:*", "fl", "*,score", "sort", "payload desc");
+199c211
+<     if (idScoreFields.containsAll(fls)) {
+---
+>     if (idScoreFields.containsAll(fls) && !fls.isEmpty()) {
+262,263c274,282
+<     for (String p : params) {
+<       requestedFields.addAll(StrUtils.splitSmart(p, ','));
+---
+>     if (params != null) {
+>       for (String p : params) {
+>         List<String> list = StrUtils.splitSmart(p, ',');
+>         for (String s : list) {
+>           
+>           assertTrue("Field name " + s + " was requested multiple times: params = " + requestAndParams.params,
+>               requestedFields.add(s));
+>         }
+>       }
+265,268c284,290
+<     assertEquals("Number of requested fields do not match with expectations", expectedCount, requestedFields.size());
+<     for (String field : values) {
+<       if (!requestedFields.contains(field)) {
+<         fail("Field " + field + " not found in param: " + paramName + " request had " + paramName + "=" + requestedFields);
+---
+>     
+>     if (!requestedFields.contains("*"))  {
+>       assertEquals("Number of requested fields do not match with expectations", expectedCount, requestedFields.size());
+>       for (String field : values) {
+>         if (!requestedFields.contains(field)) {
+>           fail("Field " + field + " not found in param: " + paramName + " request had " + paramName + "=" + requestedFields);
+>         }

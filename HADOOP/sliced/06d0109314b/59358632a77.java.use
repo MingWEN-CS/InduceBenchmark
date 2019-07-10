@@ -1,0 +1,99 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+13	item	PathData	param	91	define	org.apache.hadoop.fs.shell.Display.Cat.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	91	93
+13	item	PathData	param	92	use	org.apache.hadoop.fs.shell.Display.Cat.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	91	93
+13	item	PathData	param	92	use	org.apache.hadoop.fs.shell.Display.Cat.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	91	93
+14	path		variable	92	use	org.apache.hadoop.fs.shell.Display.Cat.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	91	93
+19	in	InputStream	param	83	define	org.apache.hadoop.fs.shell.Display.Cat.printToStdout	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	83	89
+19	in	InputStream	param	85	use	org.apache.hadoop.fs.shell.Display.Cat.printToStdout	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	83	89
+19	in	InputStream	param	87	use	org.apache.hadoop.fs.shell.Display.Cat.printToStdout	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	83	89
+20	out		variable	85	use	org.apache.hadoop.fs.shell.Display.Cat.printToStdout	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	83	89
+24	args	LinkedList<String>	param	66	define	org.apache.hadoop.fs.shell.Display.Cat.processOptions	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	66	71
+24	args	LinkedList<String>	param	69	use	org.apache.hadoop.fs.shell.Display.Cat.processOptions	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	66	71
+25	cf	CommandFormat	variable	68	define	org.apache.hadoop.fs.shell.Display.Cat.processOptions	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	66	71
+25	cf	CommandFormat	variable	68	set	org.apache.hadoop.fs.shell.Display.Cat.processOptions	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	66	71
+34	Cat.verifyChecksum	boolean	variable	70	set	org.apache.hadoop.fs.shell.Display.Cat.processOptions	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	66	71
+25	cf	CommandFormat	variable	69	use	org.apache.hadoop.fs.shell.Display.Cat.processOptions	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	66	71
+25	cf	CommandFormat	variable	70	use	org.apache.hadoop.fs.shell.Display.Cat.processOptions	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	66	71
+30	item	PathData	param	74	define	org.apache.hadoop.fs.shell.Display.Cat.processPath	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	74	80
+30	item	PathData	param	75	use	org.apache.hadoop.fs.shell.Display.Cat.processPath	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	74	80
+30	item	PathData	param	76	use	org.apache.hadoop.fs.shell.Display.Cat.processPath	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	74	80
+30	item	PathData	param	79	use	org.apache.hadoop.fs.shell.Display.Cat.processPath	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	74	80
+30	item	PathData	param	80	use	org.apache.hadoop.fs.shell.Display.Cat.processPath	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	74	80
+34	Cat.verifyChecksum	boolean	variable	79	use	org.apache.hadoop.fs.shell.Display.Cat.processPath	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	74	80
+80	factory	CommandFactory	param	48	define	org.apache.hadoop.fs.shell.Display.registerCommands	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	48	51
+80	factory	CommandFactory	param	49	use	org.apache.hadoop.fs.shell.Display.registerCommands	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	48	51
+80	factory	CommandFactory	param	50	use	org.apache.hadoop.fs.shell.Display.registerCommands	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	48	51
+58	class		variable	49	use	org.apache.hadoop.fs.shell.Display.registerCommands	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	48	51
+58	class		variable	50	use	org.apache.hadoop.fs.shell.Display.registerCommands	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	48	51
+45	item	PathData	param	108	define	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+45	item	PathData	param	109	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+45	item	PathData	param	113	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+45	item	PathData	param	126	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+44	i	FSDataInputStream	variable	109	define	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+42	cf	CompressionCodecFactory	variable	112	define	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+43	codec	CompressionCodec	variable	113	define	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+44	i	FSDataInputStream	variable	109	set	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+42	cf	CompressionCodecFactory	variable	112	set	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+43	codec	CompressionCodec	variable	113	set	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+42	cf	CompressionCodecFactory	variable	113	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+14	path		variable	113	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+43	codec	CompressionCodec	variable	114	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+43	codec	CompressionCodec	variable	115	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+44	i	FSDataInputStream	variable	115	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+44	i	FSDataInputStream	variable	118	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+44	i	FSDataInputStream	variable	120	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+44	i	FSDataInputStream	variable	121	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+44	i	FSDataInputStream	variable	124	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+44	i	FSDataInputStream	variable	125	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+46	stat		variable	126	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+44	i	FSDataInputStream	variable	131	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+44	i	FSDataInputStream	variable	132	use	org.apache.hadoop.fs.shell.Display.Text.getInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	108	132
+76	TextRecordInputStream.r	SequenceFile.Reader	variable	177	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.close	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	176	179
+71	ret	int	variable	158	define	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+72	tmp	byte[]	variable	163	define	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+71	ret	int	variable	159	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+72	tmp	byte[]	variable	163	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+72	tmp	byte[]	variable	166	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+71	ret	int	variable	171	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+73	TextRecordInputStream.inbuf	DataInputBuffer	variable	159	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+73	TextRecordInputStream.inbuf	DataInputBuffer	variable	159	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+76	TextRecordInputStream.r	SequenceFile.Reader	variable	160	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+74	TextRecordInputStream.key	Writable	variable	160	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+77	TextRecordInputStream.val	Writable	variable	160	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+74	TextRecordInputStream.key	Writable	variable	163	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+75	TextRecordInputStream.outbuf	DataOutputBuffer	variable	164	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+72	tmp	byte[]	variable	164	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+72	tmp	byte[]	variable	164	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+120	length		variable	164	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+75	TextRecordInputStream.outbuf	DataOutputBuffer	variable	165	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+77	TextRecordInputStream.val	Writable	variable	166	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+75	TextRecordInputStream.outbuf	DataOutputBuffer	variable	167	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+72	tmp	byte[]	variable	167	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+72	tmp	byte[]	variable	167	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+120	length		variable	167	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+75	TextRecordInputStream.outbuf	DataOutputBuffer	variable	168	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+73	TextRecordInputStream.inbuf	DataInputBuffer	variable	169	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+75	TextRecordInputStream.outbuf	DataOutputBuffer	variable	169	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+75	TextRecordInputStream.outbuf	DataOutputBuffer	variable	169	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+75	TextRecordInputStream.outbuf	DataOutputBuffer	variable	170	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+73	TextRecordInputStream.inbuf	DataInputBuffer	variable	171	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+71	ret	int	variable	173	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.read	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	157	174
+59	f	FileStatus	param	144	define	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+59	f	FileStatus	param	145	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+60	fpath	Path	variable	145	define	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+61	lconf	Configuration	variable	146	define	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+60	fpath	Path	variable	145	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+61	lconf	Configuration	variable	146	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+76	TextRecordInputStream.r	SequenceFile.Reader	variable	147	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+74	TextRecordInputStream.key	Writable	variable	149	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+77	TextRecordInputStream.val	Writable	variable	151	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+73	TextRecordInputStream.inbuf	DataInputBuffer	variable	153	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+75	TextRecordInputStream.outbuf	DataOutputBuffer	variable	154	set	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+61	lconf	Configuration	variable	147	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+60	fpath	Path	variable	148	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+76	TextRecordInputStream.r	SequenceFile.Reader	variable	150	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+58	class		variable	150	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+61	lconf	Configuration	variable	150	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+76	TextRecordInputStream.r	SequenceFile.Reader	variable	152	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+58	class		variable	152	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155
+61	lconf	Configuration	variable	152	use	org.apache.hadoop.fs.shell.Display.TextRecordInputStream.TextRecordInputStream	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/06d0109314b/59358632a77.java	144	155

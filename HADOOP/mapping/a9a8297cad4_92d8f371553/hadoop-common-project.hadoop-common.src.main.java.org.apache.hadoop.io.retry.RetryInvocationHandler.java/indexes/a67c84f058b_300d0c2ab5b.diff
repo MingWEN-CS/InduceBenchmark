@@ -1,0 +1,397 @@
+20,29c20
+< import java.io.IOException;
+< import java.lang.reflect.InvocationHandler;
+< import java.lang.reflect.InvocationTargetException;
+< import java.lang.reflect.Method;
+< import java.lang.reflect.Proxy;
+< import java.util.Collections;
+< import java.util.LinkedList;
+< import java.util.List;
+< import java.util.Map;
+< 
+---
+> import com.google.common.annotations.VisibleForTesting;
+35c26
+< import org.apache.hadoop.ipc.Client;
+---
+> import org.apache.hadoop.ipc.*;
+37,42d27
+< import org.apache.hadoop.ipc.ProtocolTranslator;
+< import org.apache.hadoop.ipc.RPC;
+< import org.apache.hadoop.ipc.RpcConstants;
+< import org.apache.hadoop.ipc.RpcInvocationHandler;
+< 
+< import com.google.common.annotations.VisibleForTesting;
+43a29,36
+> import java.io.IOException;
+> import java.lang.reflect.InvocationHandler;
+> import java.lang.reflect.InvocationTargetException;
+> import java.lang.reflect.Method;
+> import java.lang.reflect.Proxy;
+> import java.util.Arrays;
+> import java.util.Collections;
+> import java.util.Map;
+51d43
+<   private final FailoverProxyProvider<T> proxyProvider;
+53c45,57
+<   
+---
+>   private static class Counters {
+>     
+>     private int retries;
+>     
+>     private int failovers;
+>   }
+> 
+>   private static class ProxyDescriptor<T> {
+>     private final FailoverProxyProvider<T> fpp;
+>     
+>     private long failoverCount = 0;
+> 
+>     private ProxyInfo<T> proxyInfo;
+54a59,145
+>     ProxyDescriptor(FailoverProxyProvider<T> fpp) {
+>       this.fpp = fpp;
+>       this.proxyInfo = fpp.getProxy();
+>     }
+> 
+>     synchronized ProxyInfo<T> getProxyInfo() {
+>       return proxyInfo;
+>     }
+> 
+>     synchronized T getProxy() {
+>       return proxyInfo.proxy;
+>     }
+> 
+>     synchronized long getFailoverCount() {
+>       return failoverCount;
+>     }
+> 
+>     synchronized void failover(long expectedFailoverCount, Method method) {
+>       
+>       
+>       if (failoverCount == expectedFailoverCount) {
+>         fpp.performFailover(proxyInfo.proxy);
+>         failoverCount++;
+>       } else {
+>         LOG.warn("A failover has occurred since the start of "
+>             + proxyInfo.getString(method.getName()));
+>       }
+>       proxyInfo = fpp.getProxy();
+>     }
+> 
+>     boolean idempotentOrAtMostOnce(Method method) throws NoSuchMethodException {
+>       final Method m = fpp.getInterface()
+>           .getMethod(method.getName(), method.getParameterTypes());
+>       return m.isAnnotationPresent(Idempotent.class)
+>           || m.isAnnotationPresent(AtMostOnce.class);
+>     }
+> 
+>     void close() throws IOException {
+>       fpp.close();
+>     }
+>   }
+> 
+>   private static class RetryInfo {
+>     private final long delay;
+>     private final RetryAction failover;
+>     private final RetryAction fail;
+> 
+>     RetryInfo(long delay, RetryAction failover, RetryAction fail) {
+>       this.delay = delay;
+>       this.failover = failover;
+>       this.fail = fail;
+>     }
+> 
+>     static RetryInfo newRetryInfo(RetryPolicy policy, Exception e,
+>         Counters counters, boolean idempotentOrAtMostOnce) throws Exception {
+>       long maxRetryDelay = 0;
+>       RetryAction failover = null;
+>       RetryAction retry = null;
+>       RetryAction fail = null;
+> 
+>       final Iterable<Exception> exceptions = e instanceof MultiException ?
+>           ((MultiException) e).getExceptions().values()
+>           : Collections.singletonList(e);
+>       for (Exception exception : exceptions) {
+>         final RetryAction a = policy.shouldRetry(exception,
+>             counters.retries, counters.failovers, idempotentOrAtMostOnce);
+>         if (a.action == RetryAction.RetryDecision.FAIL) {
+>           fail = a;
+>         } else {
+>           
+>           if (a.action == RetryAction.RetryDecision.FAILOVER_AND_RETRY) {
+>             failover = a;
+>           } else {
+>             retry = a;
+>           }
+>           if (a.delayMillis > maxRetryDelay) {
+>             maxRetryDelay = a.delayMillis;
+>           }
+>         }
+>       }
+> 
+>       return new RetryInfo(maxRetryDelay, failover,
+>           failover == null && retry == null? fail: null);
+>     }
+>   }
+> 
+>   private final ProxyDescriptor<T> proxyDescriptor;
+56d146
+<   private long proxyProviderFailoverCount = 0;
+61d150
+<   private ProxyInfo<T> currentProxy;
+71c160
+<     this.proxyProvider = proxyProvider;
+---
+>     this.proxyDescriptor = new ProxyDescriptor<>(proxyProvider);
+74c163,167
+<     this.currentProxy = proxyProvider.getProxy();
+---
+>   }
+> 
+>   private RetryPolicy getRetryPolicy(Method method) {
+>     final RetryPolicy policy = methodNameToPolicyMap.get(method.getName());
+>     return policy != null? policy: defaultPolicy;
+79,87c172,173
+<     throws Throwable {
+<     RetryPolicy policy = methodNameToPolicyMap.get(method.getName());
+<     if (policy == null) {
+<       policy = defaultPolicy;
+<     }
+<     
+<     
+<     int invocationFailoverCount = 0;
+<     final boolean isRpc = isRpcInvocation(currentProxy.proxy);
+---
+>       throws Throwable {
+>     final boolean isRpc = isRpcInvocation(proxyDescriptor.getProxy());
+89c175,182
+<     int retries = 0;
+---
+>     return invoke(method, args, isRpc, callId, new Counters());
+>   }
+> 
+>   private Object invoke(final Method method, final Object[] args,
+>       final boolean isRpc, final int callId, final Counters counters)
+>       throws Throwable {
+>     final RetryPolicy policy = getRetryPolicy(method);
+> 
+94,97c187
+<       long invocationAttemptFailoverCount;
+<       synchronized (proxyProvider) {
+<         invocationAttemptFailoverCount = proxyProviderFailoverCount;
+<       }
+---
+>       final long failoverCount = proxyDescriptor.getFailoverCount();
+100c190
+<         Client.setCallIdAndRetryCount(callId, retries);
+---
+>         Client.setCallIdAndRetryCount(callId, counters.retries);
+103c193
+<         Object ret = invokeMethod(method, args);
+---
+>         final Object ret = invokeMethod(method, args);
+111,178c201
+<         boolean isIdempotentOrAtMostOnce = proxyProvider.getInterface()
+<             .getMethod(method.getName(), method.getParameterTypes())
+<             .isAnnotationPresent(Idempotent.class);
+<         if (!isIdempotentOrAtMostOnce) {
+<           isIdempotentOrAtMostOnce = proxyProvider.getInterface()
+<               .getMethod(method.getName(), method.getParameterTypes())
+<               .isAnnotationPresent(AtMostOnce.class);
+<         }
+<         List<RetryAction> actions = extractActions(policy, ex, retries++,
+<                 invocationFailoverCount, isIdempotentOrAtMostOnce);
+<         RetryAction failAction = getFailAction(actions);
+<         if (failAction != null) {
+<           
+<           if (failAction.reason != null) {
+<             LOG.warn("Exception while invoking " + currentProxy.proxy.getClass()
+<                 + "." + method.getName() + " over " + currentProxy.proxyInfo
+<                 + ". Not retrying because " + failAction.reason, ex);
+<           }
+<           throw ex;
+<         } else { 
+<           
+<           
+<           
+<           boolean worthLogging = 
+<             !(invocationFailoverCount == 0 && !hasMadeASuccessfulCall);
+<           worthLogging |= LOG.isDebugEnabled();
+<           RetryAction failOverAction = getFailOverAction(actions);
+<           long delay = getDelayMillis(actions);
+< 
+<           if (worthLogging) {
+<             String msg = "Exception while invoking " + method.getName()
+<                 + " of class " + currentProxy.proxy.getClass().getSimpleName()
+<                 + " over " + currentProxy.proxyInfo;
+< 
+<             if (invocationFailoverCount > 0) {
+<               msg += " after " + invocationFailoverCount + " fail over attempts"; 
+<             }
+< 
+<             if (failOverAction != null) {
+<               
+<               msg += ". Trying to fail over " + formatSleepMessage(delay);
+<             } else {
+<               
+<               msg += ". Retrying " + formatSleepMessage(delay);
+<             }
+<             LOG.info(msg, ex);
+<           }
+< 
+<           if (delay > 0) {
+<             Thread.sleep(delay);
+<           }
+< 
+<           if (failOverAction != null) {
+<             
+<             
+<             synchronized (proxyProvider) {
+<               if (invocationAttemptFailoverCount == proxyProviderFailoverCount) {
+<                 proxyProvider.performFailover(currentProxy.proxy);
+<                 proxyProviderFailoverCount++;
+<               } else {
+<                 LOG.warn("A failover has occurred since the start of this method"
+<                     + " invocation attempt.");
+<               }
+<               currentProxy = proxyProvider.getProxy();
+<             }
+<             invocationFailoverCount++;
+<           }
+<         }
+---
+>         handleException(method, policy, failoverCount, counters, ex);
+183,184c206,211
+<   
+< 
+---
+>   private void handleException(final Method method, final RetryPolicy policy,
+>       final long expectedFailoverCount, final Counters counters,
+>       final Exception ex) throws Exception {
+>     final RetryInfo retryInfo = RetryInfo.newRetryInfo(policy, ex, counters,
+>         proxyDescriptor.idempotentOrAtMostOnce(method));
+>     counters.retries++;
+186,193c213,218
+<   private long getDelayMillis(List<RetryAction> actions) {
+<     long retVal = 0;
+<     for (RetryAction action : actions) {
+<       if (action.action == RetryAction.RetryDecision.FAILOVER_AND_RETRY ||
+<               action.action == RetryAction.RetryDecision.RETRY) {
+<         if (action.delayMillis > retVal) {
+<           retVal = action.delayMillis;
+<         }
+---
+>     if (retryInfo.fail != null) {
+>       
+>       if (retryInfo.fail.reason != null) {
+>         LOG.warn("Exception while invoking "
+>             + proxyDescriptor.getProxyInfo().getString(method.getName())
+>             + ". Not retrying because " + retryInfo.fail.reason, ex);
+194a220
+>       throw ex;
+196,197d221
+<     return retVal;
+<   }
+199c223,224
+<   
+---
+>     
+>     final boolean isFailover = retryInfo.failover != null;
+200a226
+>     log(method, isFailover, counters.failovers, retryInfo.delay, ex);
+202,206c228,229
+<   private RetryAction getFailOverAction(List<RetryAction> actions) {
+<     for (RetryAction action : actions) {
+<       if (action.action == RetryAction.RetryDecision.FAILOVER_AND_RETRY) {
+<         return action;
+<       }
+---
+>     if (retryInfo.delay > 0) {
+>       Thread.sleep(retryInfo.delay);
+208,212d230
+<     return null;
+<   }
+< 
+<   
+< 
+214,222c232,234
+<   private RetryAction getFailAction(List<RetryAction> actions) {
+<     RetryAction fAction = null;
+<     for (RetryAction action : actions) {
+<       if (action.action == RetryAction.RetryDecision.FAIL) {
+<         fAction = action;
+<       } else {
+<         
+<         return null;
+<       }
+---
+>     if (isFailover) {
+>       proxyDescriptor.failover(expectedFailoverCount, method);
+>       counters.failovers++;
+224d235
+<     return fAction;
+227,239c238,244
+<   private List<RetryAction> extractActions(RetryPolicy policy, Exception ex,
+<                                            int i, int invocationFailoverCount,
+<                                            boolean isIdempotentOrAtMostOnce)
+<           throws Exception {
+<     List<RetryAction> actions = new LinkedList<>();
+<     if (ex instanceof MultiException) {
+<       for (Exception th : ((MultiException) ex).getExceptions().values()) {
+<         actions.add(policy.shouldRetry(th, i, invocationFailoverCount,
+<                 isIdempotentOrAtMostOnce));
+<       }
+<     } else {
+<       actions.add(policy.shouldRetry(ex, i,
+<               invocationFailoverCount, isIdempotentOrAtMostOnce));
+---
+>   private void log(final Method method, final boolean isFailover,
+>       final int failovers, final long delay, final Exception ex) {
+>     
+>     
+>     final boolean info = hasMadeASuccessfulCall || failovers != 0;
+>     if (!info && !LOG.isDebugEnabled()) {
+>       return;
+241,242d245
+<     return actions;
+<   }
+244,246c247,257
+<   private static String formatSleepMessage(long millis) {
+<     if (millis > 0) {
+<       return "after sleeping for " + millis + "ms.";
+---
+>     final StringBuilder b = new StringBuilder()
+>         .append("Exception while invoking ")
+>         .append(proxyDescriptor.getProxyInfo().getString(method.getName()));
+>     if (failovers > 0) {
+>       b.append(" after ").append(failovers).append(" failover attempts");
+>     }
+>     b.append(isFailover? ". Trying to failover ": ". Retrying ");
+>     b.append(delay > 0? "after sleeping for " + delay + "ms.": "immediately.");
+> 
+>     if (info) {
+>       LOG.info(b.toString(), ex);
+248c259
+<       return "immediately.";
+---
+>       LOG.debug(b.toString(), ex);
+251c262
+<   
+---
+> 
+257c268
+<       return method.invoke(currentProxy.proxy, args);
+---
+>       return method.invoke(proxyDescriptor.getProxy(), args);
+277c288
+<     proxyProvider.close();
+---
+>     proxyDescriptor.close();
+282c293
+<     return RPC.getConnectionIdForProxy(currentProxy.proxy);
+---
+>     return RPC.getConnectionIdForProxy(proxyDescriptor.getProxy());
+284d294
+< 

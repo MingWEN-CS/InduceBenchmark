@@ -1,0 +1,37 @@
+364,377d363
+<   
+<   @Override
+<   public final TermEnum terms() throws IOException {
+<     ensureOpen();
+<     return in.terms();
+<   }
+< 
+<   
+<   @Override
+<   public final TermEnum terms(Term t) throws IOException {
+<     ensureOpen();
+<     return in.terms(t);
+<   }
+< 
+390,410d375
+<   
+<   @Override
+<   public final TermDocs termDocs() throws IOException {
+<     ensureOpen();
+<     return in.termDocs();
+<   }
+< 
+<   
+<   @Override
+<   public final TermDocs termDocs(Term term) throws IOException {
+<     ensureOpen();
+<     return in.termDocs(term);
+<   }
+< 
+<   
+<   @Override
+<   public final TermPositions termPositions() throws IOException {
+<     ensureOpen();
+<     return in.termPositions();
+<   }
+< 

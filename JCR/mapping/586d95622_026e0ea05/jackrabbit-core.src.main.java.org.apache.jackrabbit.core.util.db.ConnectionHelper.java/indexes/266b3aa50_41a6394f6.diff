@@ -1,0 +1,52 @@
+67c67
+<     private static Logger log = LoggerFactory.getLogger(ConnectionHelper.class);
+---
+>     static Logger log = LoggerFactory.getLogger(ConnectionHelper.class);
+73c73
+<     private final boolean blockOnConnectionLoss;
+---
+>     final boolean blockOnConnectionLoss;
+102c102
+<     
+---
+> 
+212c212
+<             throw new IllegalStateException("already in batch mode");
+---
+>             throw new SQLException("already in batch mode");
+270c270
+<             
+---
+> 
+273,274c273,274
+<     
+<     private void reallyExec(String sql, Object... params) throws SQLException {
+---
+> 
+>     void reallyExec(String sql, Object... params) throws SQLException {
+306c306
+<             
+---
+> 
+310c310
+<     private int reallyUpdate(String sql, Object[] params) throws SQLException {
+---
+>     int reallyUpdate(String sql, Object[] params) throws SQLException {
+341c341
+<             
+---
+> 
+344,345c344,345
+<     
+<     private ResultSet reallyExec(String sql, Object[] params, boolean returnGeneratedKeys, int maxRows)
+---
+> 
+>     ResultSet reallyExec(String sql, Object[] params, boolean returnGeneratedKeys, int maxRows)
+441c441
+<     
+---
+> 
+478c478
+<         
+---
+> 

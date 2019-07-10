@@ -1,0 +1,613 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+179	startTime	AtomicLong	variable	109	use	org.apache.solr.handler.dataimport.DocBuilder.execute.(Anon_1).toString	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	108	110
+244	DocBuilder.stop	AtomicBoolean	variable	546	use	org.apache.solr.handler.dataimport.DocBuilder.abort	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	545	547
+63	entity	DataConfig.Entity	param	367	define	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+62	doc	SolrInputDocument	param	367	define	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+61	arow	Map<String,Object>	param	367	define	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+61	arow	Map<String,Object>	param	368	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+63	entity	DataConfig.Entity	param	374	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+62	doc	SolrInputDocument	param	382	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+62	doc	SolrInputDocument	param	387	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+55	entry	Map.Entry<String,Object>	variable	368	define	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+57	key	String	variable	369	define	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+56	field	DataConfig.Field	variable	374	define	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+59	sf	SchemaField	variable	377	define	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+57	key	String	variable	369	set	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+56	field	DataConfig.Field	variable	374	set	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+59	sf	SchemaField	variable	377	set	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+59	sf	SchemaField	variable	379	set	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+55	entry	Map.Entry<String,Object>	variable	369	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+57	key	String	variable	370	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+57	key	String	variable	374	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+56	field	DataConfig.Field	variable	375	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+236	DocBuilder.dataImporter	DataImporter	variable	375	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+236	DocBuilder.dataImporter	DataImporter	variable	377	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+57	key	String	variable	377	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+59	sf	SchemaField	variable	378	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+236	DocBuilder.dataImporter	DataImporter	variable	379	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+57	key	String	variable	379	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+59	sf	SchemaField	variable	381	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+55	entry	Map.Entry<String,Object>	variable	382	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+57	key	String	variable	382	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+59	sf	SchemaField	variable	382	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+56	field	DataConfig.Field	variable	386	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+56	field	DataConfig.Field	variable	386	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+60	toWrite		variable	386	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+55	entry	Map.Entry<String,Object>	variable	387	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+57	key	String	variable	387	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+56	field	DataConfig.Field	variable	387	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+54	boost		variable	387	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+56	field	DataConfig.Field	variable	387	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+58	multiValued		variable	387	use	org.apache.solr.handler.dataimport.DocBuilder.addFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	367	388
+43	value	Object	param	394	define	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+42	name	String	param	394	define	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+38	boost	float	param	394	define	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+41	multiValued	boolean	param	394	define	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+40	doc	SolrInputDocument	param	394	define	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+43	value	Object	param	395	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+43	value	Object	param	396	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+41	multiValued	boolean	param	397	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+40	doc	SolrInputDocument	param	399	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+42	name	String	param	399	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+38	boost	float	param	399	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+40	doc	SolrInputDocument	param	402	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+42	name	String	param	402	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+40	doc	SolrInputDocument	param	404	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+42	name	String	param	404	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+38	boost	float	param	404	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+41	multiValued	boolean	param	408	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+40	doc	SolrInputDocument	param	409	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+42	name	String	param	409	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+43	value	Object	param	409	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+38	boost	float	param	409	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+40	doc	SolrInputDocument	param	411	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+42	name	String	param	411	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+40	doc	SolrInputDocument	param	412	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+42	name	String	param	412	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+43	value	Object	param	412	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+38	boost	float	param	412	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+39	collection	Collection	variable	396	define	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+36	o	Object	variable	398	define	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+37	o	Object	variable	403	define	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+39	collection	Collection	variable	396	set	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+39	collection	Collection	variable	398	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+36	o	Object	variable	399	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+39	collection	Collection	variable	403	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+37	o	Object	variable	404	use	org.apache.solr.handler.dataimport.DocBuilder.addFieldToDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	394	414
+67	msg	String	param	226	define	org.apache.solr.handler.dataimport.DocBuilder.addStatusMessage	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	226	228
+67	msg	String	param	227	use	org.apache.solr.handler.dataimport.DocBuilder.addStatusMessage	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	226	228
+243	DocBuilder.statusMessages	Map	variable	227	use	org.apache.solr.handler.dataimport.DocBuilder.addStatusMessage	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	226	228
+116	vr	VariableResolverImpl	param	231	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	231	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+112	pk	Map<String,Object>	param	232	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	232	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+109	isRoot	boolean	param	232	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+110	parentCtx	ContextImpl	param	233	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+88	e	DataImportHandlerException	param	320	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+90	t	Throwable	param	335	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	271	set	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	315	set	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	235	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	237	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+116	vr	VariableResolverImpl	param	237	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+112	pk	Map<String,Object>	param	238	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+110	parentCtx	ContextImpl	param	239	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	247	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	263	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	264	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	266	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	266	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	272	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	274	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+116	vr	VariableResolverImpl	param	274	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	285	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	289	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	295	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	298	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	298	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	299	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	299	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+109	isRoot	boolean	param	301	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+116	vr	VariableResolverImpl	param	302	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	303	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+116	vr	VariableResolverImpl	param	304	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	304	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	305	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+116	vr	VariableResolverImpl	param	306	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	306	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+116	vr	VariableResolverImpl	param	308	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	308	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	311	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	314	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	322	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+88	e	DataImportHandlerException	param	322	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+109	isRoot	boolean	param	324	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+88	e	DataImportHandlerException	param	325	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	329	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+103	doc	SolrInputDocument	param	329	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+88	e	DataImportHandlerException	param	329	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+88	e	DataImportHandlerException	param	331	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+88	e	DataImportHandlerException	param	332	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+88	e	DataImportHandlerException	param	334	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	337	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+90	t	Throwable	param	337	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+90	t	Throwable	param	339	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	342	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+105	entity	DataConfig.Entity	param	343	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+106	entityProcessor	EntityProcessor	variable	235	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+102	ctx	ContextImpl	variable	237	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+114	seenDocCount	int	variable	250	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+104	e	DataConfig.Entity	variable	272	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+101	arow	Map<String,Object>	variable	280	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+113	result	boolean	variable	314	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+91	child	DataConfig.Entity	variable	305	define	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+106	entityProcessor	EntityProcessor	variable	235	set	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+102	ctx	ContextImpl	variable	237	set	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+114	seenDocCount	int	variable	250	set	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+104	e	DataConfig.Entity	variable	272	set	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+104	e	DataConfig.Entity	variable	276	set	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+101	arow	Map<String,Object>	variable	280	set	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+113	result	boolean	variable	314	set	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+236	DocBuilder.dataImporter	DataImporter	variable	235	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+242	DocBuilder.session	Map<String,Object>	variable	239	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+106	entityProcessor	EntityProcessor	variable	240	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+102	ctx	ContextImpl	variable	240	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	242	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+115	start		variable	242	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	243	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+93	DISABLE_LOGGING		variable	243	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+245	DocBuilder.verboseDebug	boolean	variable	246	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	247	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+100	START_ENTITY		variable	247	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+89	name		variable	247	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+244	DocBuilder.stop	AtomicBoolean	variable	254	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+114	seenDocCount	int	variable	259	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	259	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+115	start		variable	259	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	260	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+94	ENABLE_LOGGING		variable	260	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+245	DocBuilder.verboseDebug	boolean	variable	263	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+108	isDocRoot		variable	263	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	264	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+99	START_DOC		variable	264	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+89	name		variable	264	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+108	isDocRoot		variable	266	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+102	ctx	ContextImpl	variable	267	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+102	ctx	ContextImpl	variable	268	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+102	ctx	ContextImpl	variable	270	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+104	e	DataConfig.Entity	variable	273	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+111	parentEntity		variable	273	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+104	e	DataConfig.Entity	variable	274	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+111	parentEntity		variable	274	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+104	e	DataConfig.Entity	variable	275	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+104	e	DataConfig.Entity	variable	276	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+111	parentEntity		variable	276	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+106	entityProcessor	EntityProcessor	variable	280	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+101	arow	Map<String,Object>	variable	281	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+101	arow	Map<String,Object>	variable	284	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+229	DocBuilder.DOC_BOOST	String	variable	284	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+101	arow	Map<String,Object>	variable	285	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+108	isDocRoot		variable	289	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+114	seenDocCount	int	variable	290	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	290	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+115	start		variable	290	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+245	DocBuilder.verboseDebug	boolean	variable	294	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	295	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+97	ENTITY_OUT		variable	295	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+89	name		variable	295	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+101	arow	Map<String,Object>	variable	295	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+239	DocBuilder.importStatistics	Statistics	variable	297	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+21	Statistics.rowsCount	AtomicLong	variable	297	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+107	fields		variable	298	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+101	arow	Map<String,Object>	variable	299	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+92	entities		variable	303	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+89	name		variable	304	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+101	arow	Map<String,Object>	variable	304	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+92	entities		variable	305	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+91	child	DataConfig.Entity	variable	306	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+102	ctx	ContextImpl	variable	306	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+89	name		variable	308	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+108	isDocRoot		variable	311	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+244	DocBuilder.stop	AtomicBoolean	variable	312	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	314	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+113	result	boolean	variable	316	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+239	DocBuilder.importStatistics	Statistics	variable	317	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+19	Statistics.docCount	AtomicInteger	variable	317	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+245	DocBuilder.verboseDebug	boolean	variable	321	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	322	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+85	ENTITY_EXCEPTION		variable	322	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+89	name		variable	322	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+87	SKIP		variable	325	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+239	DocBuilder.importStatistics	Statistics	variable	326	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+22	Statistics.skipDocCount	AtomicLong	variable	326	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+233	DocBuilder.LOG	Logger	variable	328	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+89	name		variable	329	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+86	SEVERE		variable	331	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+245	DocBuilder.verboseDebug	boolean	variable	336	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	337	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+85	ENTITY_EXCEPTION		variable	337	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+89	name		variable	337	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+86	SEVERE		variable	339	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+245	DocBuilder.verboseDebug	boolean	variable	341	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	342	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+98	ROW_END		variable	342	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+89	name		variable	342	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+108	isDocRoot		variable	343	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	344	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+95	END_DOC		variable	344	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+245	DocBuilder.verboseDebug	boolean	variable	349	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+246	DocBuilder.writer	SolrWriter	variable	350	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+96	END_ENTITY		variable	350	use	org.apache.solr.handler.dataimport.DocBuilder.buildDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	231	350
+132	entity	DataConfig.Entity	param	443	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+135	parentEntity	DataConfig.Entity	param	444	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+138	resolver	VariableResolverImpl	param	444	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+127	context	DataImporter	param	445	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+129	deletedRows	Set<Map>	param	445	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	452	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	454	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	456	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+138	resolver	VariableResolverImpl	param	456	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+127	context	DataImporter	param	456	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+129	deletedRows	Set<Map>	param	457	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+138	resolver	VariableResolverImpl	param	464	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	464	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	465	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+127	context	DataImporter	param	465	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	466	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+138	resolver	VariableResolverImpl	param	466	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	468	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	481	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	485	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	497	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+135	parentEntity	DataConfig.Entity	param	504	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+135	parentEntity	DataConfig.Entity	param	504	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+135	parentEntity	DataConfig.Entity	param	505	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+127	context	DataImporter	param	505	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+135	parentEntity	DataConfig.Entity	param	506	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+138	resolver	VariableResolverImpl	param	506	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+138	resolver	VariableResolverImpl	param	510	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	510	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	511	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+138	resolver	VariableResolverImpl	param	514	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	514	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	515	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	518	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	519	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+129	deletedRows	Set<Map>	param	520	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+132	entity	DataConfig.Entity	param	522	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+134	myModifiedPks	Set<Map>	variable	450	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+131	deltaSet	Set<Map>	variable	463	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+133	entityProcessor	EntityProcessor	variable	465	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+128	count	int	variable	469	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+139	row	Map<String,Object>	variable	472	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+130	deletedSet	Set<Map>	variable	487	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+140	row	Map<String,Object>	variable	489	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+137	parentKeyList	Set<Map>	variable	501	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+136	parentEntityProcessor	EntityProcessor	variable	505	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+123	row	Map<String,Object>	variable	513	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+124	entity1	DataConfig.Entity	variable	454	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+125	row	Map<String,Object>	variable	509	define	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+134	myModifiedPks	Set<Map>	variable	450	set	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+131	deltaSet	Set<Map>	variable	463	set	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+133	entityProcessor	EntityProcessor	variable	465	set	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+128	count	int	variable	469	set	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+139	row	Map<String,Object>	variable	472	set	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+128	count	int	variable	483	set	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+130	deletedSet	Set<Map>	variable	487	set	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+140	row	Map<String,Object>	variable	489	set	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+137	parentKeyList	Set<Map>	variable	501	set	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+136	parentEntityProcessor	EntityProcessor	variable	505	set	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+244	DocBuilder.stop	AtomicBoolean	variable	447	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+92	entities		variable	452	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+92	entities		variable	454	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+134	myModifiedPks	Set<Map>	variable	456	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+124	entity1	DataConfig.Entity	variable	456	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+126	allAttributes		variable	464	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+133	entityProcessor	EntityProcessor	variable	466	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+242	DocBuilder.session	Map<String,Object>	variable	467	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+233	DocBuilder.LOG	Logger	variable	468	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+89	name		variable	468	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+133	entityProcessor	EntityProcessor	variable	472	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+139	row	Map<String,Object>	variable	474	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+131	deltaSet	Set<Map>	variable	477	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+139	row	Map<String,Object>	variable	477	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+239	DocBuilder.importStatistics	Statistics	variable	479	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+21	Statistics.rowsCount	AtomicLong	variable	479	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+233	DocBuilder.LOG	Logger	variable	481	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+89	name		variable	481	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+128	count	int	variable	482	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+233	DocBuilder.LOG	Logger	variable	485	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+89	name		variable	485	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+133	entityProcessor	EntityProcessor	variable	489	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+140	row	Map<String,Object>	variable	490	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+130	deletedSet	Set<Map>	variable	493	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+140	row	Map<String,Object>	variable	493	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+239	DocBuilder.importStatistics	Statistics	variable	495	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+21	Statistics.rowsCount	AtomicLong	variable	495	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+233	DocBuilder.LOG	Logger	variable	497	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+89	name		variable	497	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+128	count	int	variable	498	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+134	myModifiedPks	Set<Map>	variable	500	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+131	deltaSet	Set<Map>	variable	500	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+108	isDocRoot		variable	504	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+136	parentEntityProcessor	EntityProcessor	variable	506	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+242	DocBuilder.session	Map<String,Object>	variable	506	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+134	myModifiedPks	Set<Map>	variable	509	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+89	name		variable	510	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+125	row	Map<String,Object>	variable	510	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+89	name		variable	511	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+136	parentEntityProcessor	EntityProcessor	variable	511	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+137	parentKeyList	Set<Map>	variable	511	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+130	deletedSet	Set<Map>	variable	513	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+89	name		variable	514	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+123	row	Map<String,Object>	variable	514	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+89	name		variable	515	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+136	parentEntityProcessor	EntityProcessor	variable	515	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+137	parentKeyList	Set<Map>	variable	515	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+233	DocBuilder.LOG	Logger	variable	518	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+89	name		variable	518	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+108	isDocRoot		variable	519	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+130	deletedSet	Set<Map>	variable	520	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+108	isDocRoot		variable	522	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+134	myModifiedPks	Set<Map>	variable	522	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+137	parentKeyList	Set<Map>	variable	523	use	org.apache.solr.handler.dataimport.DocBuilder.collectDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	443	523
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	160	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+145	commit		variable	160	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+246	DocBuilder.writer	SolrWriter	variable	161	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+236	DocBuilder.dataImporter	DataImporter	variable	161	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+233	DocBuilder.LOG	Logger	variable	162	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+243	DocBuilder.statusMessages	Map	variable	163	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+239	DocBuilder.importStatistics	Statistics	variable	164	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+19	Statistics.docCount	AtomicInteger	variable	164	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+239	DocBuilder.importStatistics	Statistics	variable	165	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+18	Statistics.deletedDocCount	AtomicInteger	variable	165	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+246	DocBuilder.writer	SolrWriter	variable	166	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	166	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+146	optimize		variable	166	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	168	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+146	optimize		variable	168	use	org.apache.solr.handler.dataimport.DocBuilder.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	159	170
+151	deletedKeys	Set<Map>	param	218	define	org.apache.solr.handler.dataimport.DocBuilder.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	218	223
+151	deletedKeys	Set<Map>	param	220	use	org.apache.solr.handler.dataimport.DocBuilder.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	218	223
+149	deletedKey	Map<String,Object>	variable	220	define	org.apache.solr.handler.dataimport.DocBuilder.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	218	223
+233	DocBuilder.LOG	Logger	variable	219	use	org.apache.solr.handler.dataimport.DocBuilder.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	218	223
+246	DocBuilder.writer	SolrWriter	variable	221	use	org.apache.solr.handler.dataimport.DocBuilder.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	218	223
+149	deletedKey	Map<String,Object>	variable	221	use	org.apache.solr.handler.dataimport.DocBuilder.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	218	223
+241	DocBuilder.root	DataConfig.Entity	variable	221	use	org.apache.solr.handler.dataimport.DocBuilder.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	218	223
+150	pk		variable	221	use	org.apache.solr.handler.dataimport.DocBuilder.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	218	223
+26	context	DataImporter	param	68	define	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+31	writer	SolrWriter	param	68	define	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+28	reqParams	DataImporter.RequestParams	param	69	define	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+29	variables	Map<String,String>	param	69	define	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+26	context	DataImporter	param	71	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+31	writer	SolrWriter	param	72	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+28	reqParams	DataImporter.RequestParams	param	74	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+29	variables	Map<String,String>	param	76	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+236	DocBuilder.dataImporter	DataImporter	variable	71	set	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+246	DocBuilder.writer	SolrWriter	variable	72	set	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	74	set	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+245	DocBuilder.verboseDebug	boolean	variable	75	set	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+237	DocBuilder.defaultVariables	Map<String,String>	variable	76	set	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+231	DocBuilder.INSTANCE	ThreadLocal<DocBuilder>	variable	70	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+239	DocBuilder.importStatistics	Statistics	variable	73	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+20	Statistics.queryCount	AtomicLong	variable	73	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	75	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+27	debug		variable	75	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	75	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+30	verbose		variable	75	use	org.apache.solr.handler.dataimport.DocBuilder.DocBuilder	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	68	77
+162	resolver	VariableResolverImpl	variable	183	define	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+161	deletedKeys	Set<Map>	variable	191	define	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+159	allPks	Set<Map>	variable	192	define	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+157	pk	Map<String,Object>	variable	206	define	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+158	vri	VariableResolverImpl	variable	207	define	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+162	resolver	VariableResolverImpl	variable	183	set	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+161	deletedKeys	Set<Map>	variable	191	set	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+159	allPks	Set<Map>	variable	192	set	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+158	vri	VariableResolverImpl	variable	207	set	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+236	DocBuilder.dataImporter	DataImporter	variable	183	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+238	DocBuilder.document	DataConfig.Document	variable	185	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+160	deleteQuery		variable	185	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+246	DocBuilder.writer	SolrWriter	variable	186	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+238	DocBuilder.document	DataConfig.Document	variable	186	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+160	deleteQuery		variable	186	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+233	DocBuilder.LOG	Logger	variable	190	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+241	DocBuilder.root	DataConfig.Entity	variable	192	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+162	resolver	VariableResolverImpl	variable	192	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+236	DocBuilder.dataImporter	DataImporter	variable	193	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+161	deletedKeys	Set<Map>	variable	193	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+244	DocBuilder.stop	AtomicBoolean	variable	194	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+161	deletedKeys	Set<Map>	variable	198	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+161	deletedKeys	Set<Map>	variable	199	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+239	DocBuilder.importStatistics	Statistics	variable	200	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+18	Statistics.deletedDocCount	AtomicInteger	variable	200	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+161	deletedKeys	Set<Map>	variable	200	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+159	allPks	Set<Map>	variable	202	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+161	deletedKeys	Set<Map>	variable	202	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+243	DocBuilder.statusMessages	Map	variable	205	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+159	allPks	Set<Map>	variable	205	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+159	allPks	Set<Map>	variable	206	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+236	DocBuilder.dataImporter	DataImporter	variable	207	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+158	vri	VariableResolverImpl	variable	208	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+157	pk	Map<String,Object>	variable	208	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+158	vri	VariableResolverImpl	variable	209	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+157	pk	Map<String,Object>	variable	209	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+241	DocBuilder.root	DataConfig.Entity	variable	209	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+244	DocBuilder.stop	AtomicBoolean	variable	212	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+246	DocBuilder.writer	SolrWriter	variable	213	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+236	DocBuilder.dataImporter	DataImporter	variable	213	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+233	DocBuilder.LOG	Logger	variable	214	use	org.apache.solr.handler.dataimport.DocBuilder.doDelta	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	181	214
+236	DocBuilder.dataImporter	DataImporter	variable	176	use	org.apache.solr.handler.dataimport.DocBuilder.doFullDump	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	174	178
+241	DocBuilder.root	DataConfig.Entity	variable	176	use	org.apache.solr.handler.dataimport.DocBuilder.doFullDump	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	174	178
+177	docName	String	param	101	define	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+177	docName	String	param	103	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+179	startTime	AtomicLong	variable	106	define	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+178	entities	List<String>	variable	122	define	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+175	e	DataConfig.Entity	variable	124	define	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+238	DocBuilder.document	DataConfig.Document	variable	103	set	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+179	startTime	AtomicLong	variable	106	set	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+178	entities	List<String>	variable	122	set	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+241	DocBuilder.root	DataConfig.Entity	variable	128	set	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+236	DocBuilder.dataImporter	DataImporter	variable	102	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+243	DocBuilder.statusMessages	Map	variable	102	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+236	DocBuilder.dataImporter	DataImporter	variable	103	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+238	DocBuilder.document	DataConfig.Document	variable	104	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+243	DocBuilder.statusMessages	Map	variable	107	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+234	DocBuilder.TIME_ELAPSED	String	variable	107	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+243	DocBuilder.statusMessages	Map	variable	113	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+239	DocBuilder.importStatistics	Statistics	variable	114	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+20	Statistics.queryCount	AtomicLong	variable	114	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+243	DocBuilder.statusMessages	Map	variable	115	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+239	DocBuilder.importStatistics	Statistics	variable	116	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+21	Statistics.rowsCount	AtomicLong	variable	116	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+243	DocBuilder.statusMessages	Map	variable	117	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+239	DocBuilder.importStatistics	Statistics	variable	118	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+19	Statistics.docCount	AtomicInteger	variable	118	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+243	DocBuilder.statusMessages	Map	variable	119	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+239	DocBuilder.importStatistics	Statistics	variable	120	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+22	Statistics.skipDocCount	AtomicLong	variable	120	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	122	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+92	entities		variable	122	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+238	DocBuilder.document	DataConfig.Document	variable	124	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+92	entities		variable	124	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+92	entities		variable	125	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+92	entities		variable	125	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+175	e	DataConfig.Entity	variable	125	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+89	name		variable	125	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+175	e	DataConfig.Entity	variable	128	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+236	DocBuilder.dataImporter	DataImporter	variable	129	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+236	DocBuilder.dataImporter	DataImporter	variable	130	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+243	DocBuilder.statusMessages	Map	variable	136	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+244	DocBuilder.stop	AtomicBoolean	variable	139	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	140	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+176	command		variable	140	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+243	DocBuilder.statusMessages	Map	variable	142	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	144	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+145	commit		variable	144	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+243	DocBuilder.statusMessages	Map	variable	153	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+234	DocBuilder.TIME_ELAPSED	String	variable	153	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+243	DocBuilder.statusMessages	Map	variable	154	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+179	startTime	AtomicLong	variable	154	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+233	DocBuilder.LOG	Logger	variable	155	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+179	startTime	AtomicLong	variable	155	use	org.apache.solr.handler.dataimport.DocBuilder.execute	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	101	155
+184	entity	DataConfig.Entity	param	416	define	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+183	core	SolrCore	param	416	define	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+182	e	Exception	param	426	define	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+184	entity	DataConfig.Entity	param	432	set	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+184	entity	DataConfig.Entity	param	417	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+184	entity	DataConfig.Entity	param	418	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+184	entity	DataConfig.Entity	param	420	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+184	entity	DataConfig.Entity	param	424	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+183	core	SolrCore	param	424	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+184	entity	DataConfig.Entity	param	429	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+182	e	Exception	param	429	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+185	entityProcessor	EntityProcessor	variable	419	define	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+185	entityProcessor	EntityProcessor	variable	421	set	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+185	entityProcessor	EntityProcessor	variable	424	set	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+187	processor		variable	417	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+187	processor		variable	418	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+186	proc		variable	420	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+186	proc		variable	424	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+86	SEVERE		variable	427	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+89	name		variable	429	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+187	processor		variable	432	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+185	entityProcessor	EntityProcessor	variable	432	use	org.apache.solr.handler.dataimport.DocBuilder.getEntityProcessor	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	416	433
+195	resolver	VariableResolverImpl	param	526	define	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+191	entity	String	param	527	define	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+192	entityProcessor	EntityProcessor	param	527	define	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+193	parentKeyList	Set<Map>	param	528	define	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+192	entityProcessor	EntityProcessor	param	531	use	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+193	parentKeyList	Set<Map>	param	536	use	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+195	resolver	VariableResolverImpl	param	541	use	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+191	entity	String	param	541	use	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+194	parentRow	Map<String,Object>	variable	531	define	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+194	parentRow	Map<String,Object>	variable	531	set	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+194	parentRow	Map<String,Object>	variable	533	use	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+194	parentRow	Map<String,Object>	variable	536	use	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+239	DocBuilder.importStatistics	Statistics	variable	537	use	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+21	Statistics.rowsCount	AtomicLong	variable	537	use	org.apache.solr.handler.dataimport.DocBuilder.getModifiedParentRows	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	526	541
+197	l	long	param	560	define	org.apache.solr.handler.dataimport.DocBuilder.getTimeElapsedSince	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	560	564
+197	l	long	param	561	set	org.apache.solr.handler.dataimport.DocBuilder.getTimeElapsedSince	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	560	564
+197	l	long	param	561	use	org.apache.solr.handler.dataimport.DocBuilder.getTimeElapsedSince	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	560	564
+197	l	long	param	562	use	org.apache.solr.handler.dataimport.DocBuilder.getTimeElapsedSince	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	560	564
+197	l	long	param	562	use	org.apache.solr.handler.dataimport.DocBuilder.getTimeElapsedSince	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	560	564
+197	l	long	param	562	use	org.apache.solr.handler.dataimport.DocBuilder.getTimeElapsedSince	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	560	564
+197	l	long	param	563	use	org.apache.solr.handler.dataimport.DocBuilder.getTimeElapsedSince	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	560	564
+200	context	DataImporter	param	79	define	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+200	context	DataImporter	param	82	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+200	context	DataImporter	param	84	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+200	context	DataImporter	param	85	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+200	context	DataImporter	param	90	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+200	context	DataImporter	param	92	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+200	context	DataImporter	param	94	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+203	resolver	VariableResolverImpl	variable	80	define	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+201	indexerNamespace	Map<String,Object>	variable	81	define	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+203	resolver	VariableResolverImpl	variable	80	set	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+201	indexerNamespace	Map<String,Object>	variable	81	set	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+201	indexerNamespace	Map<String,Object>	variable	83	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+232	DocBuilder.LAST_INDEX_TIME	String	variable	83	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+201	indexerNamespace	Map<String,Object>	variable	85	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+230	DocBuilder.INDEX_START_TIME	String	variable	85	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+201	indexerNamespace	Map<String,Object>	variable	86	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+240	DocBuilder.requestParameters	DataImporter.RequestParams	variable	86	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+202	requestParams		variable	86	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+201	indexerNamespace	Map<String,Object>	variable	87	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+237	DocBuilder.defaultVariables	Map<String,String>	variable	87	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+201	indexerNamespace	Map<String,Object>	variable	88	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+203	resolver	VariableResolverImpl	variable	88	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+236	DocBuilder.dataImporter	DataImporter	variable	89	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+201	indexerNamespace	Map<String,Object>	variable	91	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+201	indexerNamespace	Map<String,Object>	variable	93	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+203	resolver	VariableResolverImpl	variable	96	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+201	indexerNamespace	Map<String,Object>	variable	96	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+203	resolver	VariableResolverImpl	variable	97	use	org.apache.solr.handler.dataimport.DocBuilder.getVariableResolver	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	79	98
+214	name	String	param	567	define	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+213	core	SolrCore	param	567	define	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+211	e	Exception	param	572	define	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+210	e1	Exception	param	578	define	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+213	core	SolrCore	param	569	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+213	core	SolrCore	param	570	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+214	name	String	param	570	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+214	name	String	param	571	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+214	name	String	param	574	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+213	core	SolrCore	param	575	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+213	core	SolrCore	param	576	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+214	name	String	param	579	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+214	name	String	param	579	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+211	e	Exception	param	579	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+212	n	String	variable	574	define	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+212	n	String	variable	574	set	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+235	class		variable	574	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+212	n	String	variable	576	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+212	n	String	variable	577	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+235	class		variable	579	use	org.apache.solr.handler.dataimport.DocBuilder.loadClass	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	567	582
+218	args	String[]	param	553	define	org.apache.solr.handler.dataimport.DocBuilder.main	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	553	557
+219	l	long	variable	554	define	org.apache.solr.handler.dataimport.DocBuilder.main	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	553	557
+219	l	long	variable	554	set	org.apache.solr.handler.dataimport.DocBuilder.main	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	553	557
+219	l	long	variable	556	use	org.apache.solr.handler.dataimport.DocBuilder.main	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	553	557
+226	doc	SolrInputDocument	param	355	define	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+225	arow	Map<String,Object>	param	355	define	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+225	arow	Map<String,Object>	param	356	use	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+226	doc	SolrInputDocument	param	363	use	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+227	v	Object	variable	356	define	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+228	value	float	variable	357	define	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+227	v	Object	variable	356	set	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+228	value	float	variable	357	set	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+228	value	float	variable	359	set	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+228	value	float	variable	361	set	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+229	DocBuilder.DOC_BOOST	String	variable	356	use	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+227	v	Object	variable	358	use	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+227	v	Object	variable	359	use	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+227	v	Object	variable	361	use	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+228	value	float	variable	363	use	org.apache.solr.handler.dataimport.DocBuilder.setDocumentBoost	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	355	364
+17	stats	Statistics	param	595	define	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+17	stats	Statistics	param	596	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+17	stats	Statistics	param	597	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+17	stats	Statistics	param	598	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+17	stats	Statistics	param	599	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+19	Statistics.docCount	AtomicInteger	variable	596	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+19	Statistics.docCount	AtomicInteger	variable	596	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+18	Statistics.deletedDocCount	AtomicInteger	variable	597	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+18	Statistics.deletedDocCount	AtomicInteger	variable	597	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+21	Statistics.rowsCount	AtomicLong	variable	598	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+21	Statistics.rowsCount	AtomicLong	variable	598	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+20	Statistics.queryCount	AtomicLong	variable	599	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601
+20	Statistics.queryCount	AtomicLong	variable	599	use	org.apache.solr.handler.dataimport.DocBuilder.Statistics.add	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/e3ba95b8b8/68822d6e12.java	595	601

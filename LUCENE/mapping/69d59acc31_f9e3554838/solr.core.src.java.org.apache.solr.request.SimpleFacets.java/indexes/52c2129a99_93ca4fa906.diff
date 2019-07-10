@@ -1,0 +1,4 @@
+862c862
+<     LeafReader r = searcher.getLeafReader();
+---
+>     LeafReader r = searcher.getSlowAtomicReader();

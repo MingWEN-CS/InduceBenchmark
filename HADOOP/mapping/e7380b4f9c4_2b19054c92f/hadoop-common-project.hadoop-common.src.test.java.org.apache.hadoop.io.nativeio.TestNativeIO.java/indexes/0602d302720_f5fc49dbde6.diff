@@ -1,0 +1,20 @@
+449c449,455
+<       Assert.assertEquals(e.getErrno(), Errno.ENOENT);
+---
+>       if (Path.WINDOWS) {
+>         Assert.assertEquals(
+>           String.format("The system cannot find the file specified.%n"),
+>           e.getMessage());
+>       } else {
+>         Assert.assertEquals(Errno.ENOENT, e.getErrno());
+>       }
+468c474,480
+<       Assert.assertEquals(e.getErrno(), Errno.ENOTDIR);
+---
+>       if (Path.WINDOWS) {
+>         Assert.assertEquals(
+>           String.format("The parameter is incorrect.%n"),
+>           e.getMessage());
+>       } else {
+>         Assert.assertEquals(Errno.ENOTDIR, e.getErrno());
+>       }

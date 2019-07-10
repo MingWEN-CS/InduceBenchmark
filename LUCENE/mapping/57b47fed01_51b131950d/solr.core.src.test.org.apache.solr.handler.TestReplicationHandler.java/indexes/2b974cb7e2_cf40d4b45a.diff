@@ -1,0 +1,40 @@
+213c213
+<     params.set("qt","/replication");
+---
+>     params.set("qt",ReplicationHandler.PATH);
+234c234
+<     params.set("qt","/replication");
+---
+>     params.set("qt",ReplicationHandler.PATH);
+250c250
+<     params.set("qt","/replication");
+---
+>     params.set("qt",ReplicationHandler.PATH);
+282a283,287
+>   public void doTestHandlerPathUnchanged() throws Exception {
+>     assertEquals("/replication", ReplicationHandler.PATH);
+>   }
+> 
+>   @Test
+454c459
+<     String masterUrl = buildUrl(pJettyPort) + "/" + DEFAULT_TEST_CORENAME + "/replication?command=" + pCommand;
+---
+>     String masterUrl = buildUrl(pJettyPort) + "/" + DEFAULT_TEST_CORENAME + ReplicationHandler.PATH+"?command=" + pCommand;
+613,614c618,619
+<     String masterUrl = buildUrl(slaveJetty.getLocalPort()) + "/" + DEFAULT_TEST_CORENAME + "/replication?command=fetchindex&masterUrl=";
+<     masterUrl += buildUrl(masterJetty.getLocalPort()) + "/" + DEFAULT_TEST_CORENAME + "/replication";
+---
+>     String masterUrl = buildUrl(slaveJetty.getLocalPort()) + "/" + DEFAULT_TEST_CORENAME + ReplicationHandler.PATH+"?command=fetchindex&masterUrl=";
+>     masterUrl += buildUrl(masterJetty.getLocalPort()) + "/" + DEFAULT_TEST_CORENAME + ReplicationHandler.PATH;
+928c933
+<     params.set("qt", "/replication");
+---
+>     params.set("qt", ReplicationHandler.PATH);
+967c972
+<         + "/replication?wait=true&command=fetchindex&masterUrl="
+---
+>         + ReplicationHandler.PATH+"?wait=true&command=fetchindex&masterUrl="
+969c974
+<         + "/" + DEFAULT_TEST_CORENAME + "/replication";
+---
+>         + "/" + DEFAULT_TEST_CORENAME + ReplicationHandler.PATH;

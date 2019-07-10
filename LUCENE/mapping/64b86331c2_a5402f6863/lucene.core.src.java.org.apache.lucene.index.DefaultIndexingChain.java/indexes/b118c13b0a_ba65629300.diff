@@ -1,0 +1,10 @@
+429,434d428
+<       
+<       
+<       if (fieldType.omitNorms() && field.boost() != 1.0f) {
+<         throw new UnsupportedOperationException("You cannot set an index-time boost: norms are omitted for field '" + field.name() + "'");
+<       }
+<       
+826,827d819
+< 
+<       invertState.boost *= field.boost();

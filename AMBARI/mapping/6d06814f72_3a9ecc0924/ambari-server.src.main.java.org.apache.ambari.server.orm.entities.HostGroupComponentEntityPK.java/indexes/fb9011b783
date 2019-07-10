@@ -1,0 +1,114 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.orm.entities;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+
+
+
+
+public class HostGroupComponentEntityPK {
+
+  @Id
+  @Column(name = "hostgroup_name", nullable = false, insertable = true, updatable = false, length = 100)
+  private String hostGroupName;
+
+  @Id
+  @Column(name = "blueprint_name", nullable = false, insertable = true, updatable = false, length = 100)
+  private String blueprintName;
+
+  @Id
+  @Column(name = "name", nullable = false, insertable = true, updatable = false, length = 100)
+  private String name;
+
+  
+
+
+
+
+  public String getHostGroupName() {
+    return hostGroupName;
+  }
+
+  
+
+
+
+
+  public void setHostGroupName(String hostGroupName) {
+    this.hostGroupName = hostGroupName;
+  }
+
+  
+
+
+
+
+  public String getBlueprintName() {
+    return blueprintName;
+  }
+
+  
+
+
+
+
+  public void setBlueprintName(String blueprintName) {
+    this.blueprintName = blueprintName;
+  }
+
+  
+
+
+
+
+  public String getName() {
+    return name;
+  }
+
+  
+
+
+
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    HostGroupComponentEntityPK that = (HostGroupComponentEntityPK) o;
+
+    return this.hostGroupName.equals(that.hostGroupName) &&
+        this.name.equals(that.name) &&
+        this.blueprintName.equals(that.blueprintName);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = hostGroupName.hashCode();
+    result = 31 * result + blueprintName.hashCode();
+    result = 31 * result + name.hashCode();
+    return result;
+  }
+}

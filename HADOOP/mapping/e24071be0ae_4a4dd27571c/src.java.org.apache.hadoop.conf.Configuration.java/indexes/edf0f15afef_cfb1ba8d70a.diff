@@ -1,0 +1,279 @@
+46a47
+> import java.util.concurrent.atomic.AtomicBoolean;
+184a186,320
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private static class DeprecatedKeyInfo {
+>     private String[] newKeys;
+>     private String customMessage;
+>     private boolean accessed;
+>     DeprecatedKeyInfo(String[] newKeys, String customMessage) {
+>       this.newKeys = newKeys;
+>       this.customMessage = customMessage;
+>       accessed = false;
+>     }
+>     DeprecatedKeyInfo(String[] newKeys) {
+>       this(newKeys, null);
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+>     private final String getWarningMessage(String key) {
+>       String warningMessage;
+>       if(customMessage == null) {
+>         StringBuilder message = new StringBuilder(key);
+>         String deprecatedKeySuffix = " is deprecated. Instead, use ";
+>         message.append(deprecatedKeySuffix);
+>         for (int i = 0; i < newKeys.length; i++) {
+>           message.append(newKeys[i]);
+>           if(i != newKeys.length-1) {
+>             message.append(", ");
+>           }
+>         }
+>         warningMessage = message.toString();
+>       }
+>       else {
+>         warningMessage = customMessage;
+>       }
+>       accessed = true;
+>       return warningMessage;
+>     }
+>   }
+>   
+>   
+> 
+> 
+> 
+>   private static Map<String, DeprecatedKeyInfo> deprecatedKeyMap = 
+>     new HashMap<String, DeprecatedKeyInfo>();
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public synchronized static void addDeprecation(String key, String[] newKeys,
+>       String customMessage) {
+>     if (key == null || key.length() == 0 ||
+>         newKeys == null || newKeys.length == 0) {
+>       throw new IllegalArgumentException();
+>     }
+>     if (!isDeprecated(key)) {
+>       DeprecatedKeyInfo newKeyInfo;
+>       if (customMessage == null) {
+>         newKeyInfo = new DeprecatedKeyInfo(newKeys);
+>       }
+>       else {
+>         newKeyInfo = new DeprecatedKeyInfo(newKeys, customMessage);
+>       }
+>       deprecatedKeyMap.put(key, newKeyInfo);
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public synchronized static void addDeprecation(String key, String[] newKeys) {
+>     addDeprecation(key, newKeys, null);
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   private static boolean isDeprecated(String key) {
+>     return deprecatedKeyMap.containsKey(key);
+>   }
+>  
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private String handleDeprecation(String name) {
+>     if (isDeprecated(name)) {
+>       DeprecatedKeyInfo keyInfo = deprecatedKeyMap.get(name);
+>       if (!keyInfo.accessed) {
+>         LOG.warn(keyInfo.getWarningMessage(name));
+>       }
+>       for (String newKey : keyInfo.newKeys) {
+>         if(newKey != null) {
+>           name = newKey;
+>           break;
+>         }
+>       }
+>     }
+>     return name;
+>   }
+>   
+416a553
+> 
+417a555
+>     name = handleDeprecation(name);
+428a567,568
+> 
+> 
+429a570
+>     name = handleDeprecation(name);
+438a580,581
+> 
+> 
+440,441c583,597
+<     getOverlay().setProperty(name, value);
+<     getProps().setProperty(name, value);
+---
+>     if (deprecatedKeyMap.isEmpty()) {
+>       getProps();
+>     }
+>     if (!isDeprecated(name)) {
+>       getOverlay().setProperty(name, value);
+>       getProps().setProperty(name, value);
+>     }
+>     else {
+>       DeprecatedKeyInfo keyInfo = deprecatedKeyMap.get(name);
+>       LOG.warn(keyInfo.getWarningMessage(name));
+>       for (String newKey : keyInfo.newKeys) {
+>         getOverlay().setProperty(newKey, value);
+>         getProps().setProperty(newKey, value);
+>       }
+>     }
+470a627,629
+> 
+> 
+> 
+471a631
+>     name = handleDeprecation(name);
+1182a1343,1391
+>     
+>     processDeprecation();
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+>   private static AtomicBoolean loadedDeprecation = new AtomicBoolean(false);
+>   
+>   private static final String extraConfKey = "hadoop.conf.extra.classes";
+> 
+>   
+> 
+> 
+> 
+>   private void processDeprecation() {
+>     populateDeprecationMapping();
+>     processDeprecatedKeys();
+>   }
+>   
+>   
+> 
+> 
+> 
+>   private synchronized void populateDeprecationMapping() {
+>     if (!loadedDeprecation.get()) {
+>       
+>       
+>       String classnames = substituteVars(properties.getProperty(extraConfKey));
+>       if (classnames == null) {
+>         return;
+>       }
+>       String[] classes = StringUtils.getStrings(classnames);
+>       for (String className : classes) {
+>         try {
+>           Class.forName(className);
+>         } catch (ClassNotFoundException e) {
+>           LOG.warn(className + " is not in the classpath");
+>         }
+>       }
+>       
+>       
+>       deprecatedKeyMap = Collections.unmodifiableMap(deprecatedKeyMap);
+>       
+>       
+>       loadedDeprecation.set(true);
+>     }
+1184a1394,1446
+>   
+> 
+> 
+> 
+>   private void processDeprecatedKeys() {
+>     for (Map.Entry<String, DeprecatedKeyInfo> item : 
+>       deprecatedKeyMap.entrySet()) {
+>       if (!properties.containsKey(item.getKey())) {
+>         continue;
+>       }
+>       String oldKey = item.getKey();
+>       deprecatedKeyMap.get(oldKey).accessed = false;
+>       setDeprecatedValue(oldKey, properties.getProperty(oldKey),
+>           finalParameters.contains(oldKey));
+>       properties.remove(oldKey);
+>       if (finalParameters.contains(oldKey)) {
+>         finalParameters.remove(oldKey);
+>       }
+>       if (storeResource) {
+>         updatingResource.remove(oldKey);
+>       }
+>     }
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   private void setDeprecatedValue(String attr,
+>       String value, boolean finalParameter) {
+>     DeprecatedKeyInfo keyInfo = deprecatedKeyMap.get(attr);
+>     for (String key:keyInfo.newKeys) {
+>       
+>       
+>       
+>       if (finalParameters.contains(key) && !finalParameter) {
+>         LOG.warn("An attempt to override final parameter: "+key
+>             +";  Ignoring.");
+>         continue;
+>       }
+>       properties.setProperty(key, value);
+>       if (storeResource) {
+>         updatingResource.put(key, updatingResource.get(attr));
+>       }
+>       if (finalParameter) {
+>         finalParameters.add(key);
+>       }
+>     }
+>   }
+>   

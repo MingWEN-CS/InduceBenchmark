@@ -1,0 +1,43 @@
+228a229,230
+>   public static final String SKIP_INSTALL_FOR_COMPONENTS = "skipInstallForComponents";
+>   public static final String DONT_SKIP_INSTALL_FOR_COMPONENTS = "dontSkipInstallForComponents";
+429c431
+<         stackId.getStackVersion());
+---
+>       stackId.getStackVersion());
+732c734
+<         stackId.getStackName(), stackId.getStackVersion());
+---
+>       stackId.getStackName(), stackId.getStackVersion());
+2801,2805c2803,2804
+<             if (configs.skipInstallTasks() &&
+<                   "INITIAL_INSTALL".equals(requestProperties.get("phase")) &&
+<                     newState == State.INSTALLED && !isClientComponent(cluster, scHost)) {
+<               LOG.info("Skipping create of INSTALL task for {} on {} because host is sysprepped.", scHost
+<                 .getServiceComponentName(), scHost.getHostName());
+---
+>             if (newState == State.INSTALLED && skipInstallTaskForComponent(requestProperties, cluster, scHost)) {
+>               LOG.info("Skipping create of INSTALL task for {} on {}.", scHost.getServiceComponentName(), scHost.getHostName());
+2896c2895,2897
+<   private boolean isClientComponent(Cluster cluster, ServiceComponentHost sch) throws AmbariException {
+---
+>   private boolean skipInstallTaskForComponent(Map<String, String> requestProperties, Cluster cluster,
+>                                               ServiceComponentHost sch) throws AmbariException {
+>     boolean isClientComponent = false;
+2901c2902
+<         return serviceComponent.isClientComponent();
+---
+>         isClientComponent = serviceComponent.isClientComponent();
+2903a2905,2914
+>     
+>     
+>     if (requestProperties.get(SKIP_INSTALL_FOR_COMPONENTS) != null &&
+>       (requestProperties.get(SKIP_INSTALL_FOR_COMPONENTS).contains(sch.getServiceComponentName()) ||
+>         (requestProperties.get(SKIP_INSTALL_FOR_COMPONENTS).equals("ALL") && !requestProperties.get
+>           (DONT_SKIP_INSTALL_FOR_COMPONENTS).contains(sch
+>           .getServiceComponentName()))) &&
+>       "INITIAL_INSTALL".equals(requestProperties.get("phase")) && !isClientComponent) {
+>       return true;
+>     }
+2904a2916
+> 

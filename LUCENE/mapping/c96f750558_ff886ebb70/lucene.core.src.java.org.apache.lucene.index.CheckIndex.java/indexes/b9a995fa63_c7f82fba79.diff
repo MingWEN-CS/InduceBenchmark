@@ -1,0 +1,20 @@
+1643,1646c1643,1644
+<           if (liveDocs != null && liveDocs.get(j) == false) {
+<             
+<             continue;
+<           }
+---
+>           
+>           final boolean doStats = liveDocs == null || liveDocs.get(j);
+1648c1646,1648
+<           status.docCount++;
+---
+>           if (doStats) {
+>             status.docCount++;
+>           }
+1651c1651,1653
+<             status.totVectors++;
+---
+>             if (doStats) {
+>               status.totVectors++;
+>             }

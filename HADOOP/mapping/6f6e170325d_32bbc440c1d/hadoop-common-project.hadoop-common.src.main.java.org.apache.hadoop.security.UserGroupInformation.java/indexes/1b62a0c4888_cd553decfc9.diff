@@ -1,0 +1,24 @@
+993c993,995
+<       LOG.info("Initiating logout for " + getUserName());
+---
+>       if (LOG.isDebugEnabled()) {
+>         LOG.debug("Initiating logout for " + getUserName());
+>       }
+1004c1006,1008
+<         LOG.info("Initiating re-login for " + keytabPrincipal);
+---
+>         if (LOG.isDebugEnabled()) {
+>           LOG.debug("Initiating re-login for " + keytabPrincipal);
+>         }
+1045c1049,1051
+<       LOG.info("Initiating logout for " + getUserName());
+---
+>       if (LOG.isDebugEnabled()) {
+>         LOG.debug("Initiating logout for " + getUserName());
+>       }
+1055c1061,1063
+<       LOG.info("Initiating re-login for " + getUserName());
+---
+>       if (LOG.isDebugEnabled()) {
+>         LOG.debug("Initiating re-login for " + getUserName());
+>       }

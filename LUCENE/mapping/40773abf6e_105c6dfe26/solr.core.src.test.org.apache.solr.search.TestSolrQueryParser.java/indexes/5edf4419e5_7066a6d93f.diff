@@ -1,0 +1,33 @@
+186a187,218
+>   @Test
+>   public void testComments() throws Exception {
+>     assertJQ(req("q","id:1 id:2  id:3")
+>         ,"/response/numFound==3"
+>     );
+> 
+>     
+>     assertJQ(req("q","id:1 ")
+>         ,"/response/numFound==1"  
+>     );
+> 
+> 
+>     
+>     assertJQ(req("q"," \"\" id:3")
+>         ,"/response/numFound==3"
+>     );
+> 
+>     
+>     
+>     
+>     
+>     
+>     
+> 
+>     
+>     assertJQ(req("q","id:1   id:3 */ id:10 */ id:11")
+>         ,"/response/numFound==2"
+>     );
+> 
+>   }
+> 
+> 

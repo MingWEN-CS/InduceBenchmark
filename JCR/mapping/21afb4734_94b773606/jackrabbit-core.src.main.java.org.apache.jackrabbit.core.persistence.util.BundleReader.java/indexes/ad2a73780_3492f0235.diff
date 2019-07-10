@@ -1,0 +1,11 @@
+552,553c552,558
+<             value = (b & 0x7f) << 57 | value >>> 7;
+<             bits += 7;
+---
+>             if (bits < 57) {
+>                 value = (b & 0x7f) << 57 | value >>> 7;
+>                 bits += 7;
+>             } else {
+>                 value = (b & 0x01) << 63 | value >>> 1;
+>                 bits = 64;
+>             }

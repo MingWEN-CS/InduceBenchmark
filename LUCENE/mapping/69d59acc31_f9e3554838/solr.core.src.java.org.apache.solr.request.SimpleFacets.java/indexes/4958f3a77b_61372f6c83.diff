@@ -1,0 +1,25 @@
+28a29,30
+> import org.apache.lucene.search.BooleanClause.Occur;
+> import org.apache.lucene.search.BooleanQuery;
+32d33
+< import org.apache.lucene.search.FilteredQuery;
+254c255
+<         searcher.search(new FilteredQuery(new MatchAllDocsQuery(), base.getTopFilter()), allGroupHeadsCollector);
+---
+>         searcher.search(base.getTopFilter(), allGroupHeadsCollector);
+353c354,358
+<     searcher.search(new FilteredQuery(facetQuery, mainQueryFilter), collector);
+---
+>     Query filteredFacetQuery = new BooleanQuery.Builder()
+>         .add(facetQuery, Occur.MUST)
+>         .add(mainQueryFilter, Occur.FILTER)
+>         .build();
+>     searcher.search(filteredFacetQuery, collector);
+529c534
+<       searcher.search(new FilteredQuery(new MatchAllDocsQuery(), base.getTopFilter()), new FilterCollector(collector) {
+---
+>       searcher.search(base.getTopFilter(), new FilterCollector(collector) {
+537c542
+<       searcher.search(new FilteredQuery(new MatchAllDocsQuery(), base.getTopFilter()), collector);
+---
+>       searcher.search(base.getTopFilter(), collector);

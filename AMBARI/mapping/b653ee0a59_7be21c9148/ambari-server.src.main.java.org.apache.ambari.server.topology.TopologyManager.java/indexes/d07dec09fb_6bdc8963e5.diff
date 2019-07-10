@@ -1,0 +1,8 @@
+498a499,501
+>     if (ambariContext.isTopologyResolved(clusterId)) {
+>       getOrCreateTopologyTaskExecutor(clusterId).start();
+>     }
+971c974
+<   private ExecutorService getOrCreateTopologyTaskExecutor(Long clusterId) {
+---
+>   private ManagedThreadPoolExecutor getOrCreateTopologyTaskExecutor(Long clusterId) {

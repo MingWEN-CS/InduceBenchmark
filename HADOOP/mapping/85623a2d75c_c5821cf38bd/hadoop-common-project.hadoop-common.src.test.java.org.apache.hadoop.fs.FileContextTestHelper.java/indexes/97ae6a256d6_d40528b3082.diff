@@ -1,0 +1,70 @@
+24a25
+> import org.apache.commons.lang.RandomStringUtils;
+34,36d34
+<   
+<   public static String TEST_ROOT_DIR = 
+<     System.getProperty("test.build.data", "build/test/data") + "/test";
+39c37,39
+<   private static String absTestRootDir = null;
+---
+> 
+>   private final String testRootDir;
+>   private String absTestRootDir = null;
+42c42,46
+<   private FileContextTestHelper() {}
+---
+> 
+> 
+>   public FileContextTestHelper() {
+>       testRootDir = System.getProperty("test.build.data", "target/test/data") + "/" + RandomStringUtils.randomAlphanumeric(10);
+>   }
+56,57c60,61
+<   public static Path getTestRootPath(FileContext fc) {
+<     return fc.makeQualified(new Path(TEST_ROOT_DIR));
+---
+>   public Path getTestRootPath(FileContext fc) {
+>     return fc.makeQualified(new Path(testRootDir));
+60,61c64,65
+<   public static Path getTestRootPath(FileContext fc, String pathString) {
+<     return fc.makeQualified(new Path(TEST_ROOT_DIR, pathString));
+---
+>   public Path getTestRootPath(FileContext fc, String pathString) {
+>     return fc.makeQualified(new Path(testRootDir, pathString));
+68c72
+<   public static String getAbsoluteTestRootDir(FileContext fc)
+---
+>   public String getAbsoluteTestRootDir(FileContext fc)
+71,72c75,76
+<       if (new Path(TEST_ROOT_DIR).isAbsolute()) {
+<         absTestRootDir = TEST_ROOT_DIR;
+---
+>       if (new Path(testRootDir).isAbsolute()) {
+>         absTestRootDir = testRootDir;
+75c79
+<             + TEST_ROOT_DIR;
+---
+>             + testRootDir;
+81c85
+<   public static Path getAbsoluteTestRootPath(FileContext fc) throws IOException {
+---
+>   public Path getAbsoluteTestRootPath(FileContext fc) throws IOException {
+85c89
+<   public static Path getDefaultWorkingDirectory(FileContext fc)
+---
+>   public Path getDefaultWorkingDirectory(FileContext fc)
+119c123
+<   public static long createFile(FileContext fc, String name) throws IOException {
+---
+>   public long createFile(FileContext fc, String name) throws IOException {
+124c128
+<   public static long createFileNonRecursive(FileContext fc, String name)
+---
+>   public long createFileNonRecursive(FileContext fc, String name)
+193c197
+<   public static FileStatus containsPath(FileContext fc, Path path,
+---
+>   public FileStatus containsPath(FileContext fc, Path path,
+209c213
+<   public static FileStatus containsPath(FileContext fc, String path,
+---
+>   public FileStatus containsPath(FileContext fc, String path,

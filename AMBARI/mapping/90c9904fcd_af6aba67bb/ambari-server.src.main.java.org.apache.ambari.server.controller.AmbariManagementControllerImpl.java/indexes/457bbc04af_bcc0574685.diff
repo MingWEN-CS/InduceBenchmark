@@ -1,0 +1,11 @@
+27a28
+> import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.CUSTOM_FOLDER;
+2212a2214,2221
+>     String customCacheDirectory = componentInfo.getCustomFolder();
+>     if (customCacheDirectory != null) {
+>       File customCache = new File(configs.getResourceDirPath(), customCacheDirectory);
+>       if (customCache.exists() && customCache.isDirectory()) {
+>         commandParams.put(CUSTOM_FOLDER, customCacheDirectory);
+>       }
+>     }
+> 

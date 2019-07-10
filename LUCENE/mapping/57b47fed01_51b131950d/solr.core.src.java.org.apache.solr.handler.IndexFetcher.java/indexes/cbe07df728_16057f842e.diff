@@ -1,0 +1,7 @@
+364a365,366
+> 
+>         
+366c368
+<         if (isIndexStale(indexDir)) {
+---
+>         if (!isFullCopyNeeded && isIndexStale(indexDir)) {

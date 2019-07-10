@@ -1,0 +1,924 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.accumulo.core.client.mapred;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.accumulo.core.Constants;
+import org.apache.accumulo.core.client.AccumuloException;
+import org.apache.accumulo.core.client.AccumuloSecurityException;
+import org.apache.accumulo.core.client.ClientSideIteratorScanner;
+import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.Instance;
+import org.apache.accumulo.core.client.IsolatedScanner;
+import org.apache.accumulo.core.client.IteratorSetting;
+import org.apache.accumulo.core.client.RowIterator;
+import org.apache.accumulo.core.client.Scanner;
+import org.apache.accumulo.core.client.TableDeletedException;
+import org.apache.accumulo.core.client.TableNotFoundException;
+import org.apache.accumulo.core.client.TableOfflineException;
+import org.apache.accumulo.core.client.ZooKeeperInstance;
+import org.apache.accumulo.core.client.impl.OfflineScanner;
+import org.apache.accumulo.core.client.impl.Tables;
+import org.apache.accumulo.core.client.impl.TabletLocator;
+import org.apache.accumulo.core.client.mapreduce.lib.util.InputConfigurator;
+import org.apache.accumulo.core.client.mock.MockInstance;
+import org.apache.accumulo.core.client.security.tokens.AuthenticationToken;
+import org.apache.accumulo.core.data.Key;
+import org.apache.accumulo.core.data.KeyExtent;
+import org.apache.accumulo.core.data.PartialKey;
+import org.apache.accumulo.core.data.Range;
+import org.apache.accumulo.core.data.Value;
+import org.apache.accumulo.core.master.state.tables.TableState;
+import org.apache.accumulo.core.security.Authorizations;
+import org.apache.accumulo.core.security.CredentialHelper;
+import org.apache.accumulo.core.security.thrift.TCredentials;
+import org.apache.accumulo.core.util.Pair;
+import org.apache.accumulo.core.util.UtilWaitThread;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.InputFormat;
+import org.apache.hadoop.mapred.InputSplit;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.RecordReader;
+import org.apache.hadoop.mapred.Reporter;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+
+
+
+
+
+
+
+
+
+
+public abstract class InputFormatBase<K,V> implements InputFormat<K,V> {
+
+  private static final Class<?> CLASS = AccumuloInputFormat.class;
+  protected static final Logger log = Logger.getLogger(CLASS);
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static void setConnectorInfo(JobConf job, String principal, AuthenticationToken token) throws AccumuloSecurityException {
+    InputConfigurator.setConnectorInfo(CLASS, job, principal, token);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static Boolean isConnectorInfoSet(JobConf job) {
+    return InputConfigurator.isConnectorInfoSet(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static String getPrincipal(JobConf job) {
+    return InputConfigurator.getPrincipal(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static String getTokenClass(JobConf job) {
+    return InputConfigurator.getTokenClass(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  protected static byte[] getToken(JobConf job) {
+    return InputConfigurator.getToken(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public static void setZooKeeperInstance(JobConf job, String instanceName, String zooKeepers) {
+    InputConfigurator.setZooKeeperInstance(CLASS, job, instanceName, zooKeepers);
+  }
+
+  
+
+
+
+
+
+
+
+
+  public static void setMockInstance(JobConf job, String instanceName) {
+    InputConfigurator.setMockInstance(CLASS, job, instanceName);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  protected static Instance getInstance(JobConf job) {
+    return InputConfigurator.getInstance(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+  public static void setLogLevel(JobConf job, Level level) {
+    InputConfigurator.setLogLevel(CLASS, job, level);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static Level getLogLevel(JobConf job) {
+    return InputConfigurator.getLogLevel(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+  public static void setInputTableName(JobConf job, String tableName) {
+    InputConfigurator.setInputTableName(CLASS, job, tableName);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static String getInputTableName(JobConf job) {
+    return InputConfigurator.getInputTableName(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+  public static void setScanAuthorizations(JobConf job, Authorizations auths) {
+    InputConfigurator.setScanAuthorizations(CLASS, job, auths);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static Authorizations getScanAuthorizations(JobConf job) {
+    return InputConfigurator.getScanAuthorizations(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+  public static void setRanges(JobConf job, Collection<Range> ranges) {
+    InputConfigurator.setRanges(CLASS, job, ranges);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  protected static List<Range> getRanges(JobConf job) throws IOException {
+    return InputConfigurator.getRanges(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  public static void fetchColumns(JobConf job, Collection<Pair<Text,Text>> columnFamilyColumnQualifierPairs) {
+    InputConfigurator.fetchColumns(CLASS, job, columnFamilyColumnQualifierPairs);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static Set<Pair<Text,Text>> getFetchedColumns(JobConf job) {
+    return InputConfigurator.getFetchedColumns(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+  public static void addIterator(JobConf job, IteratorSetting cfg) {
+    InputConfigurator.addIterator(CLASS, job, cfg);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static List<IteratorSetting> getIterators(JobConf job) {
+    return InputConfigurator.getIterators(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static void setAutoAdjustRanges(JobConf job, boolean enableFeature) {
+    InputConfigurator.setAutoAdjustRanges(CLASS, job, enableFeature);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static boolean getAutoAdjustRanges(JobConf job) {
+    return InputConfigurator.getAutoAdjustRanges(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public static void setScanIsolation(JobConf job, boolean enableFeature) {
+    InputConfigurator.setScanIsolation(CLASS, job, enableFeature);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static boolean isIsolated(JobConf job) {
+    return InputConfigurator.isIsolated(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  public static void setLocalIterators(JobConf job, boolean enableFeature) {
+    InputConfigurator.setLocalIterators(CLASS, job, enableFeature);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static boolean usesLocalIterators(JobConf job) {
+    return InputConfigurator.usesLocalIterators(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static void setOfflineTableScan(JobConf job, boolean enableFeature) {
+    InputConfigurator.setOfflineTableScan(CLASS, job, enableFeature);
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected static boolean isOfflineScan(JobConf job) {
+    return InputConfigurator.isOfflineScan(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  protected static TabletLocator getTabletLocator(JobConf job) throws TableNotFoundException {
+    return InputConfigurator.getTabletLocator(CLASS, job);
+  }
+
+  
+  
+
+
+
+
+
+
+
+
+  protected static void validateOptions(JobConf job) throws IOException {
+    InputConfigurator.validateOptions(CLASS, job);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  protected abstract static class RecordReaderBase<K,V> implements RecordReader<K,V> {
+    protected long numKeysRead;
+    protected Iterator<Entry<Key,Value>> scannerIterator;
+    protected org.apache.accumulo.core.client.mapred.RangeInputSplit split;
+
+    
+
+
+
+
+
+    protected void setupIterators(List<IteratorSetting> iterators, Scanner scanner) {
+      for (IteratorSetting iterator : iterators) {
+        scanner.addScanIterator(iterator);
+      }
+    }
+
+    
+
+
+    public void initialize(InputSplit inSplit, JobConf job) throws IOException {
+      Scanner scanner;
+      split = (org.apache.accumulo.core.client.mapred.RangeInputSplit) inSplit;
+      log.debug("Initializing input split: " + split.getRange());
+
+      Instance instance = split.getInstance();
+      if (null == instance) {
+        instance = getInstance(job);
+      }
+
+      String principal = split.getPrincipal();
+      if (null == principal) {
+        principal = getPrincipal(job);
+      }
+
+      AuthenticationToken token = split.getToken();
+      if (null == token) {
+        String tokenClass = getTokenClass(job);
+        byte[] tokenBytes = getToken(job);
+        try {
+          token = CredentialHelper.extractToken(tokenClass, tokenBytes);
+        } catch (AccumuloSecurityException e) {
+          throw new IOException(e);
+        }
+      }
+
+      Authorizations authorizations = split.getAuths();
+      if (null == authorizations) {
+        authorizations = getScanAuthorizations(job);
+      }
+
+      String table = split.getTable();
+      if (null == table) {
+        table = getInputTableName(job);
+      }
+
+      Boolean isOffline = split.isOffline();
+      if (null == isOffline) {
+        isOffline = isOfflineScan(job);
+      }
+
+      Boolean isIsolated = split.isIsolatedScan();
+      if (null == isIsolated) {
+        isIsolated = isIsolated(job);
+      }
+
+      Boolean usesLocalIterators = split.usesLocalIterators();
+      if (null == usesLocalIterators) {
+        usesLocalIterators = usesLocalIterators(job);
+      }
+
+      List<IteratorSetting> iterators = split.getIterators();
+      if (null == iterators) {
+        iterators = getIterators(job);
+      }
+
+      Set<Pair<Text,Text>> columns = split.getFetchedColumns();
+      if (null == columns) {
+        columns = getFetchedColumns(job);
+      }
+
+      try {
+        log.debug("Creating connector with user: " + principal);
+        Connector conn = instance.getConnector(principal, token);
+        log.debug("Creating scanner for table: " + table);
+        log.debug("Authorizations are: " + authorizations);
+        if (isOffline) {
+          String tokenClass = token.getClass().getCanonicalName();
+          ByteBuffer tokenBuffer = ByteBuffer.wrap(CredentialHelper.toBytes(token));
+          scanner = new OfflineScanner(instance, new TCredentials(principal, tokenClass, tokenBuffer, instance.getInstanceID()), Tables.getTableId(instance,
+              table), authorizations);
+        } else {
+          scanner = conn.createScanner(table, authorizations);
+        }
+        if (isIsolated) {
+          log.info("Creating isolated scanner");
+          scanner = new IsolatedScanner(scanner);
+        }
+        if (usesLocalIterators) {
+          log.info("Using local iterators");
+          scanner = new ClientSideIteratorScanner(scanner);
+        }
+        setupIterators(iterators, scanner);
+      } catch (Exception e) {
+        throw new IOException(e);
+      }
+
+      
+      for (Pair<Text,Text> c : columns) {
+        if (c.getSecond() != null) {
+          log.debug("Fetching column " + c.getFirst() + ":" + c.getSecond());
+          scanner.fetchColumn(c.getFirst(), c.getSecond());
+        } else {
+          log.debug("Fetching column family " + c.getFirst());
+          scanner.fetchColumnFamily(c.getFirst());
+        }
+      }
+
+      scanner.setRange(split.getRange());
+
+      numKeysRead = 0;
+
+      
+      scannerIterator = scanner.iterator();
+    }
+
+    @Override
+    public void close() {}
+
+    @Override
+    public long getPos() throws IOException {
+      return numKeysRead;
+    }
+
+    @Override
+    public float getProgress() throws IOException {
+      if (numKeysRead > 0 && currentKey == null)
+        return 1.0f;
+      return split.getProgress(currentKey);
+    }
+
+    protected Key currentKey = null;
+
+  }
+
+  Map<String,Map<KeyExtent,List<Range>>> binOfflineTable(JobConf job, String tableName, List<Range> ranges) throws TableNotFoundException, AccumuloException,
+      AccumuloSecurityException {
+
+    Map<String,Map<KeyExtent,List<Range>>> binnedRanges = new HashMap<String,Map<KeyExtent,List<Range>>>();
+
+    Instance instance = getInstance(job);
+    Connector conn = instance.getConnector(getPrincipal(job), CredentialHelper.extractToken(getTokenClass(job), getToken(job)));
+    String tableId = Tables.getTableId(instance, tableName);
+
+    if (Tables.getTableState(instance, tableId) != TableState.OFFLINE) {
+      Tables.clearCache(instance);
+      if (Tables.getTableState(instance, tableId) != TableState.OFFLINE) {
+        throw new AccumuloException("Table is online " + tableName + "(" + tableId + ") cannot scan table in offline mode ");
+      }
+    }
+
+    for (Range range : ranges) {
+      Text startRow;
+
+      if (range.getStartKey() != null)
+        startRow = range.getStartKey().getRow();
+      else
+        startRow = new Text();
+
+      Range metadataRange = new Range(new KeyExtent(new Text(tableId), startRow, null).getMetadataEntry(), true, null, false);
+      Scanner scanner = conn.createScanner(Constants.METADATA_TABLE_NAME, Constants.NO_AUTHS);
+      Constants.METADATA_PREV_ROW_COLUMN.fetch(scanner);
+      scanner.fetchColumnFamily(Constants.METADATA_LAST_LOCATION_COLUMN_FAMILY);
+      scanner.fetchColumnFamily(Constants.METADATA_CURRENT_LOCATION_COLUMN_FAMILY);
+      scanner.fetchColumnFamily(Constants.METADATA_FUTURE_LOCATION_COLUMN_FAMILY);
+      scanner.setRange(metadataRange);
+
+      RowIterator rowIter = new RowIterator(scanner);
+
+      KeyExtent lastExtent = null;
+
+      while (rowIter.hasNext()) {
+        Iterator<Entry<Key,Value>> row = rowIter.next();
+        String last = "";
+        KeyExtent extent = null;
+        String location = null;
+
+        while (row.hasNext()) {
+          Entry<Key,Value> entry = row.next();
+          Key key = entry.getKey();
+
+          if (key.getColumnFamily().equals(Constants.METADATA_LAST_LOCATION_COLUMN_FAMILY)) {
+            last = entry.getValue().toString();
+          }
+
+          if (key.getColumnFamily().equals(Constants.METADATA_CURRENT_LOCATION_COLUMN_FAMILY)
+              || key.getColumnFamily().equals(Constants.METADATA_FUTURE_LOCATION_COLUMN_FAMILY)) {
+            location = entry.getValue().toString();
+          }
+
+          if (Constants.METADATA_PREV_ROW_COLUMN.hasColumns(key)) {
+            extent = new KeyExtent(key.getRow(), entry.getValue());
+          }
+
+        }
+
+        if (location != null)
+          return null;
+
+        if (!extent.getTableId().toString().equals(tableId)) {
+          throw new AccumuloException("Saw unexpected table Id " + tableId + " " + extent);
+        }
+
+        if (lastExtent != null && !extent.isPreviousExtent(lastExtent)) {
+          throw new AccumuloException(" " + lastExtent + " is not previous extent " + extent);
+        }
+
+        Map<KeyExtent,List<Range>> tabletRanges = binnedRanges.get(last);
+        if (tabletRanges == null) {
+          tabletRanges = new HashMap<KeyExtent,List<Range>>();
+          binnedRanges.put(last, tabletRanges);
+        }
+
+        List<Range> rangeList = tabletRanges.get(extent);
+        if (rangeList == null) {
+          rangeList = new ArrayList<Range>();
+          tabletRanges.put(extent, rangeList);
+        }
+
+        rangeList.add(range);
+
+        if (extent.getEndRow() == null || range.afterEndKey(new Key(extent.getEndRow()).followingKey(PartialKey.ROW))) {
+          break;
+        }
+
+        lastExtent = extent;
+      }
+
+    }
+
+    return binnedRanges;
+  }
+
+  
+
+
+  @Override
+  public InputSplit[] getSplits(JobConf job, int numSplits) throws IOException {
+    Level logLevel = getLogLevel(job);
+    log.setLevel(logLevel);
+
+    validateOptions(job);
+
+    String tableName = getInputTableName(job);
+    boolean autoAdjust = getAutoAdjustRanges(job);
+    List<Range> ranges = autoAdjust ? Range.mergeOverlapping(getRanges(job)) : getRanges(job);
+    Instance instance = getInstance(job);
+    boolean offline = isOfflineScan(job);
+    boolean isolated = isIsolated(job);
+    boolean localIterators = usesLocalIterators(job);
+    boolean mockInstance = (null != instance && MockInstance.class.equals(instance.getClass()));
+    Set<Pair<Text,Text>> fetchedColumns = getFetchedColumns(job);
+    Authorizations auths = getScanAuthorizations(job);
+    String principal = getPrincipal(job);
+    String tokenClass = getTokenClass(job);
+    byte[] tokenBytes = getToken(job);
+
+    AuthenticationToken token;
+    try {
+      token = CredentialHelper.extractToken(tokenClass, tokenBytes);
+    } catch (AccumuloSecurityException e) {
+      throw new IOException(e);
+    }
+
+    List<IteratorSetting> iterators = getIterators(job);
+
+    if (ranges.isEmpty()) {
+      ranges = new ArrayList<Range>(1);
+      ranges.add(new Range());
+    }
+
+    
+    Map<String,Map<KeyExtent,List<Range>>> binnedRanges = new HashMap<String,Map<KeyExtent,List<Range>>>();
+    TabletLocator tl;
+    try {
+      if (isOfflineScan(job)) {
+        binnedRanges = binOfflineTable(job, tableName, ranges);
+        while (binnedRanges == null) {
+          
+          UtilWaitThread.sleep(100 + (int) (Math.random() * 100)); 
+          binnedRanges = binOfflineTable(job, tableName, ranges);
+        }
+      } else {
+        String tableId = null;
+        tl = getTabletLocator(job);
+        
+        tl.invalidateCache();
+        while (!tl.binRanges(ranges, binnedRanges, new TCredentials(principal, tokenClass, ByteBuffer.wrap(tokenBytes), instance.getInstanceID())).isEmpty()) {
+          if (!(instance instanceof MockInstance)) {
+            if (tableId == null)
+              tableId = Tables.getTableId(instance, tableName);
+            if (!Tables.exists(instance, tableId))
+              throw new TableDeletedException(tableId);
+            if (Tables.getTableState(instance, tableId) == TableState.OFFLINE)
+              throw new TableOfflineException(instance, tableId);
+          }
+          binnedRanges.clear();
+          log.warn("Unable to locate bins for specified ranges. Retrying.");
+          UtilWaitThread.sleep(100 + (int) (Math.random() * 100)); 
+          tl.invalidateCache();
+        }
+      }
+    } catch (Exception e) {
+      throw new IOException(e);
+    }
+
+    ArrayList<org.apache.accumulo.core.client.mapred.RangeInputSplit> splits = new ArrayList<org.apache.accumulo.core.client.mapred.RangeInputSplit>(
+        ranges.size());
+    HashMap<Range,ArrayList<String>> splitsToAdd = null;
+
+    if (!autoAdjust)
+      splitsToAdd = new HashMap<Range,ArrayList<String>>();
+
+    HashMap<String,String> hostNameCache = new HashMap<String,String>();
+
+    for (Entry<String,Map<KeyExtent,List<Range>>> tserverBin : binnedRanges.entrySet()) {
+      String ip = tserverBin.getKey().split(":", 2)[0];
+      String location = hostNameCache.get(ip);
+      if (location == null) {
+        InetAddress inetAddress = InetAddress.getByName(ip);
+        location = inetAddress.getHostName();
+        hostNameCache.put(ip, location);
+      }
+
+      for (Entry<KeyExtent,List<Range>> extentRanges : tserverBin.getValue().entrySet()) {
+        Range ke = extentRanges.getKey().toDataRange();
+        for (Range r : extentRanges.getValue()) {
+          if (autoAdjust) {
+            
+            splits.add(new org.apache.accumulo.core.client.mapred.RangeInputSplit(ke.clip(r), new String[] {location}));
+          } else {
+            
+            ArrayList<String> locations = splitsToAdd.get(r);
+            if (locations == null)
+              locations = new ArrayList<String>(1);
+            locations.add(location);
+            splitsToAdd.put(r, locations);
+          }
+        }
+      }
+    }
+
+    if (!autoAdjust)
+      for (Entry<Range,ArrayList<String>> entry : splitsToAdd.entrySet())
+        splits.add(new org.apache.accumulo.core.client.mapred.RangeInputSplit(entry.getKey(), entry.getValue().toArray(new String[0])));
+
+    for (org.apache.accumulo.core.client.mapred.RangeInputSplit split : splits) {
+      split.setTable(tableName);
+      split.setOffline(offline);
+      split.setIsolatedScan(isolated);
+      split.setUsesLocalIterators(localIterators);
+      split.setMockInstance(mockInstance);
+      split.setFetchedColumns(fetchedColumns);
+      split.setPrincipal(principal);
+      split.setToken(token);
+      split.setInstanceName(instance.getInstanceName());
+      split.setZooKeepers(instance.getZooKeepers());
+      split.setAuths(auths);
+      split.setIterators(iterators);
+      split.setLogLevel(logLevel);
+    }
+
+    return splits.toArray(new InputSplit[splits.size()]);
+  }
+
+  
+
+
+  @Deprecated
+  public static class RangeInputSplit extends org.apache.accumulo.core.client.mapred.RangeInputSplit {
+    public RangeInputSplit() {
+      super();
+    }
+
+    public RangeInputSplit(Range range, String[] locations) {
+      super(range, locations);
+    }
+  }
+}

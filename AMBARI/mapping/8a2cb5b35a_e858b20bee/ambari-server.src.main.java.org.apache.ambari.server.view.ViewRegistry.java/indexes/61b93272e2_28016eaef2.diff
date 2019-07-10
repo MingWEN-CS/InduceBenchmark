@@ -1,0 +1,7 @@
+1538,1539d1537
+<       
+<       ClassLoader cl = extractor.extractViewArchive(viewDefinition, archiveFile, extractedArchiveDirFile);
+1550c1548
+<         setupViewDefinition(viewDefinition, cl);
+---
+>         setupViewDefinition(viewDefinition, extractor.extractViewArchive(viewDefinition, archiveFile, extractedArchiveDirFile));

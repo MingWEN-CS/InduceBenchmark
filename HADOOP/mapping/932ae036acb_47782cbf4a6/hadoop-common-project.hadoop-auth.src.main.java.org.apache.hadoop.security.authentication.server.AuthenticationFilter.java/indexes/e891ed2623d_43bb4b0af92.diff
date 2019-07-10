@@ -1,0 +1,24 @@
+21,26c21
+< import org.apache.hadoop.security.authentication.util.Signer;
+< import org.apache.hadoop.security.authentication.util.SignerException;
+< import org.apache.hadoop.security.authentication.util.RandomSignerSecretProvider;
+< import org.apache.hadoop.security.authentication.util.SignerSecretProvider;
+< import org.apache.hadoop.security.authentication.util.StringSignerSecretProvider;
+< import org.apache.hadoop.security.authentication.util.ZKSignerSecretProvider;
+---
+> import org.apache.hadoop.security.authentication.util.*;
+149a145,146
+>   public static final String SIGNATURE_SECRET_FILE = SIGNATURE_SECRET + ".file";
+> 
+286c283,288
+<       if (signatureSecret != null) {
+---
+>       String signatureSecretFile = config.getProperty(
+>           SIGNATURE_SECRET_FILE, null);
+>       
+>       if (signatureSecretFile != null) {
+>         providerClassName = FileSignerSecretProvider.class.getName();
+>       } else if (signatureSecret != null) {
+297a300,301
+>       } else if ("file".equals(signerSecretProviderName)) {
+>         providerClassName = FileSignerSecretProvider.class.getName();

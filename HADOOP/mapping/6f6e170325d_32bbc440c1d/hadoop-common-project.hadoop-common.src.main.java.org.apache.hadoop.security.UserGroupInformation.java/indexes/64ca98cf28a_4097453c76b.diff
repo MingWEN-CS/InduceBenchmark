@@ -1,0 +1,8 @@
+995c995
+<     if (user == null || "".equals(user)) {
+---
+>     if (user == null || user.isEmpty()) {
+1030c1030
+<     if (user == null || "".equals(user)) {
+---
+>     if (user == null || user.isEmpty()) {

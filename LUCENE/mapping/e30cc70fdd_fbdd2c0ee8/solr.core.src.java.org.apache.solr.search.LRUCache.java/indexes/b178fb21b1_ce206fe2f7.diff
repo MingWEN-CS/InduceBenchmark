@@ -1,0 +1,99 @@
+21a22
+> import java.util.HashSet;
+24a26
+> import java.util.Set;
+27a30
+> import com.codahale.metrics.MetricRegistry;
+32,33c35,36
+< import org.apache.solr.common.util.NamedList;
+< import org.apache.solr.common.util.SimpleOrderedMap;
+---
+> import org.apache.solr.metrics.MetricsMap;
+> import org.apache.solr.metrics.SolrMetricManager;
+57a61
+> 
+84a89,91
+>   private MetricsMap cacheMap;
+>   private Set<String> metricNames = new HashSet<>();
+>   private MetricRegistry registry;
+322,323c329,330
+<   public String getSource() {
+<     return null;
+---
+>   public Set<String> getMetricNames() {
+>     return metricNames;
+327,335c334,358
+<   public NamedList getStatistics() {
+<     NamedList lst = new SimpleOrderedMap();
+<     synchronized (map) {
+<       lst.add("lookups", lookups);
+<       lst.add("hits", hits);
+<       lst.add("hitratio", calcHitRatio(lookups,hits));
+<       lst.add("inserts", inserts);
+<       lst.add("evictions", evictions);
+<       lst.add("size", map.size());
+---
+>   public void initializeMetrics(SolrMetricManager manager, String registryName, String scope) {
+>     registry = manager.registry(registryName);
+>     cacheMap = new MetricsMap((detailed, res) -> {
+>       synchronized (map) {
+>         res.put("lookups", lookups);
+>         res.put("hits", hits);
+>         res.put("hitratio", calcHitRatio(lookups,hits));
+>         res.put("inserts", inserts);
+>         res.put("evictions", evictions);
+>         res.put("size", map.size());
+>         if (maxRamBytes != Long.MAX_VALUE)  {
+>           res.put("maxRamMB", maxRamBytes / 1024L / 1024L);
+>           res.put("ramBytesUsed", ramBytesUsed());
+>           res.put("evictionsRamUsage", evictionsRamUsage);
+>         }
+>       }
+>       res.put("warmupTime", warmupTime);
+> 
+>       long clookups = stats.lookups.longValue();
+>       long chits = stats.hits.longValue();
+>       res.put("cumulative_lookups", clookups);
+>       res.put("cumulative_hits", chits);
+>       res.put("cumulative_hitratio", calcHitRatio(clookups, chits));
+>       res.put("cumulative_inserts", stats.inserts.longValue());
+>       res.put("cumulative_evictions", stats.evictions.longValue());
+337,339c360
+<         lst.add("maxRamMB", maxRamBytes / 1024L / 1024L);
+<         lst.add("ramBytesUsed", ramBytesUsed());
+<         lst.add("evictionsRamUsage", evictionsRamUsage);
+---
+>         res.put("cumulative_evictionsRamUsage", stats.evictionsRamUsage.longValue());
+341,355c362,373
+<     }
+<     lst.add("warmupTime", warmupTime);
+<     
+<     long clookups = stats.lookups.longValue();
+<     long chits = stats.hits.longValue();
+<     lst.add("cumulative_lookups", clookups);
+<     lst.add("cumulative_hits", chits);
+<     lst.add("cumulative_hitratio", calcHitRatio(clookups, chits));
+<     lst.add("cumulative_inserts", stats.inserts.longValue());
+<     lst.add("cumulative_evictions", stats.evictions.longValue());
+<     if (maxRamBytes != Long.MAX_VALUE)  {
+<       lst.add("cumulative_evictionsRamUsage", stats.evictionsRamUsage.longValue());
+<     }
+<     
+<     return lst;
+---
+>     });
+>     manager.registerGauge(this, registryName, cacheMap, true, scope, getCategory().toString());
+>   }
+> 
+>   
+>   MetricsMap getMetricsMap() {
+>     return cacheMap;
+>   }
+> 
+>   @Override
+>   public MetricRegistry getMetricRegistry() {
+>     return registry;
+360c378
+<     return name() + getStatistics().toString();
+---
+>     return name() + cacheMap != null ? cacheMap.getValue().toString() : "";

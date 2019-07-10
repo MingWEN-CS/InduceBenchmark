@@ -1,0 +1,177 @@
+47a48,58
+> import org.apache.jackrabbit.spi.commons.query.qom.OrderingImpl;
+> import org.apache.jackrabbit.spi.commons.query.qom.QOMTreeVisitor;
+> import org.apache.jackrabbit.spi.commons.query.qom.DefaultTraversingQOMTreeVisitor;
+> import org.apache.jackrabbit.spi.commons.query.qom.LengthImpl;
+> import org.apache.jackrabbit.spi.commons.query.qom.LowerCaseImpl;
+> import org.apache.jackrabbit.spi.commons.query.qom.UpperCaseImpl;
+> import org.apache.jackrabbit.spi.commons.query.qom.FullTextSearchScoreImpl;
+> import org.apache.jackrabbit.spi.commons.query.qom.NodeLocalNameImpl;
+> import org.apache.jackrabbit.spi.commons.query.qom.NodeNameImpl;
+> import org.apache.jackrabbit.spi.commons.query.qom.PropertyValueImpl;
+> import org.apache.jackrabbit.spi.commons.query.qom.DynamicOperandImpl;
+545c556
+<                     new Integer(getIndexFormatVersion().getVersion()));
+---
+>                     getIndexFormatVersion().getVersion());
+781,783d791
+< 
+< 
+< 
+786,787c794
+<                                              Path[] orderProps,
+<                                              boolean[] orderSpecs,
+---
+>                                              OrderingImpl[] orderings,
+792c799
+<         Sort sort = new Sort(createSortFields(orderProps, orderSpecs));
+---
+>         Sort sort = new Sort(createSortFields(orderings));
+998a1006,1076
+>     protected SortField[] createSortFields(OrderingImpl[] orderings) {
+>         List<SortField> sortFields = new ArrayList<SortField>();
+>         for (final OrderingImpl ordering : orderings) {
+>             QOMTreeVisitor visitor = new DefaultTraversingQOMTreeVisitor() {
+> 
+>                 public Object visit(LengthImpl node, Object data) throws Exception {
+>                     PropertyValueImpl propValue = (PropertyValueImpl) node.getPropertyValue();
+>                     return new SortField(propValue.getPropertyQName().toString(),
+>                             new LengthSortComparator(),
+>                             !ordering.isAscending());
+>                 }
+> 
+>                 public Object visit(LowerCaseImpl node, Object data)
+>                         throws Exception {
+>                     SortField sf = (SortField) super.visit(node, data);
+>                     return new SortField(sf.getField(),
+>                             new LowerCaseSortComparator(sf.getFactory()),
+>                             sf.getReverse());
+>                 }
+> 
+>                 public Object visit(UpperCaseImpl node, Object data)
+>                         throws Exception {
+>                     SortField sf = (SortField) super.visit(node, data);
+>                     return new SortField(sf.getField(),
+>                             new UpperCaseSortComparator(sf.getFactory()),
+>                             sf.getReverse());
+>                 }
+> 
+>                 public Object visit(FullTextSearchScoreImpl node, Object data)
+>                         throws Exception {
+>                     
+>                     return new SortField(null, SortField.SCORE,
+>                             ordering.isAscending());
+>                 }
+> 
+>                 public Object visit(NodeLocalNameImpl node, Object data) throws Exception {
+>                     return new SortField(FieldNames.LOCAL_NAME,
+>                            SortField.STRING, !ordering.isAscending());
+>                 }
+> 
+>                 public Object visit(NodeNameImpl node, Object data) throws Exception {
+>                     return new SortField(FieldNames.LABEL,
+>                            SortField.STRING, !ordering.isAscending());
+>                 }
+> 
+>                 public Object visit(PropertyValueImpl node, Object data)
+>                         throws Exception {
+>                     return new SortField(node.getPropertyQName().toString(),
+>                             scs, !ordering.isAscending());
+>                 }
+> 
+>                 public Object visit(OrderingImpl node, Object data)
+>                         throws Exception {
+>                     return ((DynamicOperandImpl) node.getOperand()).accept(this, data);
+>                 }
+>             };
+>             try {
+>                 sortFields.add((SortField) ordering.accept(visitor, null));
+>             } catch (Exception e) {
+>                 
+>             }
+>         }
+>         return sortFields.toArray(new SortField[sortFields.size()]);
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+1237c1315
+<                 for (int i = 0; i < aggregateRules.length; i++) {
+---
+>                 for (AggregateRule aggregateRule : aggregateRules) {
+1240c1318
+<                     NodeState[] aggregates = aggregateRules[i].getAggregatedNodeStates(state);
+---
+>                     NodeState[] aggregates = aggregateRule.getAggregatedNodeStates(state);
+1243,1246c1321,1322
+<                         for (int j = 0; j < aggregates.length; j++) {
+<                             Document aDoc = createDocument(aggregates[j],
+<                                     getNamespaceMappings(),
+<                                     index.getIndexFormatVersion());
+---
+>                         for (NodeState aggregate : aggregates) {
+>                             Document aDoc = createDocument(aggregate, getNamespaceMappings(), index.getIndexFormatVersion());
+1250,1251c1326,1327
+<                                 for (int k = 0; k < fulltextFields.length; k++) {
+<                                     doc.add(fulltextFields[k]);
+---
+>                                 for (Fieldable fulltextField : fulltextFields) {
+>                                     doc.add(fulltextField);
+1253,1256c1329
+<                                 doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID,
+<                                         aggregates[j].getNodeId().getUUID().toString(),
+<                                         Field.Store.NO,
+<                                         Field.Index.NOT_ANALYZED_NO_NORMS));
+---
+>                                 doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, aggregate.getNodeId().getUUID().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+1261c1334
+<                     PropertyState[] propStates = aggregateRules[i].getAggregatedPropertyStates(state);
+---
+>                     PropertyState[] propStates = aggregateRule.getAggregatedPropertyStates(state);
+1264,1267c1337,1338
+<                         for (int j = 0; j < propStates.length; j++) {
+<                             PropertyState propState = propStates[j];
+<                             String namePrefix = FieldNames.createNamedValue(
+<                                     getNamespaceMappings().translateName(propState.getName()), "");
+---
+>                         for (PropertyState propState : propStates) {
+>                             String namePrefix = FieldNames.createNamedValue(getNamespaceMappings().translateName(propState.getName()), "");
+1273,1274c1344
+<                             for (int k = 0; k < fields.length; k++) {
+<                                 Fieldable field = fields[k];
+---
+>                             for (Fieldable field : fields) {
+1287,1290c1357
+<                                     doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID,
+<                                             parent.getNodeId().getUUID().toString(),
+<                                             Field.Store.NO,
+<                                             Field.Index.NOT_ANALYZED_NO_NORMS));
+---
+>                                     doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, parent.getNodeId().getUUID().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+1358,1359c1425,1426
+<                 for (int i = 0; i < aggregateRules.length; i++) {
+<                     NodeState root = aggregateRules[i].getAggregateRoot(state);
+---
+>                 for (AggregateRule aggregateRule : aggregateRules) {
+>                     NodeState root = aggregateRule.getAggregateRoot(state);
+1480,1481c1547,1548
+<             for (int i = 0; i < subReaders.length; i++) {
+<                 subReaders[i].release();
+---
+>             for (CachingMultiIndexReader subReader : subReaders) {
+>                 subReader.release();
+1525,1526c1592,1593
+<             for (int i = 0; i < subReaders.length; i++) {
+<                 hash = 31 * hash + subReaders[i].hashCode();
+---
+>             for (CachingMultiIndexReader subReader : subReaders) {
+>                 hash = 31 * hash + subReader.hashCode();
+1535,1536c1602
+<             for (int i = 0; i < subReaders.length; i++) {
+<                 CachingMultiIndexReader subReader = subReaders[i];
+---
+>             for (CachingMultiIndexReader subReader : subReaders) {

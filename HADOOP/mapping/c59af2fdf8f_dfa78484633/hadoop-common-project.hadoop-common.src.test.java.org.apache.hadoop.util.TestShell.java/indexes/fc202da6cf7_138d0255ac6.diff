@@ -1,0 +1,299 @@
+20c20
+< import junit.framework.TestCase;
+---
+> import org.apache.commons.io.FileUtils;
+24a25
+> import java.io.FileNotFoundException;
+32a34,40
+> import static org.apache.hadoop.util.Shell.*;
+> import org.junit.Assume;
+> import org.junit.Before;
+> import org.junit.Rule;
+> import org.junit.Test;
+> import org.junit.rules.TestName;
+> import org.junit.rules.Timeout;
+34c42,58
+< public class TestShell extends TestCase {
+---
+> public class TestShell extends Assert {
+>   
+> 
+> 
+>   @Rule
+>   public Timeout testTimeout = new Timeout(30000);
+> 
+>   @Rule
+>   public TestName methodName = new TestName();
+> 
+>   private File rootTestDir = new File(System.getProperty("test.build.data", "target/"));
+> 
+>   
+> 
+> 
+> 
+>   private File methodDir;
+48c72
+<       return Shell.WINDOWS ?
+---
+>       return WINDOWS ?
+62a87,94
+>   @Before
+>   public void setup() {
+>     rootTestDir.mkdirs();
+>     assertTrue("Not a directory " + rootTestDir, rootTestDir.isDirectory());
+>     methodDir = new File(rootTestDir, methodName.getMethodName());
+>   }
+> 
+>   @Test
+81a114
+>   @Test
+90c123,124
+<   
+---
+> 
+>   @Test
+92,97c126,127
+<     if(Shell.WINDOWS) {
+<       
+<       return;
+<     }
+<     String rootDir = new File(System.getProperty(
+<         "test.build.data", "/tmp")).getAbsolutePath();
+---
+>     Assume.assumeFalse(WINDOWS);
+>     String rootDir = rootTestDir.getAbsolutePath();
+100,102c130,134
+<     PrintWriter writer = new PrintWriter(new FileOutputStream(shellFile));
+<     writer.println(timeoutCommand);
+<     writer.close();
+---
+>     Shell.ShellCommandExecutor shexc;
+>     try (PrintWriter writer = new PrintWriter(new FileOutputStream(shellFile))) {
+>       writer.println(timeoutCommand);
+>       writer.close();
+>     }
+104,106c136,137
+<     Shell.ShellCommandExecutor shexc 
+<     = new Shell.ShellCommandExecutor(new String[]{shellFile.getAbsolutePath()},
+<                                       null, null, 100);
+---
+>     shexc = new Shell.ShellCommandExecutor(new String[]{shellFile.getAbsolutePath()},
+>         null, null, 100);
+113c144
+<     assertTrue("Script didnt not timeout" , shexc.isTimedOut());
+---
+>     assertTrue("Script did not timeout" , shexc.isTimedOut());
+132c163,164
+<   
+---
+> 
+>   @Test
+154a187
+>   @Test
+157c190
+<     String[] checkProcessAliveCommand = Shell.getCheckProcessIsAliveCommand(
+---
+>     String[] checkProcessAliveCommand = getCheckProcessIsAliveCommand(
+164c197
+<           new String[]{ Shell.WINUTILS, "task", "isAlive", anyPid };
+---
+>           new String[]{getWinutilsPath(), "task", "isAlive", anyPid };
+172a206
+>   @Test
+176c210
+<     String[] checkProcessAliveCommand = Shell.getSignalKillCommand(anySignal,
+---
+>     String[] checkProcessAliveCommand = getSignalKillCommand(anySignal,
+183c217
+<           new String[]{ Shell.WINUTILS, "task", "isAlive", anyPid };
+---
+>           new String[]{getWinutilsPath(), "task", "kill", anyPid };
+191d224
+<   
+205a239,424
+> 
+>   @Test
+>   public void testHadoopHomeUnset() throws Throwable {
+>     assertHomeResolveFailed(null, "unset");
+>   }
+> 
+>   @Test
+>   public void testHadoopHomeEmpty() throws Throwable {
+>     assertHomeResolveFailed("", E_HADOOP_PROPS_EMPTY);
+>   }
+> 
+>   @Test
+>   public void testHadoopHomeEmptyDoubleQuotes() throws Throwable {
+>     assertHomeResolveFailed("\"\"", E_HADOOP_PROPS_EMPTY);
+>   }
+> 
+>   @Test
+>   public void testHadoopHomeEmptySingleQuote() throws Throwable {
+>     assertHomeResolveFailed("\"", E_HADOOP_PROPS_EMPTY);
+>   }
+> 
+>   @Test
+>   public void testHadoopHomeValid() throws Throwable {
+>     File f = checkHadoopHomeInner(rootTestDir.getCanonicalPath());
+>     assertEquals(rootTestDir, f);
+>   }
+> 
+>   @Test
+>   public void testHadoopHomeValidQuoted() throws Throwable {
+>     File f = checkHadoopHomeInner('"'+ rootTestDir.getCanonicalPath() + '"');
+>     assertEquals(rootTestDir, f);
+>   }
+> 
+>   @Test
+>   public void testHadoopHomeNoDir() throws Throwable {
+>     assertHomeResolveFailed(methodDir.getCanonicalPath(), E_DOES_NOT_EXIST);
+>   }
+> 
+>   @Test
+>   public void testHadoopHomeNotADir() throws Throwable {
+>     File touched = touch(methodDir);
+>     try {
+>       assertHomeResolveFailed(touched.getCanonicalPath(), E_NOT_DIRECTORY);
+>     } finally {
+>       FileUtils.deleteQuietly(touched);
+>     }
+>   }
+> 
+>   @Test
+>   public void testHadoopHomeRelative() throws Throwable {
+>     assertHomeResolveFailed("./target", E_IS_RELATIVE);
+>   }
+> 
+>   @Test
+>   public void testBinDirMissing() throws Throwable {
+>     FileNotFoundException ex = assertWinutilsResolveFailed(methodDir,
+>         E_DOES_NOT_EXIST);
+>     assertInString(ex.toString(), "Hadoop bin directory");
+>   }
+> 
+>   @Test
+>   public void testHadoopBinNotADir() throws Throwable {
+>     File bin = new File(methodDir, "bin");
+>     touch(bin);
+>     try {
+>       assertWinutilsResolveFailed(methodDir, E_NOT_DIRECTORY);
+>     } finally {
+>       FileUtils.deleteQuietly(methodDir);
+>     }
+>   }
+> 
+>   @Test
+>   public void testBinWinUtilsFound() throws Throwable {
+>     try {
+>       File bin = new File(methodDir, "bin");
+>       File winutils = new File(bin, WINUTILS_EXE);
+>       touch(winutils);
+>       assertEquals(winutils.getCanonicalPath(),
+>           getQualifiedBinInner(methodDir, WINUTILS_EXE).getCanonicalPath());
+>     } finally {
+>       FileUtils.deleteQuietly(methodDir);
+>     }
+>   }
+> 
+>   @Test
+>   public void testBinWinUtilsNotAFile() throws Throwable {
+>     try {
+>       File bin = new File(methodDir, "bin");
+>       File winutils = new File(bin, WINUTILS_EXE);
+>       winutils.mkdirs();
+>       assertWinutilsResolveFailed(methodDir, E_NOT_EXECUTABLE_FILE);
+>     } finally {
+>       FileUtils.deleteDirectory(methodDir);
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   @Test
+>   public void testNoWinutilsOnUnix() throws Throwable {
+>     Assume.assumeFalse(WINDOWS);
+>     try {
+>       getWinutilsFile();
+>     } catch (FileNotFoundException ex) {
+>       assertExContains(ex, E_NOT_A_WINDOWS_SYSTEM);
+>     }
+>     try {
+>       getWinutilsPath();
+>     } catch (RuntimeException ex) {
+>       assertExContains(ex, E_NOT_A_WINDOWS_SYSTEM);
+>       if ( ex.getCause() == null
+>           || !(ex.getCause() instanceof FileNotFoundException)) {
+>         throw ex;
+>       }
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   private File touch(File path) throws IOException {
+>     path.getParentFile().mkdirs();
+>     FileUtils.writeByteArrayToFile(path, new byte[]{});
+>     return path;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private FileNotFoundException assertHomeResolveFailed(String path,
+>       String expectedText) throws Exception {
+>     try {
+>       File f = checkHadoopHomeInner(path);
+>       fail("Expected an exception with the text `" + expectedText + "`"
+>           + " -but got the path " + f);
+>       
+>       return null;
+>     } catch (FileNotFoundException ex) {
+>       assertExContains(ex, expectedText);
+>       return ex;
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private FileNotFoundException assertWinutilsResolveFailed(File hadoopHome,
+>       String expectedText) throws Exception {
+>     try {
+>       File f = getQualifiedBinInner(hadoopHome, WINUTILS_EXE);
+>       fail("Expected an exception with the text `" + expectedText + "`"
+>           + " -but got the path " + f);
+>       
+>       return null;
+>     } catch (FileNotFoundException ex) {
+>       assertExContains(ex, expectedText);
+>       return ex;
+>     }
+>   }
+> 
+>   private void assertExContains(Exception ex, String expectedText)
+>       throws Exception {
+>     if (!ex.toString().contains(expectedText)) {
+>       throw ex;
+>     }
+>   }
+> 

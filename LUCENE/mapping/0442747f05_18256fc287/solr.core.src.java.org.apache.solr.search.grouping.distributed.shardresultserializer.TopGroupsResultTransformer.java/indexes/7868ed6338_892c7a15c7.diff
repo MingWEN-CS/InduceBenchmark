@@ -1,0 +1,16 @@
+26a27
+> import org.apache.lucene.document.Document;
+28d28
+< import org.apache.lucene.index.StoredDocument;
+215c215
+<         StoredDocument doc = retrieveDocument(uniqueField, searchGroup.scoreDocs[i].doc);
+---
+>         Document doc = retrieveDocument(uniqueField, searchGroup.scoreDocs[i].doc);
+265c265
+<       StoredDocument doc = retrieveDocument(uniqueField, scoreDoc.doc);
+---
+>       Document doc = retrieveDocument(uniqueField, scoreDoc.doc);
+295c295
+<   private StoredDocument retrieveDocument(final SchemaField uniqueField, int doc) throws IOException {
+---
+>   private Document retrieveDocument(final SchemaField uniqueField, int doc) throws IOException {

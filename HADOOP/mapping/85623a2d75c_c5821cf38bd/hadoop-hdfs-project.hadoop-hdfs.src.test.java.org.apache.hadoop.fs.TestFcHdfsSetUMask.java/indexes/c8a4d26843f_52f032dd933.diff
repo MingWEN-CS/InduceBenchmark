@@ -1,0 +1,34 @@
+44a45
+>   private static FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+85d85
+<     FileContextTestHelper.TEST_ROOT_DIR = "/tmp/TestFcHdfsSetUMask";
+114c114
+<     fc.mkdir(getTestRootPath(fc), FileContext.DEFAULT_PERM, true);
+---
+>     fc.mkdir(fileContextTestHelper.getTestRootPath(fc), FileContext.DEFAULT_PERM, true);
+119c119
+<     fc.delete(getTestRootPath(fc), true);
+---
+>     fc.delete(fileContextTestHelper.getTestRootPath(fc), true);
+203c203
+<     Path f = getTestRootPath(fc, "aDir");
+---
+>     Path f = fileContextTestHelper.getTestRootPath(fc, "aDir");
+214c214
+<     Path f = getTestRootPath(fc, "NonExistant2/aDir");
+---
+>     Path f = fileContextTestHelper.getTestRootPath(fc, "NonExistant2/aDir");
+220c220
+<     Path fParent = getTestRootPath(fc, "NonExistant2");
+---
+>     Path fParent = fileContextTestHelper.getTestRootPath(fc, "NonExistant2");
+228c228
+<     Path f = getTestRootPath(fc,"foo");
+---
+>     Path f = fileContextTestHelper.getTestRootPath(fc,"foo");
+240,241c240,241
+<     Path f = getTestRootPath(fc,"NonExisting/foo");
+<     Path fParent = getTestRootPath(fc, "NonExisting");
+---
+>     Path f = fileContextTestHelper.getTestRootPath(fc,"NonExisting/foo");
+>     Path fParent = fileContextTestHelper.getTestRootPath(fc, "NonExisting");

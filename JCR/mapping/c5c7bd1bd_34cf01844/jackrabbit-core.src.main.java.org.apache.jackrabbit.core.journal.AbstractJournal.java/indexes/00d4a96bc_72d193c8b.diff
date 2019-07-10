@@ -1,0 +1,82 @@
+220,236c220,238
+<         RecordIterator iterator = getRecords(startRevision);
+<         long stopRevision = Long.MIN_VALUE;
+< 
+<         try {
+<             while (iterator.hasNext()) {
+<                 Record record = iterator.nextRecord();
+<                 if (record.getJournalId().equals(id)) {
+<                     log.info("Record with revision '" + record.getRevision()
+<                             + "' created by this journal, skipped.");
+<                 } else {
+<                     RecordConsumer consumer = getConsumer(record.getProducerId());
+<                     if (consumer != null) {
+<                         try {
+<                             consumer.consume(record);
+<                         } catch (IllegalStateException e) {
+<                             log.error("Could not synchronize to revision: " + record.getRevision() + " due illegal state of RecordConsumer.");
+<                             return;
+---
+>         for (;;) {
+>             RecordIterator iterator = getRecords(startRevision);
+>             long stopRevision = Long.MIN_VALUE;
+>     
+>             try {
+>                 while (iterator.hasNext()) {
+>                     Record record = iterator.nextRecord();
+>                     if (record.getJournalId().equals(id)) {
+>                         log.info("Record with revision '" + record.getRevision()
+>                                 + "' created by this journal, skipped.");
+>                     } else {
+>                         RecordConsumer consumer = getConsumer(record.getProducerId());
+>                         if (consumer != null) {
+>                             try {
+>                                 consumer.consume(record);
+>                             } catch (IllegalStateException e) {
+>                                 log.error("Could not synchronize to revision: " + record.getRevision() + " due illegal state of RecordConsumer.");
+>                                 return;
+>                             }
+238a241
+>                     stopRevision = record.getRevision();
+240c243,244
+<                 stopRevision = record.getRevision();
+---
+>             } finally {
+>                 iterator.close();
+242,244c246,251
+<         } finally {
+<             iterator.close();
+<         }
+---
+>     
+>             if (stopRevision > 0) {
+>                 for (RecordConsumer consumer : consumers.values()) {
+>                     consumer.setRevision(stopRevision);
+>                 }
+>                 log.info("Synchronized to revision: " + stopRevision);
+246,248c253,257
+<         if (stopRevision > 0) {
+<             for (RecordConsumer consumer : consumers.values()) {
+<                 consumer.setRevision(stopRevision);
+---
+>                 if (syncAgainOnNewRecords()) {
+>                     
+>                     startRevision = stopRevision;
+>                     continue;
+>                 }
+250c259
+<             log.info("Synchronized to revision: " + stopRevision);
+---
+>             break;
+252a262,272
+>     
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+>     protected boolean syncAgainOnNewRecords() {
+>         return false;
+>     }

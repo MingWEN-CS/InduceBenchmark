@@ -1,0 +1,9 @@
+45a46,47
+> 
+> 
+115,117c117
+<     synchronized (nameToRackMap) {
+<       return nameToRackMap.isEmpty();
+<     }
+---
+>     return false;

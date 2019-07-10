@@ -1,0 +1,16 @@
+159c159
+<       defaultClient.getConnectionManager().shutdown();
+---
+>       ExecutorUtil.shutdownNowAndAwaitTermination(commExecutor);
+162a163
+>     
+164c165
+<       loadbalancer.shutdown();
+---
+>       defaultClient.getConnectionManager().shutdown();
+169c170
+<       ExecutorUtil.shutdownNowAndAwaitTermination(commExecutor);
+---
+>       loadbalancer.shutdown();
+172a174
+> 

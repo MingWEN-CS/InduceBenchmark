@@ -1,0 +1,25 @@
+51,52c51
+<       SegmentInfos sis = new SegmentInfos();
+<       sis.read(dir);
+---
+>       SegmentInfos sis = SegmentInfos.readLatestCommit(dir);
+62,63c61
+<       sis = new SegmentInfos();
+<       sis.read(dir);
+---
+>       sis = SegmentInfos.readLatestCommit(dir);
+96,97c94
+<       SegmentInfos sis = new SegmentInfos();
+<       sis.read(dir);
+---
+>       SegmentInfos sis = SegmentInfos.readLatestCommit(dir);
+104,105c101
+<       sis = new SegmentInfos();
+<       sis.read(dir);
+---
+>       sis = SegmentInfos.readLatestCommit(dir);
+229,230c225
+<         SegmentInfos infos = new SegmentInfos();
+<         infos.read(dir);
+---
+>         SegmentInfos infos = SegmentInfos.readLatestCommit(dir);

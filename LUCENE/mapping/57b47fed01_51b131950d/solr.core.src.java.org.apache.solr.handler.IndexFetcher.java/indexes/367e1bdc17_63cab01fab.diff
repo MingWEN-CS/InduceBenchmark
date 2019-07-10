@@ -1,0 +1,9 @@
+971,972c971,975
+<         LOG.info("Skipping move file - it already exists:" + fname);
+<         return true;
+---
+>         LOG.warn("Cannot complete replication attempt because file already exists:" + fname);
+>         
+>         
+>         
+>         return false;

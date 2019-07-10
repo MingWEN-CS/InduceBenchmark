@@ -1,0 +1,20 @@
+57a58,66
+>     private final String[] namespaces =
+>         
+>         { Name.NS_DEFAULT_URI, null, null, null, null, null, null };
+> 
+>     
+> 
+> 
+> 
+> 
+327,328c336,337
+<             if (ns != 0x07) {
+<                 uri = BundleNames.indexToNamespace(ns);
+---
+>             if (ns < namespaces.length && namespaces[ns] != null) {
+>                 uri = namespaces[ns];
+330a340,342
+>                 if (ns < namespaces.length) {
+>                     namespaces[ns] = uri;
+>                 }

@@ -1,0 +1,185 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.events;
+
+
+
+
+
+public abstract class AmbariEvent {
+
+  
+
+
+  public enum AmbariEventType {
+    
+
+
+    SERVICE_INSTALL_SUCCESS,
+
+    
+
+
+    SERVICE_REMOVED_SUCCESS,
+
+    
+
+
+    SERVICE_COMPONENT_INSTALL_SUCCESS,
+
+    
+
+
+    SERVICE_COMPONENT_UNINSTALLED_SUCCESS,
+
+    
+
+
+    ALERT_DEFINITION_REGISTRATION,
+
+    
+
+
+    ALERT_DEFINITION_CHANGED,
+
+    
+
+
+    ALERT_DEFINITION_REMOVAL,
+
+    
+
+
+    ALERT_DEFINITION_HASH_INVALIDATION,
+
+    
+
+
+    ALERT_DEFINITION_DISABLED,
+
+    
+
+
+    HOST_REGISTERED,
+
+    
+
+
+    HOST_COMPONENT_VERSION_ADVERTISED,
+
+    
+
+
+    HOST_ADDED,
+
+    
+
+
+    HOST_REMOVED,
+
+    
+
+
+    MAINTENANCE_MODE,
+
+    
+
+
+    ACTION_EXECUTION_FINISHED,
+
+    
+
+
+    REQUEST_FINISHED,
+
+    
+
+
+    CLUSTER_RENAME,
+
+    
+
+
+    SERVICE_COMPONENT_RECOVERY_CHANGED,
+
+    
+
+
+    FINALIZE_UPGRADE_FINISH,
+
+    
+
+
+    CLUSTER_CONFIG_CHANGED,
+
+    
+
+
+    CLUSTER_CONFIG_FINISHED,
+
+    
+
+
+    METRICS_COLLECTOR_HOST_DOWN,
+
+    
+
+
+    USER_CREATED,
+
+    
+
+
+    LDAP_CONFIG_CHANGED;
+
+  }
+
+  
+
+
+  protected final AmbariEventType m_eventType;
+
+  
+
+
+
+
+  public AmbariEvent(AmbariEventType eventType) {
+    m_eventType = eventType;
+  }
+
+  
+
+
+
+
+  public AmbariEventType getType() {
+    return m_eventType;
+  }
+
+  
+
+
+  @Override
+  public String toString() {
+    StringBuilder buffer = new StringBuilder(getClass().getSimpleName());
+    buffer.append("{eventType=").append(m_eventType);
+    buffer.append("}");
+    return buffer.toString();
+  }
+}

@@ -1,0 +1,103 @@
+44d43
+< import org.apache.solr.core.Config;
+53,54d51
+< import org.w3c.dom.Document;
+< import org.w3c.dom.NodeList;
+57,59d53
+< import javax.xml.xpath.XPath;
+< import javax.xml.xpath.XPathConstants;
+< import javax.xml.xpath.XPathExpressionException;
+421,424c415,416
+<       
+<       for (SchemaAware aware : newSchema.schemaAware) {
+<         aware.inform(newSchema);
+<       }
+---
+>       newSchema.postReadInform();
+> 
+471,474c463
+<       
+<       for (SchemaAware aware : newSchema.schemaAware) {
+<         aware.inform(newSchema);
+<       }
+---
+>       newSchema.postReadInform();
+558,560c547
+<       for (SchemaAware aware : newSchema.schemaAware) {
+<         aware.inform(newSchema);
+<       }
+---
+>       newSchema.postReadInform();
+598,601c585
+<       
+<       for (SchemaAware aware : newSchema.schemaAware) {
+<         aware.inform(newSchema);
+<       }
+---
+>       newSchema.postReadInform();
+680,683c664
+<       
+<       for (SchemaAware aware : newSchema.schemaAware) {
+<         aware.inform(newSchema);
+<       }
+---
+>       newSchema.postReadInform();
+751,753c732
+<       for (SchemaAware aware : newSchema.schemaAware) {
+<         aware.inform(newSchema);
+<       }
+---
+>       newSchema.postReadInform();
+776,780c755
+<       
+<       
+<       for (SchemaAware aware : newSchema.schemaAware) {
+<         aware.inform(newSchema);
+<       }
+---
+>       newSchema.postReadInform();
+816,820c791
+<       
+<       
+<       for (SchemaAware aware : newSchema.schemaAware) {
+<         aware.inform(newSchema);
+<       }
+---
+>       newSchema.postReadInform();
+962a934
+>     newSchema.postReadInform();
+964,970d935
+<     for (SchemaAware aware : newSchema.schemaAware)
+<       aware.inform(newSchema);
+<     
+<     
+<     for (FieldType fieldType : fieldTypeList)
+<       informResourceLoaderAwareObjectsForFieldType(fieldType);
+< 
+1021,1026c986
+<       for (SchemaAware aware : newSchema.schemaAware) {
+<         aware.inform(newSchema);
+<       }
+<       for (FieldType fieldType : newSchema.fieldTypes.values()) {
+<         informResourceLoaderAwareObjectsForFieldType(fieldType);
+<       }
+---
+>       newSchema.postReadInform();
+1156,1161c1116
+<       for (SchemaAware aware : newSchema.schemaAware) {
+<         aware.inform(newSchema);
+<       }
+<       for (FieldType fieldType : newSchema.fieldTypes.values()) {
+<         newSchema.informResourceLoaderAwareObjectsForFieldType(fieldType);
+<       }
+---
+>       newSchema.postReadInform();
+1169a1125,1132
+>   
+>   @Override
+>   protected void postReadInform() {
+>     super.postReadInform();
+>     for (FieldType fieldType : fieldTypes.values()) {
+>       informResourceLoaderAwareObjectsForFieldType(fieldType);
+>     }
+>   }

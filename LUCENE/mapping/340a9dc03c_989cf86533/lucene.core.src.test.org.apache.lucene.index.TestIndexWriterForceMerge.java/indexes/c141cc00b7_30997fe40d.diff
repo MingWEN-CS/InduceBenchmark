@@ -1,0 +1,59 @@
+124c124,125
+<     MockDirectoryWrapper dir = newMockDirectory();
+---
+>     final MockDirectoryWrapper dir = newMockDirectory();
+>     dir.setEnableVirusScanner(false);
+127a129
+>     
+141,143d142
+<     if (VERBOSE) {
+<       System.out.println("TEST: start disk usage");
+<     }
+145,147c144,145
+<     String[] files = dir.listAll();
+<     for(int i=0;i<files.length;i++) {
+<       startDiskUsage += dir.fileLength(files[i]);
+---
+>     for (String f : dir.listAll()) {
+>       startDiskUsage += dir.fileLength(f);
+149c147
+<         System.out.println(files[i] + ": " + dir.fileLength(files[i]));
+---
+>         System.out.println(f + ": " + dir.fileLength(f));
+151a150,152
+>     if (VERBOSE) {
+>       System.out.println("TEST: start disk usage = " + startDiskUsage);
+>     }
+158a160,164
+>     
+>     if (VERBOSE) {
+>       System.out.println("TEST: config2=" + writer.getConfig());
+>     }
+> 
+160a167,183
+> 
+>     long finalDiskUsage = 0;
+>     for (String f : dir.listAll()) {
+>       finalDiskUsage += dir.fileLength(f);
+>       if (VERBOSE) {
+>         System.out.println(f + ": " + dir.fileLength(f));
+>       }
+>     }
+>     if (VERBOSE) {
+>       System.out.println("TEST: final disk usage = " + finalDiskUsage);
+>     }
+> 
+>     
+>     
+>     
+>     
+>     long maxStartFinalDiskUsage = Math.max(startDiskUsage, finalDiskUsage);
+162,163c185,189
+<     assertTrue("forceMerge used too much temporary space: starting usage was " + startDiskUsage + " bytes; max temp usage was " + maxDiskUsage + " but should have been " + (4*startDiskUsage) + " (= 4X starting usage)",
+<                maxDiskUsage <= 4*startDiskUsage);
+---
+>     assertTrue("forceMerge used too much temporary space: starting usage was "
+>         + startDiskUsage + " bytes; final usage was " + finalDiskUsage
+>         + " bytes; max temp usage was " + maxDiskUsage
+>         + " but should have been " + (3 * maxStartFinalDiskUsage)
+>         + " (= 3X starting usage)", maxDiskUsage <= 3 * maxStartFinalDiskUsage);

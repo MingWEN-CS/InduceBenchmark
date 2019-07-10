@@ -1,0 +1,47 @@
+885d884
+<     
+887,896c886,888
+<     if (shardQueryIncludeScore) {
+<       sreq.params.set(CommonParams.FL, rb.req.getSchema().getUniqueKeyField().getName() + ",score");
+<       StatsCache statsCache = rb.req.getCore().getStatsCache();
+<       statsCache.sendGlobalStats(rb, sreq);
+<     } else  {
+<       
+<       sreq.params.set(CommonParams.FL, rb.req.getSchema().getUniqueKeyField().getName());
+<     }
+< 
+<     if (distribSinglePass) {
+---
+>     StringBuilder additionalFL = new StringBuilder();
+>     boolean additionalAdded = false;
+>     if (distribSinglePass)  {
+900a893,895
+>         if (!fields.wantsField(keyFieldName))  {
+>           additionalAdded = addFL(additionalFL, keyFieldName, additionalAdded);
+>         }
+905a901,909
+>       if (!fields.wantsScore() && shardQueryIncludeScore) {
+>         additionalAdded = addFL(additionalFL, "score", additionalAdded);
+>       }
+>     } else {
+>       
+>       sreq.params.set(CommonParams.FL, rb.req.getSchema().getUniqueKeyField().getName());
+>       if (shardQueryIncludeScore) {
+>         additionalAdded = addFL(additionalFL, "score", additionalAdded);
+>       }
+907,912c911,918
+<     StringBuilder additionalFL = new StringBuilder();
+<     boolean additionalAdded = false;
+<     if (!distribSinglePass || !fields.wantsField(keyFieldName))
+<       additionalAdded = addFL(additionalFL, keyFieldName, additionalAdded);
+<     if ((!distribSinglePass || !fields.wantsScore()) && shardQueryIncludeScore) 
+<       additionalAdded = addFL(additionalFL, "score", additionalAdded);
+---
+> 
+>     
+> 
+>     if (shardQueryIncludeScore) {
+>       StatsCache statsCache = rb.req.getCore().getStatsCache();
+>       statsCache.sendGlobalStats(rb, sreq);
+>     }
+> 

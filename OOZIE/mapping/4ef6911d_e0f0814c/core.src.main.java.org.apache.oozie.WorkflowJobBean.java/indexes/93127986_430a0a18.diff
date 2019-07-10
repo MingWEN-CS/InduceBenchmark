@@ -1,0 +1,6 @@
+124,125c124,125
+<     @Basic
+<     @Column(name = "sla_xml", length = 4000)
+---
+>     @Column(name = "sla_xml")
+>     @Lob

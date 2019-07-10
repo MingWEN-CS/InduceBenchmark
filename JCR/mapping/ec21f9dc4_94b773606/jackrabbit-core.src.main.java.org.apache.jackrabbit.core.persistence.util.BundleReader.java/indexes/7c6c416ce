@@ -1,0 +1,571 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.persistence.util;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
+import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TimeZone;
+import java.math.BigDecimal;
+
+import javax.jcr.PropertyType;
+
+
+
+
+
+
+
+class BundleReader {
+
+    
+    private static Logger log = LoggerFactory.getLogger(BundleReader.class);
+
+    
+
+
+    private static final TimeZone[] COMMON_TIMEZONES = {
+        TimeZone.getTimeZone("GMT+00:00"), 
+        TimeZone.getTimeZone("GMT+01:00"), 
+        TimeZone.getTimeZone("GMT+02:00"), 
+        TimeZone.getTimeZone("GMT+03:00"), 
+        TimeZone.getTimeZone("GMT+04:00"), 
+        TimeZone.getTimeZone("GMT+05:00"), 
+        TimeZone.getTimeZone("GMT+06:00"), 
+        TimeZone.getTimeZone("GMT+07:00"), 
+        TimeZone.getTimeZone("GMT+08:00"), 
+        TimeZone.getTimeZone("GMT+09:00"), 
+        TimeZone.getTimeZone("GMT+10:00"), 
+        TimeZone.getTimeZone("GMT+11:00"), 
+        TimeZone.getTimeZone("GMT+12:00"), 
+        TimeZone.getTimeZone("GMT+13:00"), 
+        TimeZone.getTimeZone("GMT+14:00"), 
+        TimeZone.getTimeZone("GMT+15:00"), 
+        TimeZone.getTimeZone("GMT-16:00"), 
+        TimeZone.getTimeZone("GMT-15:00"), 
+        TimeZone.getTimeZone("GMT-14:00"), 
+        TimeZone.getTimeZone("GMT-13:00"), 
+        TimeZone.getTimeZone("GMT-12:00"), 
+        TimeZone.getTimeZone("GMT-11:00"), 
+        TimeZone.getTimeZone("GMT-10:00"), 
+        TimeZone.getTimeZone("GMT-09:00"), 
+        TimeZone.getTimeZone("GMT-08:00"), 
+        TimeZone.getTimeZone("GMT-07:00"), 
+        TimeZone.getTimeZone("GMT-06:00"), 
+        TimeZone.getTimeZone("GMT-05:00"), 
+        TimeZone.getTimeZone("GMT-04:00"), 
+        TimeZone.getTimeZone("GMT-03:00"), 
+        TimeZone.getTimeZone("GMT-02:00"), 
+        TimeZone.getTimeZone("GMT-01:00"), 
+    };
+
+    private final BundleBinding binding;
+
+    private final DataInputStream in;
+
+    private final int version;
+
+    
+
+
+
+
+    private final String[] namespaces =
+        
+        { Name.NS_DEFAULT_URI, null, null, null, null, null, null };
+
+    
+
+
+
+
+
+
+    public BundleReader(BundleBinding binding, InputStream stream)
+            throws IOException {
+        this.binding = binding;
+        this.in = new DataInputStream(stream);
+        this.version = in.readUnsignedByte();
+    }
+
+    
+
+
+
+
+
+
+    public NodePropBundle readBundle(NodeId id) throws IOException {
+        NodePropBundle bundle = new NodePropBundle(id);
+
+        
+        Name nodeTypeName;
+        if (version >= BundleBinding.VERSION_3) {
+            nodeTypeName = readName();
+        } else {
+            int a = in.readUnsignedByte();
+            int b = in.readUnsignedByte();
+            int c = in.readUnsignedByte();
+            String uri = binding.nsIndex.indexToString(a << 16 | b << 8 | c);
+            String local = binding.nameIndex.indexToString(in.readInt());
+            nodeTypeName = NameFactoryImpl.getInstance().create(uri, local);
+        }
+        bundle.setNodeTypeName(nodeTypeName);
+
+        
+        bundle.setParentId(readNodeId());
+
+        if (version < BundleBinding.VERSION_3) {
+            
+            in.readUTF();
+        }
+
+        
+        Set<Name> mixinTypeNames = new HashSet<Name>();
+        Name name = readIndexedQName();
+        while (name != null) {
+            mixinTypeNames.add(name);
+            name = readIndexedQName();
+        }
+        bundle.setMixinTypeNames(mixinTypeNames);
+
+        
+        name = readIndexedQName();
+        while (name != null) {
+            PropertyId pId = new PropertyId(id, name);
+            NodePropBundle.PropertyEntry pState = readPropertyEntry(pId);
+            
+            if (!name.equals(NameConstants.JCR_PRIMARYTYPE)
+                && !name.equals(NameConstants.JCR_MIXINTYPES)
+                && !name.equals(NameConstants.JCR_UUID)) {
+                bundle.addProperty(pState);
+            }
+            name = readIndexedQName();
+        }
+
+        
+        bundle.setReferenceable(in.readBoolean());
+
+        
+        NodeId childId = readNodeId();
+        while (childId != null) {
+            bundle.addChildNodeEntry(readQName(), childId);
+            childId = readNodeId();
+        }
+
+        
+        if (version >= BundleBinding.VERSION_3) {
+            bundle.setModCount((short) readVarInt());
+        } else if (version >= BundleBinding.VERSION_1) {
+            bundle.setModCount(in.readShort());
+        }
+
+        
+        Set<NodeId> sharedSet = new HashSet<NodeId>();
+        if (version >= BundleBinding.VERSION_2) {
+            
+            NodeId parentId = readNodeId();
+            while (parentId != null) {
+                sharedSet.add(parentId);
+                parentId = readNodeId();
+            }
+        }
+        bundle.setSharedSet(sharedSet);
+
+        return bundle;
+    }
+
+    
+
+
+
+
+
+
+    private NodePropBundle.PropertyEntry readPropertyEntry(PropertyId id)
+            throws IOException {
+        NodePropBundle.PropertyEntry entry = new NodePropBundle.PropertyEntry(id);
+
+        int count = 1;
+        if (version >= BundleBinding.VERSION_3) {
+            int b = in.readUnsignedByte();
+
+            entry.setType(b & 0x0f);
+
+            int len = b >>> 4;
+            if (len != 0) {
+                entry.setMultiValued(true);
+                if (len == 0x0f) {
+                    count = readVarInt() + 0x0f - 1;
+                } else {
+                    count = len - 1;
+                }
+            }
+
+            entry.setModCount((short) readVarInt());
+        } else {
+            
+            int type = in.readInt();
+            entry.setModCount((short) ((type >> 16) & 0x0ffff));
+            type &= 0x0ffff;
+            entry.setType(type);
+
+            
+            entry.setMultiValued(in.readBoolean());
+
+            
+            in.readUTF();
+
+            
+            count = in.readInt();
+        }
+
+        
+        InternalValue[] values = new InternalValue[count];
+        String[] blobIds = new String[count];
+        for (int i = 0; i < count; i++) {
+            InternalValue val;
+            switch (entry.getType()) {
+                case PropertyType.BINARY:
+                    int size = in.readInt();
+                    if (size == BundleBinding.BINARY_IN_DATA_STORE) {
+                        val = InternalValue.create(binding.dataStore, readString());
+                    } else if (size == BundleBinding.BINARY_IN_BLOB_STORE) {
+                        blobIds[i] = readString();
+                        try {
+                            BLOBStore blobStore = binding.getBlobStore();
+                            if (blobStore instanceof ResourceBasedBLOBStore) {
+                                val = InternalValue.create(((ResourceBasedBLOBStore) blobStore).getResource(blobIds[i]));
+                            } else {
+                                val = InternalValue.create(blobStore.get(blobIds[i]));
+                            }
+                        } catch (IOException e) {
+                            if (binding.errorHandling.ignoreMissingBlobs()) {
+                                log.warn("Ignoring error while reading blob-resource: " + e);
+                                val = InternalValue.create(new byte[0]);
+                            } else {
+                                throw e;
+                            }
+                        } catch (Exception e) {
+                            throw new IOException("Unable to create property value: " + e.toString());
+                        }
+                    } else {
+                        
+                        byte[] data = new byte[size];
+                        in.readFully(data);
+                        val = InternalValue.create(data);
+                    }
+                    break;
+                case PropertyType.DOUBLE:
+                    val = InternalValue.create(in.readDouble());
+                    break;
+                case PropertyType.DECIMAL:
+                    val = InternalValue.create(readDecimal());
+                    break;
+                case PropertyType.LONG:
+                    if (version >= BundleBinding.VERSION_3) {
+                        val = InternalValue.create(readVarLong());
+                    } else {
+                        val = InternalValue.create(in.readLong());
+                    }
+                    break;
+                case PropertyType.BOOLEAN:
+                    val = InternalValue.create(in.readBoolean());
+                    break;
+                case PropertyType.NAME:
+                    val = InternalValue.create(readQName());
+                    break;
+                case PropertyType.WEAKREFERENCE:
+                    val = InternalValue.create(readNodeId(), true);
+                    break;
+                case PropertyType.REFERENCE:
+                    val = InternalValue.create(readNodeId(), false);
+                    break;
+                case PropertyType.DATE:
+                    if (version >= BundleBinding.VERSION_3) {
+                        val = InternalValue.create(readDate());
+                        break;
+                    } 
+                default:
+                    if (version >= BundleBinding.VERSION_3) {
+                        val = InternalValue.valueOf(
+                                readString(), entry.getType());
+                    } else {
+                        
+                        
+                        int len = in.readInt();
+                        byte[] bytes = new byte[len];
+                        in.readFully(bytes);
+                        val = InternalValue.valueOf(
+                                new String(bytes, "UTF-8"), entry.getType());
+                    }
+            }
+            values[i] = val;
+        }
+        entry.setValues(values);
+        entry.setBlobIds(blobIds);
+
+        return entry;
+    }
+
+    
+
+
+
+
+
+    private NodeId readNodeId() throws IOException {
+        if (in.readBoolean()) {
+            long msb = in.readLong();
+            long lsb = in.readLong();
+            return new NodeId(msb, lsb);
+        } else {
+            return null;
+        }
+    }
+
+    
+
+
+
+
+
+    private BigDecimal readDecimal() throws IOException {
+        if (in.readBoolean()) {
+            
+            return new BigDecimal(readString());
+        } else {
+            return null;
+        }
+    }
+
+    
+
+
+
+
+
+    private Name readQName() throws IOException {
+        if (version >= BundleBinding.VERSION_3) {
+            return readName();
+        }
+
+        String uri = binding.nsIndex.indexToString(in.readInt());
+        String local = in.readUTF();
+        return NameFactoryImpl.getInstance().create(uri, local);
+    }
+
+    
+
+
+
+
+
+    private Name readIndexedQName() throws IOException {
+        if (version >= BundleBinding.VERSION_3) {
+            return readName();
+        }
+
+        int index = in.readInt();
+        if (index < 0) {
+            return null;
+        } else {
+            String uri = binding.nsIndex.indexToString(index);
+            String local = binding.nameIndex.indexToString(in.readInt());
+            return NameFactoryImpl.getInstance().create(uri, local);
+        }
+    }
+
+    
+
+
+
+
+
+    private Name readName() throws IOException {
+        int b = in.readUnsignedByte();
+        if ((b & 0x80) == 0) {
+            return BundleNames.indexToName(b);
+        } else {
+            String uri;
+            int ns = (b >> 4) & 0x07;
+            if (ns < namespaces.length && namespaces[ns] != null) {
+                uri = namespaces[ns];
+            } else {
+                uri = readString();
+                if (ns < namespaces.length) {
+                    namespaces[ns] = uri;
+                }
+            }
+
+            String local = new String(readBytes((b & 0x0f) + 1, 0x10), "UTF-8");
+
+            return NameFactoryImpl.getInstance().create(uri, local);
+        }
+    }
+
+    
+
+
+
+
+
+
+    private int readVarInt() throws IOException {
+        int b = in.readUnsignedByte();
+        if ((b & 0x80) == 0) {
+            return b;
+        } else {
+            return readVarInt() << 7 | b & 0x7f;
+        }
+    }
+
+    
+
+
+
+
+
+
+    private long readVarLong() throws IOException {
+        long value = 0;
+        int bits = 0;
+        long b;
+        do {
+            b = in.readUnsignedByte();
+            value = (b & 0x7f) << 57 | value >>> 7;
+            bits += 7;
+        } while ((b & 0x80) != 0);
+        value = value >>> (64 - bits);
+        if ((value & 1) != 0) {
+            return ~(value >>> 1);
+        } else {
+            return value >>> 1;
+        }
+    }
+
+    
+
+
+
+
+
+
+    private Calendar readDate() throws IOException {
+        long ts = readVarLong();
+
+        TimeZone tz;
+        if ((ts & 1) == 0) {
+            tz = COMMON_TIMEZONES[0];
+            ts >>= 1; 
+        } else if ((ts & 2) == 0) {
+            tz = COMMON_TIMEZONES[((int) ts >> 2) & 0x1f]; 
+            ts >>= 7;
+        } else {
+            int m = ((int) ts << 19) >> 21; 
+            int h = m / 60;
+            String s;
+            if (m < 0) {
+                s = String.format("GMT-%02d:%02d", -h, h * 60 - m);
+            } else {
+                s = String.format("GMT+%02d:%02d", h, m - h * 60);
+            }
+            tz = TimeZone.getTimeZone(s);
+            ts >>= 13;
+        }
+
+        int u = 0;
+        int s = 0;
+        int m = 0;
+        int h = 0;
+        int type = (int) ts & 3;
+        ts >>= 2;
+        switch (type) {
+        case 3:
+            u = (int) ts & 0x3fffffff; 
+            s = u / 1000;
+            m = s / 60;
+            h = m / 60;
+            m -= h * 60;
+            s -= (h * 60 + m) * 60;
+            u -= ((h * 60 + m) * 60 + s) * 1000;
+            ts >>= 30;
+            break;
+        case 2:
+            m = (int) ts & 0x07ff; 
+            h = m / 60;
+            m -= h * 60;
+            ts >>= 11;
+            break;
+        case 1:
+            h = (int) ts & 0x1f; 
+            ts >>= 5;
+            break;
+        }
+
+        int d = (int) ts & 0x01ff; 
+        ts >>= 9;
+        int y = (int) (ts + 2010);
+
+        Calendar value = Calendar.getInstance(tz);
+        if (y <= 0) {
+            value.set(Calendar.YEAR, 1 - y);
+            value.set(Calendar.ERA, GregorianCalendar.BC);
+        } else {
+            value.set(Calendar.YEAR, y);
+            value.set(Calendar.ERA, GregorianCalendar.AD);
+        }
+        value.set(Calendar.DAY_OF_YEAR, d);
+        value.set(Calendar.HOUR_OF_DAY, h);
+        value.set(Calendar.MINUTE, m);
+        value.set(Calendar.SECOND, s);
+        value.set(Calendar.MILLISECOND, u);
+
+        return value;
+    }
+
+    private String readString() throws IOException {
+        if (version >= BundleBinding.VERSION_3) {
+            return new String(readBytes(0, 0), "UTF-8");
+        } else {
+            return in.readUTF();
+        }
+    }
+
+    private byte[] readBytes(int len, int base) throws IOException {
+        if (len == base) {
+            len += readVarInt();
+        }
+        byte[] bytes = new byte[len];
+        in.readFully(bytes);
+        return bytes;
+    }
+
+}

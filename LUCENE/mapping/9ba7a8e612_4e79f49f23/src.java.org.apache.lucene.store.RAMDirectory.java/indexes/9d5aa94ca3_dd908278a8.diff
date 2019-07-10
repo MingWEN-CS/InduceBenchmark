@@ -1,0 +1,177 @@
+24c24
+< import java.util.Hashtable;
+---
+> import java.util.Collection;
+26,29c26,28
+< 
+< import org.apache.lucene.store.Directory;
+< import org.apache.lucene.store.IndexInput;
+< import org.apache.lucene.store.IndexOutput;
+---
+> import java.util.HashMap;
+> import java.util.Iterator;
+> import java.util.Set;
+42c41,48
+<   Hashtable files = new Hashtable();
+---
+>   private HashMap fileMap = new HashMap();
+>   private Set fileNames = fileMap.keySet();
+>   private Collection files = fileMap.values();
+>   long sizeInBytes = 0;
+>   
+>   
+>   
+>   
+110c116
+<     String[] result = new String[files.size()];
+---
+>     String[] result = new String[fileNames.size()];
+112,114c118,120
+<     Enumeration names = files.keys();
+<     while (names.hasMoreElements())
+<       result[i++] = (String)names.nextElement();
+---
+>     Iterator it = fileNames.iterator();
+>     while (it.hasNext())
+>       result[i++] = (String)it.next();
+120c126,129
+<     RAMFile file = (RAMFile)files.get(name);
+---
+>     RAMFile file;
+>     synchronized (this) {
+>       file = (RAMFile)fileMap.get(name);
+>     }
+125,127c134,143
+<   public final long fileModified(String name) {
+<     RAMFile file = (RAMFile)files.get(name);
+<     return file.lastModified;
+---
+> 
+> 
+>   public final long fileModified(String name) throws IOException {
+>     RAMFile file;
+>     synchronized (this) {
+>       file = (RAMFile)fileMap.get(name);
+>     }
+>     if (file==null)
+>       throw new FileNotFoundException(name);
+>     return file.getLastModified();
+131d146
+<   public void touchFile(String name) {
+134c149,156
+<     RAMFile file = (RAMFile)files.get(name);
+---
+>   public void touchFile(String name) throws IOException {
+>     RAMFile file;
+>     synchronized (this) {
+>       file = (RAMFile)fileMap.get(name);
+>     }
+>     if (file==null)
+>       throw new FileNotFoundException(name);
+>     
+141,143d162
+< 
+< 
+< 
+144a164,166
+>     
+>     file.setLastModified(ts2);
+>   }
+146,147c168
+<     file.lastModified = ts2;
+< 
+---
+>   
+149a171,178
+>   public final long fileLength(String name) throws IOException {
+>     RAMFile file;
+>     synchronized (this) {
+>       file = (RAMFile)fileMap.get(name);
+>     }
+>     if (file==null)
+>       throw new FileNotFoundException(name);
+>     return file.getLength();
+151d179
+< 
+153,155c181,183
+<   public final long fileLength(String name) {
+<     RAMFile file = (RAMFile)files.get(name);
+<     return file.length;
+---
+>   
+>   public synchronized final long sizeInBytes() {
+>     return sizeInBytes;
+157d184
+< 
+159,160c186,192
+<   public final void deleteFile(String name) {
+<     files.remove(name);
+---
+>   
+>   public synchronized final long getRecomputedSizeInBytes() {
+>     long size = 0;
+>     Iterator it = files.iterator();
+>     while (it.hasNext())
+>       size += ((RAMFile) it.next()).getSizeInBytes();
+>     return size;
+164,167c196,205
+<   public final void renameFile(String from, String to) {
+<     RAMFile file = (RAMFile)files.get(from);
+<     files.remove(from);
+<     files.put(to, file);
+---
+> 
+> 
+>   public synchronized final void deleteFile(String name) throws IOException {
+>     RAMFile file = (RAMFile)fileMap.get(name);
+>     if (file!=null) {
+>         fileMap.remove(name);
+>         file.directory = null;
+>         sizeInBytes -= file.sizeInBytes;       
+>     } else
+>       throw new FileNotFoundException(name);
+171a210,224
+> 
+>   public synchronized final void renameFile(String from, String to) throws IOException {
+>     RAMFile fromFile = (RAMFile)fileMap.get(from);
+>     if (fromFile==null)
+>       throw new FileNotFoundException(from);
+>     RAMFile toFile = (RAMFile)fileMap.get(to);
+>     if (toFile!=null) {
+>       sizeInBytes -= toFile.sizeInBytes;       
+>       toFile.directory = null;
+>     }
+>     fileMap.remove(from);
+>     fileMap.put(to, fromFile);
+>   }
+> 
+>   
+173,174c226,234
+<     RAMFile file = new RAMFile();
+<     files.put(name, file);
+---
+>     RAMFile file = new RAMFile(this);
+>     synchronized (this) {
+>       RAMFile existing = (RAMFile)fileMap.get(name);
+>       if (existing!=null) {
+>         sizeInBytes -= existing.sizeInBytes;
+>         existing.directory = null;
+>       }
+>       fileMap.put(name, file);
+>     }
+180,182c240,242
+<     RAMFile file = (RAMFile)files.get(name);
+<     if (file == null) {
+<       throw new FileNotFoundException(name);
+---
+>     RAMFile file;
+>     synchronized (this) {
+>       file = (RAMFile)fileMap.get(name);
+183a244,245
+>     if (file == null)
+>       throw new FileNotFoundException(name);
+188a251,252
+>     fileMap = null;
+>     fileNames = null;
+190a255
+> 

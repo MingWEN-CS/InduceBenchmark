@@ -1,0 +1,104 @@
+28d27
+< import java.util.Set;
+63,65d61
+<     if (updateRequest.getDocuments() != null) {
+<       docIter = updateRequest.getDocuments().iterator();
+<     }
+73c69,71
+<     nl.add("delByIdMap", updateRequest.getDeleteByIdMap());
+---
+>     if (updateRequest.getDeleteByIdMap() != null) {
+>       nl.add("delByIdMap", updateRequest.getDeleteByIdMap());
+>     }
+75,76c73,81
+<     nl.add("docs", docIter);
+<     nl.add("docsMap", docMap);
+---
+> 
+>     if (docMap != null) {
+>       nl.add("docsMap", docMap.entrySet().iterator());
+>     } else {
+>       if (updateRequest.getDocuments() != null) {
+>         docIter = updateRequest.getDocuments().iterator();
+>       }
+>       nl.add("docs", docIter);
+>     }
+95c100
+<     Map<SolrInputDocument,Map<String,Object>>  docMap;
+---
+>     List<Entry<SolrInputDocument,Map<Object,Object>>>  docMap;
+135c140
+<         NamedList params = (NamedList) namedList[0].getVal(0);
+---
+>         NamedList params = (NamedList) namedList[0].get("params");
+137a143,144
+>         Integer commitWithin = null;
+>         Boolean overwrite = null;
+147c154,161
+<             handler.update(null, req);
+---
+>             handler.update(null, req, null, null);
+>           } else if (o instanceof Map.Entry){
+>             sdoc = (SolrInputDocument) ((Map.Entry) o).getKey();
+>             Map p = (Map) ((Map.Entry) o).getValue();
+>             if (p != null) {
+>               commitWithin = (Integer) p.get(UpdateRequest.COMMIT_WITHIN);
+>               overwrite = (Boolean) p.get(UpdateRequest.OVERWRITE);
+>             }
+148a163
+>           
+151c166
+<           handler.update(sdoc, updateRequest);
+---
+>           handler.update(sdoc, updateRequest, commitWithin, overwrite);
+155d169
+<     };
+156a171
+>     };
+163a179
+>       System.out.println("unmarchal params:" + params);
+172c188,192
+<     docMap =  (Map<SolrInputDocument,Map<String,Object>>) namedList[0].get("docsMap");
+---
+>     docMap =  (List<Entry<SolrInputDocument,Map<Object,Object>>>) namedList[0].get("docsMap");
+>     
+> 
+>     
+>     
+174,197d193
+<     if (doclist != null && !doclist.isEmpty()) {
+<       List<SolrInputDocument> solrInputDocs = new ArrayList<SolrInputDocument>();
+<       for (Object o : doclist) {
+<         if (o instanceof List) {
+<           solrInputDocs.add(listToSolrInputDocument((List<NamedList>)o));
+<         } else  {
+<           solrInputDocs.add((SolrInputDocument)o);
+<         }
+<       }
+<       updateRequest.add(solrInputDocs);
+<     }
+<     if (docMap != null && !docMap.isEmpty()) {
+<       Set<Entry<SolrInputDocument,Map<String,Object>>> entries = docMap.entrySet();
+<       for (Entry<SolrInputDocument,Map<String,Object>> entry : entries) {
+<         Map<String,Object> map = entry.getValue();
+<         Boolean overwrite = null;
+<         Integer commitWithin = null;
+<         if (map != null) {
+<           overwrite = (Boolean) map.get(UpdateRequest.OVERWRITE);
+<           commitWithin = (Integer) map.get(UpdateRequest.COMMIT_WITHIN);
+<         }
+<         updateRequest.add(entry.getKey(), commitWithin, overwrite);
+<       }
+<     }
+207c203
+<           Long version = (Long) params.get("ver");
+---
+>           Long version = (Long) params.get(UpdateRequest.VER);
+219a216
+>     
+221d217
+< 
+245c241
+<     public void update(SolrInputDocument document, UpdateRequest req);
+---
+>     public void update(SolrInputDocument document, UpdateRequest req, Integer commitWithin, Boolean override);

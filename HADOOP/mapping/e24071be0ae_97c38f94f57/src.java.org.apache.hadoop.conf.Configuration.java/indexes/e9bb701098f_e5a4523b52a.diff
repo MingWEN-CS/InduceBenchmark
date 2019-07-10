@@ -1,0 +1,42 @@
+49a50
+> import java.util.regex.PatternSyntaxException;
+840a842,880
+> 
+> 
+>   public Pattern getPattern(String name, Pattern defaultValue) {
+>     String valString = get(name);
+>     if (null == valString || "".equals(valString)) {
+>       return defaultValue;
+>     }
+>     try {
+>       return Pattern.compile(valString);
+>     } catch (PatternSyntaxException pse) {
+>       LOG.warn("Regular expression '" + valString + "' for property '" +
+>                name + "' not valid. Using default", pse);
+>       return defaultValue;
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public void setPattern(String name, Pattern pattern) {
+>     if (null == pattern) {
+>       set(name, null);
+>     } else {
+>       set(name, pattern.pattern());
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 

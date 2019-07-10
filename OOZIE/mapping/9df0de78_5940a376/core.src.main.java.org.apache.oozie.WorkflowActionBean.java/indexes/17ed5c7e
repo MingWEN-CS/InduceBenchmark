@@ -1,0 +1,1154 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.oozie;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
+import org.apache.hadoop.io.Writable;
+import org.apache.oozie.client.WorkflowAction;
+import org.apache.oozie.client.rest.JsonBean;
+import org.apache.oozie.client.rest.JsonTags;
+import org.apache.oozie.client.rest.JsonUtils;
+import org.apache.oozie.util.DateUtils;
+import org.apache.oozie.util.ParamChecker;
+import org.apache.oozie.util.PropertiesUtils;
+import org.apache.oozie.util.WritableUtils;
+import org.apache.openjpa.persistence.jdbc.Index;
+import org.apache.openjpa.persistence.jdbc.Strategy;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+
+
+
+
+@Entity
+@NamedQueries({
+
+    @NamedQuery(name = "UPDATE_ACTION", query = "update WorkflowActionBean a set a.conf = :conf, a.consoleUrl = :consoleUrl, a.data = :data, a.stats = :stats, a.externalChildIDs = :externalChildIDs, a.errorCode = :errorCode, a.errorMessage = :errorMessage, a.externalId = :externalId, a.externalStatus = :externalStatus, a.name = :name, a.cred = :cred , a.retries = :retries, a.trackerUri = :trackerUri, a.transition = :transition, a.type = :type, a.endTimestamp = :endTime, a.executionPath = :executionPath, a.lastCheckTimestamp = :lastCheckTime, a.logToken = :logToken, a.pending = :pending, a.pendingAgeTimestamp = :pendingAge, a.signalValue = :signalValue, a.slaXml = :slaXml, a.startTimestamp = :startTime, a.statusStr = :status, a.wfId=:wfId where a.id = :id"),
+
+    @NamedQuery(name = "UPDATE_ACTION_FOR_LAST_CHECKED_TIME", query = "update WorkflowActionBean a set a.lastCheckTimestamp = :lastCheckTime where a.id = :id"),
+
+    @NamedQuery(name = "UPDATE_ACTION_START", query = "update WorkflowActionBean a set a.startTimestamp = :startTime, a.externalChildIDs = :externalChildIDs, a.conf = :conf, a.errorCode = :errorCode, a.errorMessage = :errorMessage, a.startTimestamp = :startTime, a.externalId = :externalId, a.trackerUri = :trackerUri, a.consoleUrl = :consoleUrl, a.lastCheckTimestamp = :lastCheckTime, a.statusStr = :status, a.externalStatus = :externalStatus, a.data = :data, a.retries = :retries, a.pending = :pending, a.pendingAgeTimestamp = :pendingAge, a.userRetryCount = :userRetryCount where a.id = :id"),
+
+    @NamedQuery(name = "UPDATE_ACTION_CHECK", query = "update WorkflowActionBean a set a.userRetryCount = :userRetryCount, a.stats = :stats, a.externalChildIDs = :externalChildIDs, a.externalStatus = :externalStatus, a.statusStr = :status, a.data = :data, a.pending = :pending, a.errorCode = :errorCode, a.errorMessage = :errorMessage, a.lastCheckTimestamp = :lastCheckTime, a.retries = :retries, a.pendingAgeTimestamp = :pendingAge, a.startTimestamp = :startTime where a.id = :id"),
+
+    @NamedQuery(name = "UPDATE_ACTION_END", query = "update WorkflowActionBean a set a.stats = :stats, a.errorCode = :errorCode, a.errorMessage = :errorMessage, a.retries = :retries, a.endTimestamp = :endTime, a.statusStr = :status, a.retries = :retries, a.pending = :pending, a.pendingAgeTimestamp = :pendingAge, a.signalValue = :signalValue, a.userRetryCount = :userRetryCount, a.externalStatus = :externalStatus where a.id = :id"),
+
+    @NamedQuery(name = "UPDATE_ACTION_PENDING", query = "update WorkflowActionBean a set a.pending = :pending, a.pendingAgeTimestamp = :pendingAge where a.id = :id"),
+
+    @NamedQuery(name = "UPDATE_ACTION_STATUS_PENDING", query = "update WorkflowActionBean a set a.statusStr = :status, a.pending = :pending, a.pendingAgeTimestamp = :pendingAge where a.id = :id"),
+
+    @NamedQuery(name = "UPDATE_ACTION_PENDING_TRANS", query = "update WorkflowActionBean a set a.pending = :pending, a.pendingAgeTimestamp = :pendingAge, a.transition = :transition where a.id = :id"),
+
+    @NamedQuery(name = "UPDATE_ACTION_PENDING_TRANS_ERROR", query = "update WorkflowActionBean a set a.pending = :pending, a.pendingAgeTimestamp = :pendingAge, a.transition = :transition, a.errorCode = :errorCode, a.errorMessage = :errorMessage where a.id = :id"),
+
+    @NamedQuery(name = "DELETE_ACTION", query = "delete from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "DELETE_ACTIONS_FOR_WORKFLOW", query = "delete from WorkflowActionBean a where a.wfId = :wfId"),
+
+    @NamedQuery(name = "GET_ACTIONS", query = "select OBJECT(a) from WorkflowActionBean a"),
+
+    @NamedQuery(name = "GET_ACTION", query = "select OBJECT(a) from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTION_ID_TYPE_LASTCHECK", query = "select a.id, a.type, a.lastCheckTimestamp from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTION_FAIL", query = "select a.id, a.wfId, a.name, a.statusStr, a.pending, a.type, a.logToken, a.transition, a.errorCode, a.errorMessage from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTION_SIGNAL", query = "select a.id, a.wfId, a.name, a.statusStr, a.pending, a.type, a.logToken, a.transition, a.errorCode, a.errorMessage, a.executionPath, a.signalValue, a.slaXml from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTION_START", query = "select a.id, a.wfId, a.name, a.statusStr, a.pending, a.type, a.logToken, a.transition, a.retries, a.userRetryCount, a.userRetryMax, a.userRetryInterval, a.startTimestamp, a.endTimestamp, a.errorCode, a.errorMessage, a.cred, a.conf, a.slaXml from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTION_CHECK", query = "select a.id, a.wfId, a.name, a.statusStr, a.pending, a.type, a.logToken, a.transition, a.retries, a.trackerUri, a.startTimestamp, a.endTimestamp, a.lastCheckTimestamp, a.errorCode, a.errorMessage, a.externalId, a.externalStatus, a.externalChildIDs, a.conf from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTION_END", query = "select a.id, a.wfId, a.name, a.statusStr, a.pending, a.type, a.logToken, a.transition, a.retries, a.trackerUri, a.userRetryCount, a.userRetryMax, a.userRetryInterval, a.startTimestamp, a.endTimestamp, a.errorCode, a.errorMessage, a.externalId, a.externalStatus, a.externalChildIDs, a.conf, a.data, a.stats from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTION_KILL", query = "select a.id, a.wfId, a.name, a.statusStr, a.pending, a.type, a.logToken, a.transition, a.retries, a.trackerUri, a.startTimestamp, a.endTimestamp, a.errorCode, a.errorMessage, a.externalId, a.conf, a.data from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTION_COMPLETED", query = "select a.id, a.wfId, a.statusStr, a.type, a.logToken from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTION_FOR_UPDATE", query = "select OBJECT(a) from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTION_FOR_SLA", query = "select a.id, a.statusStr, a.startTimestamp, a.endTimestamp from WorkflowActionBean a where a.id = :id"),
+
+    @NamedQuery(name = "GET_ACTIONS_FOR_WORKFLOW", query = "select OBJECT(a) from WorkflowActionBean a where a.wfId = :wfId order by a.startTimestamp"),
+
+    @NamedQuery(name = "GET_ACTIONS_OF_WORKFLOW_FOR_UPDATE", query = "select OBJECT(a) from WorkflowActionBean a where a.wfId = :wfId order by a.startTimestamp"),
+
+    @NamedQuery(name = "GET_PENDING_ACTIONS", query = "select a.id, a.wfId, a.statusStr, a.type, a.pendingAgeTimestamp from WorkflowActionBean a where a.pending = 1 AND a.pendingAgeTimestamp < :pendingAge AND a.statusStr <> 'RUNNING'"),
+
+    @NamedQuery(name = "GET_RUNNING_ACTIONS", query = "select a.id from WorkflowActionBean a where a.pending = 1 AND a.statusStr = 'RUNNING' AND a.lastCheckTimestamp < :lastCheckTime"),
+
+    @NamedQuery(name = "GET_RETRY_MANUAL_ACTIONS", query = "select OBJECT(a) from WorkflowActionBean a where a.wfId = :wfId AND (a.statusStr = 'START_RETRY' OR a.statusStr = 'START_MANUAL' OR a.statusStr = 'END_RETRY' OR a.statusStr = 'END_MANUAL')"),
+
+    @NamedQuery(name = "GET_ACTIONS_FOR_WORKFLOW_RERUN", query = "select a.id, a.name, a.statusStr from WorkflowActionBean a where a.wfId = :wfId order by a.startTimestamp") })
+@Table(name = "WF_ACTIONS")
+public class WorkflowActionBean implements Writable, WorkflowAction, JsonBean {
+    @Id
+    private String id;
+
+    @Basic
+    @Index
+    @Column(name = "wf_id")
+    private String wfId = null;
+
+    @Basic
+    @Column(name = "created_time")
+    private Timestamp createdTimeTS = null;
+
+    @Basic
+    @Index
+    @Column(name = "status")
+    private String statusStr = WorkflowAction.Status.PREP.toString();
+
+    @Basic
+    @Column(name = "last_check_time")
+    private Timestamp lastCheckTimestamp;
+
+    @Basic
+    @Column(name = "end_time")
+    private Timestamp endTimestamp = null;
+
+    @Basic
+    @Column(name = "start_time")
+    private Timestamp startTimestamp = null;
+
+    @Basic
+    @Column(name = "execution_path", length = 1024)
+    private String executionPath = null;
+
+    @Basic
+    @Column(name = "pending")
+    private int pending = 0;
+
+    @Basic
+    @Index
+    @Column(name = "pending_age")
+    private Timestamp pendingAgeTimestamp = null;
+
+    @Basic
+    @Column(name = "signal_value")
+    private String signalValue = null;
+
+    @Basic
+    @Column(name = "log_token")
+    private String logToken = null;
+
+    @Basic
+    @Column(name = "sla_xml")
+    @Lob
+    @Strategy("org.apache.oozie.executor.jpa.StringBlobValueHandler")
+    private StringBlob slaXml;
+
+    @Basic
+    @Column(name = "name")
+    private String name = null;
+
+    @Basic
+    @Column(name = "cred")
+    private String cred = null;
+
+    @Basic
+    @Column(name = "type")
+    private String type = null;
+
+    @Basic
+    @Column(name = "conf")
+    @Lob
+    @Strategy("org.apache.oozie.executor.jpa.StringBlobValueHandler")
+    private StringBlob conf;
+
+    @Basic
+    @Column(name = "retries")
+    private int retries;
+
+    @Basic
+    @Column(name = "user_retry_count")
+    private int userRetryCount;
+
+    @Basic
+    @Column(name = "user_retry_max")
+    private int userRetryMax;
+
+    @Basic
+    @Column(name = "user_retry_interval")
+    private int userRetryInterval;
+
+    @Basic
+    @Column(name = "transition")
+    private String transition = null;
+
+    @Basic
+    @Column(name = "data")
+    @Lob
+    @Strategy("org.apache.oozie.executor.jpa.StringBlobValueHandler")
+    private StringBlob data;
+
+    @Basic
+    @Column(name = "stats")
+    @Lob
+    @Strategy("org.apache.oozie.executor.jpa.StringBlobValueHandler")
+    private StringBlob stats;
+
+    @Basic
+    @Column(name = "external_child_ids")
+    @Lob
+    @Strategy("org.apache.oozie.executor.jpa.StringBlobValueHandler")
+    private StringBlob externalChildIDs;
+
+    @Basic
+    @Column(name = "external_id")
+    private String externalId = null;
+
+    @Basic
+    @Column(name = "external_status")
+    private String externalStatus = null;
+
+    @Basic
+    @Column(name = "tracker_uri")
+    private String trackerUri = null;
+
+    @Basic
+    @Column(name = "console_url")
+    private String consoleUrl = null;
+
+    @Basic
+    @Column(name = "error_code")
+    private String errorCode = null;
+
+    @Column(name = "error_message", length = 500)
+    private String errorMessage = null;
+
+    
+
+
+    public WorkflowActionBean() {
+    }
+
+    
+
+
+
+
+
+
+    public void write(DataOutput dataOutput) throws IOException {
+        WritableUtils.writeStr(dataOutput, getId());
+        WritableUtils.writeStr(dataOutput, getName());
+        WritableUtils.writeStr(dataOutput, getCred());
+        WritableUtils.writeStr(dataOutput, getType());
+        WritableUtils.writeStr(dataOutput, getConf());
+        WritableUtils.writeStr(dataOutput, getStatusStr());
+        dataOutput.writeInt(getRetries());
+        dataOutput.writeLong((getStartTime() != null) ? getStartTime().getTime() : -1);
+        dataOutput.writeLong((getEndTime() != null) ? getEndTime().getTime() : -1);
+        dataOutput.writeLong((getLastCheckTime() != null) ? getLastCheckTime().getTime() : -1);
+        WritableUtils.writeStr(dataOutput, getTransition());
+        WritableUtils.writeStr(dataOutput, getData());
+        WritableUtils.writeStr(dataOutput, getStats());
+        WritableUtils.writeStr(dataOutput, getExternalChildIDs());
+        WritableUtils.writeStr(dataOutput, getExternalId());
+        WritableUtils.writeStr(dataOutput, getExternalStatus());
+        WritableUtils.writeStr(dataOutput, getTrackerUri());
+        WritableUtils.writeStr(dataOutput, getConsoleUrl());
+        WritableUtils.writeStr(dataOutput, getErrorCode());
+        WritableUtils.writeStr(dataOutput, getErrorMessage());
+        WritableUtils.writeStr(dataOutput, wfId);
+        WritableUtils.writeStr(dataOutput, executionPath);
+        dataOutput.writeInt(pending);
+        dataOutput.writeLong((getPendingAge() != null) ? getPendingAge().getTime() : -1);
+        WritableUtils.writeStr(dataOutput, signalValue);
+        WritableUtils.writeStr(dataOutput, logToken);
+        dataOutput.writeInt(getUserRetryCount());
+        dataOutput.writeInt(getUserRetryInterval());
+        dataOutput.writeInt(getUserRetryMax());
+    }
+
+    
+
+
+
+
+
+    public void readFields(DataInput dataInput) throws IOException {
+        setId(WritableUtils.readStr(dataInput));
+        setName(WritableUtils.readStr(dataInput));
+        setCred(WritableUtils.readStr(dataInput));
+        setType(WritableUtils.readStr(dataInput));
+        setConf(WritableUtils.readStr(dataInput));
+        setStatus(WorkflowAction.Status.valueOf(WritableUtils.readStr(dataInput)));
+        setRetries(dataInput.readInt());
+        long d = dataInput.readLong();
+        if (d != -1) {
+            setStartTime(new Date(d));
+        }
+        d = dataInput.readLong();
+        if (d != -1) {
+            setEndTime(new Date(d));
+        }
+        d = dataInput.readLong();
+        if (d != -1) {
+            setLastCheckTime(new Date(d));
+        }
+        setTransition(WritableUtils.readStr(dataInput));
+        setData(WritableUtils.readStr(dataInput));
+        setStats(WritableUtils.readStr(dataInput));
+        setExternalChildIDs(WritableUtils.readStr(dataInput));
+        setExternalId(WritableUtils.readStr(dataInput));
+        setExternalStatus(WritableUtils.readStr(dataInput));
+        setTrackerUri(WritableUtils.readStr(dataInput));
+        setConsoleUrl(WritableUtils.readStr(dataInput));
+        setErrorInfo(WritableUtils.readStr(dataInput), WritableUtils.readStr(dataInput));
+        wfId = WritableUtils.readStr(dataInput);
+        executionPath = WritableUtils.readStr(dataInput);
+        pending = dataInput.readInt();
+        d = dataInput.readLong();
+        if (d != -1) {
+            pendingAgeTimestamp = DateUtils.convertDateToTimestamp(new Date(d));
+        }
+        signalValue = WritableUtils.readStr(dataInput);
+        logToken = WritableUtils.readStr(dataInput);
+        setUserRetryCount(dataInput.readInt());
+        setUserRetryInterval(dataInput.readInt());
+        setUserRetryMax(dataInput.readInt());
+    }
+
+    
+
+
+
+
+    public boolean inTerminalState() {
+        boolean isTerminalState = false;
+        switch (WorkflowAction.Status.valueOf(statusStr)) {
+            case ERROR:
+            case FAILED:
+            case KILLED:
+            case OK:
+                isTerminalState = true;
+                break;
+            default:
+                break;
+        }
+        return isTerminalState;
+    }
+
+    
+
+
+
+
+    public boolean isExecutionComplete() {
+        return getStatus() == WorkflowAction.Status.DONE;
+    }
+
+    
+
+
+
+
+
+
+    public boolean isRetryOrManual() {
+        return (getStatus() == WorkflowAction.Status.START_RETRY || getStatus() == WorkflowAction.Status.START_MANUAL
+                || getStatus() == WorkflowAction.Status.END_RETRY || getStatus() == WorkflowAction.Status.END_MANUAL);
+    }
+
+    
+
+
+
+
+    public boolean isUserRetry() {
+        return (getStatus() == WorkflowAction.Status.USER_RETRY);
+    }
+
+    
+
+
+
+
+    public boolean isComplete() {
+        return getStatus() == WorkflowAction.Status.OK || getStatus() == WorkflowAction.Status.KILLED
+                || getStatus() == WorkflowAction.Status.ERROR;
+    }
+
+    
+
+
+
+
+    public boolean isTerminalWithFailure() {
+        boolean result = false;
+        switch (getStatus()) {
+            case FAILED:
+            case KILLED:
+            case ERROR:
+                result = true;
+        }
+        return result;
+    }
+
+    
+
+
+    public void setPendingOnly() {
+        pending = 1;
+    }
+
+    
+
+
+    public void setPending() {
+        pending = 1;
+        pendingAgeTimestamp = DateUtils.convertDateToTimestamp(new Date());
+    }
+
+    
+
+
+    public void setPending(int i) {
+        pending = i;
+    }
+
+    
+
+
+
+
+
+    public void setPendingAge(Date pendingAge) {
+        this.pendingAgeTimestamp = DateUtils.convertDateToTimestamp(pendingAge);
+    }
+
+    
+
+
+
+
+
+    public Date getPendingAge() {
+        return DateUtils.toDate(pendingAgeTimestamp);
+    }
+
+    
+
+
+
+
+    public boolean isPending() {
+        return pending == 1 ? true : false;
+    }
+
+    
+
+
+    public void resetPending() {
+        pending = 0;
+        pendingAgeTimestamp = null;
+    }
+
+    
+
+
+    public void resetPendingOnly() {
+        pending = 0;
+    }
+
+    
+
+
+    public void incRetries() {
+        setRetries(getRetries() + 1);
+    }
+
+    
+
+
+
+
+
+
+
+    public void setStartData(String externalId, String trackerUri, String consoleUrl) {
+        setExternalId(ParamChecker.notEmpty(externalId, "externalId"));
+        setTrackerUri(ParamChecker.notEmpty(trackerUri, "trackerUri"));
+        setConsoleUrl(ParamChecker.notEmpty(consoleUrl, "consoleUrl"));
+        Date now = new Date();
+        if (this.startTimestamp == null) {
+            setStartTime(now);
+        }
+        setLastCheckTime(now);
+        setStatus(Status.RUNNING);
+    }
+
+    
+
+
+
+
+
+
+
+    public void setExecutionData(String externalStatus, Properties actionData) {
+        setStatus(Status.DONE);
+        setExternalStatus(ParamChecker.notEmpty(externalStatus, "externalStatus"));
+        if (actionData != null) {
+            setData(PropertiesUtils.propertiesToString(actionData));
+        }
+    }
+
+    
+
+
+
+
+    public String getExecutionStats() {
+        return getStats();
+    }
+
+    
+
+
+
+
+    public void setExecutionStats(String jsonStats) {
+        setStats(jsonStats);
+    }
+
+    
+
+
+
+
+    @Override
+    public String getExternalChildIDs() {
+        return externalChildIDs == null ? null : externalChildIDs.getString();
+    }
+
+    
+
+
+
+
+    public void setExternalChildIDs(String externalChildIDs) {
+        if (this.externalChildIDs == null) {
+            this.externalChildIDs = new StringBlob(externalChildIDs);
+        }
+        else {
+            this.externalChildIDs.setString(externalChildIDs);
+        }
+    }
+
+    
+
+
+
+
+    public void setExternalChildIDsBlob(StringBlob externalChildIDs) {
+        this.externalChildIDs = externalChildIDs;
+    }
+
+    
+
+
+
+
+    public StringBlob getExternalChildIDsBlob() {
+        return externalChildIDs;
+    }
+
+    
+
+
+
+
+
+
+
+    public void setEndData(Status status, String signalValue) {
+        if (status == null || (status != Status.OK && status != Status.ERROR && status != Status.KILLED)) {
+            throw new IllegalArgumentException("Action status must be OK, ERROR or KILLED. Received ["
+                    + status.toString() + "]");
+        }
+        if (status == Status.OK) {
+            setErrorInfo(null, null);
+        }
+        setStatus(status);
+        setSignalValue(ParamChecker.notEmpty(signalValue, "signalValue"));
+    }
+
+    
+
+
+
+
+    public String getJobId() {
+        return wfId;
+    }
+
+    
+
+
+
+
+    public String getWfId() {
+        return wfId;
+    }
+
+    
+
+
+
+
+    public void setJobId(String id) {
+        this.wfId = id;
+    }
+
+    public void setSlaXml(String slaXmlStr) {
+        if (this.slaXml == null) {
+            this.slaXml = new StringBlob(slaXmlStr);
+        }
+        else {
+            this.slaXml.setString(slaXmlStr);
+        }
+    }
+
+    public String getSlaXml() {
+        return slaXml == null ? null : slaXml.getString();
+    }
+
+    public void setSlaXmlBlob(StringBlob slaXml) {
+        this.slaXml = slaXml;
+    }
+
+    public StringBlob getSlaXmlBlob() {
+        return slaXml;
+    }
+
+    
+
+
+
+
+    public void setStatus(Status val) {
+        this.statusStr = val.toString();
+    }
+
+    @Override
+    public Status getStatus() {
+        return Status.valueOf(this.statusStr);
+    }
+
+    
+
+
+
+
+    public void setStatusStr(String statusStr) {
+        this.statusStr = statusStr;
+    }
+
+    
+
+
+
+
+    public String getStatusStr() {
+        return statusStr;
+    }
+
+    
+
+
+
+
+    public String getExecutionPath() {
+        return executionPath;
+    }
+
+    
+
+
+
+
+    public void setExecutionPath(String executionPath) {
+        this.executionPath = executionPath;
+    }
+
+    
+
+
+
+
+
+
+
+    public String getSignalValue() {
+        return signalValue;
+    }
+
+    
+
+
+
+
+
+
+
+    public void setSignalValue(String signalValue) {
+        this.signalValue = signalValue;
+    }
+
+    
+
+
+
+
+    public String getLogToken() {
+        return logToken;
+    }
+
+    
+
+
+
+
+    public void setLogToken(String logToken) {
+        this.logToken = logToken;
+    }
+
+    
+
+
+
+
+    public Date getLastCheckTime() {
+        return DateUtils.toDate(lastCheckTimestamp);
+    }
+
+    
+
+
+
+
+    public Timestamp getLastCheckTimestamp() {
+        return lastCheckTimestamp;
+    }
+
+    
+
+
+
+
+    public Timestamp getStartTimestamp() {
+        return startTimestamp;
+    }
+
+    
+
+
+
+
+    public Timestamp getEndTimestamp() {
+        return endTimestamp;
+    }
+
+    
+
+
+
+
+    public Timestamp getPendingAgeTimestamp() {
+        return pendingAgeTimestamp;
+    }
+
+    
+
+
+
+
+    public void setLastCheckTime(Date lastCheckTime) {
+        this.lastCheckTimestamp = DateUtils.convertDateToTimestamp(lastCheckTime);
+    }
+
+    public int getPending() {
+        return this.pending;
+    }
+
+    @Override
+    public Date getStartTime() {
+        return DateUtils.toDate(startTimestamp);
+    }
+
+    
+
+
+
+
+    public void setStartTime(Date startTime) {
+        this.startTimestamp = DateUtils.convertDateToTimestamp(startTime);
+    }
+
+    @Override
+    public Date getEndTime() {
+        return DateUtils.toDate(endTimestamp);
+    }
+
+    
+
+
+
+
+    public void setEndTime(Date endTime) {
+        this.endTimestamp = DateUtils.convertDateToTimestamp(endTime);
+    }
+
+    @SuppressWarnings("unchecked")
+    public JSONObject toJSONObject() {
+        return toJSONObject("GMT");
+    }
+
+    @SuppressWarnings("unchecked")
+    public JSONObject toJSONObject(String timeZoneId) {
+        JSONObject json = new JSONObject();
+        json.put(JsonTags.WORKFLOW_ACTION_ID, id);
+        json.put(JsonTags.WORKFLOW_ACTION_NAME, name);
+        json.put(JsonTags.WORKFLOW_ACTION_AUTH, cred);
+        json.put(JsonTags.WORKFLOW_ACTION_TYPE, type);
+        json.put(JsonTags.WORKFLOW_ACTION_CONF, getConf());
+        json.put(JsonTags.WORKFLOW_ACTION_STATUS, statusStr);
+        json.put(JsonTags.WORKFLOW_ACTION_RETRIES, (long) retries);
+        json.put(JsonTags.WORKFLOW_ACTION_START_TIME, JsonUtils.formatDateRfc822(getStartTime(), timeZoneId));
+        json.put(JsonTags.WORKFLOW_ACTION_END_TIME, JsonUtils.formatDateRfc822(getEndTime(), timeZoneId));
+        json.put(JsonTags.WORKFLOW_ACTION_TRANSITION, transition);
+        json.put(JsonTags.WORKFLOW_ACTION_DATA, getData());
+        json.put(JsonTags.WORKFLOW_ACTION_STATS, getStats());
+        json.put(JsonTags.WORKFLOW_ACTION_EXTERNAL_CHILD_IDS, getExternalChildIDs());
+        json.put(JsonTags.WORKFLOW_ACTION_EXTERNAL_ID, externalId);
+        json.put(JsonTags.WORKFLOW_ACTION_EXTERNAL_STATUS, externalStatus);
+        json.put(JsonTags.WORKFLOW_ACTION_TRACKER_URI, trackerUri);
+        json.put(JsonTags.WORKFLOW_ACTION_CONSOLE_URL, consoleUrl);
+        json.put(JsonTags.WORKFLOW_ACTION_ERROR_CODE, errorCode);
+        json.put(JsonTags.WORKFLOW_ACTION_ERROR_MESSAGE, errorMessage);
+        json.put(JsonTags.TO_STRING, toString());
+        return json;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Timestamp getCreatedTimestamp() {
+        return createdTimeTS;
+    }
+
+    public Date getCreatedTime() {
+        return DateUtils.toDate(createdTimeTS);
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTimeTS = DateUtils.convertDateToTimestamp(createdTime);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getCred() {
+        return cred;
+    }
+
+    public void setCred(String cred) {
+        this.cred = cred;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Override
+    public String getConf() {
+        return conf == null ? null : conf.getString();
+    }
+
+    public void setConf(String conf) {
+        if (this.conf == null) {
+            this.conf = new StringBlob(conf);
+        }
+        else {
+            this.conf.setString(conf);
+        }
+    }
+
+    public void setConfBlob(StringBlob conf) {
+        this.conf = conf;
+    }
+
+    public StringBlob getConfBlob() {
+        return conf;
+    }
+
+    @Override
+    public int getRetries() {
+        return retries;
+    }
+
+    public void setRetries(int retries) {
+        this.retries = retries;
+    }
+
+    @Override
+    public int getUserRetryCount() {
+        return userRetryCount;
+    }
+
+    public void setUserRetryCount(int retryCount) {
+        this.userRetryCount = retryCount;
+    }
+
+    public void incrmentUserRetryCount() {
+        this.userRetryCount++;
+    }
+
+    @Override
+    public int getUserRetryMax() {
+        return userRetryMax;
+    }
+
+    
+
+
+
+
+    public void setUserRetryMax(int retryMax) {
+        this.userRetryMax = retryMax;
+    }
+
+    @Override
+    public int getUserRetryInterval() {
+        return userRetryInterval;
+    }
+
+    public void setUserRetryInterval(int retryInterval) {
+        this.userRetryInterval = retryInterval;
+    }
+
+    @Override
+    public String getTransition() {
+        return transition;
+    }
+
+    
+
+
+
+
+    public void setTransition(String transition) {
+        this.transition = transition;
+    }
+
+    @Override
+    public String getData() {
+        return data == null ? null : data.getString();
+    }
+
+    
+
+
+
+
+    public void setData(String data) {
+        if (this.data == null) {
+            this.data = new StringBlob(data);
+        }
+        else {
+            this.data.setString(data);
+        }
+    }
+
+    public void setDataBlob(StringBlob data) {
+        this.data = data;
+    }
+
+    public StringBlob getDataBlob() {
+        return data;
+    }
+
+    @Override
+    public String getStats() {
+        return stats == null ? null : stats.getString();
+    }
+
+    
+
+
+
+
+    public void setStats(String stats) {
+        if (this.stats == null) {
+            this.stats = new StringBlob(stats);
+        }
+        else {
+            this.stats.setString(stats);
+        }
+    }
+
+    public void setStatsBlob(StringBlob stats) {
+        this.stats = stats;
+    }
+
+    public StringBlob getStatsBlob() {
+        return this.stats;
+    }
+
+    @Override
+    public String getExternalId() {
+        return externalId;
+    }
+
+    
+
+
+
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
+    @Override
+    public String getExternalStatus() {
+        return externalStatus;
+    }
+
+    
+
+
+
+
+    public void setExternalStatus(String externalStatus) {
+        this.externalStatus = externalStatus;
+    }
+
+    @Override
+    public String getTrackerUri() {
+        return trackerUri;
+    }
+
+    
+
+
+
+
+    public void setTrackerUri(String trackerUri) {
+        this.trackerUri = trackerUri;
+    }
+
+    @Override
+    public String getConsoleUrl() {
+        return consoleUrl;
+    }
+
+    
+
+
+
+
+    public void setConsoleUrl(String consoleUrl) {
+        this.consoleUrl = consoleUrl;
+    }
+
+    @Override
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    @Override
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    
+
+
+
+
+
+    public void setErrorInfo(String errorCode, String errorMessage) {
+        this.errorCode = errorCode;
+        if (errorMessage != null && errorMessage.length() > 500) {
+            errorMessage = errorMessage.substring(0, 500);
+        }
+        this.errorMessage = errorMessage;
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format("Action name[{0}] status[{1}]", getName(), getStatus());
+    }
+
+    
+
+
+
+
+
+
+    @SuppressWarnings("unchecked")
+    public static JSONArray toJSONArray(List<WorkflowActionBean> nodes, String timeZoneId) {
+        JSONArray array = new JSONArray();
+        for (WorkflowActionBean node : nodes) {
+            array.add(node.toJSONObject(timeZoneId));
+        }
+        return array;
+    }
+
+}

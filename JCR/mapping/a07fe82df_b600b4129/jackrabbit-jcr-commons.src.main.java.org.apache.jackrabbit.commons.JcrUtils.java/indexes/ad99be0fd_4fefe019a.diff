@@ -1,0 +1,22 @@
+1545a1546,1566
+>         
+>         
+>         String fullPath = baseNode.getPath().equals("/") ? "/" + path : baseNode.getPath() + "/" + path;
+>         int currentIndex = fullPath.lastIndexOf('/');
+>         String temp = fullPath;
+>         String existingPath = null;
+>         while (currentIndex > 0) {
+>             temp = temp.substring(0, currentIndex);
+>             
+>             if (baseNode.getSession().itemExists(temp)) {
+>                 existingPath = temp;
+>                 break;
+>             }
+>             currentIndex = temp.lastIndexOf("/");
+>         }
+> 
+>         if (existingPath != null) {
+>             baseNode = baseNode.getSession().getNode(existingPath);
+>             path = path.substring(existingPath.length() + 1);
+>         }
+> 

@@ -1,0 +1,6 @@
+38d37
+< import org.apache.lucene.util.StringHelper;
+227c226
+<     String idName = StringHelper.intern(ffs.keyField.getName());
+---
+>     String idName = ffs.keyField.getName();

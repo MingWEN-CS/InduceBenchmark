@@ -1,0 +1,10 @@
+96,101c96,97
+<   private final Cache<Long, Object> walErrors;
+<   {
+<     
+<     walErrors = CacheBuilder.newBuilder().maximumSize(HALT_AFTER_ERROR_COUNT).expireAfterWrite(10, TimeUnit.SECONDS).build();
+<   }
+< 
+---
+>   
+>   private final Cache<Long,Object> walErrors = CacheBuilder.newBuilder().maximumSize(HALT_AFTER_ERROR_COUNT).expireAfterWrite(10, TimeUnit.SECONDS).build();

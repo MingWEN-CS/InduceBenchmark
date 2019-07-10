@@ -1,0 +1,136 @@
+18a19,20
+> import org.apache.jackrabbit.core.SessionImpl;
+> import org.apache.jackrabbit.core.query.lucene.hits.AbstractHitCollector;
+21d22
+< import org.apache.lucene.search.HitCollector;
+26d26
+< import org.apache.lucene.search.Weight;
+28c28
+< import org.apache.jackrabbit.core.SessionImpl;
+---
+> import org.apache.lucene.search.Weight;
+36c36
+< import java.util.Set;
+---
+> import java.util.Iterator;
+37a38
+> import java.util.Set;
+39d39
+< import java.util.Iterator;
+45a46
+> @SuppressWarnings("serial")
+174c175
+<     protected Weight createWeight(Searcher searcher) {
+---
+>     public Weight createWeight(Searcher searcher) {
+324c325
+<     private class DescendantSelfAxisWeight implements Weight {
+---
+>     private class DescendantSelfAxisWeight extends Weight {
+379,381c380,383
+<         public Scorer scorer(IndexReader reader) throws IOException {
+<             contextScorer = contextQuery.weight(searcher).scorer(reader);
+<             subScorer = subQuery.weight(searcher).scorer(reader);
+---
+>         public Scorer scorer(IndexReader reader, boolean scoreDocsInOrder,
+>                 boolean topScorer) throws IOException {
+>             contextScorer = contextQuery.weight(searcher).scorer(reader, scoreDocsInOrder, topScorer);
+>             subScorer = subQuery.weight(searcher).scorer(reader, scoreDocsInOrder, topScorer);
+433a436,440
+>         private int currentDoc = -1;
+> 
+>         
+> 
+> 
+447,453c454,457
+<         
+< 
+< 
+<         public boolean next() throws IOException {
+<             collectContextHits();
+<             if (!subScorer.next() || contextHits.isEmpty()) {
+<                 return false;
+---
+>         @Override
+>         public int nextDoc() throws IOException {
+>             if (currentDoc == NO_MORE_DOCS) {
+>                 return currentDoc;
+455,456d458
+<             int nextDoc = subScorer.doc();
+<             while (nextDoc > -1) {
+458,459c460,467
+<                 if (isValid(nextDoc)) {
+<                     return true;
+---
+>             collectContextHits();
+>             currentDoc = subScorer.nextDoc();
+>             if (contextHits.isEmpty()) {
+>                 currentDoc = NO_MORE_DOCS;
+>             }
+>             while (currentDoc != NO_MORE_DOCS) {
+>                 if (isValid(currentDoc)) {
+>                     return currentDoc;
+463c471
+<                 nextDoc = subScorer.next() ? subScorer.doc() : -1;
+---
+>                 currentDoc = subScorer.nextDoc();
+465c473
+<             return false;
+---
+>             return currentDoc;
+468,472c476,478
+<         
+< 
+< 
+<         public int doc() {
+<             return subScorer.doc();
+---
+>         @Override
+>         public int docID() {
+>             return currentDoc;
+475,477c481
+<         
+< 
+< 
+---
+>         @Override
+482,483c486,490
+<         
+< 
+---
+>         @Override
+>         public int advance(int target) throws IOException {
+>             if (currentDoc == NO_MORE_DOCS) {
+>                 return currentDoc;
+>             }
+485,489c492,494
+<         public boolean skipTo(int target) throws IOException {
+<             boolean match = subScorer.skipTo(target);
+<             if (match) {
+<                 collectContextHits();
+<                 return isValid(subScorer.doc()) || next();
+---
+>             currentDoc = subScorer.nextDoc();
+>             if (currentDoc == NO_MORE_DOCS) {
+>                 return NO_MORE_DOCS;
+491c496,497
+<                 return false;
+---
+>                 collectContextHits();
+>                 return isValid(currentDoc) ? currentDoc : nextDoc();
+498,499c504,506
+<                 contextScorer.score(new HitCollector() {
+<                     public void collect(int doc, float score) {
+---
+>                 contextScorer.score(new AbstractHitCollector() {
+>                     @Override
+>                     protected void collect(int doc, float score) {
+520,527d526
+<         public Explanation explain(int doc) throws IOException {
+<             throw new UnsupportedOperationException();
+<         }
+< 
+<         
+< 
+< 
+< 

@@ -1,0 +1,49 @@
+63a64,66
+> import org.apache.tika.exception.TikaException;
+> import org.apache.tika.fork.ForkParser;
+> import org.apache.tika.metadata.Metadata;
+64a68
+> import org.apache.tika.parser.ParseContext;
+68a73
+> import org.xml.sax.ContentHandler;
+221a227,232
+>     private String forkJavaCommand = null;
+> 
+>     
+> 
+> 
+> 
+902a914,933
+>     public String getForkJavaCommand() {
+>         return forkJavaCommand;
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+>     public void setForkJavaCommand(String command) {
+>         this.forkJavaCommand = command;
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+935c966,975
+<             parser = new AutoDetectParser(config);
+---
+>             if (forkJavaCommand == null) {
+>                 parser = new AutoDetectParser(config);
+>             } else {
+>                 ForkParser forkParser = new ForkParser(
+>                         SearchIndex.class.getClassLoader(),
+>                         new AutoDetectParser(config));
+>                 forkParser.setJavaCommand(forkJavaCommand);
+>                 forkParser.setPoolSize(extractorPoolSize);
+>                 parser = forkParser;
+>             }

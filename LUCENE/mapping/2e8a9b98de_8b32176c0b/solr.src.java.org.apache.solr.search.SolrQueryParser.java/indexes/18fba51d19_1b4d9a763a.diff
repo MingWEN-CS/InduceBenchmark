@@ -1,0 +1,8 @@
+131c131
+<   protected Query getFieldQuery(String field, String queryText, boolean quoted) throws ParseException {
+---
+>   protected Query getFieldQuery(String field, String queryText) throws ParseException {
+155c155
+<     return super.getFieldQuery(field, queryText, quoted);
+---
+>     return super.getFieldQuery(field, queryText);

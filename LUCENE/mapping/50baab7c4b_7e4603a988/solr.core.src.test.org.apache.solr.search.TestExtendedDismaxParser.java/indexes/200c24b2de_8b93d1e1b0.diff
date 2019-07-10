@@ -1,0 +1,18 @@
+82a83,99
+>   @Test
+>   public void testSyntax() throws Exception {
+>     
+>     assertJQ(req("defType","edismax", "q","*", "df","doesnotexist_s")
+>         ,"/response/docs/[0]=="   
+>     );
+>     assertJQ(req("defType","edismax", "q","doesnotexist_s:*")
+>         ,"/response/numFound==0"   
+>     );
+>     assertJQ(req("defType","edismax","q","doesnotexist_s:*")
+>         ,"/response/numFound==0"   
+>     );
+>     assertJQ(req("defType","edismax","q","doesnotexist_s:( * * * )")
+>         ,"/response/numFound==0"   
+>     );
+>   }
+> 

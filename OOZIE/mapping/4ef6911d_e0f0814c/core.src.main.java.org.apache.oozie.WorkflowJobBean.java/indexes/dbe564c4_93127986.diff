@@ -1,0 +1,18 @@
+65a66,67
+>     @NamedQuery(name = "GET_WORKFLOW_FOR_SLA", query = "select w.id, w.status, w.startTimestamp, w.endTimestamp from WorkflowJobBean w where w.id = :id"),
+> 
+194a197,210
+>     public boolean inTerminalState() {
+>         boolean inTerminalState = false;
+>         switch (WorkflowJob.Status.valueOf(status)) {
+>             case FAILED:
+>             case KILLED:
+>             case SUCCEEDED:
+>                 inTerminalState = true;
+>                 break;
+>             default:
+>                 break;
+>         }
+>         return inTerminalState;
+>     }
+> 

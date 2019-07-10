@@ -1,0 +1,18 @@
+260c260
+<       Map<String, String> properties = extractProperties(requestMap);
+---
+>       Map<String, Object> properties = extractProperties(requestMap);
+465,466c465,466
+<   private Map<String, String> extractProperties(Map<String, Object> requestMap) {
+<     Map<String, String> normalizedMap = new HashMap<String, String>(
+---
+>   private Map<String, Object> extractProperties(Map<String, Object> requestMap) {
+>     Map<String, Object> normalizedMap = new HashMap<String, Object>(
+475c475
+<         normalizedMap.put(propKey, entry.getValue().toString());
+---
+>         normalizedMap.put(propKey, entry.getValue());
+487c487
+<   private void validateTargetConfig(String notificationType, Map<String, String> properties) {
+---
+>   private void validateTargetConfig(String notificationType, Map<String, Object> properties) {

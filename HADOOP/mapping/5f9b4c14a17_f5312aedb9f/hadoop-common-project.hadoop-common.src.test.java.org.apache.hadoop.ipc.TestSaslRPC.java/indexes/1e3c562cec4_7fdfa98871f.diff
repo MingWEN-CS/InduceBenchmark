@@ -1,0 +1,28 @@
+337c337
+<       proxy = (TestSaslProtocol) RPC.getProxy(TestSaslProtocol.class,
+---
+>       proxy = RPC.getProxy(TestSaslProtocol.class,
+418c418
+<       proxy1 = (TestSaslProtocol) RPC.getProxy(TestSaslProtocol.class,
+---
+>       proxy1 = RPC.getProxy(TestSaslProtocol.class,
+425c425
+<       proxy2 = (TestSaslProtocol) RPC.getProxy(TestSaslProtocol.class,
+---
+>       proxy2 = RPC.getProxy(TestSaslProtocol.class,
+431c431
+<       proxy3 = (TestSaslProtocol) RPC.getProxy(TestSaslProtocol.class,
+---
+>       proxy3 = RPC.getProxy(TestSaslProtocol.class,
+471c471
+<       proxy = (TestSaslProtocol) RPC.getProxy(TestSaslProtocol.class,
+---
+>       proxy = RPC.getProxy(TestSaslProtocol.class,
+491c491
+<   public void testSaslPlainServerBadPassword() throws IOException {
+---
+>   public void testSaslPlainServerBadPassword() {
+827c827
+<             proxy = (TestSaslProtocol) RPC.getProxy(TestSaslProtocol.class,
+---
+>             proxy = RPC.getProxy(TestSaslProtocol.class,

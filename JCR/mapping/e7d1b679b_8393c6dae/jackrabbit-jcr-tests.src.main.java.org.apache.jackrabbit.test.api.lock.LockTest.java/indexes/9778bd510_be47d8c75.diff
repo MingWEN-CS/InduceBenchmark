@@ -1,0 +1,12 @@
+114a115
+>         String lt = lock.getLockToken();
+126,128c127,131
+<             
+<             assertNull("Lock token must be null for other session",
+<                     n2.getLock().getLockToken());
+---
+>             Lock lock2 = n2.getLock();
+>             assertNotNull("other session must see the lock", lock2);
+>             String lt2 = lock2.getLockToken();
+>             assertTrue("other session must either not get the lock token, or see the actual one (tokens: " + lt + ", " + lt2 + ")",
+>                     lt2 == null || lt2.equals(lt));

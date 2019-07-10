@@ -1,0 +1,58 @@
+34a35
+> import java.io.Closeable;
+40d40
+< import java.util.Collections;
+47d46
+< import java.util.concurrent.ConcurrentHashMap;
+54c53
+< public class ZkStateReader {
+---
+> public class ZkStateReader implements Closeable {
+77a77,79
+>   public static final String REPLICATION_FACTOR = "replicationFactor";
+>   public static final String MAX_SHARDS_PER_NODE = "maxShardsPerNode";
+>   public static final String AUTO_ADD_REPLICAS = "autoAddReplicas";
+93,94c95,96
+< 
+<   private volatile ClusterState clusterState;
+---
+>   
+>   protected volatile ClusterState clusterState;
+103d104
+< 
+133c134
+< 
+---
+>   
+443c444
+<           log.info("Updating cloud state from ZooKeeper... ");
+---
+>           log.debug("Updating cloud state from ZooKeeper... ");
+447c448
+<           log.info("Updating live nodes from ZooKeeper... ({})", liveNodesSet.size());
+---
+>           log.debug("Updating live nodes from ZooKeeper... ({})", liveNodesSet.size());
+456c457
+<         log.info("Cloud state update for ZooKeeper already scheduled");
+---
+>         log.debug("Cloud state update for ZooKeeper already scheduled");
+459c460
+<       log.info("Scheduling cloud state update from ZooKeeper...");
+---
+>       log.debug("Scheduling cloud state update from ZooKeeper...");
+465c466
+<           log.info("Updating cluster state from ZooKeeper...");
+---
+>           log.debug("Updating cluster state from ZooKeeper...");
+476c477
+<                 log.info("Updating cloud state from ZooKeeper... ");
+---
+>                 log.debug("Updating cloud state from ZooKeeper... ");
+480c481
+<                 log.info("Updating live nodes from ZooKeeper... ");
+---
+>                 log.debug("Updating live nodes from ZooKeeper... ");
+646c647
+<       if(getZkClient().exists(ZkStateReader.CLUSTER_PROPS,true)){
+---
+>       if(getZkClient().exists(ZkStateReader.CLUSTER_PROPS, true)){

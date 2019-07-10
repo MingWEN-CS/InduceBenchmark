@@ -1,0 +1,80 @@
+39a40,43
+> import java.util.Arrays;
+> import java.util.Collections;
+> import java.util.Comparator;
+> import java.util.Date;
+47a52,53
+>     private final Date FAR_INTO_THE_FUTURE = new Date(Long.MAX_VALUE);
+> 
+156a163
+>     private ActionEndTimesComparator actionEndTimesComparator = null;
+170a178,182
+>     public LiteWorkflowInstance(LiteWorkflowApp def, Configuration conf, String instanceId, Map<String, Date> actionEndTimes) {
+>         this(def, conf, instanceId);
+>         actionEndTimesComparator = new ActionEndTimesComparator(actionEndTimes);
+>     }
+> 
+296a309,318
+> 
+>                             
+>                             
+>                             
+>                             
+>                             
+>                             if (actionEndTimesComparator != null && pathsToStart.size() > 1) {
+>                                 Collections.sort(pathsToStart, actionEndTimesComparator);
+>                             }
+> 
+587a610,617
+>         if (actionEndTimesComparator != null) {
+>             Map<String, Date> actionEndTimes = actionEndTimesComparator.getActionEndTimes();
+>             dOut.writeInt(actionEndTimes.size());
+>             for (Map.Entry<String, Date> entry : actionEndTimes.entrySet()) {
+>                 dOut.writeUTF(entry.getKey());
+>                 dOut.writeLong(entry.getValue().getTime());
+>             }
+>         }
+618a649,663
+>         int numActionEndTimes = -1;
+>         try {
+>             numActionEndTimes = dIn.readInt();
+>         } catch (IOException ioe) {
+>             
+>         }
+>         if (numActionEndTimes > 0) {
+>             Map<String, Date> actionEndTimes = new HashMap<String, Date>(numActionEndTimes);
+>             for (int x = 0; x < numActionEndTimes; x++) {
+>                 String name = dIn.readUTF();
+>                 long endTime = dIn.readLong();
+>                 actionEndTimes.put(name, new Date(endTime));
+>             }
+>             actionEndTimesComparator = new ActionEndTimesComparator(actionEndTimes);
+>         }
+673a719,745
+>     private class ActionEndTimesComparator implements Comparator<String> {
+> 
+>         private final Map<String, Date> actionEndTimes;
+> 
+>         public ActionEndTimesComparator(Map<String, Date> actionEndTimes) {
+>             this.actionEndTimes = actionEndTimes;
+>         }
+> 
+>         @Override
+>         public int compare(String node1, String node2) {
+>             Date date1 = FAR_INTO_THE_FUTURE;
+>             Date date2 = FAR_INTO_THE_FUTURE;
+>             NodeInstance node1Instance = executionPaths.get(node1);
+>             if (node1Instance != null) {
+>                 date1 = this.actionEndTimes.get(node1Instance.nodeName);
+>             }
+>             NodeInstance node2Instance = executionPaths.get(node2);
+>             if (node2Instance != null) {
+>                 date2 = this.actionEndTimes.get(node2Instance.nodeName);
+>             }
+>             return date1.compareTo(date2);
+>         }
+> 
+>         public Map<String, Date> getActionEndTimes() {
+>             return actionEndTimes;
+>         }
+>     }

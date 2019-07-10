@@ -1,0 +1,19 @@
+409c409
+<         schema, coreDescriptor, updateHandler, prev);
+---
+>         schema, coreDescriptor, updateHandler, this.solrDelPolicy, prev);
+619c619
+<     this(name, dataDir, config, schema, cd, null, null);
+---
+>     this(name, dataDir, config, schema, cd, null, null, null);
+655c655
+<   public SolrCore(String name, String dataDir, SolrConfig config, IndexSchema schema, CoreDescriptor cd, UpdateHandler updateHandler, SolrCore prev) {
+---
+>   public SolrCore(String name, String dataDir, SolrConfig config, IndexSchema schema, CoreDescriptor cd, UpdateHandler updateHandler, IndexDeletionPolicyWrapper delPolicy, SolrCore prev) {
+729c729
+<       if (updateHandler == null) {
+---
+>       if (delPolicy == null) {
+730a731,732
+>       } else {
+>         this.solrDelPolicy = delPolicy;

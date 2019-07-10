@@ -1,0 +1,275 @@
+105a106
+> import com.google.common.base.Strings;
+2836a2838,2841
+>   public void writeXml(Writer out) throws IOException {
+>     writeXml(null, out);
+>   }
+> 
+2843,2844c2848,2868
+<   public void writeXml(Writer out) throws IOException {
+<     Document doc = asXmlDocument();
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public void writeXml(String propertyName, Writer out)
+>       throws IOException, IllegalArgumentException {
+>     Document doc = asXmlDocument(propertyName);
+2864c2888,2889
+<   private synchronized Document asXmlDocument() throws IOException {
+---
+>   private synchronized Document asXmlDocument(String propertyName)
+>       throws IOException, IllegalArgumentException {
+2867,2868c2892,2895
+<       doc =
+<         DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+---
+>       doc = DocumentBuilderFactory
+>           .newInstance()
+>           .newDocumentBuilder()
+>           .newDocument();
+2871a2899
+> 
+2876,2904c2904,2913
+<     for (Enumeration<Object> e = properties.keys(); e.hasMoreElements();) {
+<       String name = (String)e.nextElement();
+<       Object object = properties.get(name);
+<       String value = null;
+<       if (object instanceof String) {
+<         value = (String) object;
+<       }else {
+<         continue;
+<       }
+<       Element propNode = doc.createElement("property");
+<       conf.appendChild(propNode);
+< 
+<       Element nameNode = doc.createElement("name");
+<       nameNode.appendChild(doc.createTextNode(name));
+<       propNode.appendChild(nameNode);
+< 
+<       Element valueNode = doc.createElement("value");
+<       valueNode.appendChild(doc.createTextNode(value));
+<       propNode.appendChild(valueNode);
+< 
+<       if (updatingResource != null) {
+<         String[] sources = updatingResource.get(name);
+<         if(sources != null) {
+<           for(String s : sources) {
+<             Element sourceNode = doc.createElement("source");
+<             sourceNode.appendChild(doc.createTextNode(s));
+<             propNode.appendChild(sourceNode);
+<           }
+<         }
+---
+> 
+>     if(!Strings.isNullOrEmpty(propertyName)) {
+>       if (!properties.containsKey(propertyName)) {
+>         
+>         throw new IllegalArgumentException("Property " +
+>             propertyName + " not found");
+>       } else {
+>         
+>         appendXMLProperty(doc, conf, propertyName);
+>         conf.appendChild(doc.createTextNode("\n"));
+2905a2915
+>     } else {
+2907c2917,2920
+<       conf.appendChild(doc.createTextNode("\n"));
+---
+>       for (Enumeration<Object> e = properties.keys(); e.hasMoreElements();) {
+>         appendXMLProperty(doc, conf, (String)e.nextElement());
+>         conf.appendChild(doc.createTextNode("\n"));
+>       }
+2919a2933,3061
+>   private synchronized void appendXMLProperty(Document doc, Element conf,
+>       String propertyName) {
+>     
+>     if (!Strings.isNullOrEmpty(propertyName)) {
+>       String value = properties.getProperty(propertyName);
+>       if (value != null) {
+>         Element propNode = doc.createElement("property");
+>         conf.appendChild(propNode);
+> 
+>         Element nameNode = doc.createElement("name");
+>         nameNode.appendChild(doc.createTextNode(propertyName));
+>         propNode.appendChild(nameNode);
+> 
+>         Element valueNode = doc.createElement("value");
+>         valueNode.appendChild(doc.createTextNode(
+>             properties.getProperty(propertyName)));
+>         propNode.appendChild(valueNode);
+> 
+>         Element finalNode = doc.createElement("final");
+>         finalNode.appendChild(doc.createTextNode(
+>             String.valueOf(finalParameters.contains(propertyName))));
+>         propNode.appendChild(finalNode);
+> 
+>         if (updatingResource != null) {
+>           String[] sources = updatingResource.get(propertyName);
+>           if(sources != null) {
+>             for(String s : sources) {
+>               Element sourceNode = doc.createElement("source");
+>               sourceNode.appendChild(doc.createTextNode(s));
+>               propNode.appendChild(sourceNode);
+>             }
+>           }
+>         }
+>       }
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static void dumpConfiguration(Configuration config,
+>       String propertyName, Writer out) throws IOException {
+>     if(Strings.isNullOrEmpty(propertyName)) {
+>       dumpConfiguration(config, out);
+>     } else if (Strings.isNullOrEmpty(config.get(propertyName))) {
+>       throw new IllegalArgumentException("Property " +
+>           propertyName + " not found");
+>     } else {
+>       JsonFactory dumpFactory = new JsonFactory();
+>       JsonGenerator dumpGenerator = dumpFactory.createJsonGenerator(out);
+>       dumpGenerator.writeStartObject();
+>       dumpGenerator.writeFieldName("property");
+>       appendJSONProperty(dumpGenerator, config, propertyName);
+>       dumpGenerator.writeEndObject();
+>       dumpGenerator.flush();
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+2933,2945c3075,3077
+<         dumpGenerator.writeStartObject();
+<         dumpGenerator.writeStringField("key", (String) item.getKey());
+<         dumpGenerator.writeStringField("value", 
+<                                        config.get((String) item.getKey()));
+<         dumpGenerator.writeBooleanField("isFinal",
+<                                         config.finalParameters.contains(item.getKey()));
+<         String[] resources = config.updatingResource.get(item.getKey());
+<         String resource = UNKNOWN_RESOURCE;
+<         if(resources != null && resources.length > 0) {
+<           resource = resources[0];
+<         }
+<         dumpGenerator.writeStringField("resource", resource);
+<         dumpGenerator.writeEndObject();
+---
+>         appendJSONProperty(dumpGenerator,
+>             config,
+>             item.getKey().toString());
+2951a3084
+> 
+2952a3086,3112
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private static void appendJSONProperty(JsonGenerator jsonGen,
+>       Configuration config, String name) throws IOException {
+>     
+>     if(!Strings.isNullOrEmpty(name) && jsonGen != null) {
+>       jsonGen.writeStartObject();
+>       jsonGen.writeStringField("key", name);
+>       jsonGen.writeStringField("value", config.get(name));
+>       jsonGen.writeBooleanField("isFinal",
+>           config.finalParameters.contains(name));
+>       String[] resources = config.updatingResource.get(name);
+>       String resource = UNKNOWN_RESOURCE;
+>       if(resources != null && resources.length > 0) {
+>         resource = resources[0];
+>       }
+>       jsonGen.writeStringField("resource", resource);
+>       jsonGen.writeEndObject();
+>     }
+>   }
+> 

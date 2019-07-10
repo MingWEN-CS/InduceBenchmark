@@ -1,0 +1,752 @@
+21a22,28
+> import org.apache.ambari.server.topology.Cardinality;
+> import org.apache.ambari.server.topology.ClusterTopology;
+> import org.apache.ambari.server.topology.Configuration;
+> import org.apache.ambari.server.topology.HostGroupInfo;
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+> 
+27a35
+> import java.util.Iterator;
+41a50,51
+>   protected final static Logger LOG = LoggerFactory.getLogger(BlueprintConfigurationProcessor.class);
+> 
+98,99d107
+< 
+< 
+103,105d110
+<   private Map<String, Map<String, String>> properties;
+< 
+< 
+107a113
+>   private ClusterTopology clusterTopology;
+110,112c116,117
+< 
+<   public BlueprintConfigurationProcessor(Map<String, Map<String, String>> properties) {
+<     this.properties = properties;
+---
+>   public BlueprintConfigurationProcessor(ClusterTopology clusterTopology) {
+>     this.clusterTopology = clusterTopology;
+115c120,121
+<   
+---
+>   public Collection<String> getRequiredHostGroups() {
+>     Collection<String> requiredHostGroups = new HashSet<String>();
+116a123,128
+>     for (Map<String, Map<String, PropertyUpdater>> updaterMap : createCollectionOfUpdaters()) {
+>       for (Map.Entry<String, Map<String, PropertyUpdater>> entry : updaterMap.entrySet()) {
+>         String type = entry.getKey();
+>         for (Map.Entry<String, PropertyUpdater> updaterEntry : entry.getValue().entrySet()) {
+>           String propertyName = updaterEntry.getKey();
+>           PropertyUpdater updater = updaterEntry.getValue();
+117a130,151
+>           
+>           Map<String, Map<String, String>> clusterProps = clusterTopology.getConfiguration().getFullProperties();
+>           Map<String, String> typeMap = clusterProps.get(type);
+>           if (typeMap != null && typeMap.containsKey(propertyName)) {
+>             requiredHostGroups.addAll(updater.getRequiredHostGroups(
+>                 typeMap.get(propertyName), clusterProps, clusterTopology));
+>           }
+> 
+>           
+>           for (HostGroupInfo groupInfo : clusterTopology.getHostGroupInfo().values()) {
+>             Map<String, Map<String, String>> hgConfigProps = groupInfo.getConfiguration().getProperties();
+>             Map<String, String> hgTypeMap = hgConfigProps.get(type);
+>             if (hgTypeMap != null && hgTypeMap.containsKey(propertyName)) {
+>               requiredHostGroups.addAll(updater.getRequiredHostGroups(
+>                   hgTypeMap.get(propertyName), hgConfigProps, clusterTopology));
+>             }
+>           }
+>         }
+>       }
+>     }
+>     return requiredHostGroups;
+>   }
+119a154
+>   
+122a158,161
+>   public void doUpdateForClusterCreate() throws ConfigurationTopologyException {
+>     Configuration clusterConfig = clusterTopology.getConfiguration();
+>     Map<String, Map<String, String>> clusterProps = clusterConfig.getFullProperties();
+>     Map<String, HostGroupInfo> groupInfoMap = clusterTopology.getHostGroupInfo();
+124d162
+<   public Map<String, Map<String, String>> doUpdateForClusterCreate(Map<String, ? extends HostGroup> hostGroups, Stack stackDefinition) {
+132c170,171
+<           Map<String, String> typeMap = properties.get(type);
+---
+>           
+>           Map<String, String> typeMap = clusterProps.get(type);
+134,135c173,185
+<             typeMap.put(propertyName, updater.updateForClusterCreate(
+<                 hostGroups, propertyName, typeMap.get(propertyName), properties, stackDefinition));
+---
+>             clusterConfig.setProperty(type, propertyName, updater.updateForClusterCreate(
+>                 propertyName, typeMap.get(propertyName), clusterProps, clusterTopology));
+>           }
+> 
+>           
+>           for (HostGroupInfo groupInfo : groupInfoMap.values()) {
+>             Configuration hgConfig = groupInfo.getConfiguration();
+>             Map<String, Map<String, String>> hgConfigProps = hgConfig.getProperties();
+>             Map<String, String> hgTypeMap = hgConfigProps.get(type);
+>             if (hgTypeMap != null && hgTypeMap.containsKey(propertyName)) {
+>               hgConfig.setProperty(type, propertyName, updater.updateForClusterCreate(
+>                   propertyName, hgTypeMap.get(propertyName), hgConfigProps, clusterTopology));
+>             }
+141c191,192
+<     if (isNameNodeHAEnabled()) {
+---
+>     
+>     if (clusterTopology.isNameNodeHAEnabled()) {
+143,146c194,198
+<       if (! isNameNodeHAInitialActiveNodeSet(properties) && ! isNameNodeHAInitialStandbyNodeSet(properties)) {
+<         Collection<HostGroup> listOfHostGroups = new LinkedList<HostGroup>();
+<         for (String key : hostGroups.keySet()) {
+<           listOfHostGroups.add(hostGroups.get(key));
+---
+>       if (! isNameNodeHAInitialActiveNodeSet(clusterProps) && ! isNameNodeHAInitialStandbyNodeSet(clusterProps)) {
+>         Collection<String> nnHosts = clusterTopology.getHostAssignmentsForComponent("NAMENODE");
+>         if (nnHosts.size() != 2) {
+>           throw new ConfigurationTopologyException("NAMENODE HA requires exactly 2 hosts running NAMENODE but there are: " +
+>               nnHosts.size() + " Hosts: " + nnHosts);
+149,150d200
+<         Collection<HostGroup> hostGroupsContainingNameNode =
+<           getHostGroupsForComponent("NAMENODE", listOfHostGroups);
+153,166c203,205
+<         Map<String, String> hadoopEnv = properties.get("hadoop-env");
+<         if (hostGroupsContainingNameNode.size() == 2) {
+<           List<HostGroup> listOfGroups = new LinkedList<HostGroup>(hostGroupsContainingNameNode);
+<           hadoopEnv.put("dfs_ha_initial_namenode_active", listOfGroups.get(0).getHostInfo().iterator().next());
+<           hadoopEnv.put("dfs_ha_initial_namenode_standby", listOfGroups.get(1).getHostInfo().iterator().next());
+<         } else {
+<           
+<           if (hostGroupsContainingNameNode.size() == 1) {
+<             List<String> listOfInfo = new LinkedList<String>(hostGroupsContainingNameNode.iterator().next().getHostInfo());
+<             
+<             hadoopEnv.put("dfs_ha_initial_namenode_active", listOfInfo.get(0));
+<             hadoopEnv.put("dfs_ha_initial_namenode_standby", listOfInfo.get(1));
+<           }
+<         }
+---
+>         Iterator<String> nnHostIterator = nnHosts.iterator();
+>         clusterConfig.setProperty("hadoop-env", "dfs_ha_initial_namenode_active", nnHostIterator.next());
+>         clusterConfig.setProperty("hadoop-env", "dfs_ha_initial_namenode_standby", nnHostIterator.next());
+168a208,231
+>     setMissingConfigurations(clusterProps);
+>   }
+> 
+>   
+> 
+> 
+> 
+>   
+>   public void doUpdateForBlueprintExport() {
+> 
+>     
+>     if (clusterTopology.isNameNodeHAEnabled()) {
+>       doNameNodeHAUpdate();
+>     }
+>     Collection<Map<String, Map<String, String>>> allConfigs = new ArrayList<Map<String, Map<String, String>>>();
+>     allConfigs.add(clusterTopology.getConfiguration().getFullProperties());
+>     for (HostGroupInfo groupInfo : clusterTopology.getHostGroupInfo().values()) {
+>       
+>       allConfigs.add(groupInfo.getConfiguration().getProperties());
+>     }
+> 
+>     for (Map<String, Map<String, String>> properties : allConfigs) {
+>       doSingleHostExportUpdate(singleHostTopologyUpdaters, properties);
+>       doSingleHostExportUpdate(dbHostTopologyUpdaters, properties);
+170c233,236
+<     return properties;
+---
+>       doMultiHostExportUpdate(multiHostTopologyUpdaters, properties);
+> 
+>       doRemovePropertyExport(removePropertyUpdaters, properties);
+>     }
+182c248
+<     return (isNameNodeHAEnabled()) ? addHAUpdaters(allUpdaters) : allUpdaters;
+---
+>     return (clusterTopology.isNameNodeHAEnabled()) ? addHAUpdaters(allUpdaters) : allUpdaters;
+218,239d283
+<   public Map<String, Map<String, String>> doUpdateForBlueprintExport(Collection<? extends HostGroup> hostGroups) {
+<     doSingleHostExportUpdate(hostGroups, singleHostTopologyUpdaters);
+<     doSingleHostExportUpdate(hostGroups, dbHostTopologyUpdaters);
+< 
+<     if (isNameNodeHAEnabled()) {
+<       doNameNodeHAUpdate(hostGroups);
+<     }
+< 
+<     doMultiHostExportUpdate(hostGroups, multiHostTopologyUpdaters);
+< 
+<     doRemovePropertyExport(removePropertyUpdaters);
+< 
+<     return properties;
+<   }
+< 
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+244a289,290
+>   private void doRemovePropertyExport(Map<String, Map<String, PropertyUpdater>> updaters,
+>                                       Map<String, Map<String, String>> properties) {
+246d291
+<   private void doRemovePropertyExport(Map<String, Map<String, PropertyUpdater>> updaters) {
+265,266c310
+< 
+<   public void doNameNodeHAUpdate(Collection<? extends HostGroup> hostGroups) {
+---
+>   public void doNameNodeHAUpdate() {
+271c315
+<       doSingleHostExportUpdate(hostGroups, highAvailabilityUpdaters);
+---
+>       doSingleHostExportUpdate(highAvailabilityUpdaters, clusterTopology.getConfiguration().getFullProperties());
+289c333,334
+<     Map<String, String> hdfsSiteConfig = properties.get("hdfs-site");
+---
+>     
+>     Map<String, String> hdfsSiteConfig = clusterTopology.getConfiguration().getFullProperties().get("hdfs-site");
+310,330d354
+<   boolean isNameNodeHAEnabled() {
+<     return isNameNodeHAEnabled(properties);
+<   }
+< 
+<   
+< 
+< 
+< 
+< 
+< 
+<   static boolean isNameNodeHAEnabled(Map<String, Map<String, String>> configProperties) {
+<     return configProperties.containsKey("hdfs-site") && configProperties.get("hdfs-site").containsKey("dfs.nameservices");
+<   }
+< 
+< 
+<   
+< 
+< 
+< 
+< 
+< 
+418,420c442
+< 
+<   private void doSingleHostExportUpdate(Collection<? extends HostGroup> hostGroups,
+<                                         Map<String, Map<String, PropertyUpdater>> updaters) {
+---
+>   private void doSingleHostExportUpdate(Map<String, Map<String, PropertyUpdater>> updaters, Map<String, Map<String, String>> properties) {
+430,431c452,454
+<           for (HostGroup group : hostGroups) {
+<             Collection<String> hosts = group.getHostInfo();
+---
+> 
+>           for (HostGroupInfo groupInfo : clusterTopology.getHostGroupInfo().values()) {
+>             Collection<String> hosts = groupInfo.getHostNames();
+437c460
+<                     host, "%HOSTGROUP::" + group.getName() + "%"));
+---
+>                     host, "%HOSTGROUP::" + groupInfo.getHostGroupName() + "%"));
+506,509c529
+< 
+<   private void doMultiHostExportUpdate(Collection<? extends HostGroup> hostGroups,
+<                                        Map<String, Map<String, PropertyUpdater>> updaters) {
+< 
+---
+>   private void doMultiHostExportUpdate(Map<String, Map<String, PropertyUpdater>> updaters, Map<String, Map<String, String>> properties) {
+516,517c536,537
+<           for (HostGroup group : hostGroups) {
+<             Collection<String> hosts = group.getHostInfo();
+---
+>           for (HostGroupInfo groupInfo : clusterTopology.getHostGroupInfo().values()) {
+>             Collection<String> hosts = groupInfo.getHostNames();
+519c539,540
+<               propValue = propValue.replaceAll(host + "\\b", "%HOSTGROUP::" + group.getName() + "%");
+---
+>               propValue = propValue.replaceAll(host + "\\b", "%HOSTGROUP::" +
+>                   groupInfo.getHostGroupName() + "%");
+560,570d580
+<   private static Collection<HostGroup> getHostGroupsForComponent(String component,
+<                                                                  Collection<? extends HostGroup> hostGroups) {
+< 
+<     Collection<HostGroup> resultGroups = new LinkedHashSet<HostGroup>();
+<     for (HostGroup group : hostGroups ) {
+<       if (group.getComponents().contains(component)) {
+<         resultGroups.add(group);
+<       }
+<     }
+<     return resultGroups;
+<   }
+573,581c583
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   private static Collection<String> getHostStrings(Map<String, ? extends HostGroup> hostGroups,
+<                                                    String val) {
+---
+>   private static Collection<String> getHostStrings(String val, ClusterTopology topology) {
+589,591c591,592
+< 
+<       HostGroup hostGroup = hostGroups.get(groupName);
+<       if (hostGroup == null) {
+---
+>       HostGroupInfo hostGroupInfo = topology.getHostGroupInfo().get(groupName);
+>       if (hostGroupInfo == null) {
+595c596,597
+<       for (String host : hostGroup.getHostInfo()) {
+---
+> 
+>       for (String host : hostGroupInfo.getHostNames()) {
+636a639,642
+>     public String updateForClusterCreate(String propertyName,
+>                                          String origValue,
+>                                          Map<String, Map<String, String>> properties,
+>                                          ClusterTopology topology);
+638,642c644,646
+< 
+< 
+<     public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+<                                          String propertyName, String origValue, Map<String, Map<String, String>> properties, Stack stackDefinition
+<     );
+---
+>     public Collection<String> getRequiredHostGroups(String origValue,
+>                                                     Map<String, Map<String, String>> properties,
+>                                                     ClusterTopology topology);
+649c653
+<   static class SingleHostTopologyUpdater implements PropertyUpdater {
+---
+>   private static class SingleHostTopologyUpdater implements PropertyUpdater {
+674,675d677
+< 
+< 
+677,678c679
+<     public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+<                                          String propertyName,
+---
+>     public String updateForClusterCreate(String propertyName,
+681c682
+<                                          Stack stackDefinition)  {
+---
+>                                          ClusterTopology topology)  {
+682a684
+>       
+686c688,696
+<         HostGroup hostGroup = hostGroups.get(hostGroupName);
+---
+> 
+>         HostGroupInfo groupInfo = topology.getHostGroupInfo().get(hostGroupName);
+>         if (groupInfo == null) {
+>           
+>           throw new RuntimeException(
+>               "Encountered a host group token in configuration which couldn't be matched to a host group: "
+>               + hostGroupName);
+>         }
+> 
+688c698
+<         return origValue.replace(m.group(0), hostGroup.getHostInfo().iterator().next());
+---
+>         return origValue.replace(m.group(0), groupInfo.getHostNames().iterator().next());
+690,692c700,704
+<         Collection<HostGroup> matchingGroups = getHostGroupsForComponent(component, hostGroups.values());
+<         if (matchingGroups.size() == 1) {
+<           return origValue.replace("localhost", matchingGroups.iterator().next().getHostInfo().iterator().next());
+---
+>         int matchingGroupCount = topology.getHostGroupsForComponent(component).size();
+>         if (matchingGroupCount == 1) {
+>           Collection<String> componentHosts = topology.getHostAssignmentsForComponent(component);
+>           
+>           return origValue.replace("localhost", componentHosts.iterator().next());
+694c706,707
+<           Cardinality cardinality = stackDefinition.getCardinality(component);
+---
+>           
+>           Cardinality cardinality = topology.getBlueprint().getStack().getCardinality(component);
+700c713
+<           if (matchingGroups.isEmpty() && cardinality.isValidCount(0)) {
+---
+>           if (matchingGroupCount == 0 && cardinality.isValidCount(0)) {
+703c716
+<             if (isNameNodeHAEnabled(properties) && isComponentNameNode() && (matchingGroups.size() == 2)) {
+---
+>             if (topology.isNameNodeHAEnabled() && isComponentNameNode() && (matchingGroupCount == 2)) {
+729c742
+<             if (isNameNodeHAEnabled(properties) && isComponentSecondaryNameNode() && (matchingGroups.isEmpty())) {
+---
+>             if (topology.isNameNodeHAEnabled() && isComponentSecondaryNameNode() && (matchingGroupCount == 0)) {
+735c748
+<             if (isYarnResourceManagerHAEnabled(properties) && isComponentResourceManager() && (matchingGroups.size() == 2)) {
+---
+>             if (isYarnResourceManagerHAEnabled(properties) && isComponentResourceManager() && (matchingGroupCount == 2)) {
+742c755
+<             if ((isOozieServerHAEnabled(properties)) && isComponentOozieServer() && (matchingGroups.size() > 1))     {
+---
+>             if ((isOozieServerHAEnabled(properties)) && isComponentOozieServer() && (matchingGroupCount > 1))     {
+749c762
+<             if ((isHiveServerHAEnabled(properties)) && isComponentHiveServer() && (matchingGroups.size() > 1)) {
+---
+>             if ((isHiveServerHAEnabled(properties)) && isComponentHiveServer() && (matchingGroupCount > 1)) {
+756c769
+<             if ((isComponentHiveMetaStoreServer()) && matchingGroups.size() > 1) {
+---
+>             if ((isComponentHiveMetaStoreServer()) && matchingGroupCount > 1) {
+770a784,824
+>     @Override
+>     public Collection<String> getRequiredHostGroups(String origValue,
+>                                                     Map<String, Map<String, String>> properties,
+>                                                     ClusterTopology topology) {
+>       
+>       Matcher m = HOSTGROUP_REGEX.matcher(origValue);
+>       if (m.find()) {
+>         String hostGroupName = m.group(1);
+>         return Collections.singleton(hostGroupName);
+>       } else {
+>         Collection<String> matchingGroups = topology.getHostGroupsForComponent(component);
+>         if (matchingGroups.size() == 1) {
+>           return Collections.singleton(matchingGroups.iterator().next());
+>         } else {
+>           if (topology.isNameNodeHAEnabled() && isComponentNameNode() && (matchingGroups.size() == 2)) {
+>             
+>             
+>             if (properties.containsKey("core-site") && properties.get("core-site").get("fs.defaultFS").equals(origValue)) {
+>               return Collections.emptySet();
+>             }
+> 
+>             if (properties.containsKey("hbase-site") && properties.get("hbase-site").get("hbase.rootdir").equals(origValue)) {
+>               
+>               
+>               return Collections.emptySet();
+>             }
+>           }
+> 
+>           if (topology.isNameNodeHAEnabled() && isComponentSecondaryNameNode() && (matchingGroups.isEmpty())) {
+>             
+>             
+>             return Collections.emptySet();
+>           }
+> 
+>           
+>           throw new IllegalArgumentException("Unable to determine required host groups for component. " +
+>               "Component '" + component + "' is not mapped to any host group or is mapped to multiple groups.");
+>         }
+>       }
+>     }
+> 
+866c920,923
+<     public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups, String propertyName, String origValue, Map<String, Map<String, String>> properties, Stack stackDefinition) {
+---
+>     public String updateForClusterCreate(String propertyName,
+>                                          String origValue,
+>                                          Map<String, Map<String, String>> properties,
+>                                          ClusterTopology topology) {
+868c925
+<         return super.updateForClusterCreate(hostGroups, propertyName, origValue, properties, stackDefinition);
+---
+>         return super.updateForClusterCreate(propertyName, origValue, properties, topology);
+873a931,942
+> 
+>     @Override
+>     public Collection<String> getRequiredHostGroups(String origValue,
+>                                                     Map<String, Map<String, String>> properties,
+>                                                     ClusterTopology topology) {
+> 
+>       try {
+>         return super.getRequiredHostGroups(origValue, properties, topology);
+>       } catch (IllegalArgumentException e) {
+>         return Collections.emptySet();
+>       }
+>     }
+919d987
+< 
+921,924c989,993
+<     public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+<                                          String propertyName,
+<                                          String origValue, Map<String, Map<String, String>> properties,
+<                                          Stack stackDefinition) {
+---
+> 
+>     public String updateForClusterCreate(String propertyName,
+>                                          String origValue,
+>                                          Map<String, Map<String, String>> properties,
+>                                          ClusterTopology topology) {
+927c996
+<         return super.updateForClusterCreate(hostGroups, propertyName, origValue, properties, stackDefinition);
+---
+>         return super.updateForClusterCreate(propertyName, origValue, properties, topology);
+951d1019
+< 
+1005,1007d1072
+< 
+< 
+< 
+1009,1010c1074
+<     public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+<                                          String propertyName,
+---
+>     public String updateForClusterCreate(String propertyName,
+1013c1077,1078
+<                                          Stack stackDefinition) {
+---
+>                                          ClusterTopology topology) {
+> 
+1017c1082
+<         (!origValue.contains("localhost"))) {
+---
+>           (!origValue.contains("localhost"))) {
+1024c1089
+<       Collection<String> hostStrings = getHostStrings(hostGroups, origValue);
+---
+>       Collection<String> hostStrings = getHostStrings(origValue, topology);
+1027c1092
+<         String port = null;
+---
+>         String port;
+1042,1049c1107,1109
+< 
+<         Collection<HostGroup> matchingGroups = getHostGroupsForComponent(component, hostGroups.values());
+<         for (HostGroup group : matchingGroups) {
+<           for (String host : group.getHostInfo()) {
+<             if (port != null) {
+<               host += ":" + port;
+<             }
+<             hostStrings.add(host);
+---
+>         for (String host : topology.getHostAssignmentsForComponent(component)) {
+>           if (port != null) {
+>             host += ":" + port;
+1050a1111
+>           hostStrings.add(host);
+1054,1055d1114
+< 
+< 
+1057d1115
+< 
+1078d1135
+< 
+1093,1095d1149
+< 
+< 
+< 
+1102,1103d1155
+< 
+< 
+1114a1167,1194
+> 
+>     @Override
+>     public Collection<String> getRequiredHostGroups(String origValue,
+>                                                     Map<String, Map<String, String>> properties,
+>                                                     ClusterTopology topology) {
+> 
+>       Collection<String> requiredHostGroups = new HashSet<String>();
+> 
+>       
+>       Matcher m = HOSTGROUP_PORT_REGEX.matcher(origValue);
+>       while (m.find()) {
+>         String groupName = m.group(1);
+> 
+>         if (!topology.getBlueprint().getHostGroups().containsKey(groupName)) {
+>           throw new IllegalArgumentException(
+>               "Unable to match blueprint host group token to a host group: " + groupName);
+>         }
+>         requiredHostGroups.add(groupName);
+>       }
+> 
+>       
+>       
+>       if (requiredHostGroups.isEmpty()) {
+>         requiredHostGroups.addAll(topology.getHostGroupsForComponent(component));
+>       }
+> 
+>       return requiredHostGroups;
+>     }
+1132d1211
+< 
+1134,1138c1213,1216
+<     public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+<                                          String propertyName,
+<                                          String origValue, Map<String,
+<                                          Map<String, String>> properties,
+<                                          Stack stackDefinition) {
+---
+>     public String updateForClusterCreate(String propertyName,
+>                                          String origValue,
+>                                          Map<String, Map<String, String>> properties,
+>                                          ClusterTopology topology) {
+1141a1220,1225
+> 
+>     @Override
+>     public Collection<String> getRequiredHostGroups(String origValue,
+>                                                     Map<String, Map<String, String>> properties, ClusterTopology topology) {
+>       return Collections.emptySet();
+>     }
+1170,1171c1254
+<     public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroupMap,
+<                                          String propertyName,
+---
+>     public String updateForClusterCreate(String propertyName,
+1174c1257
+<                                          Stack stackDefinition) {
+---
+>                                          ClusterTopology topology) {
+1176c1259
+<       return doFormat(propertyUpdater.updateForClusterCreate(hostGroupMap, propertyName, origValue, properties, stackDefinition));
+---
+>       return doFormat(propertyUpdater.updateForClusterCreate(propertyName, origValue, properties, topology));
+1186a1270,1276
+> 
+>     @Override
+>     public Collection<String> getRequiredHostGroups(String origValue,
+>                                                     Map<String, Map<String, String>> properties, ClusterTopology topology) {
+> 
+>       return propertyUpdater.getRequiredHostGroups(origValue, properties, topology);
+>     }
+1235,1237c1325,1327
+<     @Override
+<     public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+<                                          String propertyName, String origValue,
+---
+> 
+>     public String updateForClusterCreate(String propertyName,
+>                                          String origValue,
+1239c1329
+<                                          Stack stackDefinition) {
+---
+>                                          ClusterTopology topology) {
+1242a1333,1340
+> 
+>     @Override
+>     public Collection<String> getRequiredHostGroups(String origValue,
+>                                                     Map<String, Map<String, String>> properties,
+>                                                     ClusterTopology topology) {
+> 
+>       return Collections.emptySet();
+>     }
+1267c1365,1369
+<     public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups, String propertyName, String origValue, Map<String, Map<String, String>> properties, Stack stackDefinition) {
+---
+>     public String updateForClusterCreate(String propertyName,
+>                                          String origValue,
+>                                          Map<String, Map<String, String>> properties,
+>                                          ClusterTopology topology) {
+> 
+1276,1277c1378
+<       StringBuffer updatedResult = new StringBuffer();
+< 
+---
+>       StringBuilder updatedResult = new StringBuilder();
+1290c1391,1392
+<           String result = mapOfKeysToUpdaters.get(key).updateForClusterCreate(hostGroups, key, keyValuePair.split("=")[1], properties, stackDefinition);
+---
+>           String result = mapOfKeysToUpdaters.get(key).updateForClusterCreate(
+>               key, keyValuePair.split("=")[1], properties, topology);
+1293c1395,1397
+<           updatedResult.append(key + "=" + result.replaceAll(",", Matcher.quoteReplacement("\\,")));
+---
+>           updatedResult.append(key);
+>           updatedResult.append("=");
+>           updatedResult.append(result.replaceAll(",", Matcher.quoteReplacement("\\,")));
+1300a1405,1430
+> 
+>     @Override
+>     public Collection<String> getRequiredHostGroups(String origValue,
+>                                                     Map<String, Map<String, String>> properties,
+>                                                     ClusterTopology topology) {
+> 
+>       
+>       if (!origValue.contains("%HOSTGROUP") &&
+>           (!origValue.contains("localhost"))) {
+>         
+>         
+>         return Collections.emptySet();
+>       }
+> 
+>       Collection<String> requiredGroups = new HashSet<String>();
+>       
+>       String[] keyValuePairs = origValue.split(",");
+>       for (String keyValuePair : keyValuePairs) {
+>         String key = keyValuePair.split("=")[0];
+>         if (mapOfKeysToUpdaters.containsKey(key)) {
+>           requiredGroups.addAll(mapOfKeysToUpdaters.get(key).getRequiredHostGroups(
+>               keyValuePair.split("=")[1], properties, topology));
+>         }
+>       }
+>       return requiredGroups;
+>     }
+1380a1511,1514
+>     
+> 
+> 
+>     
+1491a1626,1693
+> 
+>   
+> 
+> 
+>   void setMissingConfigurations(Map<String, Map<String, String>> mapClusterConfigurations) {
+>     
+>     final Map<String , String> userProps = new HashMap<String , String>();
+> 
+>     Collection<String> services = clusterTopology.getBlueprint().getServices();
+>     
+>     
+>     if (services.contains("OOZIE")) {
+>       userProps.put("oozie_user", "oozie-env");
+>     }
+> 
+>     if (services.contains("HIVE")) {
+>       userProps.put("hive_user", "hive-env");
+>       userProps.put("hcat_user", "hive-env");
+>     }
+> 
+>     if (services.contains("HBASE")) {
+>       userProps.put("hbase_user", "hbase-env");
+>     }
+> 
+>     if (services.contains("FALCON")) {
+>       userProps.put("falcon_user", "falcon-env");
+>     }
+> 
+> 
+>     String proxyUserHosts  = "hadoop.proxyuser.%s.hosts";
+>     String proxyUserGroups = "hadoop.proxyuser.%s.groups";
+> 
+>     for (String property : userProps.keySet()) {
+>       String configType = userProps.get(property);
+>       Map<String, String> configs = mapClusterConfigurations.get(configType);
+>       if (configs != null) {
+>         String user = configs.get(property);
+>         if (user != null && !user.isEmpty()) {
+>           ensureProperty(mapClusterConfigurations, "core-site", String.format(proxyUserHosts, user), "*");
+>           ensureProperty(mapClusterConfigurations, "core-site", String.format(proxyUserGroups, user), "users");
+>         }
+>       } else {
+>         LOG.debug("setMissingConfigurations: no user configuration found for type = " + configType +
+>                   ".  This may be caused by an error in the blueprint configuration.");
+>       }
+> 
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private void ensureProperty(Map<String, Map<String, String>> mapClusterConfigurations, String type, String property, String defaultValue) {
+>     Map<String, String> properties = mapClusterConfigurations.get(type);
+>     if (properties == null) {
+>       properties = new HashMap<String, String>();
+>       mapClusterConfigurations.put(type, properties);
+>     }
+> 
+>     if (! properties.containsKey(property)) {
+>       properties.put(property, defaultValue);
+>     }
+>   }

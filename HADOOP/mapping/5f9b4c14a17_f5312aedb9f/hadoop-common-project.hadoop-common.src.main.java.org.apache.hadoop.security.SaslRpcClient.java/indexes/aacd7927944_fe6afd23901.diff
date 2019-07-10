@@ -1,0 +1,367 @@
+27a28,30
+> import java.net.InetSocketAddress;
+> import java.util.ArrayList;
+> import java.util.List;
+34a38
+> import javax.security.auth.kerberos.KerberosPrincipal;
+44a49
+> import org.apache.hadoop.conf.Configuration;
+60a66,67
+> import org.apache.hadoop.security.token.TokenInfo;
+> import org.apache.hadoop.security.token.TokenSelector;
+72,74c79,85
+<   private final AuthMethod authMethod;
+<   private final SaslClient saslClient;
+<   private final boolean fallbackAllowed;
+---
+>   private final UserGroupInformation ugi;
+>   private final Class<?> protocol;
+>   private final InetSocketAddress serverAddr;  
+>   private final Configuration conf;
+> 
+>   private SaslClient saslClient;
+>   
+90,95c101,178
+<   public SaslRpcClient(AuthMethod method,
+<       Token<? extends TokenIdentifier> token, String serverPrincipal,
+<       boolean fallbackAllowed)
+<       throws IOException {
+<     this.authMethod = method;
+<     this.fallbackAllowed = fallbackAllowed;
+---
+>   public SaslRpcClient(UserGroupInformation ugi, Class<?> protocol,
+>       InetSocketAddress serverAddr, Configuration conf) {
+>     this.ugi = ugi;
+>     this.protocol = protocol;
+>     this.serverAddr = serverAddr;
+>     this.conf = conf;
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private SaslAuth selectSaslClient(List<SaslAuth> authTypes)
+>       throws SaslException, AccessControlException, IOException {
+>     SaslAuth selectedAuthType = null;
+>     boolean switchToSimple = false;
+>     for (SaslAuth authType : authTypes) {
+>       if (!isValidAuthType(authType)) {
+>         continue; 
+>       }
+>       AuthMethod authMethod = AuthMethod.valueOf(authType.getMethod());
+>       if (authMethod == AuthMethod.SIMPLE) {
+>         switchToSimple = true;
+>       } else {
+>         saslClient = createSaslClient(authType);
+>         if (saslClient == null) { 
+>           continue;
+>         }
+>       }
+>       selectedAuthType = authType;
+>       break;
+>     }
+>     if (saslClient == null && !switchToSimple) {
+>       List<String> serverAuthMethods = new ArrayList<String>();
+>       for (SaslAuth authType : authTypes) {
+>         serverAuthMethods.add(authType.getMethod());
+>       }
+>       throw new AccessControlException(
+>           "Client cannot authenticate via:" + serverAuthMethods);
+>     }
+>     if (LOG.isDebugEnabled()) {
+>       LOG.debug("Use " + selectedAuthType.getMethod() +
+>           " authentication for protocol " + protocol.getSimpleName());
+>     }
+>     return selectedAuthType;
+>   }
+>   
+> 
+>   private boolean isValidAuthType(SaslAuth authType) {
+>     AuthMethod authMethod;
+>     try {
+>       authMethod = AuthMethod.valueOf(authType.getMethod());
+>     } catch (IllegalArgumentException iae) { 
+>       authMethod = null;
+>     }
+>     
+>     return authMethod != null &&
+>            authMethod.getMechanismName().equals(authType.getMechanism());
+>   }  
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private SaslClient createSaslClient(SaslAuth authType)
+>       throws SaslException, IOException {
+97,98c180,183
+<     String saslProtocol = null;
+<     String saslServerName = null;
+---
+>     
+>     
+>     final String saslProtocol = authType.getProtocol();
+>     final String saslServerName = authType.getServerId();
+101a187
+>     final AuthMethod method = AuthMethod.valueOf(authType.getMethod());
+104,105c190,193
+<         saslProtocol = "";
+<         saslServerName = SaslRpcServer.SASL_DEFAULT_REALM;
+---
+>         Token<?> token = getServerToken(authType);
+>         if (token == null) {
+>           return null; 
+>         }
+110,112c198,200
+<         if (serverPrincipal == null || serverPrincipal.isEmpty()) {
+<           throw new IOException(
+<               "Failed to specify server's Kerberos principal name");
+---
+>         if (ugi.getRealAuthenticationMethod().getAuthMethod() !=
+>             AuthMethod.KERBEROS) {
+>           return null; 
+114,120c202,208
+<         KerberosName name = new KerberosName(serverPrincipal);
+<         saslProtocol = name.getServiceName();
+<         saslServerName = name.getHostName();
+<         if (saslServerName == null) {
+<           throw new IOException(
+<               "Kerberos principal name does NOT have the expected hostname part: "
+<                   + serverPrincipal);
+---
+>         String serverPrincipal = getServerPrincipal(authType);
+>         if (serverPrincipal == null) {
+>           return null; 
+>         }
+>         if (LOG.isDebugEnabled()) {
+>           LOG.debug("RPC Server's Kerberos principal name for protocol="
+>               + protocol.getCanonicalName() + " is " + serverPrincipal);
+130c218
+<       LOG.debug("Creating SASL " + mechanism + "(" + authMethod + ") "
+---
+>       LOG.debug("Creating SASL " + mechanism + "(" + method + ") "
+133c221
+<     saslClient = Sasl.createSaslClient(
+---
+>     return Sasl.createSaslClient(
+136,137c224,245
+<     if (saslClient == null) {
+<       throw new IOException("Unable to find SASL client implementation");
+---
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   private Token<?> getServerToken(SaslAuth authType) throws IOException {
+>     TokenInfo tokenInfo = SecurityUtil.getTokenInfo(protocol, conf);
+>     LOG.debug("Get token info proto:"+protocol+" info:"+tokenInfo);
+>     if (tokenInfo == null) { 
+>       return null;
+>     }
+>     TokenSelector<?> tokenSelector = null;
+>     try {
+>       tokenSelector = tokenInfo.value().newInstance();
+>     } catch (InstantiationException e) {
+>       throw new IOException(e.toString());
+>     } catch (IllegalAccessException e) {
+>       throw new IOException(e.toString());
+138a247,248
+>     return tokenSelector.selectToken(
+>         SecurityUtil.buildTokenService(serverAddr), ugi.getTokens());
+139a250,258
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+141a261,296
+>   private String getServerPrincipal(SaslAuth authType) throws IOException {
+>     KerberosInfo krbInfo = SecurityUtil.getKerberosInfo(protocol, conf);
+>     LOG.debug("Get kerberos info proto:"+protocol+" info:"+krbInfo);
+>     if (krbInfo == null) { 
+>       return null;
+>     }
+>     String serverKey = krbInfo.serverPrincipal();
+>     if (serverKey == null) {
+>       throw new IllegalArgumentException(
+>           "Can't obtain server Kerberos config key from protocol="
+>               + protocol.getCanonicalName());
+>     }
+>     
+>     String confPrincipal = SecurityUtil.getServerPrincipal(
+>         conf.get(serverKey), serverAddr.getAddress());
+>     if (confPrincipal == null || confPrincipal.isEmpty()) {
+>       throw new IllegalArgumentException(
+>           "Failed to specify server's Kerberos principal name");
+>     }
+>     
+>     KerberosName name = new KerberosName(confPrincipal);
+>     if (name.getHostName() == null) {
+>       throw new IllegalArgumentException(
+>           "Kerberos principal name does NOT have the expected hostname part: "
+>               + confPrincipal);
+>     }
+>     
+>     KerberosPrincipal serverPrincipal = new KerberosPrincipal(
+>         authType.getProtocol() + "/" + authType.getServerId());
+>     if (!serverPrincipal.getName().equals(confPrincipal)) {
+>       throw new IllegalArgumentException(
+>           "Server has invalid Kerberos principal: " + serverPrincipal);
+>     }
+>     return confPrincipal;
+>   }
+>   
+142a298
+>   
+153c309
+<   public boolean saslConnect(InputStream inS, OutputStream outS)
+---
+>   public AuthMethod saslConnect(InputStream inS, OutputStream outS)
+160c316,317
+<     boolean inSasl = false;
+---
+>     AuthMethod authMethod = AuthMethod.SIMPLE;
+>     
+194d350
+<           inSasl = true;
+195a352,353
+>           SaslAuth saslAuthType = selectSaslClient(saslMessage.getAuthsList());
+>           authMethod = AuthMethod.valueOf(saslAuthType.getMethod());
+197,202c355,366
+<           String clientAuthMethod = authMethod.toString();
+<           SaslAuth saslAuthType = null;
+<           for (SaslAuth authType : saslMessage.getAuthsList()) {
+<             if (clientAuthMethod.equals(authType.getMethod())) {
+<               saslAuthType = authType;
+<               break;
+---
+>           byte[] responseToken = null;
+>           if (authMethod == AuthMethod.SIMPLE) { 
+>             done = true; 
+>           } else {
+>             byte[] challengeToken = null;
+>             if (saslAuthType.hasChallenge()) {
+>               
+>               challengeToken = saslAuthType.getChallenge().toByteArray();
+>               saslAuthType =
+>                   SaslAuth.newBuilder(saslAuthType).clearChallenge().build();
+>             } else if (saslClient.hasInitialResponse()) {
+>               challengeToken = new byte[0];
+203a368,370
+>             responseToken = (challengeToken != null)
+>                 ? saslClient.evaluateChallenge(challengeToken)
+>                     : new byte[0];
+205,224d371
+<           if (saslAuthType == null) {
+<             saslAuthType = SaslAuth.newBuilder()
+<                 .setMethod(clientAuthMethod)
+<                 .setMechanism(saslClient.getMechanismName())
+<                 .build();
+<           }
+<           
+<           byte[] challengeToken = null;
+<           if (saslAuthType != null && saslAuthType.hasChallenge()) {
+<             
+<             challengeToken = saslAuthType.getChallenge().toByteArray();
+<             saslAuthType =
+<               SaslAuth.newBuilder(saslAuthType).clearChallenge().build();
+<           } else if (saslClient.hasInitialResponse()) {
+<             challengeToken = new byte[0];
+<           }
+<           byte[] responseToken = (challengeToken != null)
+<               ? saslClient.evaluateChallenge(challengeToken)
+<               : new byte[0];
+<           
+230c377,381
+<           inSasl = true;
+---
+>           if (saslClient == null) {
+>             
+>             
+>             throw new SaslException("Server sent unsolicited challenge");
+>           }
+236,237c387,392
+<           if (inSasl && saslEvaluateToken(saslMessage, true) != null) {
+<             throw new SaslException("SASL client generated spurious token");
+---
+>           
+>           
+>           if (saslClient == null) {
+>             authMethod = AuthMethod.SIMPLE;
+>           } else {
+>             saslEvaluateToken(saslMessage, true);
+251,256c406
+<     if (!inSasl && !fallbackAllowed) {
+<       throw new IOException("Server asks us to fall back to SIMPLE " +
+<           "auth, but this client is configured to only allow secure " +
+<           "connections.");
+<     }
+<     return inSasl;
+---
+>     return authMethod;
+270a421,432
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+272c434
+<       boolean done) throws SaslException {
+---
+>       boolean serverIsDone) throws SaslException {
+277,278c439,441
+<     } else if (!done) {
+<       throw new SaslException("Challenge contains no token");
+---
+>     } else if (!serverIsDone) {
+>       
+>       throw new SaslException("Server challenge contains no token");
+280,281c443,451
+<     if (done && !saslClient.isComplete()) {
+<       throw new SaslException("Client is out of sync with server");
+---
+>     if (serverIsDone) {
+>       
+>       if (!saslClient.isComplete()) {
+>         throw new SaslException("Client is out of sync with server");
+>       }
+>       
+>       if (saslToken != null) {
+>         throw new SaslException("Client generated spurious response");        
+>       }
+330c500,503
+<     saslClient.dispose();
+---
+>     if (saslClient != null) {
+>       saslClient.dispose();
+>       saslClient = null;
+>     }

@@ -1,0 +1,18 @@
+758a759,766
+>       
+>       BytesRef bb = terms.getMin();
+>       assert bb.isValid();
+>       final BytesRef minTerm = bb == null ? null : BytesRef.deepCopyOf(bb);
+>       
+>       bb = terms.getMax();
+>       assert bb.isValid();
+>       final BytesRef maxTerm = bb == null ? null : BytesRef.deepCopyOf(bb);
+819a828,835
+>         if (term.compareTo(minTerm) < 0) {
+>           throw new RuntimeException("invalid term: term=" + term + ", minTerm=" + minTerm);
+>         }
+>         
+>         if (term.compareTo(maxTerm) > 0) {
+>           throw new RuntimeException("invalid term: term=" + term + ", maxTerm=" + maxTerm);
+>         }
+>         

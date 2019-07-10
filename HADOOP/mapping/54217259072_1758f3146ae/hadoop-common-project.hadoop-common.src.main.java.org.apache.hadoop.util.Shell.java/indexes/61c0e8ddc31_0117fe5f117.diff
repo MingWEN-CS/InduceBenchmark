@@ -1,0 +1,11 @@
+135a136,140
+> 
+> 
+> 
+> 
+> 
+139c144,145
+<                     : new String [] {"bash", "-c", "id -Gn " + user};
+---
+>                     : new String [] {"bash", "-c", "id -gn " + user
+>                                      + "&& id -Gn " + user};

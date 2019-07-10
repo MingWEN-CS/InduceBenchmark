@@ -1,0 +1,31 @@
+52c52
+<         GET_ACTION_ID_TYPE,
+---
+>         GET_ACTION_ID_TYPE_LASTCHECK,
+61c61,62
+<         GET_PENDING_ACTIONS
+---
+>         GET_PENDING_ACTIONS,
+>         GET_ACTIONS_FOR_WORKFLOW_RERUN
+209c210
+<             case GET_ACTION_ID_TYPE:
+---
+>             case GET_ACTION_ID_TYPE_LASTCHECK:
+227a229,231
+>             case GET_ACTIONS_FOR_WORKFLOW_RERUN:
+>                 query.setParameter("wfId", parameters[0]);
+>                 break;
+250c254
+<             case GET_ACTION_ID_TYPE:
+---
+>             case GET_ACTION_ID_TYPE_LASTCHECK:
+254a259
+>                 bean.setLastCheckTime(DateUtils.toDate((Timestamp) arr[2]));
+396a402,408
+>             case GET_ACTIONS_FOR_WORKFLOW_RERUN:
+>                 bean = new WorkflowActionBean();
+>                 arr = (Object[]) ret;
+>                 bean.setId((String) arr[0]);
+>                 bean.setName((String) arr[1]);
+>                 bean.setStatusStr((String) arr[2]);
+>                 break;

@@ -1,0 +1,7 @@
+27d26
+< import org.apache.hadoop.fs.permission.FsPermission;
+38c37,38
+<   private static final FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+---
+>   private static final FileContextTestHelper fileContextTestHelper =
+>       new FileContextTestHelper("/tmp/TestFcHdfsPermission");

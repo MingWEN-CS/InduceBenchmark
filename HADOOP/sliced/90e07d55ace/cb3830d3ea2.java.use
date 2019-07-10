@@ -1,0 +1,44 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+24	container	FilterContainer	param	58	define	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+23	conf	Configuration	param	58	define	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+11	ex	IOException	param	80	define	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+23	conf	Configuration	param	64	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+23	conf	Configuration	param	67	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+23	conf	Configuration	param	74	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+11	ex	IOException	param	81	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+11	ex	IOException	param	81	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+24	container	FilterContainer	param	86	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+25	filterConfig	Map<String,String>	variable	59	define	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+22	bindAddress	String	variable	74	define	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+26	principal	String	variable	75	define	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+16	entry	Map.Entry<String,String>	variable	64	define	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+17	name	String	variable	65	define	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+18	value	String	variable	67	define	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+25	filterConfig	Map<String,String>	variable	59	set	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+17	name	String	variable	65	set	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+18	value	String	variable	67	set	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+17	name	String	variable	68	set	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+22	bindAddress	String	variable	74	set	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+26	principal	String	variable	75	set	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+26	principal	String	variable	78	set	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+25	filterConfig	Map<String,String>	variable	62	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+20	COOKIE_PATH		variable	62	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+16	entry	Map.Entry<String,String>	variable	65	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+17	name	String	variable	66	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+27	AuthenticationFilterInitializer.PREFIX	String	variable	66	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+17	name	String	variable	67	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+17	name	String	variable	68	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+27	AuthenticationFilterInitializer.PREFIX	String	variable	68	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+25	filterConfig	Map<String,String>	variable	69	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+17	name	String	variable	69	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+18	value	String	variable	69	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+19	BIND_ADDRESS		variable	74	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+25	filterConfig	Map<String,String>	variable	75	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+21	PRINCIPAL		variable	75	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+26	principal	String	variable	76	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+26	principal	String	variable	78	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+22	bindAddress	String	variable	78	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+25	filterConfig	Map<String,String>	variable	83	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+21	PRINCIPAL		variable	83	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+26	principal	String	variable	83	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88
+25	filterConfig	Map<String,String>	variable	88	use	org.apache.hadoop.security.AuthenticationFilterInitializer.initFilter	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/90e07d55ace/cb3830d3ea2.java	58	88

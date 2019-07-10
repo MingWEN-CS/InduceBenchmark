@@ -1,0 +1,12 @@
+147a148
+>     expect(dbAccessor.tableHasColumn(UpgradeCatalog260.CLUSTER_CONFIG_TABLE, UpgradeCatalog260.SERVICE_DELETED_COLUMN)).andReturn(true).anyTimes();
+184a186,188
+>     Capture<DBColumnInfo> unapped = newCapture();
+>     expectRenameServiceDeletedColumn(unapped);
+> 
+220a225,229
+>   public  void expectRenameServiceDeletedColumn(Capture<DBColumnInfo> unmapped) throws SQLException {
+>     dbAccessor.renameColumn(eq(UpgradeCatalog260.CLUSTER_CONFIG_TABLE), eq(UpgradeCatalog260.SERVICE_DELETED_COLUMN), capture(unmapped));
+>     expectLastCall().once();
+>   }
+> 

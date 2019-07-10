@@ -1,0 +1,46 @@
+58d57
+< import org.apache.log4j.Logger;
+63a63,65
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+> 
+71c73
+<   private static Logger LOG = Logger.getLogger(LoggingRequestHelperImpl.class);
+---
+>   private static Logger LOG = LoggerFactory.getLogger(LoggingRequestHelperImpl.class);
+116a119,123
+>   private int logSearchConnectTimeoutInMilliseconds = DEFAULT_LOGSEARCH_CONNECT_TIMEOUT_IN_MILLISECONDS;
+> 
+>   private int logSearchReadTimeoutInMilliseconds = DEFAULT_LOGSEARCH_READ_TIMEOUT_IN_MILLISECONDS;
+> 
+> 
+129a137,152
+>   public int getLogSearchConnectTimeoutInMilliseconds() {
+>     return this.logSearchConnectTimeoutInMilliseconds;
+>   }
+> 
+>   public void setLogSearchConnectTimeoutInMilliseconds(int logSearchConnectTimeoutInMilliseconds) {
+>     this.logSearchConnectTimeoutInMilliseconds = logSearchConnectTimeoutInMilliseconds;
+>   }
+> 
+>   public int getLogSearchReadTimeoutInMilliseconds() {
+>     return this.logSearchReadTimeoutInMilliseconds;
+>   }
+> 
+>   public void setLogSearchReadTimeoutInMilliseconds(int logSearchReadTimeoutInMilliseconds) {
+>     this.logSearchReadTimeoutInMilliseconds = logSearchReadTimeoutInMilliseconds;
+>   }
+> 
+138,139c161,162
+<       httpURLConnection.setConnectTimeout(DEFAULT_LOGSEARCH_CONNECT_TIMEOUT_IN_MILLISECONDS);
+<       httpURLConnection.setReadTimeout(DEFAULT_LOGSEARCH_READ_TIMEOUT_IN_MILLISECONDS);
+---
+>       httpURLConnection.setConnectTimeout(logSearchConnectTimeoutInMilliseconds);
+>       httpURLConnection.setReadTimeout(logSearchReadTimeoutInMilliseconds);
+141a165,166
+>       LOG.debug("Attempting request to LogSearch Portal Server, with connect timeout = {} milliseconds and read timeout = {} milliseconds",
+>         logSearchConnectTimeoutInMilliseconds, logSearchReadTimeoutInMilliseconds);
+285c310
+<     if ((response != null) && (!response.getListOfResults().isEmpty())) {
+---
+>     if ((response != null) && (response.getListOfResults() != null) && (!response.getListOfResults().isEmpty())) {

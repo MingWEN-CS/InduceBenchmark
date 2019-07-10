@@ -1,0 +1,17 @@
+47d46
+< import java.util.concurrent.atomic.AtomicBoolean;
+307a307,320
+> 
+> 
+>   public boolean deprecatedKeyWasSet(String oldKey) {
+>     return isDeprecated(oldKey) && deprecatedKeyMap.get(oldKey).accessed;
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 

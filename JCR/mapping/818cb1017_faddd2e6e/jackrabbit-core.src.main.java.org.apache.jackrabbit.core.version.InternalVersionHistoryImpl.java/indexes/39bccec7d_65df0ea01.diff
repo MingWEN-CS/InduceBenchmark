@@ -1,0 +1,25 @@
+378c378
+<         if (vMgr.hasItemReferences(v)) {
+---
+>         if (vMgr.hasItemReferences(v.getId())) {
+400c400,417
+<         node.store();
+---
+>         if (!vMgr.hasItemReferences(node.getNodeId())) {
+>             log.debug("Current version history has no references");
+>             NodeStateEx[] childNodes = node.getChildNodes();
+> 
+>             
+>             if (childNodes.length == 2) {
+>                 log.debug("Removing orphan version history as it contains only two children");
+>                 NodeStateEx parentNode = vMgr.getNodeStateEx(node.getParentId());
+>                 
+>                 parentNode.removeNode(node.getName());
+>                 
+>                 parentNode.store();
+>             }
+>         } else {
+>             log.debug("Current version history has at least one reference");
+>             
+>             node.store();
+>         }

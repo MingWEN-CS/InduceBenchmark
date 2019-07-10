@@ -1,0 +1,7 @@
+31a32
+> import org.apache.accumulo.core.conf.AccumuloConfiguration;
+103c104,105
+<     UtilWaitThread.sleep(10000);
+---
+>     long zkTimeout = AccumuloConfiguration.getTimeInMillis(getCluster().getConfig().getSiteConfig().get(Property.INSTANCE_ZK_TIMEOUT.getKey()));
+>     UtilWaitThread.sleep(zkTimeout + 500);

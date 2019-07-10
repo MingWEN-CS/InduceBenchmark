@@ -1,0 +1,78 @@
+150a151,157
+> 
+>   public static final String
+>       AUTH_TOKEN_MAX_INACTIVE_INTERVAL = "token.MaxInactiveInterval";
+> 
+>   
+> 
+> 
+192a200
+>   private long maxInactiveInterval;
+229a238,239
+>     maxInactiveInterval = Long.parseLong(config.getProperty(
+>         AUTH_TOKEN_MAX_INACTIVE_INTERVAL, "1800")) * 1000; 
+361a372,380
+>   protected long getMaxInactiveInterval() {
+>     return maxInactiveInterval / 1000;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+513,514c532,535
+<   public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+<       throws IOException, ServletException {
+---
+>   public void doFilter(ServletRequest request,
+>                        ServletResponse response,
+>                        FilterChain filterChain)
+>                            throws IOException, ServletException {
+536c557,558
+<             LOG.debug("Request [{}] triggering authentication", getRequestURL(httpRequest));
+---
+>             LOG.debug("Request [{}] triggering authentication",
+>                 getRequestURL(httpRequest));
+539,541c561,569
+<           if (token != null && token.getExpires() != 0 &&
+<               token != AuthenticationToken.ANONYMOUS) {
+<             token.setExpires(System.currentTimeMillis() + getValidity() * 1000);
+---
+>           if (token != null && token != AuthenticationToken.ANONYMOUS) {
+>             if (token.getMaxInactives() != 0) {
+>               token.setMaxInactives(System.currentTimeMillis()
+>                   + getMaxInactiveInterval() * 1000);
+>             }
+>             if (token.getExpires() != 0) {
+>               token.setExpires(System.currentTimeMillis()
+>                   + getValidity() * 1000);
+>             }
+548c576,577
+<             LOG.debug("Request [{}] user [{}] authenticated", getRequestURL(httpRequest), token.getUserName());
+---
+>             LOG.debug("Request [{}] user [{}] authenticated",
+>                 getRequestURL(httpRequest), token.getUserName());
+565c594,595
+<               return (authToken != AuthenticationToken.ANONYMOUS) ? authToken : null;
+---
+>               return (authToken != AuthenticationToken.ANONYMOUS) ?
+>                   authToken : null;
+568c598,609
+<           if (newToken && !token.isExpired() && token != AuthenticationToken.ANONYMOUS) {
+---
+> 
+>           
+>           
+>           
+>           if (!newToken && !isCookiePersistent()
+>               && getMaxInactiveInterval() > 0) {
+>             token.setMaxInactives(System.currentTimeMillis()
+>                 + getMaxInactiveInterval() * 1000);
+>             newToken = true;
+>           }
+>           if (newToken && !token.isExpired()
+>               && token != AuthenticationToken.ANONYMOUS) {
+641,642d681
+< 
+< 

@@ -1,0 +1,143 @@
+45d44
+< import org.apache.ambari.server.agent.AgentCommand.AgentCommandType;
+358c357
+<       List<Stage> stages = db.getFirstStageInProgressPerRequest();
+---
+>       List<Stage> firstStageInProgressPerRequest = db.getFirstStageInProgressPerRequest();
+361c360
+<         LOG.debug("Processing {} in progress stages ", stages.size());
+---
+>         LOG.debug("Processing {} in progress stages", firstStageInProgressPerRequest.size());
+364c363
+<       publishInProgressTasks(stages);
+---
+>       publishInProgressTasks(firstStageInProgressPerRequest);
+366c365
+<       if (stages.isEmpty()) {
+---
+>       if (firstStageInProgressPerRequest.isEmpty()) {
+378,379c377,385
+<       HashSet<String> hostsWithTasks = getListOfHostsWithPendingTask(stages);
+<       actionQueue.updateListOfHostsWithPendingTask(hostsWithTasks);
+---
+>       
+>       long iLowestRequestIdInProgress = firstStageInProgressPerRequest.get(0).getRequestId();
+>       long iHighestRequestIdInProgress = firstStageInProgressPerRequest.get(
+>           firstStageInProgressPerRequest.size() - 1).getRequestId();
+> 
+>       List<String> hostsWithPendingTasks = hostRoleCommandDAO.getHostsWithPendingTasks(
+>           iLowestRequestIdInProgress, iHighestRequestIdInProgress);
+> 
+>       actionQueue.updateListOfHostsWithPendingTask(new HashSet<>(hostsWithPendingTasks));
+381d386
+<       stages = filterParallelPerHostStages(stages);
+382a388,389
+>       
+>       List<Stage> stages = filterParallelPerHostStages(firstStageInProgressPerRequest);
+573,581d579
+<   private HashSet<String> getListOfHostsWithPendingTask(List<Stage> stages) {
+<     HashSet<String> hostsWithTasks = new HashSet<>();
+<     for (Stage s : stages) {
+<       hostsWithTasks.addAll(s.getHosts());
+<     }
+<     return hostsWithTasks;
+<   }
+< 
+<   
+604a603,607
+>   private List<Stage> filterParallelPerHostStages(List<Stage> firstStageInProgressPerRequest) {
+>     
+>     if (firstStageInProgressPerRequest.size() == 1) {
+>       return firstStageInProgressPerRequest;
+>     }
+606d608
+<   private List<Stage> filterParallelPerHostStages(List<Stage> stages) {
+608,609d609
+<     Set<String> affectedHosts = new HashSet<>();
+<     Set<Long> affectedRequests = new HashSet<>();
+611,612c611,618
+<     for (Stage s : stages) {
+<       long requestId = s.getRequestId();
+---
+>     
+>     
+>     long lowerRequestIdInclusive = firstStageInProgressPerRequest.get(0).getRequestId();
+> 
+>     
+>     
+>     for (Stage stage : firstStageInProgressPerRequest) {
+>       long requestId = stage.getRequestId();
+615c621
+<         LOG.trace("==> Processing stage: {}/{} ({}) for {}", requestId, s.getStageId(), s.getRequestContext());
+---
+>         LOG.trace("==> Processing stage: {}/{} ({}) for {}", requestId, stage.getStageId(), stage.getRequestContext());
+621a628,632
+>       HashSet<String> hostsInProgressForEarlierRequests = new HashSet<>(
+>           hostRoleCommandDAO.getBlockingHostsForRequest(lowerRequestIdInclusive, requestId));
+> 
+>       
+>       
+623c634
+<       for (String host : s.getHosts()) {
+---
+>       for (String host : stage.getHosts()) {
+626c637
+<         if (affectedHosts.contains(host)) {
+---
+>         if (hostsInProgressForEarlierRequests.contains(host)) {
+628,635c639
+<             LOG.trace("===>  Skipping stage since it utilizes at least one host that a previous stage requires: {}/{} ({})", s.getRequestId(), s.getStageId(), s.getRequestContext());
+<           }
+< 
+<           addStage &= false;
+<         } else {
+<           if (!Stage.INTERNAL_HOSTNAME.equalsIgnoreCase(host) && !isStageHasBackgroundCommandsOnly(s, host)) {
+<             LOG.trace("====>  Adding host to affected hosts: {}", host);
+<             affectedHosts.add(host);
+---
+>             LOG.trace("===>  Skipping stage since it utilizes at least one host that a previous stage requires: {}/{} ({})", stage.getRequestId(), stage.getStageId(), stage.getRequestContext());
+638,654c642,643
+<           addStage &= true;
+<         }
+<       }
+< 
+<       
+<       
+<       
+<       
+<       if (affectedRequests.contains(requestId)) {
+<         if (LOG.isTraceEnabled()) {
+<           LOG.trace("===>  Skipping stage since the request it is in has been processed already: {}/{} ({})", s.getRequestId(), s.getStageId(), s.getRequestContext());
+<         }
+< 
+<         addStage = false;
+<       } else {
+<         if (LOG.isTraceEnabled()) {
+<           LOG.trace("====>  Adding request to affected requests: {}", requestId);
+---
+>           addStage = false;
+>           break;
+656,658d644
+< 
+<         affectedRequests.add(requestId);
+<         addStage &= true;
+663d648
+<       
+666c651
+<           LOG.trace("===>  Adding stage to return value: {}/{} ({})", s.getRequestId(), s.getStageId(), s.getRequestContext());
+---
+>           LOG.trace("===>  Adding stage to return value: {}/{} ({})", stage.getRequestId(), stage.getStageId(), stage.getRequestContext());
+669c654
+<         retVal.add(s);
+---
+>         retVal.add(stage);
+676,684d660
+<   private boolean isStageHasBackgroundCommandsOnly(Stage s, String host) {
+<     for (ExecutionCommandWrapper c : s.getExecutionCommands(host)) {
+<       if (c.getCommandType() != AgentCommandType.BACKGROUND_EXECUTION_COMMAND) {
+<         return false;
+<       }
+<     }
+<     return true;
+<   }
+< 

@@ -1,0 +1,6 @@
+145c145,147
+<                     action.setPending();
+---
+>                     if (!(actionService.getExecutor(action.getType()) instanceof ControlNodeActionExecutor)) {
+>                         action.setPending();
+>                     }

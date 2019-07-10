@@ -1,0 +1,39 @@
+19a20
+> import org.apache.commons.lang.StringUtils;
+145a147,165
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static boolean contains(String ref, String substring, boolean ignoreCase) {
+>     if (ignoreCase)
+>       return StringUtils.containsIgnoreCase(ref, substring);
+>     return StringUtils.contains(ref, substring);
+>   }
+> 
+497d516
+<     BytesRef containsRef = contains != null ? new BytesRef(contains) : null;
+529c548
+<       if (containsRef != null && !StringHelper.contains(facetEntry.getValue(), containsRef, ignoreCase)) {
+---
+>       if (contains != null && !contains(facetEntry.getValue().utf8ToString(), contains, ignoreCase)) {
+733,738d751
+<     
+<     BytesRef containsTermBytes = null;
+<     if (contains != null) {
+<       String indexedContains = ft.toInternal(contains);
+<       containsTermBytes = new BytesRef(indexedContains);
+<     }
+772c785
+<         if (containsTermBytes == null || StringHelper.contains(term, containsTermBytes, ignoreCase)) {
+---
+>         if (contains == null || contains(term.utf8ToString(), contains, ignoreCase)) {

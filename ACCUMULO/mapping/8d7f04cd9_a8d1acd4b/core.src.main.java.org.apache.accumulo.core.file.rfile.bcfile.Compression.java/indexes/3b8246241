@@ -1,0 +1,580 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.accumulo.core.file.rfile.bcfile;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.compress.CodecPool;
+import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.io.compress.CompressionInputStream;
+import org.apache.hadoop.io.compress.CompressionOutputStream;
+import org.apache.hadoop.io.compress.Compressor;
+import org.apache.hadoop.io.compress.Decompressor;
+import org.apache.hadoop.io.compress.DefaultCodec;
+import org.apache.hadoop.util.ReflectionUtils;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Maps;
+
+
+
+
+public final class Compression {
+  static final Log LOG = LogFactory.getLog(Compression.class);
+
+  
+
+
+  private Compression() {
+    
+  }
+
+  static class FinishOnFlushCompressionStream extends FilterOutputStream {
+    public FinishOnFlushCompressionStream(CompressionOutputStream cout) {
+      super(cout);
+    }
+
+    @Override
+    public void write(byte b[], int off, int len) throws IOException {
+      out.write(b, off, len);
+    }
+
+    @Override
+    public void flush() throws IOException {
+      CompressionOutputStream cout = (CompressionOutputStream) out;
+      cout.finish();
+      cout.flush();
+      cout.resetState();
+    }
+  }
+
+  
+  public static final String COMPRESSION_SNAPPY = "snappy";
+  
+  public static final String COMPRESSION_GZ = "gz";
+  
+  public static final String COMPRESSION_LZO = "lzo";
+  
+  public static final String COMPRESSION_NONE = "none";
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static enum Algorithm {
+
+    LZO(COMPRESSION_LZO) {
+      
+
+
+      private transient AtomicBoolean checked = new AtomicBoolean(false);
+      private static final String defaultClazz = "org.apache.hadoop.io.compress.LzoCodec";
+      private transient CompressionCodec codec = null;
+
+      
+
+
+      private static final String BUFFER_SIZE_OPT = "io.compression.codec.lzo.buffersize";
+
+      
+
+
+      private static final int DEFAULT_BUFFER_SIZE = 64 * 1024;
+
+      @Override
+      public boolean isSupported() {
+        return codec != null;
+      }
+
+      public void initializeDefaultCodec() {
+        if (!checked.get()) {
+          checked.set(true);
+          codec = createNewCodec(DEFAULT_BUFFER_SIZE);
+        }
+      }
+
+      @Override
+      CompressionCodec createNewCodec(int bufferSize) {
+        String extClazz = (conf.get(CONF_LZO_CLASS) == null ? System.getProperty(CONF_LZO_CLASS) : null);
+        String clazz = (extClazz != null) ? extClazz : defaultClazz;
+        try {
+          LOG.info("Trying to load Lzo codec class: " + clazz);
+          Configuration myConf = new Configuration(conf);
+          
+          
+          if (bufferSize > 0)
+            myConf.setInt(BUFFER_SIZE_OPT, bufferSize);
+          codec = (CompressionCodec) ReflectionUtils.newInstance(Class.forName(clazz), myConf);
+          return codec;
+        } catch (ClassNotFoundException e) {
+          
+        }
+        return null;
+      }
+
+      @Override
+      CompressionCodec getCodec() throws IOException {
+        return codec;
+      }
+
+      @Override
+      public InputStream createDecompressionStream(InputStream downStream, Decompressor decompressor, int downStreamBufferSize) throws IOException {
+        if (!isSupported()) {
+          throw new IOException("LZO codec class not specified. Did you forget to set property " + CONF_LZO_CLASS + "?");
+        }
+        InputStream bis1 = null;
+        if (downStreamBufferSize > 0) {
+          bis1 = new BufferedInputStream(downStream, downStreamBufferSize);
+        } else {
+          bis1 = downStream;
+        }
+        CompressionInputStream cis = codec.createInputStream(bis1, decompressor);
+        BufferedInputStream bis2 = new BufferedInputStream(cis, DATA_IBUF_SIZE);
+        return bis2;
+      }
+
+      @Override
+      public OutputStream createCompressionStream(OutputStream downStream, Compressor compressor, int downStreamBufferSize) throws IOException {
+        if (!isSupported()) {
+          throw new IOException("LZO codec class not specified. Did you forget to set property " + CONF_LZO_CLASS + "?");
+        }
+        OutputStream bos1 = null;
+        if (downStreamBufferSize > 0) {
+          bos1 = new BufferedOutputStream(downStream, downStreamBufferSize);
+        } else {
+          bos1 = downStream;
+        }
+        CompressionOutputStream cos = codec.createOutputStream(bos1, compressor);
+        BufferedOutputStream bos2 = new BufferedOutputStream(new FinishOnFlushCompressionStream(cos), DATA_OBUF_SIZE);
+        return bos2;
+      }
+
+    },
+
+    GZ(COMPRESSION_GZ) {
+
+      private transient DefaultCodec codec = null;
+
+      
+
+
+      private static final String BUFFER_SIZE_OPT = "io.file.buffer.size";
+
+      
+
+
+      private static final int DEFAULT_BUFFER_SIZE = 32 * 1024;
+
+      @Override
+      CompressionCodec getCodec() {
+        return codec;
+      }
+
+      @Override
+      public void initializeDefaultCodec() {
+        codec = (DefaultCodec) createNewCodec(DEFAULT_BUFFER_SIZE);
+      }
+
+      
+
+
+
+
+
+
+      protected CompressionCodec createNewCodec(final int bufferSize) {
+        DefaultCodec myCodec = new DefaultCodec();
+        Configuration myConf = new Configuration(conf);
+        
+        
+        if (bufferSize > 0)
+          myConf.setInt(BUFFER_SIZE_OPT, bufferSize);
+        myCodec.setConf(myConf);
+        return myCodec;
+      }
+
+      @Override
+      public InputStream createDecompressionStream(InputStream downStream, Decompressor decompressor, int downStreamBufferSize) throws IOException {
+        
+        CompressionCodec decomCodec = codec;
+        
+        if (DEFAULT_BUFFER_SIZE != downStreamBufferSize) {
+          Entry<Algorithm,Integer> sizeOpt = Maps.immutableEntry(GZ, downStreamBufferSize);
+          try {
+            decomCodec = codecCache.get(sizeOpt);
+          } catch (ExecutionException e) {
+            throw new IOException(e);
+          }
+        }
+        CompressionInputStream cis = decomCodec.createInputStream(downStream, decompressor);
+        BufferedInputStream bis2 = new BufferedInputStream(cis, DATA_IBUF_SIZE);
+        return bis2;
+      }
+
+      @Override
+      public OutputStream createCompressionStream(OutputStream downStream, Compressor compressor, int downStreamBufferSize) throws IOException {
+        OutputStream bos1 = null;
+        if (downStreamBufferSize > 0) {
+          bos1 = new BufferedOutputStream(downStream, downStreamBufferSize);
+        } else {
+          bos1 = downStream;
+        }
+        
+        CompressionOutputStream cos = codec.createOutputStream(bos1, compressor);
+        BufferedOutputStream bos2 = new BufferedOutputStream(new FinishOnFlushCompressionStream(cos), DATA_OBUF_SIZE);
+        return bos2;
+      }
+
+      @Override
+      public boolean isSupported() {
+        return true;
+      }
+    },
+
+    NONE(COMPRESSION_NONE) {
+      @Override
+      CompressionCodec getCodec() {
+        return null;
+      }
+
+      @Override
+      public InputStream createDecompressionStream(InputStream downStream, Decompressor decompressor, int downStreamBufferSize) throws IOException {
+        if (downStreamBufferSize > 0) {
+          return new BufferedInputStream(downStream, downStreamBufferSize);
+        }
+        return downStream;
+      }
+
+      public void initializeDefaultCodec() {
+
+      }
+
+      protected CompressionCodec createNewCodec(final int bufferSize) {
+        return null;
+      }
+
+      @Override
+      public OutputStream createCompressionStream(OutputStream downStream, Compressor compressor, int downStreamBufferSize) throws IOException {
+        if (downStreamBufferSize > 0) {
+          return new BufferedOutputStream(downStream, downStreamBufferSize);
+        }
+
+        return downStream;
+      }
+
+      @Override
+      public boolean isSupported() {
+        return true;
+      }
+    },
+
+    SNAPPY(COMPRESSION_SNAPPY) {
+      
+      private transient CompressionCodec snappyCodec = null;
+      
+
+
+      private transient AtomicBoolean checked = new AtomicBoolean(false);
+      private static final String defaultClazz = "org.apache.hadoop.io.compress.SnappyCodec";
+
+      
+
+
+      private static final String BUFFER_SIZE_OPT = "io.compression.codec.snappy.buffersize";
+
+      
+
+
+      private static final int DEFAULT_BUFFER_SIZE = 64 * 1024;
+
+      public CompressionCodec getCodec() throws IOException {
+        return snappyCodec;
+      }
+
+      @Override
+      public void initializeDefaultCodec() {
+        if (!checked.get()) {
+          checked.set(true);
+          snappyCodec = createNewCodec(DEFAULT_BUFFER_SIZE);
+        }
+      }
+
+      
+
+
+
+
+
+
+      protected CompressionCodec createNewCodec(final int bufferSize) {
+
+        String extClazz = (conf.get(CONF_SNAPPY_CLASS) == null ? System.getProperty(CONF_SNAPPY_CLASS) : null);
+        String clazz = (extClazz != null) ? extClazz : defaultClazz;
+        try {
+          LOG.info("Trying to load snappy codec class: " + clazz);
+
+          Configuration myConf = new Configuration(conf);
+          
+          
+          if (bufferSize > 0)
+            myConf.setInt(BUFFER_SIZE_OPT, bufferSize);
+
+          return (CompressionCodec) ReflectionUtils.newInstance(Class.forName(clazz), myConf);
+
+        } catch (ClassNotFoundException e) {
+          
+        }
+
+        return null;
+      }
+
+      @Override
+      public OutputStream createCompressionStream(OutputStream downStream, Compressor compressor, int downStreamBufferSize) throws IOException {
+
+        if (!isSupported()) {
+          throw new IOException("SNAPPY codec class not specified. Did you forget to set property " + CONF_SNAPPY_CLASS + "?");
+        }
+        OutputStream bos1 = null;
+        if (downStreamBufferSize > 0) {
+          bos1 = new BufferedOutputStream(downStream, downStreamBufferSize);
+        } else {
+          bos1 = downStream;
+        }
+        
+        CompressionOutputStream cos = snappyCodec.createOutputStream(bos1, compressor);
+        BufferedOutputStream bos2 = new BufferedOutputStream(new FinishOnFlushCompressionStream(cos), DATA_OBUF_SIZE);
+        return bos2;
+      }
+
+      @Override
+      public InputStream createDecompressionStream(InputStream downStream, Decompressor decompressor, int downStreamBufferSize) throws IOException {
+        if (!isSupported()) {
+          throw new IOException("SNAPPY codec class not specified. Did you forget to set property " + CONF_SNAPPY_CLASS + "?");
+        }
+
+        CompressionCodec decomCodec = snappyCodec;
+        
+        if (DEFAULT_BUFFER_SIZE != downStreamBufferSize) {
+          Entry<Algorithm,Integer> sizeOpt = Maps.immutableEntry(SNAPPY, downStreamBufferSize);
+          try {
+            decomCodec = codecCache.get(sizeOpt);
+          } catch (ExecutionException e) {
+            throw new IOException(e);
+          }
+        }
+
+        CompressionInputStream cis = decomCodec.createInputStream(downStream, decompressor);
+        BufferedInputStream bis2 = new BufferedInputStream(cis, DATA_IBUF_SIZE);
+        return bis2;
+      }
+
+      @Override
+      public boolean isSupported() {
+
+        return snappyCodec != null;
+      }
+    };
+
+    
+
+
+
+
+
+
+
+
+
+    static {
+      conf = new Configuration();
+      for (final Algorithm al : Algorithm.values()) {
+        al.initializeDefaultCodec();
+      }
+    }
+
+    
+
+
+    private static LoadingCache<Entry<Algorithm,Integer>,CompressionCodec> codecCache = CacheBuilder.newBuilder().maximumSize(25)
+        .build(new CacheLoader<Entry<Algorithm,Integer>,CompressionCodec>() {
+          public CompressionCodec load(Entry<Algorithm,Integer> key) {
+            return key.getKey().createNewCodec(key.getValue());
+          }
+        });
+
+    
+    
+    protected static final Configuration conf;
+    private final String compressName;
+    
+    private static final int DATA_IBUF_SIZE = 1 * 1024;
+    
+    private static final int DATA_OBUF_SIZE = 4 * 1024;
+    public static final String CONF_LZO_CLASS = "io.compression.codec.lzo.class";
+    public static final String CONF_SNAPPY_CLASS = "io.compression.codec.snappy.class";
+
+    Algorithm(String name) {
+      this.compressName = name;
+    }
+
+    abstract CompressionCodec getCodec() throws IOException;
+
+    
+
+
+    abstract void initializeDefaultCodec();
+
+    
+
+
+
+
+
+
+    abstract CompressionCodec createNewCodec(int bufferSize);
+
+    public abstract InputStream createDecompressionStream(InputStream downStream, Decompressor decompressor, int downStreamBufferSize) throws IOException;
+
+    public abstract OutputStream createCompressionStream(OutputStream downStream, Compressor compressor, int downStreamBufferSize) throws IOException;
+
+    public abstract boolean isSupported();
+
+    public Compressor getCompressor() throws IOException {
+      CompressionCodec codec = getCodec();
+      if (codec != null) {
+        Compressor compressor = CodecPool.getCompressor(codec);
+        if (compressor != null) {
+          if (compressor.finished()) {
+            
+            
+            LOG.warn("Compressor obtained from CodecPool already finished()");
+          } else {
+            LOG.debug("Got a compressor: " + compressor.hashCode());
+          }
+          
+
+
+          compressor.reset();
+        }
+        return compressor;
+      }
+      return null;
+    }
+
+    public void returnCompressor(Compressor compressor) {
+      if (compressor != null) {
+        LOG.debug("Return a compressor: " + compressor.hashCode());
+        CodecPool.returnCompressor(compressor);
+      }
+    }
+
+    public Decompressor getDecompressor() throws IOException {
+      CompressionCodec codec = getCodec();
+      if (codec != null) {
+        Decompressor decompressor = CodecPool.getDecompressor(codec);
+        if (decompressor != null) {
+          if (decompressor.finished()) {
+            
+            
+            LOG.warn("Decompressor obtained from CodecPool already finished()");
+          } else {
+            LOG.debug("Got a decompressor: " + decompressor.hashCode());
+          }
+          
+
+
+          decompressor.reset();
+        }
+        return decompressor;
+      }
+
+      return null;
+    }
+
+    public void returnDecompressor(Decompressor decompressor) {
+      if (decompressor != null) {
+        LOG.debug("Returned a decompressor: " + decompressor.hashCode());
+        CodecPool.returnDecompressor(decompressor);
+      }
+    }
+
+    public String getName() {
+      return compressName;
+    }
+  }
+
+  static Algorithm getCompressionAlgorithmByName(String compressName) {
+    Algorithm[] algos = Algorithm.class.getEnumConstants();
+
+    for (Algorithm a : algos) {
+      if (a.getName().equals(compressName)) {
+        return a;
+      }
+    }
+
+    throw new IllegalArgumentException("Unsupported compression algorithm name: " + compressName);
+  }
+
+  public static String[] getSupportedAlgorithms() {
+    Algorithm[] algos = Algorithm.class.getEnumConstants();
+
+    ArrayList<String> ret = new ArrayList<String>();
+    for (Algorithm a : algos) {
+      if (a.isSupported()) {
+        ret.add(a.getName());
+      }
+    }
+    return ret.toArray(new String[ret.size()]);
+  }
+}

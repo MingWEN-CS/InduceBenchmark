@@ -1,0 +1,17 @@
+41a42
+> import java.util.HashMap;
+43a45
+> import java.util.Map;
+76c78
+< 
+---
+>     Map<String, Boolean> isLogSearchRunning = new HashMap<>();
+93c95,100
+<       if (!logSearchServerRunning(clusterName)) {
+---
+>       Boolean isLogSearchRunningForSpecifiedCluster = isLogSearchRunning.get(clusterName);
+>       if (isLogSearchRunningForSpecifiedCluster == null) {
+>         isLogSearchRunningForSpecifiedCluster = logSearchServerRunning(clusterName);
+>         isLogSearchRunning.put(clusterName, isLogSearchRunningForSpecifiedCluster);
+>       }
+>       if (!isLogSearchRunningForSpecifiedCluster) {

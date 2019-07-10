@@ -1,0 +1,88 @@
+51a52,53
+> import java.util.Map;
+> 
+108c110
+<       SnmpVersion snmpVersion = getSnmpVersion(notification);
+---
+>       SnmpVersion snmpVersion = getSnmpVersion(notification.DispatchProperties);
+122a125,156
+>   @Override
+>   public ConfigValidationResult validateTargetConfig(Map<String, String> properties) {
+>     try {
+>       getDispatchProperty(properties, BODY_OID_PROPERTY);
+>       getDispatchProperty(properties, SUBJECT_OID_PROPERTY);
+>       getDispatchProperty(properties, TRAP_OID_PROPERTY);
+>       getDispatchProperty(properties, PORT_PROPERTY);
+>       SnmpVersion snmpVersion = getSnmpVersion(properties);
+>       switch (snmpVersion) {
+>         case SNMPv3:
+>           getDispatchProperty(properties, SECURITY_USERNAME_PROPERTY);
+>           TrapSecurity securityLevel = getSecurityLevel(properties);
+>           switch (securityLevel) {
+>             case AUTH_PRIV:
+>               getDispatchProperty(properties, SECURITY_PRIV_PASSPHRASE_PROPERTY);
+>             case AUTH_NOPRIV:
+>               getDispatchProperty(properties, SECURITY_AUTH_PASSPHRASE_PROPERTY);
+>           }
+>           break;
+>         case SNMPv2c:
+>         case SNMPv1:
+>           getDispatchProperty(properties, COMMUNITY_PROPERTY);
+>       }
+>     } catch (InvalidSnmpConfigurationException ex) {
+>       return ConfigValidationResult.invalid(ex.getMessage());
+>     }
+>     return ConfigValidationResult.valid();
+>   }
+> 
+>   
+> 
+> 
+131c165
+<     pdu.add(new VariableBinding(SnmpConstants.snmpTrapOID, new OID(getDispatchProperty(notification, TRAP_OID_PROPERTY))));
+---
+>     pdu.add(new VariableBinding(SnmpConstants.snmpTrapOID, new OID(getDispatchProperty(notification.DispatchProperties, TRAP_OID_PROPERTY))));
+133,134c167,168
+<     pdu.add(new VariableBinding(new OID(getDispatchProperty(notification, BODY_OID_PROPERTY)), new OctetString(notification.Body)));
+<     pdu.add(new VariableBinding(new OID(getDispatchProperty(notification, SUBJECT_OID_PROPERTY)), new OctetString(notification.Subject)));
+---
+>     pdu.add(new VariableBinding(new OID(getDispatchProperty(notification.DispatchProperties, BODY_OID_PROPERTY)), new OctetString(notification.Body)));
+>     pdu.add(new VariableBinding(new OID(getDispatchProperty(notification.DispatchProperties, SUBJECT_OID_PROPERTY)), new OctetString(notification.Subject)));
+147c181
+<     String udpPort = getDispatchProperty(notification, PORT_PROPERTY);
+---
+>     String udpPort = getDispatchProperty(notification.DispatchProperties, PORT_PROPERTY);
+165c199
+<       OctetString community = new OctetString(getDispatchProperty(notification, COMMUNITY_PROPERTY));
+---
+>       OctetString community = new OctetString(getDispatchProperty(notification.DispatchProperties, COMMUNITY_PROPERTY));
+171c205
+<       OctetString userName = new OctetString(getDispatchProperty(notification, SECURITY_USERNAME_PROPERTY));
+---
+>       OctetString userName = new OctetString(getDispatchProperty(notification.DispatchProperties, SECURITY_USERNAME_PROPERTY));
+186c220
+<       userTarget.setSecurityLevel(getSecurityLevel(notification).getSecurityLevel());
+---
+>       userTarget.setSecurityLevel(getSecurityLevel(notification.DispatchProperties).getSecurityLevel());
+292,293c326,327
+<   private static String getDispatchProperty(Notification notification, String key) throws InvalidSnmpConfigurationException {
+<     if (notification.DispatchProperties == null || !notification.DispatchProperties.containsKey(key)) {
+---
+>   private static String getDispatchProperty(Map<String, String> dispatchProperties, String key) throws InvalidSnmpConfigurationException {
+>     if (dispatchProperties == null || !dispatchProperties.containsKey(key)) {
+296c330
+<     return notification.DispatchProperties.get(key);
+---
+>     return dispatchProperties.get(key);
+305,306c339,340
+<   private SnmpVersion getSnmpVersion(Notification notification) throws InvalidSnmpConfigurationException {
+<     String snmpVersion = getDispatchProperty(notification, SNMP_VERSION_PROPERTY);
+---
+>   private SnmpVersion getSnmpVersion(Map<String, String> dispatchProperties) throws InvalidSnmpConfigurationException {
+>     String snmpVersion = getDispatchProperty(dispatchProperties, SNMP_VERSION_PROPERTY);
+322,323c356,357
+<   private TrapSecurity getSecurityLevel(Notification notification) throws InvalidSnmpConfigurationException {
+<     String securityLevel = getDispatchProperty(notification, SECURITY_LEVEL_PROPERTY);
+---
+>   private TrapSecurity getSecurityLevel(Map<String, String> dispatchProperties) throws InvalidSnmpConfigurationException {
+>     String securityLevel = getDispatchProperty(dispatchProperties, SECURITY_LEVEL_PROPERTY);

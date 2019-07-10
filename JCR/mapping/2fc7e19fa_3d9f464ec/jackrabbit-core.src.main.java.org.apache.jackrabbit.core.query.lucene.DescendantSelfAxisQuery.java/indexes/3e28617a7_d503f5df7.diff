@@ -1,0 +1,12 @@
+236,238c236
+<                     IOException ex = new IOException(e.getMessage());
+<                     ex.initCause(e);
+<                     throw ex;
+---
+>                     throw Util.createIOException(e);
+296,298c294
+<                             IOException ex = new IOException(e.getMessage());
+<                             ex.initCause(e);
+<                             throw ex;
+---
+>                             throw Util.createIOException(e);

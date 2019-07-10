@@ -1,0 +1,75 @@
+20a21
+> import org.apache.ambari.server.controller.internal.DeleteStatusMetaData;
+8869,8871c8870,8871
+<     clusters.getCluster(cluster1)
+<         .setDesiredStackVersion(new StackId("HDP-1.3.1"));
+<     String serviceName = "HDFS";
+---
+>     clusters.getCluster(cluster1).setDesiredStackVersion(new StackId("HDP-1.3.1"));
+>     String hdfs = "HDFS";
+8873c8873
+<     createService(cluster1, serviceName, null);
+---
+>     createService(cluster1, hdfs, null);
+8882,8884c8882,8884
+<     createServiceComponent(cluster1, serviceName, componentName1, State.INIT);
+<     createServiceComponent(cluster1, serviceName, componentName2, State.INIT);
+<     createServiceComponent(cluster1, serviceName, componentName3, State.INIT);
+---
+>     createServiceComponent(cluster1, hdfs, componentName1, State.INIT);
+>     createServiceComponent(cluster1, hdfs, componentName2, State.INIT);
+>     createServiceComponent(cluster1, hdfs, componentName3, State.INIT);
+8893,8895c8893,8895
+<     createServiceComponentHost(cluster1, serviceName, componentName1, host1, null);
+<     createServiceComponentHost(cluster1, serviceName, componentName2, host1, null);
+<     createServiceComponentHost(cluster1, serviceName, componentName3, host1, null);
+---
+>     createServiceComponentHost(cluster1, hdfs, componentName1, host1, null);
+>     createServiceComponentHost(cluster1, hdfs, componentName2, host1, null);
+>     createServiceComponentHost(cluster1, hdfs, componentName3, host1, null);
+8901c8901
+<     installService(cluster1, serviceName, false, false);
+---
+>     installService(cluster1, hdfs, false, false);
+8905c8905
+<     Service s1 = cluster.getService(serviceName);
+---
+>     Service s1 = cluster.getService(hdfs);
+8913c8913
+<     schRequests.add(new ServiceComponentHostRequest(cluster1, serviceName, componentName1, host1, null));
+---
+>     schRequests.add(new ServiceComponentHostRequest(cluster1, hdfs, componentName1, host1, null));
+8937,8939c8937,8939
+<     schRequests.add(new ServiceComponentHostRequest(cluster1, serviceName, componentName1, host1, null));
+<     schRequests.add(new ServiceComponentHostRequest(cluster1, serviceName, componentName2, host1, null));
+<     schRequests.add(new ServiceComponentHostRequest(cluster1, serviceName, componentName3, host1, null));
+---
+>     schRequests.add(new ServiceComponentHostRequest(cluster1, hdfs, componentName1, host1, null));
+>     schRequests.add(new ServiceComponentHostRequest(cluster1, hdfs, componentName2, host1, null));
+>     schRequests.add(new ServiceComponentHostRequest(cluster1, hdfs, componentName3, host1, null));
+8943c8943,8944
+<     controller.deleteHostComponents(schRequests);
+---
+>     DeleteStatusMetaData deleteStatusMetaData = controller.deleteHostComponents(schRequests);
+>     Assert.assertEquals(0, deleteStatusMetaData.getExceptionForKeys().size());
+9177,9182c9178,9181
+<     try {
+<       controller.deleteHostComponents(schRequests);
+<       fail("Expected exception while deleting all host components.");
+<     } catch (AmbariException e) {
+<     }
+<     Assert.assertEquals(3, cluster.getServiceComponentHosts(host1).size());
+---
+> 
+>     DeleteStatusMetaData deleteStatusMetaData = controller.deleteHostComponents(schRequests);
+>     Assert.assertEquals(1, deleteStatusMetaData.getExceptionForKeys().size());
+>     Assert.assertEquals(1, cluster.getServiceComponentHosts(host1).size());
+9187,9194d9185
+<     schRequests.clear();
+<     
+<     schRequests.add(new ServiceComponentHostRequest(cluster1, serviceName, componentName1, host1, "DISABLED"));
+<     updateHostComponents(schRequests, new HashMap<String,String>(), false);
+< 
+<     
+<     schRequests.clear();
+<     schRequests.add(new ServiceComponentHostRequest(cluster1, null, null, host1, null));

@@ -1,0 +1,43 @@
+129a130,134
+>     private final RedoLogFactory redoLogFactory;
+> 
+>     
+> 
+> 
+234a240
+>         this.redoLogFactory = handler.getRedoLogFactory();
+249c255
+<         this.redoLog = RedoLog.create(indexDir, indexNames.getGeneration());
+---
+>         this.redoLog = redoLogFactory.createRedoLog(this);
+770a777,787
+> 
+> 
+> 
+>     ConsistencyCheck runConsistencyCheck() throws IOException {
+>         return ConsistencyCheck.run(this,
+>                 handler.getContext().getItemStateManager());
+>     }
+> 
+>     
+> 
+> 
+828a846,859
+>     Directory getDirectory() {
+>         return indexDir;
+>     }
+> 
+>     
+> 
+> 
+>     long getIndexGeneration() {
+>         return indexNames.getGeneration();
+>     }
+> 
+>     
+> 
+> 
+945c976
+<                 redoLog = RedoLog.create(indexDir, indexNames.getGeneration());
+---
+>                 redoLog = redoLogFactory.createRedoLog(this);

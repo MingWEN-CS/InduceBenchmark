@@ -1,0 +1,11 @@
+597a598,600
+>     Capture<String> capturedPigSmokeTestEntityUpdate = newCapture();
+>     expect(dbAccessor.executeUpdate(capture(capturedPigSmokeTestEntityUpdate))).andReturn(1).once();
+> 
+694a698,703
+> 
+>     Assert.assertNotNull(capturedPigSmokeTestEntityUpdate.getValue());
+>     Assert.assertEquals("UPDATE viewentity " +
+>         "SET class_name = 'org.apache.ambari.view.pig.persistence.SmokeTestEntity' " +
+>         "WHERE class_name = 'org.apache.ambari.view.pig.persistence.DataStoreStorage$SmokeTestEntity'",
+>       capturedPigSmokeTestEntityUpdate.getValue());

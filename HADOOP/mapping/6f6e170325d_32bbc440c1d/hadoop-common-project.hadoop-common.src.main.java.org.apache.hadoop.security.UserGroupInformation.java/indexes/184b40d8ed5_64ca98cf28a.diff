@@ -1,0 +1,87 @@
+30d29
+< import java.util.ArrayList;
+649c648
+<           cred.addTokensToUGI(loginUser);
+---
+>           loginUser.addCredentials(cred);
+1179,1213d1177
+< 
+<   
+<   private class NamedToken {
+<     Text alias;
+<     Token<? extends TokenIdentifier> token;
+<     NamedToken(Text alias, Token<? extends TokenIdentifier> token) {
+<       this.alias = alias;
+<       this.token = token;
+<     }
+<     @Override
+<     public boolean equals(Object o) {
+<       boolean equals;
+<       if (o == this) {
+<         equals = true;
+<       } else if (!(o instanceof NamedToken)) {
+<         equals = false;
+<       } else {
+<         Text otherAlias = ((NamedToken)o).alias;
+<         if (alias == otherAlias) {
+<           equals = true;
+<         } else {
+<           equals = (otherAlias != null && otherAlias.equals(alias));
+<         }
+<       }
+<       return equals;
+<     }
+<     @Override
+<     public int hashCode() {
+<       return (alias != null) ? alias.hashCode() : -1; 
+<     }
+<     @Override
+<     public String toString() {
+<       return "NamedToken: alias="+alias+" token="+token;
+<     }
+<   }
+1222c1186
+<     return addToken(token.getService(), token);
+---
+>     return (token != null) ? addToken(token.getService(), token) : false;
+1234,1237c1198,1199
+<     NamedToken namedToken = new NamedToken(alias, token);
+<     Collection<Object> ugiCreds = subject.getPrivateCredentials();
+<     ugiCreds.remove(namedToken); 
+<     return ugiCreds.add(new NamedToken(alias, token));
+---
+>     getCredentialsInternal().addToken(alias, token);
+>     return true;
+1247,1248c1209,1210
+<     return Collections.unmodifiableList(
+<         new ArrayList<Token<?>>(getCredentials().getAllTokens()));
+---
+>     return Collections.unmodifiableCollection(
+>         getCredentialsInternal().getAllTokens());
+1257,1261c1219,1238
+<     final Credentials credentials = new Credentials();
+<     final Set<NamedToken> namedTokens =
+<         subject.getPrivateCredentials(NamedToken.class);
+<     for (final NamedToken namedToken : namedTokens) {
+<       credentials.addToken(namedToken.alias, namedToken.token);
+---
+>     return new Credentials(getCredentialsInternal());
+>   }
+>   
+>   
+> 
+> 
+> 
+>   public synchronized void addCredentials(Credentials credentials) {
+>     getCredentialsInternal().addAll(credentials);
+>   }
+> 
+>   private synchronized Credentials getCredentialsInternal() {
+>     final Credentials credentials;
+>     final Set<Credentials> credentialsSet =
+>       subject.getPrivateCredentials(Credentials.class);
+>     if (!credentialsSet.isEmpty()){
+>       credentials = credentialsSet.iterator().next();
+>     } else {
+>       credentials = new Credentials();
+>       subject.getPrivateCredentials().add(credentials);

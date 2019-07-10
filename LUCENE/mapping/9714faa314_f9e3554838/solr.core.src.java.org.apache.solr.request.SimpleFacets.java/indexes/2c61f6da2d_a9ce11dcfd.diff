@@ -1,0 +1,14 @@
+490,500c490
+<             
+<             if (prefix!=null) {
+<               
+<               throw new SolrException (
+<                   SolrException.ErrorCode.BAD_REQUEST,
+<                   FacetParams.FACET_PREFIX+"="+prefix+
+<                   " are not supported by "+FacetParams.FACET_METHOD+"="+FacetParams.FACET_METHOD_uif+
+<                   " for field:"+ field
+<                   
+<               );
+<             }
+---
+>             jsonFacet.put("prefix", prefix);

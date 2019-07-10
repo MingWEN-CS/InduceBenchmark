@@ -1,0 +1,41 @@
+19a20
+> import java.util.Map;
+54a56,93
+> 
+>   
+> 
+> 
+> 
+> 
+>   public ConfigValidationResult validateTargetConfig(Map<String, String> properties);
+> 
+>   public static class ConfigValidationResult {
+> 
+>     public enum Status {
+>       VALID, INVALID
+>     }
+> 
+>     private String message;
+>     private Status status;
+> 
+>     private ConfigValidationResult(Status status, String message) {
+>       this.message = message;
+>       this.status = status;
+>     }
+> 
+>     public String getMessage() {
+>       return message;
+>     }
+> 
+>     public Status getStatus() {
+>       return status;
+>     }
+> 
+>     public static ConfigValidationResult valid() {
+>       return new ConfigValidationResult(Status.VALID, "Configuration is valid");
+>     }
+> 
+>     public static ConfigValidationResult invalid(String message) {
+>       return new ConfigValidationResult(Status.INVALID, message);
+>     }
+>   }

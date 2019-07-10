@@ -1,0 +1,30 @@
+1356,1357c1356
+< 
+<     private synchronized ItemState getNonVirtualItemState(ItemId id)
+---
+>     private ItemState getNonVirtualItemState(ItemId id)
+1361,1367c1360,1375
+<             
+<             state = loadItemState(id);
+<             state.setStatus(ItemState.STATUS_EXISTING);
+<             
+<             cache.cache(state);
+<             
+<             state.setContainer(this);
+---
+>             synchronized (this) {
+>                 
+>                 
+>                 
+>                 
+>                 state = cache.retrieve(id);
+>                 if (state == null) {
+>                     
+>                     state = loadItemState(id);
+>                     state.setStatus(ItemState.STATUS_EXISTING);
+>                     
+>                     cache.cache(state);
+>                     
+>                     state.setContainer(this);
+>                 }
+>             }

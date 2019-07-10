@@ -1,0 +1,21 @@
+203,204c203,216
+<     for(String fileName : cache.listAll()) {
+<       unCache(fileName);
+---
+>     boolean success = false;
+>     try {
+>       if (cache.isOpen) {
+>         for(String fileName : cache.listAll()) {
+>           unCache(fileName);
+>         }
+>       }
+>       success = true;
+>     } finally {
+>       if (success) {
+>         IOUtils.close(cache, in);
+>       } else {
+>         IOUtils.closeWhileHandlingException(cache, in);
+>       }
+206,207d217
+<     cache.close();
+<     in.close();

@@ -1,0 +1,12 @@
+1283c1283
+<     return new DistributedQueue(zkClient, "/overseer/queue", null, zkStats);
+---
+>     return new DistributedQueue(zkClient, "/overseer/queue", zkStats);
+1289c1289
+<     return new DistributedQueue(zkClient, "/overseer/queue-work", null, zkStats);
+---
+>     return new DistributedQueue(zkClient, "/overseer/queue-work", zkStats);
+1317c1317
+<     return new DistributedQueue(zkClient, "/overseer/collection-queue-work", null, zkStats);
+---
+>     return new DistributedQueue(zkClient, "/overseer/collection-queue-work", zkStats);

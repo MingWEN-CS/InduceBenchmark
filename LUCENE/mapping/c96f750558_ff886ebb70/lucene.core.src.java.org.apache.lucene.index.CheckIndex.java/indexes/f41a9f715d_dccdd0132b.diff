@@ -1,0 +1,6 @@
+487c487
+<         + " " + versionString + " format=" + sFormat + userDataString);
+---
+>         + " " + versionString + " id=" + sis.getId() + " format=" + sFormat + userDataString);
+537a538
+>         msg(infoStream, "    id=" + info.info.getId());

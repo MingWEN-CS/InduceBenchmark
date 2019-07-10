@@ -1,0 +1,32 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+47	User.createTime	Date	variable	82	use	org.apache.ambari.server.security.authorization.User.getCreateTime	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	81	83
+48	User.groups	Collection<String>	variable	94	use	org.apache.ambari.server.security.authorization.User.getGroups	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	93	95
+50	User.userId	int	variable	66	use	org.apache.ambari.server.security.authorization.User.getUserId	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	65	67
+51	User.userName	String	variable	70	use	org.apache.ambari.server.security.authorization.User.getUserName	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	69	71
+52	User.userType	UserType	variable	78	use	org.apache.ambari.server.security.authorization.User.getUserType	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	77	79
+44	User.active	boolean	variable	86	use	org.apache.ambari.server.security.authorization.User.isActive	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	85	87
+45	User.admin	boolean	variable	90	use	org.apache.ambari.server.security.authorization.User.isAdmin	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	89	91
+49	User.ldapUser	boolean	variable	74	use	org.apache.ambari.server.security.authorization.User.isLdapUser	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	73	75
+51	User.userName	String	variable	99	use	org.apache.ambari.server.security.authorization.User.toString	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	98	100
+34	userEntity	UserEntity	param	47	define	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+34	userEntity	UserEntity	param	48	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+34	userEntity	UserEntity	param	49	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+34	userEntity	UserEntity	param	50	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+34	userEntity	UserEntity	param	51	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+34	userEntity	UserEntity	param	52	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+34	userEntity	UserEntity	param	53	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+34	userEntity	UserEntity	param	54	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+34	userEntity	UserEntity	param	57	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+26	memberEntity	MemberEntity	variable	54	define	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+33	privilegeEntity	PrivilegeEntity	variable	57	define	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+50	User.userId	int	variable	48	set	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+51	User.userName	String	variable	49	set	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+47	User.createTime	Date	variable	50	set	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+52	User.userType	UserType	variable	51	set	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+49	User.ldapUser	boolean	variable	52	set	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+44	User.active	boolean	variable	53	set	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+45	User.admin	boolean	variable	59	set	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+48	User.groups	Collection<String>	variable	55	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+26	memberEntity	MemberEntity	variable	55	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+33	privilegeEntity	PrivilegeEntity	variable	58	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63
+32	AMBARI_ADMINISTRATOR_PERMISSION_NAME		variable	58	use	org.apache.ambari.server.security.authorization.User.User	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/76ea14ed31/85104fc5d6.java	47	63

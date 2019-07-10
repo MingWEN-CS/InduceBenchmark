@@ -1,0 +1,73 @@
+204a205
+>         String startingVersion = ver;
+219c220
+<                 upgradeDBto50(sqlFile, run);
+---
+>                 upgradeDBto50(sqlFile, run, startingVersion);
+237c238
+<     private void upgradeDBto50(String sqlFile, boolean run) throws Exception {
+---
+>     private void upgradeDBto50(String sqlFile, boolean run, String startingVersion) throws Exception {
+239c240
+<         ddlTweaksFor50(sqlFile, run);
+---
+>         ddlTweaksFor50(sqlFile, run, startingVersion);
+246a248
+>         String updateDBVersion = "update OOZIE_SYS set data='" + version + "' where name='db.version'";
+249a252
+>         writer.println(updateDBVersion);
+257c260
+<                 st.executeUpdate("update OOZIE_SYS set data='" + version + "' where name='db.version'");
+---
+>                 st.executeUpdate(updateDBVersion);
+424c427
+<     private void convertClobToBlobInOracle(boolean run, Connection conn) throws Exception {
+---
+>     private void convertClobToBlobInOracle(Connection conn) throws Exception {
+487c490
+<     private void convertClobToBlobInMysql(String sqlFile, boolean run, Connection conn) throws Exception {
+---
+>     private void convertClobToBlobInMysql(String sqlFile, Connection conn) throws Exception {
+513c516
+<     private void convertClobToBlobInPostgres(String sqlFile, boolean run, Connection conn) throws Exception {
+---
+>     private void convertClobToBlobInPostgres(String sqlFile, Connection conn, String startingVersion) throws Exception {
+521a525,532
+>                 if (startingVersion.equals(DB_VERSION_PRE_4_0)
+>                         && tableName.equals("COORD_ACTIONS") && column.equals("push_missing_dependencies")) {
+>                     
+>                     
+>                     
+>                     
+>                     continue;
+>                 }
+524,525c535,536
+<                 String updateQuery = "update " + tableName + " set " + TEMP_COLUMN_PREFIX + column + "=decode(replace("
+<                         + column + ", '\\', '\\\\'), 'escape')";
+---
+>                 String updateQuery = "update " + tableName + " set " + TEMP_COLUMN_PREFIX + column + "=(decode(replace("
+>                         + column + ", E'\\\\', E'\\\\\\\\'), 'escape'))";
+546c557
+<     private void convertClobToBlobinDerby(boolean run, Connection conn) throws Exception {
+---
+>     private void convertClobToBlobinDerby(Connection conn) throws Exception {
+610c621
+<     private void ddlTweaksFor50(String sqlFile, boolean run) throws Exception {
+---
+>     private void ddlTweaksFor50(String sqlFile, boolean run, String startingVersion) throws Exception {
+615c626
+<             convertClobToBlobInOracle(run, conn);
+---
+>             convertClobToBlobInOracle(conn);
+618c629
+<             convertClobToBlobInMysql(sqlFile, run, conn);
+---
+>             convertClobToBlobInMysql(sqlFile, conn);
+621c632
+<             convertClobToBlobInPostgres(sqlFile, run, conn);
+---
+>             convertClobToBlobInPostgres(sqlFile, conn, startingVersion);
+624c635
+<             convertClobToBlobinDerby(run, conn);
+---
+>             convertClobToBlobinDerby(conn);

@@ -1,0 +1,77 @@
+36a37
+> import org.apache.solr.common.cloud.RoutingRule;
+55a57,58
+>   public static final String ADD_ROUTING_RULE = "addroutingrule";
+>   public static final String REMOVE_ROUTING_RULE = "removeroutingrule";
+230a234,237
+>       } else if (Overseer.ADD_ROUTING_RULE.equals(operation)) {
+>         clusterState = addRoutingRule(clusterState, message);
+>       } else if (Overseer.REMOVE_ROUTING_RULE.equals(operation))  {
+>         clusterState = removeRoutingRule(clusterState, message);
+282a290,355
+>     private ClusterState addRoutingRule(ClusterState clusterState, ZkNodeProps message) {
+>       String collection = message.getStr(ZkStateReader.COLLECTION_PROP);
+>       String shard = message.getStr(ZkStateReader.SHARD_ID_PROP);
+>       String routeKey = message.getStr("routeKey");
+>       String range = message.getStr("range");
+>       String targetCollection = message.getStr("targetCollection");
+>       String targetShard = message.getStr("targetShard");
+>       String expireAt = message.getStr("expireAt");
+> 
+>       Slice slice = clusterState.getSlice(collection, shard);
+>       if (slice == null)  {
+>         throw new RuntimeException("Overseer.addRoutingRule unknown collection: " + collection + " slice:" + shard);
+>       }
+> 
+>       Map<String, RoutingRule> routingRules = slice.getRoutingRules();
+>       if (routingRules == null)
+>         routingRules = new HashMap<String, RoutingRule>();
+>       RoutingRule r = routingRules.get(routeKey);
+>       if (r == null) {
+>         Map<String, Object> map = new HashMap<String, Object>();
+>         map.put("routeRanges", range);
+>         map.put("targetCollection", targetCollection);
+>         map.put("expireAt", expireAt);
+>         RoutingRule rule = new RoutingRule(routeKey, map);
+>         routingRules.put(routeKey, rule);
+>       } else  {
+>         
+>         Map<String, Object> map = r.shallowCopy();
+>         map.put("routeRanges", map.get("routeRanges") + "," + range);
+>         map.put("expireAt", expireAt);
+>         routingRules.put(routeKey, new RoutingRule(routeKey, map));
+>       }
+> 
+>       Map<String, Object> props = slice.shallowCopy();
+>       props.put("routingRules", routingRules);
+> 
+>       Slice newSlice = new Slice(slice.getName(), slice.getReplicasCopy(), props);
+>       clusterState = updateSlice(clusterState, collection, newSlice);
+>       return clusterState;
+>     }
+> 
+>     private ClusterState removeRoutingRule(ClusterState clusterState, ZkNodeProps message) {
+>       String collection = message.getStr(ZkStateReader.COLLECTION_PROP);
+>       String shard = message.getStr(ZkStateReader.SHARD_ID_PROP);
+>       String routeKeyStr = message.getStr("routeKey");
+> 
+>       log.info("Overseer.removeRoutingRule invoked for collection: " + collection
+>           + " shard: " + shard + " routeKey: " + routeKeyStr);
+> 
+>       Slice slice = clusterState.getSlice(collection, shard);
+>       if (slice == null)  {
+>         log.warn("Unknown collection: " + collection + " shard: " + shard);
+>         return clusterState;
+>       }
+>       Map<String, RoutingRule> routingRules = slice.getRoutingRules();
+>       if (routingRules != null) {
+>         routingRules.remove(routeKeyStr); 
+>         Map<String, Object> props = slice.shallowCopy();
+>         props.put("routingRules", routingRules);
+>         Slice newSlice = new Slice(slice.getName(), slice.getReplicasCopy(), props);
+>         clusterState = updateSlice(clusterState, collection, newSlice);
+>       }
+> 
+>       return clusterState;
+>     }
+> 

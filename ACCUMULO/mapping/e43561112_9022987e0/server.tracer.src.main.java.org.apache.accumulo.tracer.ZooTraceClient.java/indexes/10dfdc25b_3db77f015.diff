@@ -1,0 +1,4 @@
+112c112
+<           log.error("Unabled to get destination tracer hosts in ZooKeeper, will retry in 5 seconds", e);
+---
+>           log.error("Unabled to get destination tracer hosts in ZooKeeper, will retry in " + retryPause + " milliseconds", e);

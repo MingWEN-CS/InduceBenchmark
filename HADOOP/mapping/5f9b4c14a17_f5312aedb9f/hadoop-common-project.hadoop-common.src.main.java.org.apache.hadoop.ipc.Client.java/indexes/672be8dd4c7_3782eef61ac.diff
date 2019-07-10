@@ -1,0 +1,14 @@
+64a65
+> import org.apache.hadoop.ipc.Server.AuthProtocol;
+764c765,773
+<       authMethod.write(out);
+---
+>       final AuthProtocol authProtocol;
+>       switch (authMethod) {
+>         case SIMPLE:
+>           authProtocol = AuthProtocol.NONE;
+>           break;
+>         default:
+>           authProtocol = AuthProtocol.SASL;
+>       }
+>       out.write(authProtocol.callId);

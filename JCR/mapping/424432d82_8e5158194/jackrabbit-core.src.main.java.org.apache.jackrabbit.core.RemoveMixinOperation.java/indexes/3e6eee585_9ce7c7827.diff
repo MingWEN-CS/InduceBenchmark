@@ -1,0 +1,8 @@
+48c48
+< import org.apache.jackrabbit.core.session.SessionOperation;
+---
+> import org.apache.jackrabbit.core.session.SessionWriteOperation;
+63c63
+< class RemoveMixinOperation implements SessionOperation<Object> {
+---
+> class RemoveMixinOperation implements SessionWriteOperation<Object> {

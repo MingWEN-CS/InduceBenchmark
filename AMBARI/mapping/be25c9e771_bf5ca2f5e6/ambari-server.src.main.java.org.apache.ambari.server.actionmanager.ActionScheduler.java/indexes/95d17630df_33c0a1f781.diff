@@ -1,0 +1,42 @@
+593c593
+<   private Map<String, RoleStats> processInProgressStage(Stage s,
+---
+>   protected Map<String, RoleStats> processInProgressStage(Stage s,
+697c697
+<             db.timeoutHostRole(host, s.getRequestId(), s.getStageId(), c.getRole());
+---
+>             db.timeoutHostRole(host, s.getRequestId(), s.getStageId(), c.getRole(), s.isAutoSkipOnFailureSupported());
+702c702,707
+<               transitionToFailedState(cluster.getClusterName(), c.getServiceName(), roleStr, host, now, false);
+---
+>               if (!RoleCommand.CUSTOM_COMMAND.equals(c.getRoleCommand())
+>                 && !RoleCommand.SERVICE_CHECK.equals(c.getRoleCommand())
+>                 && !RoleCommand.ACTIONEXECUTE.equals(c.getRoleCommand())) {
+>                 
+>                 transitionToFailedState(cluster.getClusterName(), c.getServiceName(), roleStr, host, now, false);
+>               }
+841a847,859
+>   protected boolean wasAgentRestartedDuringOperation(Host host, Stage stage, String role) {
+>     String hostName = host.getHostName();
+>     long taskStartTime = stage.getHostRoleCommand(hostName, role).getStartTime();
+>     return taskStartTime > 0 && taskStartTime <= host.getLastRegistrationTime();
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+846c864
+<   private boolean timeOutActionNeeded(HostRoleStatus status, Stage stage,
+---
+>   protected boolean timeOutActionNeeded(HostRoleStatus status, Stage stage,
+855,856c873,875
+<     if (null != host && host.getState().equals(HostState.HEARTBEAT_LOST)) {
+<       LOG.debug("Timing out action since agent is not heartbeating.");
+---
+>     if (null != host &&
+>       (host.getState().equals(HostState.HEARTBEAT_LOST) || wasAgentRestartedDuringOperation(host, stage, role))) {
+>       LOG.debug("Timing out action since agent is not heartbeating or agent was restarted.");

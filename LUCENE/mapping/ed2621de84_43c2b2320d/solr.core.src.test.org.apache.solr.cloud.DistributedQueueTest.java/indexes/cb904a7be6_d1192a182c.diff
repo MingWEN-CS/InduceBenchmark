@@ -1,0 +1,22 @@
+24a25
+> import java.util.function.Predicate;
+34,36d34
+< import static com.google.common.base.Predicates.alwaysFalse;
+< import static com.google.common.base.Predicates.alwaysTrue;
+< 
+153a152,154
+>     Predicate<String> alwaysTrue = s -> true;
+>     Predicate<String> alwaysFalse = s -> false;
+> 
+156c157
+<       assertEquals(i, dq.peekElements(i, 0, alwaysTrue()).size());
+---
+>       assertEquals(i, dq.peekElements(i, 0, alwaysTrue).size());
+160c161
+<     assertEquals(3, dq.peekElements(4, 0, alwaysTrue()).size());
+---
+>     assertEquals(3, dq.peekElements(4, 0, alwaysTrue).size());
+164c165
+<     assertEquals(0, dq.peekElements(4, 1000, alwaysFalse()).size());
+---
+>     assertEquals(0, dq.peekElements(4, 1000, alwaysFalse).size());

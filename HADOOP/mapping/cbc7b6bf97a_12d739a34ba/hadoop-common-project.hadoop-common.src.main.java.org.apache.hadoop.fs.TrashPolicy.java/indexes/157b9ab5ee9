@@ -1,0 +1,148 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.fs;
+
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.util.ReflectionUtils;
+
+import java.io.IOException;
+
+
+
+
+
+@InterfaceAudience.Public
+@InterfaceStability.Evolving
+public abstract class TrashPolicy extends Configured {
+  protected FileSystem fs; 
+  protected Path trash; 
+  protected long deletionInterval; 
+
+  
+
+
+
+
+
+
+
+  @Deprecated
+  public abstract void initialize(Configuration conf, FileSystem fs, Path home);
+
+  
+
+
+
+
+
+
+
+  public void initialize(Configuration conf, FileSystem fs) throws IOException{
+    throw new UnsupportedOperationException();
+  }
+
+  
+
+
+  public abstract boolean isEnabled();
+
+  
+
+
+ 
+  public abstract boolean moveToTrash(Path path) throws IOException;
+
+  
+
+
+  public abstract void createCheckpoint() throws IOException;
+
+  
+
+
+  public abstract void deleteCheckpoint() throws IOException;
+
+  
+
+
+
+
+
+
+
+
+
+
+  public abstract Path getCurrentTrashDir();
+
+  
+
+
+
+
+
+
+  public Path getCurrentTrashDir(Path path) throws IOException {
+    throw new UnsupportedOperationException();
+  }
+
+  
+
+
+
+  public abstract Runnable getEmptier() throws IOException;
+
+  
+
+
+
+
+
+
+
+
+
+  @Deprecated
+  public static TrashPolicy getInstance(Configuration conf, FileSystem fs, Path home) {
+    Class<? extends TrashPolicy> trashClass = conf.getClass(
+        "fs.trash.classname", TrashPolicyDefault.class, TrashPolicy.class);
+    TrashPolicy trash = ReflectionUtils.newInstance(trashClass, conf);
+    trash.initialize(conf, fs, home); 
+    return trash;
+  }
+
+  
+
+
+
+
+
+
+
+  public static TrashPolicy getInstance(Configuration conf, FileSystem fs)
+      throws IOException {
+    Class<? extends TrashPolicy> trashClass = conf.getClass(
+        "fs.trash.classname", TrashPolicyDefault.class, TrashPolicy.class);
+    TrashPolicy trash = ReflectionUtils.newInstance(trashClass, conf);
+    trash.initialize(conf, fs); 
+    return trash;
+  }
+}

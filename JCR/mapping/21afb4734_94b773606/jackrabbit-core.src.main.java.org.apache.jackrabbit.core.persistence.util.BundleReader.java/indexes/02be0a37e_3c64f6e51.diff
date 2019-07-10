@@ -1,0 +1,23 @@
+129c129
+<             bundle.setModCount(readModCount());
+---
+>             bundle.setModCount(in.readShort());
+249,251c249,251
+<             byte[] bytes = new byte[16];
+<             in.readFully(bytes);
+<             return new NodeId(bytes);
+---
+>             long msb = in.readLong();
+>             long lsb = in.readLong();
+>             return new NodeId(msb, lsb);
+290,299d289
+<     private short readModCount() throws IOException {
+<         return in.readShort();
+<     }
+< 
+<     
+< 
+< 
+< 
+< 
+< 

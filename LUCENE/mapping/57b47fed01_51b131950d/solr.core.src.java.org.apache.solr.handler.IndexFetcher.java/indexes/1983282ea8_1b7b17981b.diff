@@ -1,0 +1,4 @@
+359c359
+<       tmpIndex = Paths.get(solrCore.getDataDir(), tmpIdxDirName).toString();
+---
+>       tmpIndex = solrCore.getDataDir() + tmpIdxDirName;

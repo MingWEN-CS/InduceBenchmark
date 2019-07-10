@@ -1,0 +1,10 @@
+28a29
+> import org.apache.ambari.server.actionmanager.CommandExecutionType;
+30a32,33
+> import org.apache.ambari.server.orm.DBAccessor;
+> 
+106a110,113
+>     dbAccessor.addColumn("stage",
+>       new DBAccessor.DBColumnInfo("command_execution_type", String.class, 32, CommandExecutionType.STAGE.toString(),
+>         false));
+> 

@@ -1,0 +1,12 @@
+27a28
+> import org.apache.ambari.server.ParentObjectNotFoundException;
+198c199
+<         Map<String, ServiceInfo> services = getManagementController().getAmbariMetaInfo().getServices(stackName, upgradePack.getTarget());
+---
+>         Map<String, ServiceInfo> services = getManagementController().getAmbariMetaInfo().getServices(stackName, sourceStackVersion);
+200a202,203
+>       } catch (ParentObjectNotFoundException parentNotFoundException) {
+>         LOG.error("Invalid stack version: " + stackName + "-" + sourceStackVersion, parentNotFoundException);
+202a206,207
+>       } catch (Exception e) {
+>         LOG.error("Failed to register custom prechecks for the services", e);

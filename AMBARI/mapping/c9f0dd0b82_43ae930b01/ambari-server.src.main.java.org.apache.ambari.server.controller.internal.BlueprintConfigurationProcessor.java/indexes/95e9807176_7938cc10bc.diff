@@ -1,0 +1,107 @@
+639c639
+<     public String updateForClusterCreate(String propertyName,
+---
+>     String updateForClusterCreate(String propertyName,
+644c644
+<     public Collection<String> getRequiredHostGroups(String origValue,
+---
+>     Collection<String> getRequiredHostGroups(String origValue,
+795c795,796
+<         if (matchingGroups.size() == 1) {
+---
+>         int matchingGroupCount = matchingGroups.size();
+>         if (matchingGroupCount == 1) {
+798,799c799,804
+<           if (topology.isNameNodeHAEnabled() && isComponentNameNode() && (matchingGroups.size() == 2)) {
+<             
+---
+>           Cardinality cardinality = topology.getBlueprint().getStack().getCardinality(component);
+>           
+>           
+>           if (matchingGroupCount == 0 && cardinality.isValidCount(0)) {
+>             return Collections.emptySet();
+>           } else {
+801,802c806,828
+<             if (properties.containsKey("core-site") && properties.get("core-site").get("fs.defaultFS").equals(origValue)) {
+<               return Collections.emptySet();
+---
+>             if (topology.isNameNodeHAEnabled() && isComponentNameNode() && (matchingGroupCount == 2)) {
+>               
+>               
+>               if (properties.containsKey("core-site") && properties.get("core-site").get("fs.defaultFS").equals(origValue)) {
+>                 return Collections.emptySet();
+>               }
+> 
+>               if (properties.containsKey("hbase-site") && properties.get("hbase-site").get("hbase.rootdir").equals(origValue)) {
+>                 
+>                 
+>                 return Collections.emptySet();
+>               }
+> 
+>               if (properties.containsKey("accumulo-site") && properties.get("accumulo-site").get("instance.volumes").equals(origValue)) {
+>                 
+>                 
+>                 return Collections.emptySet();
+>               }
+> 
+>               if (!origValue.contains("localhost")) {
+>                 
+>                 return Collections.emptySet();
+>               }
+805c831
+<             if (properties.containsKey("hbase-site") && properties.get("hbase-site").get("hbase.rootdir").equals(origValue)) {
+---
+>             if (topology.isNameNodeHAEnabled() && isComponentSecondaryNameNode() && (matchingGroupCount == 0)) {
+810d835
+<           }
+812,813c837,863
+<           if (topology.isNameNodeHAEnabled() && isComponentSecondaryNameNode() && (matchingGroups.isEmpty())) {
+<             
+---
+>             if (isYarnResourceManagerHAEnabled(properties) && isComponentResourceManager() && (matchingGroupCount == 2)) {
+>               if (!origValue.contains("localhost")) {
+>                 
+>                 return Collections.emptySet();
+>               }
+>             }
+> 
+>             if ((isOozieServerHAEnabled(properties)) && isComponentOozieServer() && (matchingGroupCount > 1)) {
+>               if (!origValue.contains("localhost")) {
+>                 
+>                 return Collections.emptySet();
+>               }
+>             }
+> 
+>             if ((isHiveServerHAEnabled(properties)) && isComponentHiveServer() && (matchingGroupCount > 1)) {
+>               if (!origValue.contains("localhost")) {
+>                 
+>                 return Collections.emptySet();
+>               }
+>             }
+> 
+>             if ((isComponentHiveMetaStoreServer()) && matchingGroupCount > 1) {
+>               if (!origValue.contains("localhost")) {
+>                 
+>                 return Collections.emptySet();
+>               }
+>             }
+815c865,866
+<             return Collections.emptySet();
+---
+>             throw new IllegalArgumentException("Unable to update configuration property with topology information. " +
+>                 "Component '" + component + "' is not mapped to any host group or is mapped to multiple groups.");
+817,820d867
+< 
+<           
+<           throw new IllegalArgumentException("Unable to determine required host groups for component. " +
+<               "Component '" + component + "' is not mapped to any host group or is mapped to multiple groups.");
+1001a1049,1057
+>     @Override
+>     public Collection<String> getRequiredHostGroups(String origValue, Map<String, Map<String, String>> properties, ClusterTopology topology) {
+>       if (isDatabaseManaged(properties)) {
+>         return super.getRequiredHostGroups(origValue, properties, topology);
+>       } else {
+>         return Collections.emptySet();
+>       }
+>     }
+> 

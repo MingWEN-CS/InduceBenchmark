@@ -1,0 +1,29 @@
+55a56
+> import org.apache.solr.client.solrj.request.V2Request;
+1091a1093,1096
+>     boolean isCollectionRequestOfV2 = false;
+>     if (request instanceof V2Request) {
+>       isCollectionRequestOfV2 = ((V2Request) request).isPerCollectionRequest();
+>     }
+1093c1098
+<     if (collection != null &&  !isAdmin) { 
+---
+>     if (collection != null &&  !isAdmin && !isCollectionRequestOfV2) { 
+1151c1156,1158
+<       if (collection == null || isAdmin) {
+---
+>       
+>       
+>       if (collection == null || isAdmin || (request instanceof V2Request && request.getMethod() != SolrRequest.METHOD.GET)) {
+1277c1284,1292
+<     if (ADMIN_PATHS.contains(request.getPath())) {
+---
+>     if (request instanceof V2Request) {
+>       Set<String> liveNodes = stateProvider.liveNodes();
+>       if (!liveNodes.isEmpty()) {
+>         List<String> liveNodesList = new ArrayList<>(liveNodes);
+>         Collections.shuffle(liveNodesList);
+>         theUrlList.add(ZkStateReader.getBaseUrlForNodeName(liveNodesList.get(0),
+>             (String) stateProvider.getClusterProperty(ZkStateReader.URL_SCHEME,"http")));
+>       }
+>     } else if (ADMIN_PATHS.contains(request.getPath())) {

@@ -1,0 +1,169 @@
+31a32
+> import java.nio.file.Paths;
+249,250c250,251
+<   boolean fetchLatestIndex(final SolrCore core, boolean forceReplication) throws IOException, InterruptedException {
+<     return fetchLatestIndex(core, forceReplication, false);
+---
+>   boolean fetchLatestIndex(boolean forceReplication) throws IOException, InterruptedException {
+>     return fetchLatestIndex(forceReplication, false);
+262,263c263,264
+< 
+<    boolean fetchLatestIndex(final SolrCore core, boolean forceReplication, boolean forceCoreReload) throws IOException, InterruptedException {
+---
+>   boolean fetchLatestIndex(boolean forceReplication, boolean forceCoreReload) throws IOException, InterruptedException {
+>     
+268c269
+<     String tmpIndex = null;
+---
+>     String tmpIndex;
+270c271
+<     String indexDirPath = null;
+---
+>     String indexDirPath;
+273c274
+<     if (!core.getSolrCoreState().getLastReplicateIndexSuccess()) {
+---
+>     if (!solrCore.getSolrCoreState().getLastReplicateIndexSuccess()) {
+282c283
+<       NamedList response = null;
+---
+>       NamedList response;
+293c294
+<       IndexCommit commit = core.getDeletionPolicy().getLatestCommit();
+---
+>       IndexCommit commit = solrCore.getDeletionPolicy().getLatestCommit();
+298c299
+<           searcherRefCounted = core.getNewestSearcher(false);
+---
+>           searcherRefCounted = solrCore.getNewestSearcher(false);
+315c316
+<           RefCounted<IndexWriter> iw = core.getUpdateHandler().getSolrCoreState().getIndexWriter(core);
+---
+>           RefCounted<IndexWriter> iw = solrCore.getUpdateHandler().getSolrCoreState().getIndexWriter(solrCore);
+321,323c322,323
+<           SolrQueryRequest req = new LocalSolrQueryRequest(core,
+<               new ModifiableSolrParams());
+<           core.getUpdateHandler().commit(new CommitUpdateCommand(req, false));
+---
+>           SolrQueryRequest req = new LocalSolrQueryRequest(solrCore, new ModifiableSolrParams());
+>           solrCore.getUpdateHandler().commit(new CommitUpdateCommand(req, false));
+343c343,345
+<       if(filesToDownload.isEmpty()) return false;
+---
+>       if (filesToDownload.isEmpty()) {
+>         return false;
+>       }
+357c359
+<       tmpIndex = createTempindexDir(core, tmpIdxDirName);
+---
+>       tmpIndex = Paths.get(solrCore.getDataDir(), tmpIdxDirName).toString();
+359c361
+<       tmpIndexDir = core.getDirectoryFactory().get(tmpIndex, DirContext.DEFAULT, core.getSolrConfig().indexConfig.lockType);
+---
+>       tmpIndexDir = solrCore.getDirectoryFactory().get(tmpIndex, DirContext.DEFAULT, solrCore.getSolrConfig().indexConfig.lockType);
+362,363c364,365
+<       indexDirPath = core.getIndexDir();
+<       indexDir = core.getDirectoryFactory().get(indexDirPath, DirContext.DEFAULT, core.getSolrConfig().indexConfig.lockType);
+---
+>       indexDirPath = solrCore.getIndexDir();
+>       indexDir = solrCore.getDirectoryFactory().get(indexDirPath, DirContext.DEFAULT, solrCore.getSolrConfig().indexConfig.lockType);
+407c409
+<           solrCore.getUpdateHandler().getSolrCoreState().closeIndexWriter(core, true);
+---
+>           solrCore.getUpdateHandler().getSolrCoreState().closeIndexWriter(solrCore, true);
+425c427
+<               successfulInstall = modifyIndexProps(tmpIdxDirName);
+---
+>               successfulInstall = IndexFetcher.modifyIndexProps(solrCore, tmpIdxDirName);
+436,437c438,439
+<                   core.getDirectoryFactory().doneWithDirectory(indexDir);
+<                   core.getDirectoryFactory().remove(indexDir);
+---
+>                   solrCore.getDirectoryFactory().doneWithDirectory(indexDir);
+>                   solrCore.getDirectoryFactory().remove(indexDir);
+449c451
+<               successfulInstall = modifyIndexProps(tmpIdxDirName);
+---
+>               successfulInstall = IndexFetcher.modifyIndexProps(solrCore, tmpIdxDirName);
+461c463
+<             solrCore.getUpdateHandler().getSolrCoreState().openIndexWriter(core);
+---
+>             solrCore.getUpdateHandler().getSolrCoreState().openIndexWriter(solrCore);
+467c469
+<           LOG.info("Reloading SolrCore {}", core.getName());
+---
+>           LOG.info("Reloading SolrCore {}", solrCore.getName());
+477,478c479,480
+<               core.getDirectoryFactory().doneWithDirectory(indexDir);
+<               core.getDirectoryFactory().remove(indexDir);
+---
+>               solrCore.getDirectoryFactory().doneWithDirectory(indexDir);
+>               solrCore.getDirectoryFactory().remove(indexDir);
+489c491
+<           cleanup(core, tmpIndexDir, indexDir, deleteTmpIdxDir, successfulInstall);
+---
+>           cleanup(solrCore, tmpIndexDir, indexDir, deleteTmpIdxDir, successfulInstall);
+495c497
+<           successfulInstall = fetchLatestIndex(core, true, reloadCore);
+---
+>           successfulInstall = fetchLatestIndex(true, reloadCore);
+508c510
+<         throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "Index fetch failed : ", e);
+---
+>         throw new SolrException(ErrorCode.SERVER_ERROR, "Index fetch failed : ", e);
+512c514
+<         cleanup(core, tmpIndexDir, indexDir, deleteTmpIdxDir, successfulInstall);
+---
+>         cleanup(solrCore, tmpIndexDir, indexDir, deleteTmpIdxDir, successfulInstall);
+516c518
+<         
+---
+> 
+527c529
+<       
+---
+> 
+529c531
+<       
+---
+> 
+548c550
+<       
+---
+> 
+552c554
+<       
+---
+> 
+722,730d723
+<   
+< 
+< 
+<   private String createTempindexDir(SolrCore core, String tmpIdxDirName) {
+<     
+<     
+<     return core.getDataDir() + tmpIdxDirName;
+<   }
+< 
+818c811
+<   static class CompareResult {
+---
+>   protected static class CompareResult {
+822,823c815,816
+<   
+<   private CompareResult compareFile(Directory indexDir, String filename, Long backupIndexFileLen, Long backupIndexFileChecksum) {
+---
+> 
+>   protected static CompareResult compareFile(Directory indexDir, String filename, Long backupIndexFileLen, Long backupIndexFileChecksum) {
+1037c1030
+<   private boolean modifyIndexProps(String tmpIdxDirName) {
+---
+>   protected static boolean modifyIndexProps(SolrCore solrCore, String tmpIdxDirName) {
+1045c1038
+<   
+---
+> 
+1086c1079
+<     
+---
+> 

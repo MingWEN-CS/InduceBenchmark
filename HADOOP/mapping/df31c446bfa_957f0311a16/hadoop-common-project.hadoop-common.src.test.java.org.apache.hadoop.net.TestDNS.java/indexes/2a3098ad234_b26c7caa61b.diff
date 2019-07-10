@@ -1,0 +1,8 @@
+27a28
+> import javax.naming.CommunicationException;
+168,169c169,170
+<       LOG.info("Local revers DNS hostname is " + s);
+<     } catch (NameNotFoundException e) {
+---
+>       LOG.info("Local reverse DNS hostname is " + s);
+>     } catch (NameNotFoundException | CommunicationException e) {

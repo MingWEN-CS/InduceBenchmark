@@ -1,0 +1,108 @@
+334d333
+<                     
+521a521,545
+> 
+> 
+> 
+> 
+>     public static String ph2_coord_currentRange(int start, int end) throws Exception {
+>         ParamChecker.checkLEZero(start, "current:n");
+>         ParamChecker.checkLEZero(end, "current:n");
+>         if (isSyncDataSet()) { 
+>             return coord_currentRange_sync(start, end);
+>         }
+>         else {
+>             throw new UnsupportedOperationException("Asynchronous Dataset is not supported yet");
+>         }
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+605,607c629
+<         if (n > 0) {
+<             throw new IllegalArgumentException("paramter should be <= 0 but it is " + n);
+<         }
+---
+>         ParamChecker.checkLEZero(n, "latest:n");
+630a653,654
+>         ParamChecker.checkLEZero(start, "latest:n");
+>         ParamChecker.checkLEZero(end, "latest:n");
+682a707,710
+>     public static String ph1_coord_currentRange_echo(String start, String end) {
+>         return echoUnResolved("currentRange", start + ", " + end);
+>     }
+> 
+690a719,722
+>     public static String ph2_coord_currentRange_echo(String start, String end) {
+>         return echoUnResolved("currentRange", start + ", " + end);
+>     }
+> 
+851a884,887
+>         return coord_currentRange_sync(n, n);
+>     }
+> 
+>     private static String coord_currentRange_sync(int start, int end) throws Exception {
+855a892
+>         StringBuilder instanceList = new StringBuilder();
+860a898,920
+>         } else {
+>             Calendar initInstance = getInitialInstanceCal();
+>             instCount[0] = instCount[0] + end;
+>             
+>             for (int i = end; i >= start; i--) {
+>                 
+>                 
+>                 
+>                 nominalInstanceCal = (Calendar) initInstance.clone();
+>                 nominalInstanceCal.add(dsTimeUnit.getCalendarUnit(), instCount[0] * datasetFrequency);
+>                 instCount[0]--;
+>                 if (nominalInstanceCal.compareTo(initInstance) < 0) {
+>                     LOG.warn("If the initial instance of the dataset is later than the current-instance specified,"
+>                             + " such as coord:current({0}) in this case, an empty string is returned. This means that"
+>                             + " no data is available at the current-instance specified by the user and the user could"
+>                             + " try modifying his initial-instance to an earlier time.", start);
+>                     break;
+>                 }
+>                 else {
+>                     instanceList.append(DateUtils.formatDateOozieTZ(nominalInstanceCal));
+>                     instanceList.append(CoordELFunctions.INSTANCE_SEPARATOR);
+>                 }
+>             }
+862,864d921
+<         nominalInstanceCal = getInitialInstanceCal();
+<         int absInstanceCount = instCount[0] + n;
+<         nominalInstanceCal.add(dsTimeUnit.getCalendarUnit(), datasetFrequency * absInstanceCount);
+866,871c923,924
+<         if (nominalInstanceCal.getTime().compareTo(getInitialInstance()) < 0) {
+<             LOG.warn("If the initial instance of the dataset is later than the current-instance specified, such as"
+<                     + " coord:current({0}) in this case, an empty string is returned. This means that no data is"
+<                     + " available at the current-instance specified by the user and the user could try modifying his"
+<                     + " initial-instance to an earlier time.", n);
+<             return "";
+---
+>         if (instanceList.length() > 0) {
+>             instanceList.setLength(instanceList.length() - CoordELFunctions.INSTANCE_SEPARATOR.length());
+873,874c926
+<         String str = DateUtils.formatDateOozieTZ(nominalInstanceCal);
+<         return str;
+---
+>         return instanceList.toString();
+949,956d1000
+<         if (startOffset > 0) {
+<             throw new RuntimeException("For latest there is no meaning " + "of positive instance. n should be <=0"
+<                     + startOffset);
+<         }
+<         if (endOffset > 0) {
+<             throw new RuntimeException("For latest there is no meaning " + "of positive instance. n should be <=0"
+<                     + endOffset);
+<         }
+1023d1066
+<                     

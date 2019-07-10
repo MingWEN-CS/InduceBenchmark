@@ -1,0 +1,102 @@
+47d46
+< import org.apache.jackrabbit.uuid.UUID;
+598,600c597,599
+<         Map<UUID, NodeState> aggregateRoots = new HashMap<UUID, NodeState>();
+<         Set<UUID> removedUUIDs = new HashSet<UUID>();
+<         Set<UUID> addedUUIDs = new HashSet<UUID>();
+---
+>         Map<NodeId, NodeState> aggregateRoots = new HashMap<NodeId, NodeState>();
+>         Set<NodeId> removedIds = new HashSet<NodeId>();
+>         Set<NodeId> addedIds = new HashSet<NodeId>();
+602c601
+<         Collection<UUID> removeCollection = new ArrayList<UUID>();
+---
+>         Collection<NodeId> removeCollection = new ArrayList<NodeId>();
+604,606c603,605
+<             UUID uuid = remove.next().getUUID();
+<             removeCollection.add(uuid);
+<             removedUUIDs.add(uuid);
+---
+>             NodeId id = remove.next();
+>             removeCollection.add(id);
+>             removedIds.add(id);
+613,615c612,614
+<                 UUID uuid = state.getNodeId().getUUID();
+<                 addedUUIDs.add(uuid);
+<                 removedUUIDs.remove(uuid);
+---
+>                 NodeId id = state.getNodeId();
+>                 addedIds.add(id);
+>                 removedIds.remove(id);
+633c632
+<         aggregateRoots.keySet().removeAll(addedUUIDs);
+---
+>         aggregateRoots.keySet().removeAll(addedIds);
+636c635
+<         retrieveAggregateRoot(removedUUIDs, aggregateRoots);
+---
+>         retrieveAggregateRoot(removedIds, aggregateRoots);
+731,732c730
+<                 UUID uuid = UUID.fromString(d.get(FieldNames.UUID));
+<                 ids.add(new NodeId(uuid));
+---
+>                 ids.add(new NodeId(d.get(FieldNames.UUID)));
+1308c1306
+<                                 doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, aggregate.getNodeId().getUUID().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+---
+>                                 doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, aggregate.getNodeId().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+1336c1334
+<                                     doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, parent.getNodeId().getUUID().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+---
+>                                     doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, parent.getNodeId().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+1350c1348
+<                         + " node with UUID: " + state.getNodeId().getUUID(), e);
+---
+>                         + " node with id: " + state.getNodeId(), e);
+1395d1392
+< 
+1397c1394
+<             NodeState state, Map<UUID, NodeState> map) {
+---
+>             NodeState state, Map<NodeId, NodeState> map) {
+1407c1404
+<                         map.put(root.getNodeId().getUUID(), root);
+---
+>                         map.put(root.getNodeId(), root);
+1412c1409
+<                         + state.getNodeId().getUUID(), e);
+---
+>                         + state.getNodeId(), e);
+1425c1422
+<             Set<UUID> removedUUIDs, Map<UUID, NodeState> map) {
+---
+>             Set<NodeId> removedIds, Map<NodeId, NodeState> map) {
+1436c1433
+<                     Term aggregateUUIDs =
+---
+>                     Term aggregateIds =
+1441,1444c1438,1441
+<                         for (UUID uuid : removedUUIDs) {
+<                             aggregateUUIDs =
+<                                 aggregateUUIDs.createTerm(uuid.toString());
+<                             tDocs.seek(aggregateUUIDs);
+---
+>                         for (NodeId id : removedIds) {
+>                             aggregateIds =
+>                                 aggregateIds.createTerm(id.toString());
+>                             tDocs.seek(aggregateIds);
+1448,1450c1445,1446
+<                                 NodeId nId = new NodeId(
+<                                         UUID.fromString(doc.get(FieldNames.UUID)));
+<                                 map.put(nId.getUUID(), (NodeState) ism.getItemState(nId));
+---
+>                                 NodeId nId = new NodeId(doc.get(FieldNames.UUID));
+>                                 map.put(nId, (NodeState) ism.getItemState(nId));
+1580c1576
+<         public ForeignSegmentDocId createDocId(UUID uuid) throws IOException {
+---
+>         public ForeignSegmentDocId createDocId(NodeId id) throws IOException {
+1582c1578
+<                 ForeignSegmentDocId doc = subReader.createDocId(uuid);
+---
+>                 ForeignSegmentDocId doc = subReader.createDocId(id);

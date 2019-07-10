@@ -1,0 +1,9 @@
+23a24
+> import org.apache.jackrabbit.core.util.XAReentrantWriterPreferenceReadWriteLock;
+32,33d32
+< import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
+< 
+73c72
+<     private final ReadWriteLock rwLock = new JournalLock();
+---
+>     private final XAReentrantWriterPreferenceReadWriteLock rwLock = new XAReentrantWriterPreferenceReadWriteLock();

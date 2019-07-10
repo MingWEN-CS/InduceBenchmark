@@ -1,0 +1,8 @@
+36c36
+< import org.apache.oozie.executor.jpa.WorkflowJobGetJPAExecutor;
+---
+> import org.apache.oozie.executor.jpa.WorkflowJobQueryExecutor;
+95c95
+<                 this.wfJob = jpaService.execute(new WorkflowJobGetJPAExecutor(wfId));
+---
+>                 this.wfJob = WorkflowJobQueryExecutor.getInstance().get(WorkflowJobQuery.GET_WORKFLOW_KILL, wfId);

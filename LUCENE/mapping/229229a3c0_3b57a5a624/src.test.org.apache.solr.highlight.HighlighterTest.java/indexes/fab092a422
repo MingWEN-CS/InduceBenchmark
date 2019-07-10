@@ -1,0 +1,586 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.highlight;
+
+import org.apache.solr.core.SolrCore;
+import org.apache.solr.util.*;
+import org.apache.solr.common.params.HighlightParams;
+
+import java.util.HashMap;
+
+
+
+
+
+public class HighlighterTest extends AbstractSolrTestCase {
+
+  private static String LONG_TEXT = "a long days night this should be a piece of text which is is is is is is is is is is is is is is is is is is is " +
+          "is is is is is isis is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is " +
+          "is is is is is is is is is is is is is " +
+          "is is is is is is is is is is is is is is is is is is is is sufficiently lengthly to produce multiple fragments which are not concatenated " +
+          "at all--we want two disjoint long fragments.";
+
+  @Override public String getSchemaFile() { return "schema.xml"; }
+  @Override public String getSolrConfigFile() { return "solrconfig.xml"; }
+
+  @Override 
+  public void setUp() throws Exception {
+    
+    
+    super.setUp();
+  }
+  
+  @Override 
+  public void tearDown() throws Exception {
+    
+    
+    super.tearDown();
+  }
+  
+  public void testConfig()
+  {
+    SolrHighlighter highlighter = SolrCore.getSolrCore().getHighlighter();
+    System.out.println( "highlighter" );
+
+    
+    SolrFormatter fmt1 = highlighter.formatters.get( null );
+    SolrFormatter fmt2 = highlighter.formatters.get( "" );
+    assertSame( fmt1, fmt2 );
+    assertTrue( fmt1 instanceof HtmlFormatter );
+    
+    
+    
+    SolrFragmenter gap = highlighter.fragmenters.get( "gap" );
+    SolrFragmenter regex = highlighter.fragmenters.get( "regex" );
+    SolrFragmenter frag = highlighter.fragmenters.get( null );
+    assertSame( gap, frag );
+    assertTrue( gap instanceof GapFragmenter );
+    assertTrue( regex instanceof RegexFragmenter );
+  }
+
+  public void testMergeContiguous() throws Exception {
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put(HighlightParams.HIGHLIGHT, "true");
+    args.put("df", "t_text");
+    args.put(HighlightParams.FIELDS, "");
+    args.put(HighlightParams.SNIPPETS, String.valueOf(4));
+    args.put(HighlightParams.FRAGSIZE, String.valueOf(40));
+    args.put(HighlightParams.MERGE_CONTIGUOUS_FRAGMENTS, "true");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+    String input = "this is some long text.  It has the word long in many places.  In fact, it has long on some different fragments.  " +
+            "Let us see what happens to long in this case.";
+    String gold = "this is some <em>long</em> text.  It has the word <em>long</em> in many places.  In fact, it has <em>long</em> on some different fragments.  " +
+            "Let us see what happens to <em>long</em> in this case.";
+    assertU(adoc("t_text", input, "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Merge Contiguous",
+            sumLRF.makeRequest("t_text:long"),
+            "
+            "
+            );
+    args.put("f.t_text." + HighlightParams.MERGE_CONTIGUOUS_FRAGMENTS, "true");
+    assertU(adoc("t_text", input, "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Merge Contiguous",
+            sumLRF.makeRequest("t_text:long"),
+            "
+            "
+            );
+
+    args.put(HighlightParams.MERGE_CONTIGUOUS_FRAGMENTS, "false");
+    args.put("f.t_text." + HighlightParams.MERGE_CONTIGUOUS_FRAGMENTS, "false");
+    sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+    assertQ("Merge Contiguous",
+            sumLRF.makeRequest("t_text:long"),
+            "
+            "
+            "
+            "
+            "
+            );
+  }
+
+  public void testTermVecHighlight() {
+
+    
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "true");
+    args.put("hl.fl", "tv_text");
+    args.put("hl.snippets", "2");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard",0,200,args);
+    
+    assertU(adoc("tv_text", LONG_TEXT, 
+                 "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Basic summarization",
+            sumLRF.makeRequest("tv_text:long"),
+            "
+            "
+            "
+            );
+  }
+
+  public void testDisMaxHighlight() {
+
+    
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "true");
+    args.put("hl.fl", "tv_text");
+    args.put("qf", "tv_text");
+    args.put("q.alt", "*:*");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "dismax",0,200,args);
+    
+    assertU(adoc("tv_text", "a long day's night", "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Basic summarization",
+            sumLRF.makeRequest("long"),
+            "
+            "
+            );
+    
+    
+    assertQ("Should not explode...", 
+        sumLRF.makeRequest( new String[] { null } ), 
+        "
+        );
+  }
+
+
+  public void testMultiValueAnalysisHighlight() {
+
+    
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "true");
+    args.put("hl.fl", "textgap");
+    args.put("df", "textgap");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+    
+    assertU(adoc("textgap", "first entry hasnt queryword", 
+                 "textgap", "second entry has queryword long",
+                 "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Basic summarization",
+            sumLRF.makeRequest("long"),
+            "
+            "
+            );
+
+  }
+  
+  public void testMultiValueBestFragmentHighlight() {
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "true");
+    args.put("hl.fl", "textgap");
+    args.put("df", "textgap");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+        "standard", 0, 200, args);
+    
+    assertU(adoc("textgap", "first entry has one word foo", 
+        "textgap", "second entry has both words foo bar",
+        "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Best fragment summarization",
+        sumLRF.makeRequest("foo bar"),
+        "
+        "
+    );
+  }
+
+
+  public void testDefaultFieldHighlight() {
+
+    
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "true");
+    args.put("df", "t_text");
+    args.put("hl.fl", "");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+    
+    assertU(adoc("t_text", "a long day's night", "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Basic summarization",
+            sumLRF.makeRequest("long"),
+            "
+            "
+            );
+
+  }
+
+
+
+  public void testHighlightDisabled() {
+
+    
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "false");
+    args.put("hl.fl", "t_text");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+    
+    assertU(adoc("t_text", "a long day's night", "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Basic summarization",
+            sumLRF.makeRequest("t_text:long"), "not(
+
+  }
+
+
+  public void testTwoFieldHighlight() {
+
+    
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "true");
+    args.put("hl.fl", "t_text tv_text");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+    
+    assertU(adoc("t_text", "a long day's night", "id", "1",
+                 "tv_text", "a long night's day"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Basic summarization",
+            sumLRF.makeRequest("t_text:long"),
+            "
+            "
+            "
+            );
+  }
+  
+  public void testFieldMatch()
+  {
+     assertU(adoc("t_text1", "random words for highlighting tests", "id", "1",
+           "t_text2", "more random words for second field"));
+     assertU(commit());
+     assertU(optimize());
+     
+     HashMap<String,String> args = new HashMap<String,String>();
+     args.put("hl", "true");
+     args.put("hl.fl", "t_text1 t_text2");
+     
+     TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+           "standard", 0, 200, args);
+     
+     assertQ("Test Default",
+           sumLRF.makeRequest("t_text1:random OR t_text2:words"),
+           "
+           "
+           "
+           );
+     
+     
+     args.put("hl.requireFieldMatch", "true");
+     sumLRF = h.getRequestFactory(
+           "standard", 0, 200, args);
+     assertQ("Test RequireFieldMatch",
+           sumLRF.makeRequest("t_text1:random OR t_text2:words"),
+           "
+           "
+           "
+           );
+
+     
+     assertU(adoc("t_text1", "random words for highlighting tests", "id", "2",
+             "t_text2", "more random words for second field"));
+     assertU(delI("1"));
+     assertU(commit());
+     sumLRF = h.getRequestFactory(
+           "standard", 0, 200, args);
+     assertQ("Test RequireFieldMatch on un-optimized index",
+           sumLRF.makeRequest("t_text1:random OR t_text2:words"),
+           "
+           "
+           "
+           );
+  }
+
+  public void testCustomSimpleFormatterHighlight() {
+
+    
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "true");
+    args.put("hl.fl", "t_text");
+    args.put("hl.simple.pre","<B>");
+    args.put("hl.simple.post","</B>");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+    
+    assertU(adoc("t_text", "a long days night", "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Basic summarization",
+            sumLRF.makeRequest("t_text:long"),
+            "
+            "
+            );
+    
+    
+    args.put("f.t_text.hl.simple.pre","<I>");
+    args.put("f.t_text.hl.simple.post","</I>");
+    sumLRF = h.getRequestFactory(
+          "standard", 0, 200, args);
+    assertQ("Basic summarization",
+          sumLRF.makeRequest("t_text:long"),
+          "
+          "
+          );
+    
+  }
+
+  public void testLongFragment() {
+
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "true");
+    args.put("hl.fl", "tv_text");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+    
+
+    String text = 
+      "junit: [mkdir] Created dir: /home/klaas/worio/backend/trunk/build-src/solr-nightly/build/test-results [junit] Running org.apache.solr.BasicFunctionalityTest [junit] Tests run: 7, Failures: 0, Errors: 0, Time elapsed: 5.36 sec [junit] Running org.apache.solr.ConvertedLegacyTest [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 8.268 sec [junit] Running org.apache.solr.DisMaxRequestHandlerTest [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 1.56 sec [junit] Running org.apache.solr.HighlighterTest [junit] Tests run: 7, Failures: 0, Errors: 0, Time elapsed: 4.979 sec [junit] Running org.apache.solr.OutputWriterTest [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.797 sec [junit] Running org.apache.solr.SampleTest [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 1.021 sec [junit] Running org.apache.solr.analysis.TestBufferedTokenStream [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.05 sec [junit] Running org.apache.solr.analysis.TestRemoveDuplicatesTokenFilter [junit] Tests run: 3, Failures: 0, Errors: 0, Time elapsed: 0.054 sec [junit] Running org.apache.solr.analysis.TestSynonymFilter [junit] Tests run: 6, Failures: 0, Errors: 0, Time elapsed: 0.081 sec [junit] Running org.apache.solr.analysis.TestWordDelimiterFilter [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 1.714 sec [junit] Running org.apache.solr.search.TestDocSet [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.788 sec [junit] Running org.apache.solr.util.SolrPluginUtilsTest [junit] Tests run: 5, Failures: 0, Errors: 0, Time elapsed: 3.519 sec [junit] Running org.apache.solr.util.TestOpenBitSet [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.533 sec";
+    assertU(adoc("tv_text", text, "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("Basic summarization",
+            sumLRF.makeRequest("tv_text:dir"),
+            "
+            "
+            );
+  }
+
+  public void testMaxChars() {
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("fl", "id score");
+    args.put("hl", "true");
+    args.put("hl.snippets", "10");
+    args.put("hl.fl", "t_text");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+    
+
+    assertU(adoc("t_text", LONG_TEXT, "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("token at start of text",
+            sumLRF.makeRequest("t_text:disjoint"),
+            "
+            "
+            );
+    args.put("hl.maxAnalyzedChars", "20");
+    sumLRF = h.getRequestFactory("standard", 0, 200, args);
+    assertQ("token at end of text",
+            sumLRF.makeRequest("t_text:disjoint"),
+            "
+            "
+            );
+    args.put("hl.maxAnalyzedChars", "-1");
+    sumLRF = h.getRequestFactory("standard", 0, 200, args);
+    assertQ("token at start of text",
+        sumLRF.makeRequest("t_text:disjoint"),
+        "
+        "
+    );
+  }
+  public void testRegexFragmenter() {
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("fl", "id score");
+    args.put("hl", "true");
+    args.put("hl.snippets", "10");
+    args.put("hl.fl", "t_text");
+    args.put("hl.fragmenter", "regex");
+    args.put("hl.regex.pattern", "[-\\w ,\"']{20,200}");
+    args.put("hl.regex.slop", ".9");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+    
+    String t = "This is an example of a sentence. Another example \"sentence\" with " +
+      "special characters\nand a line-break! Miscellaneous character like ^ are " +
+      "unknowns and end up being bad example s of sentences? I wonder how " +
+      "slashes/other punctuation fare in these examples?";
+    assertU(adoc("t_text", t, "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    assertQ("regex fragmenter",
+            sumLRF.makeRequest("t_text:example"),
+            "
+            "
+            "
+            "
+            "
+            );
+    
+    args.put("hl.regex.pattern", "[-\\w ,^/\\n\"']{20,200}");
+    sumLRF = h.getRequestFactory("standard", 0, 200, args);
+    assertQ("regex fragmenter 2",
+            sumLRF.makeRequest("t_text:example"),
+            "
+            "
+            "
+            "
+            "
+            );
+  }
+  public void testVariableFragsize() {
+     assertU(adoc("tv_text", "a long days night this should be a piece of text which is is is is is is is is is is is is is is is is is is is is is is is is isis is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is is sufficiently lengthly to produce multiple fragments which are not concatenated at all", 
+           "id", "1"));
+     assertU(commit());
+     assertU(optimize());
+
+     
+     HashMap<String,String> args = new HashMap<String,String>();
+     args.put("hl", "true");
+     args.put("hl.fl", "tv_text");
+     TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+       "standard", 0, 200, args);
+     assertQ("Basic summarization",
+           sumLRF.makeRequest("tv_text:long"),
+           "
+           "
+           );
+     
+     
+     args.put("hl.fragsize","25");
+     sumLRF = h.getRequestFactory(
+           "standard", 0, 200, args);
+     assertQ("Basic summarization",
+           sumLRF.makeRequest("tv_text:long"),
+           "
+           "
+           );
+     
+     
+     args.put("hl.fragsize","0");
+     sumLRF = h.getRequestFactory(
+           "standard", 0, 200, args);
+     assertQ("Basic summarization",
+           sumLRF.makeRequest("tv_text:long"),
+           "
+           "
+           );
+  }
+  public void testAlternateSummary() {
+     
+     assertU(adoc("tv_text", "keyword is only here",
+                  "t_text", "a piece of text to be substituted",
+                  "id", "1"));
+     assertU(commit());
+     assertU(optimize());
+
+    
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "true");
+    args.put("hl.fragsize","0");
+    args.put("hl.fl", "t_text");
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+
+    
+    assertQ("Alternate summarization",
+            sumLRF.makeRequest("tv_text:keyword"),
+            "
+            "
+            );
+
+    
+    args.put("hl.alternateField", "id");
+    sumLRF = h.getRequestFactory("standard", 0, 200, args);
+    assertQ("Alternate summarization",
+            sumLRF.makeRequest("tv_text:keyword"),
+            "
+            "
+            );
+
+    
+    args.put("hl.alternateField", "t_text");
+    args.put("hl.maxAlternateFieldLength", "15");
+    sumLRF = h.getRequestFactory("standard", 0, 200, args);
+    assertQ("Alternate summarization",
+            sumLRF.makeRequest("tv_text:keyword"),
+            "
+            "
+            );
+  }
+  
+  public void testPhraseHighlighter() {
+    HashMap<String,String> args = new HashMap<String,String>();
+    args.put("hl", "true");
+    args.put("hl.fl", "t_text");
+    args.put("hl.fragsize", "40");
+    args.put("hl.snippets", "10");
+
+    TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+      "standard", 0, 200, args);
+
+    
+    String t = "This piece of text refers to Kennedy at the beginning then has a longer piece of text that is very long in the middle and finally ends with another reference to Kennedy";
+    
+    assertU(adoc("t_text", t, "id", "1"));
+    assertU(commit());
+    assertU(optimize());
+    
+    String oldHighlight1 = "
+    String oldHighlight2 = "
+    String oldHighlight3 = "
+    String newHighlight1 = "
+  
+    
+    assertQ("Phrase highlighting - old",
+        sumLRF.makeRequest("t_text:\"text refers\""),
+        "
+        oldHighlight1, oldHighlight2, oldHighlight3
+        );
+
+    assertQ("Phrase highlighting - old",
+        sumLRF.makeRequest("t_text:text refers"),
+        "
+        oldHighlight1, oldHighlight2, oldHighlight3
+        );
+    
+    
+    args.put("hl.usePhraseHighlighter", "true");
+
+    sumLRF = h.getRequestFactory("standard", 0, 200, args);
+    
+    
+    assertQ("Phrase highlighting - Lucene-794",
+        sumLRF.makeRequest("t_text:\"text refers\""),
+        "
+        newHighlight1
+        );
+
+    
+    assertQ("Phrase highlighting - Lucene-794",
+        sumLRF.makeRequest("t_text:text refers"),
+        "
+        oldHighlight1, oldHighlight2, oldHighlight3
+        );
+  }
+}

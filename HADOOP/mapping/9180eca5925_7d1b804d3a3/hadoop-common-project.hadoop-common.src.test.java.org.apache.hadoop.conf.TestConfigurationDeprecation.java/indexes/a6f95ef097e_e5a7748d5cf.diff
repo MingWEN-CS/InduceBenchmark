@@ -1,0 +1,57 @@
+22a23
+> import static org.junit.Assert.assertNotNull;
+29a31
+> import java.util.Map;
+272a275,326
+> 
+>   @Test
+>   public void testIteratorWithDeprecatedKeys() {
+>     Configuration conf = new Configuration();
+>     Configuration.addDeprecation("dK", new String[]{"nK"});
+>     conf.set("k", "v");
+>     conf.set("dK", "V");
+>     assertEquals("V", conf.get("dK"));
+>     assertEquals("V", conf.get("nK"));
+>     conf.set("nK", "VV");
+>     assertEquals("VV", conf.get("dK"));
+>     assertEquals("VV", conf.get("nK"));
+>     boolean kFound = false;
+>     boolean dKFound = false;
+>     boolean nKFound = false;
+>     for (Map.Entry<String, String> entry : conf) {
+>       if (entry.getKey().equals("k")) {
+>         assertEquals("v", entry.getValue());
+>         kFound = true;
+>       }
+>       if (entry.getKey().equals("dK")) {
+>         assertEquals("VV", entry.getValue());
+>         dKFound = true;
+>       }
+>       if (entry.getKey().equals("nK")) {
+>         assertEquals("VV", entry.getValue());
+>         nKFound = true;
+>       }
+>     }
+>     assertTrue("regular Key not found", kFound);
+>     assertTrue("deprecated Key not found", dKFound);
+>     assertTrue("new Key not found", nKFound);
+>   }
+> 
+>   @Test
+>   public void testUnsetWithDeprecatedKeys() {
+>     Configuration conf = new Configuration();
+>     Configuration.addDeprecation("dK", new String[]{"nK"});
+>     conf.set("nK", "VV");
+>     assertEquals("VV", conf.get("dK"));
+>     assertEquals("VV", conf.get("nK"));
+>     conf.unset("dK");
+>     assertNull(conf.get("dK"));
+>     assertNull(conf.get("nK"));
+>     conf.set("nK", "VV");
+>     assertEquals("VV", conf.get("dK"));
+>     assertEquals("VV", conf.get("nK"));
+>     conf.unset("nK");
+>     assertNull(conf.get("dK"));
+>     assertNull(conf.get("nK"));
+>   }
+> 

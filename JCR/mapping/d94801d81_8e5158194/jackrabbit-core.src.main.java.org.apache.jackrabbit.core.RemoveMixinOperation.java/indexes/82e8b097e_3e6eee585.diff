@@ -1,0 +1,6 @@
+92,93c92,93
+<         NodeTypeManagerImpl ntMgr = session.getNodeTypeManager();
+<         NodeTypeRegistry ntReg = ntMgr.getNodeTypeRegistry();
+---
+>         NodeTypeManagerImpl ntMgr = context.getNodeTypeManager();
+>         NodeTypeRegistry ntReg = context.getNodeTypeRegistry();

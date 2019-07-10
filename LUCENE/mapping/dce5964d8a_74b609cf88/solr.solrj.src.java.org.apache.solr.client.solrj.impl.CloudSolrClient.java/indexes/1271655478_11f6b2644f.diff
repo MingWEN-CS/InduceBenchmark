@@ -1,0 +1,30 @@
+61c61
+< import org.apache.solr.common.cloud.ClusterState;
+---
+> import org.apache.solr.common.cloud.ClusterState.CollectionRef;
+86d85
+< import static org.apache.solr.common.params.CommonParams.ADMIN_PATHS;
+87a87
+> import static org.apache.solr.common.params.CommonParams.ADMIN_PATHS;
+315c315
+<   
+---
+> 
+349a350
+>       stateProvider.connect();
+433c434
+<   
+---
+> 
+1213c1214
+<     ClusterState.CollectionRef ref = getCollectionRef(collection);
+---
+>     CollectionRef ref = getCollectionRef(collection);
+1248c1249
+<   ClusterState.CollectionRef getCollectionRef(String collection) {
+---
+>   CollectionRef getCollectionRef(String collection) {
+1410c1411
+<     
+---
+> 

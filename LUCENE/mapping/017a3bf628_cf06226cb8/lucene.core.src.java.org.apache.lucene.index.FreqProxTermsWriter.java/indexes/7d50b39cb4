@@ -1,0 +1,123 @@
+package org.apache.lucene.index;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.CollectionUtil;
+
+final class FreqProxTermsWriter extends TermsHashConsumer {
+
+  @Override
+  void abort() {}
+
+  private void applyDeletes(SegmentWriteState state, Fields fields) throws IOException {
+    
+    
+    if (state.segDeletes != null && state.segDeletes.terms.size() > 0) {
+      Map<Term,Integer> segDeletes = state.segDeletes.terms;
+      List<Term> deleteTerms = new ArrayList<Term>(segDeletes.keySet());
+      Collections.sort(deleteTerms);
+      String lastField = null;
+      TermsEnum termsEnum = null;
+      DocsEnum docsEnum = null;
+      for(Term deleteTerm : deleteTerms) {
+        if (deleteTerm.field().equals(lastField) == false) {
+          lastField = deleteTerm.field();
+          Terms terms = fields.terms(lastField);
+          if (terms != null) {
+            termsEnum = terms.iterator(termsEnum);
+          }
+        }
+
+        if (termsEnum != null && termsEnum.seekExact(deleteTerm.bytes())) {
+          docsEnum = termsEnum.docs(null, docsEnum, 0);
+          int delDocLimit = segDeletes.get(deleteTerm);
+          while (true) {
+            int doc = docsEnum.nextDoc();
+            if (doc == DocsEnum.NO_MORE_DOCS) {
+              break;
+            }
+            if (doc < delDocLimit) {
+              if (state.liveDocs == null) {
+                state.liveDocs = state.segmentInfo.getCodec().liveDocsFormat().newLiveDocs(state.segmentInfo.getDocCount());
+              }
+              if (state.liveDocs.get(doc)) {
+                state.delCountOnFlush++;
+                state.liveDocs.clear(doc);
+              }
+            } else {
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  
+  
+  
+  
+
+  @Override
+  public void flush(Map<String,TermsHashConsumerPerField> fieldsToFlush, final SegmentWriteState state) throws IOException {
+
+    
+    
+    List<FreqProxTermsWriterPerField> allFields = new ArrayList<FreqProxTermsWriterPerField>();
+
+    for (TermsHashConsumerPerField f : fieldsToFlush.values()) {
+      final FreqProxTermsWriterPerField perField = (FreqProxTermsWriterPerField) f;
+      if (perField.termsHashPerField.bytesHash.size() > 0) {
+        perField.sortPostings();
+        assert perField.fieldInfo.isIndexed();
+        allFields.add(perField);
+      }
+    }
+
+    
+    CollectionUtil.introSort(allFields);
+
+    Fields fields = new FreqProxFields(allFields);
+
+    applyDeletes(state, fields);
+
+    state.segmentInfo.getCodec().postingsFormat().fieldsConsumer(state).write(fields);
+  }
+
+  BytesRef payload;
+
+  @Override
+  public TermsHashConsumerPerField addField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo) {
+    return new FreqProxTermsWriterPerField(termsHashPerField, this, fieldInfo);
+  }
+
+  @Override
+  void finishDocument(TermsHash termsHash) {
+  }
+
+  @Override
+  void startDocument() {
+  }
+}

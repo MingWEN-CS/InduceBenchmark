@@ -1,0 +1,58 @@
+36a37
+> import org.apache.ambari.server.controller.KerberosHelper;
+61a63
+> import org.apache.ambari.server.state.SecurityType;
+124a127,132
+>   
+> 
+> 
+>   @Inject
+>   private KerberosHelper kerberosHelper;
+> 
+408a417,419
+> 
+>     boolean addKerberosStages = false;
+> 
+465a477,481
+> 
+>         
+>         
+>         addKerberosStages = addKerberosStages || requiresKerberosStageAddition(oldState, newState, cluster);
+> 
+550c566,567
+<     return getManagementController().addStages(stages, cluster, requestProperties, null, null, null,
+---
+>     RequestStageContainer requestStages = getManagementController().addStages(
+>         stages, cluster, requestProperties, null, null, null,
+551a569,575
+> 
+>     if (addKerberosStages) {
+>       
+>       kerberosHelper.toggleKerberos(cluster, SecurityType.KERBEROS, null, requestStages);
+>     }
+> 
+>     return requestStages;
+609a634,638
+>       
+>       
+>       
+>       
+> 
+620a650
+> 
+801a832,846
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public boolean requiresKerberosStageAddition(State current, State target, Cluster cluster) {
+>     return current == State.INIT &&
+>         target  == State.INSTALLED &&
+>         kerberosHelper.isClusterKerberosEnabled(cluster);
+>   }
+> 

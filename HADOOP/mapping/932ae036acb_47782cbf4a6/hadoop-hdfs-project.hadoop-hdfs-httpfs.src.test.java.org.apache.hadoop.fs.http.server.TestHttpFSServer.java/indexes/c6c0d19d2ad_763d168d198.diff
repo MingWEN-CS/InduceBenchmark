@@ -1,0 +1,11 @@
+68a69,70
+> import java.util.Properties;
+> import org.apache.hadoop.security.authentication.server.AuthenticationFilter;
+688c690,694
+<     Signer signer = new Signer(new StringSignerSecretProvider("secret"));
+---
+>     StringSignerSecretProvider secretProvider = new StringSignerSecretProvider();
+>     Properties secretProviderProps = new Properties();
+>     secretProviderProps.setProperty(AuthenticationFilter.SIGNATURE_SECRET, "secret");
+>     secretProvider.init(secretProviderProps, null, -1);
+>     Signer signer = new Signer(secretProvider);

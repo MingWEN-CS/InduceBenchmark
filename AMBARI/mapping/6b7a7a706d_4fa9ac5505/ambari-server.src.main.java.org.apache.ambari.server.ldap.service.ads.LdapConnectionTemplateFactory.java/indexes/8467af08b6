@@ -1,0 +1,111 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.ldap.service.ads;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+
+import org.apache.ambari.server.events.AmbariLdapConfigChangedEvent;
+import org.apache.ambari.server.ldap.domain.AmbariLdapConfiguration;
+import org.apache.ambari.server.ldap.service.AmbariLdapException;
+import org.apache.ambari.server.ldap.service.LdapConnectionConfigService;
+import org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory;
+import org.apache.directory.ldap.client.api.LdapConnectionConfig;
+import org.apache.directory.ldap.client.api.LdapConnectionFactory;
+import org.apache.directory.ldap.client.api.LdapConnectionPool;
+import org.apache.directory.ldap.client.api.ValidatingPoolableLdapConnectionFactory;
+import org.apache.directory.ldap.client.template.LdapConnectionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.eventbus.Subscribe;
+
+
+
+
+
+@Singleton
+public class LdapConnectionTemplateFactory {
+
+  private static final Logger LOG = LoggerFactory.getLogger(LdapConnectionTemplateFactory.class);
+
+  
+  @Inject
+  private Provider<AmbariLdapConfiguration> ambariLdapConfigurationProvider;
+
+
+  @Inject
+  private LdapConnectionConfigService ldapConnectionConfigService;
+
+  
+  private LdapConnectionTemplate ldapConnectionTemplateInstance;
+
+
+  @Inject
+  public LdapConnectionTemplateFactory() {
+  }
+
+  
+
+
+
+
+
+  public LdapConnectionTemplate create(AmbariLdapConfiguration ambariLdapConfiguration) throws AmbariLdapException {
+    LOG.info("Constructing new instance based on the provided ambari ldap configuration: {}", ambariLdapConfiguration);
+
+    
+    LdapConnectionConfig ldapConnectionConfig = ldapConnectionConfigService.createLdapConnectionConfig(ambariLdapConfiguration);
+
+    
+    LdapConnectionFactory ldapConnectionFactory = new DefaultLdapConnectionFactory(ldapConnectionConfig);
+
+    
+    LdapConnectionPool ldapConnectionPool = new LdapConnectionPool(new ValidatingPoolableLdapConnectionFactory(ldapConnectionFactory));
+
+    LdapConnectionTemplate template = new LdapConnectionTemplate(ldapConnectionPool);
+    LOG.info("Ldap connection template instance: {}", template);
+
+    return template;
+
+  }
+
+  
+
+
+
+
+  public LdapConnectionTemplate load() throws AmbariLdapException {
+
+    if (null == ldapConnectionTemplateInstance) {
+      ldapConnectionTemplateInstance = create(ambariLdapConfigurationProvider.get());
+    }
+    return ldapConnectionTemplateInstance;
+  }
+
+  
+
+
+
+
+
+  @Subscribe
+  public void onConfigChange(AmbariLdapConfigChangedEvent event) throws AmbariLdapException {
+    ldapConnectionTemplateInstance = create(ambariLdapConfigurationProvider.get());
+  }
+
+
+}

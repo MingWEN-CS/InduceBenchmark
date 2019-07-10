@@ -1,0 +1,24 @@
+43d42
+<     final private static XLog LOG = XLog.getLog(CoordELFunctions.class);
+274a274
+>         final XLog LOG = XLog.getLog(CoordELFunctions.class);
+772c772
+<             LOG.error("data_in_name " + n + " is not valid");
+---
+>             XLog.getLog(CoordELFunctions.class).error("data_in_name " + n + " is not valid");
+782c782
+<             LOG.error("data_out_name " + n + " is not valid");
+---
+>             XLog.getLog(CoordELFunctions.class).error("data_out_name " + n + " is not valid");
+887a888
+>         final XLog LOG = XLog.getLog(CoordELFunctions.class);
+977c978
+<             LOG.warn("If the initial instance of the dataset is later than the offset instance"
+---
+>             XLog.getLog(CoordELFunctions.class).warn("If the initial instance of the dataset is later than the offset instance"
+1000a1002
+>         final XLog LOG = XLog.getLog(CoordELFunctions.class);
+1474c1476
+<             LOG.warn("If the initial instance of the dataset is later than the nominal time, an"
+---
+>             XLog.getLog(CoordELFunctions.class).warn("If the initial instance of the dataset is later than the nominal time, an"

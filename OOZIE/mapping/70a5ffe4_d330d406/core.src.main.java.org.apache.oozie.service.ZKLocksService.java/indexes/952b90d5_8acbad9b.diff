@@ -1,0 +1,110 @@
+20c20
+< import java.util.HashMap;
+---
+> import java.util.concurrent.ConcurrentMap;
+41a42
+> import com.google.common.collect.MapMaker;
+54c55,56
+<     final private HashMap<String, InterProcessReadWriteLock> zkLocks = new HashMap<String, InterProcessReadWriteLock>();
+---
+>     private ConcurrentMap<String, InterProcessReadWriteLock> zkLocks = new MapMaker().weakValues().makeMap();
+> 
+126,137c128
+<         InterProcessReadWriteLock lockEntry;
+<         synchronized (zkLocks) {
+<             if (zkLocks.containsKey(resource)) {
+<                 lockEntry = zkLocks.get(resource);
+<             }
+<             else {
+<                 lockEntry = new InterProcessReadWriteLock(zk.getClient(), LOCKS_NODE + "/" + resource);
+<                 zkLocks.put(resource, lockEntry);
+<             }
+<         }
+<         InterProcessMutex readLock = lockEntry.readLock();
+<         return acquireLock(wait, readLock, resource);
+---
+>         return acquireLock(resource, Type.READ, wait);
+150,161c141
+<         InterProcessReadWriteLock lockEntry;
+<         synchronized (zkLocks) {
+<             if (zkLocks.containsKey(resource)) {
+<                 lockEntry = zkLocks.get(resource);
+<             }
+<             else {
+<                 lockEntry = new InterProcessReadWriteLock(zk.getClient(), LOCKS_NODE + "/" + resource);
+<                 zkLocks.put(resource, lockEntry);
+<             }
+<         }
+<         InterProcessMutex writeLock = lockEntry.writeLock();
+<         return acquireLock(wait, writeLock, resource);
+---
+>         return acquireLock(resource, Type.WRITE, wait);
+164c144,153
+<     private LockToken acquireLock(long wait, InterProcessMutex lock, String resource) {
+---
+>     private LockToken acquireLock(final String resource, Type type, long wait) throws InterruptedException {
+>         InterProcessReadWriteLock lockEntry = zkLocks.get(resource);
+>         if (lockEntry == null) {
+>             InterProcessReadWriteLock newLock = new InterProcessReadWriteLock(zk.getClient(), LOCKS_NODE + "/" + resource);
+>             lockEntry = zkLocks.putIfAbsent(resource, newLock);
+>             if (lockEntry == null) {
+>                 lockEntry = newLock;
+>             }
+>         }
+>         InterProcessMutex lock = (type.equals(Type.READ)) ? lockEntry.readLock() : lockEntry.writeLock();
+169c158
+<                 token = new ZKLockToken(lock, resource);
+---
+>                 token = new ZKLockToken(lockEntry, type);
+172c161
+<                 token = new ZKLockToken(lock, resource);
+---
+>                 token = new ZKLockToken(lockEntry, type);
+186,187c175,176
+<         private final InterProcessMutex lock;
+<         private final String resource;
+---
+>         private final InterProcessReadWriteLock lockEntry;
+>         private final Type type;
+189,191c178,180
+<         private ZKLockToken(InterProcessMutex lock, String resource) {
+<             this.lock = lock;
+<             this.resource = resource;
+---
+>         private ZKLockToken(InterProcessReadWriteLock lockEntry, Type type) {
+>             this.lockEntry = lockEntry;
+>             this.type = type;
+200,211c189,195
+<                 lock.release();
+<                 if (zkLocks.get(resource) == null) {
+<                     return;
+<                 }
+<                 if (!isLockHeld()) {
+<                     synchronized (zkLocks) {
+<                         if (zkLocks.get(resource) != null) {
+<                             if (!isLockHeld()) {
+<                                 zkLocks.remove(resource);
+<                             }
+<                         }
+<                     }
+---
+>                 switch (type) {
+>                     case WRITE:
+>                         lockEntry.writeLock().release();
+>                         break;
+>                     case READ:
+>                         lockEntry.readLock().release();
+>                         break;
+217d200
+< 
+219,224d201
+< 
+<         private boolean isLockHeld() {
+<             return zkLocks.get(resource).readLock().isAcquiredInThisProcess()
+<                     || zkLocks.get(resource).writeLock().isAcquiredInThisProcess();
+<         }
+< 
+228c205
+<     public HashMap<String, InterProcessReadWriteLock> getLocks(){
+---
+>     public ConcurrentMap<String, InterProcessReadWriteLock> getLocks(){

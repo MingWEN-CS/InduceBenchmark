@@ -1,0 +1,158 @@
+2424c2424
+<   private RequestStageContainer doStageCreation(RequestStageContainer requestStages,
+---
+>   protected RequestStageContainer doStageCreation(RequestStageContainer requestStages,
+2482d2481
+<       Collection<ServiceComponentHost> componentsToConfigureForKerberos = new ArrayList<>();
+2485a2485,2578
+>       
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>       if(kerberosHelper.isClusterKerberosEnabled(cluster)) {
+>         Collection<ServiceComponentHost> componentsToConfigureForKerberos = new ArrayList<>();
+> 
+>         for (Map<State, List<ServiceComponentHost>> changedScHostStates : changedScHosts.values()) {
+> 
+>           if (changedScHostStates != null) {
+>             for (Map.Entry<State, List<ServiceComponentHost>> changedScHostState : changedScHostStates.entrySet()) {
+>               State newState = changedScHostState.getKey();
+> 
+>               if (newState == State.INSTALLED) {
+>                 List<ServiceComponentHost> scHosts = changedScHostState.getValue();
+> 
+>                 if (scHosts != null) {
+>                   for (ServiceComponentHost scHost : scHosts) {
+>                     State oldSchState = scHost.getState();
+> 
+>                     
+>                     
+>                     
+>                     
+>                     
+>                     
+>                     
+>                     if ((oldSchState == State.INIT || oldSchState == State.INSTALL_FAILED)) {
+>                       
+>                       
+>                       
+>                       
+>                       if (!hostComponentAlreadyExists(cluster, scHost) && !("INITIAL_INSTALL".equals(requestProperties.get("phase")))) {
+>                         componentsToConfigureForKerberos.add(scHost);
+>                       }
+> 
+>                       
+>                       
+>                       
+>                       componentsToEnableKerberos.add(scHost);
+> 
+>                       if (Service.Type.KERBEROS.name().equalsIgnoreCase(scHost.getServiceName()) &&
+>                           Role.KERBEROS_CLIENT.name().equalsIgnoreCase(scHost.getServiceComponentName())) {
+>                         
+>                         
+>                         
+>                         
+>                         hostsToForceKerberosOperations.add(scHost.getHostName());
+>                       }
+>                     }
+>                   }
+>                 }
+>               }
+>             }
+>           }
+>         }
+> 
+>         
+>         
+>         
+>         if (!componentsToConfigureForKerberos.isEmpty()) {
+>           
+>           
+>           
+>           
+>           Map<String, Collection<String>> serviceFilter = new HashMap<String, Collection<String>>();
+> 
+>           for (ServiceComponentHost scHost : componentsToConfigureForKerberos) {
+>             String serviceName = scHost.getServiceName();
+>             Collection<String> componentFilter = serviceFilter.get(serviceName);
+> 
+>             if (componentFilter == null) {
+>               componentFilter = new HashSet<String>();
+>               serviceFilter.put(serviceName, componentFilter);
+>             }
+> 
+>             componentFilter.add(scHost.getServiceComponentName());
+>           }
+> 
+>           try {
+>             kerberosHelper.configureServices(cluster, serviceFilter);
+>           } catch (KerberosInvalidConfigurationException e) {
+>             throw new AmbariException(e.getMessage(), e);
+>           }
+>         }
+>       }
+> 
+2531,2559d2623
+< 
+<                   
+<                   
+<                   
+<                   
+<                   
+<                   
+<                   
+<                   
+<                   
+<                   if((oldSchState == State.INIT || oldSchState == State.INSTALL_FAILED) && kerberosHelper.isClusterKerberosEnabled(cluster)) {
+<                     
+<                     
+<                     if (!hostComponentAlreadyExists(cluster, scHost) && !("INITIAL_INSTALL".equals(requestProperties.get("phase")))) {
+<                       componentsToConfigureForKerberos.add(scHost);
+<                     }
+< 
+<                     componentsToEnableKerberos.add(scHost);
+< 
+<                     if(Service.Type.KERBEROS.name().equalsIgnoreCase(scHost.getServiceName()) &&
+<                         Role.KERBEROS_CLIENT.name().equalsIgnoreCase(scHost.getServiceComponentName())) {
+<                       
+<                       
+<                       
+<                       
+<                       hostsToForceKerberosOperations.add(scHost.getHostName());
+<                     }
+< 
+<                   }
+2756,2781d2819
+<       if(!componentsToConfigureForKerberos.isEmpty()) {
+<         
+<         
+<         
+<         
+<         Map<String, Collection<String>> serviceFilter = new HashMap<String, Collection<String>>();
+< 
+<         for (ServiceComponentHost scHost : componentsToConfigureForKerberos) {
+<           String serviceName = scHost.getServiceName();
+<           Collection<String> componentFilter = serviceFilter.get(serviceName);
+< 
+<           if (componentFilter == null) {
+<             componentFilter = new HashSet<String>();
+<             serviceFilter.put(serviceName, componentFilter);
+<           }
+< 
+<           componentFilter.add(scHost.getServiceComponentName());
+<         }
+< 
+<         try {
+<           kerberosHelper.configureServices(cluster, serviceFilter);
+<         } catch (KerberosInvalidConfigurationException e) {
+<           throw new AmbariException(e.getMessage(), e);
+<         }
+<       }
+< 

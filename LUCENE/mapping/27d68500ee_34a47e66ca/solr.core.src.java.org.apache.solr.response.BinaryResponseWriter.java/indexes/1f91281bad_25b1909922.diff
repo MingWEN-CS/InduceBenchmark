@@ -1,0 +1,25 @@
+36a37
+> import org.apache.solr.search.SolrReturnFields;
+143a145,146
+>       boolean onlyPseudoFields = (fnames == null && !returnFields.wantsAllFields())
+>           || (fnames != null && fnames.size() == 1 && SolrReturnFields.SCORE.equals(fnames.iterator().next()));
+147,148c150,157
+<         StoredDocument doc = searcher.doc(id, fnames);
+<         SolrDocument sdoc = getDoc(doc);
+---
+>         SolrDocument sdoc;
+>         if (onlyPseudoFields) {
+>           
+>           sdoc = new SolrDocument();
+>         } else {
+>           StoredDocument doc = searcher.doc(id, fnames);
+>           sdoc = getDoc(doc);
+>         }
+181c190
+<         if( !returnFields.wantsField(fieldName) ) 
+---
+>         if( !returnFields.wantsField(fieldName) )
+183c192
+<         
+---
+> 

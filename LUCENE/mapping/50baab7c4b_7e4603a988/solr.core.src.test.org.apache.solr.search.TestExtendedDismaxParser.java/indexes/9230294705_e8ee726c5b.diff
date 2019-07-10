@@ -1,0 +1,14 @@
+21a22
+> import org.junit.BeforeClass;
+25,28c26,31
+<   @Override
+<   public String getSchemaFile() { return "schema12.xml"; }
+<   @Override
+<   public String getSolrConfigFile() { return "solrconfig.xml"; }
+---
+> 
+>   @BeforeClass
+>   public static void beforeClass() throws Exception {
+>     initCore("solrconfig.xml", "schema12.xml");
+>   }
+>   

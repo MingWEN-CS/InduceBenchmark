@@ -1,0 +1,67 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.accumulo.tracer;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.easymock.EasyMock;
+import org.junit.Test;
+
+public class ZooTraceClientTest {
+
+  
+
+
+  private static class UpdateHostsDelegate extends ZooTraceClient {
+    private final AtomicBoolean done;
+
+    private UpdateHostsDelegate(AtomicBoolean done) {
+      this.done = done;
+    }
+
+    @Override
+    public void updateHostsFromZooKeeper() {
+      this.done.set(true);
+    }
+  }
+
+  @Test
+  public void testConnectFailureRetries() throws Exception {
+    ZooTraceClient client = EasyMock.createMockBuilder(ZooTraceClient.class).addMockedMethod("updateHostsFromZooKeeper").createStrictMock();
+    client.setRetryPause(0l);
+    AtomicBoolean done = new AtomicBoolean(false);
+
+    client.updateHostsFromZooKeeper();
+    EasyMock.expectLastCall().andThrow(new RuntimeException()).once();
+    client.updateHostsFromZooKeeper();
+    
+    EasyMock.expectLastCall().andDelegateTo(new UpdateHostsDelegate(done));
+
+    EasyMock.replay(client);
+
+    client.setInitialTraceHosts();
+
+    while (!done.get()) {
+      
+      Thread.sleep(200);
+    }
+
+    EasyMock.verify(client);
+
+  }
+
+}

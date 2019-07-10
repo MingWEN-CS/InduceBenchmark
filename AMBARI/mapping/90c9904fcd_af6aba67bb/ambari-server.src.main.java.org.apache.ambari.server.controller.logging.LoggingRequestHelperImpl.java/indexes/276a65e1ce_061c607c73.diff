@@ -1,0 +1,8 @@
+65c65
+<   private static final String LOGSEARCH_QUERY_PATH = "/service/dashboard/solr/logs_search";
+---
+>   private static final String LOGSEARCH_QUERY_PATH = "/api/v1/service/logs";
+67c67
+<   private static final String LOGSEARCH_GET_LOG_LEVELS_PATH = "/service/dashboard/getLogLevelCounts";
+---
+>   private static final String LOGSEARCH_GET_LOG_LEVELS_PATH = "/api/v1/service/logs/levels/counts/namevalues";

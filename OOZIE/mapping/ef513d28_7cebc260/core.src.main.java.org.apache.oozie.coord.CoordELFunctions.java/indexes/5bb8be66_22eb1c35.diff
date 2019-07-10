@@ -1,0 +1,26 @@
+445a446,464
+> 
+> 
+> 
+>     public static String ph2_coord_epochTime(String dateTimeStr, String millis)
+>             throws Exception {
+>         Date dateTime = DateUtils.parseDateOozieTZ(dateTimeStr);
+>         return DateUtils.formatDateEpoch(dateTime, Boolean.valueOf(millis));
+>     }
+> 
+>     public static String ph3_coord_epochTime(String dateTimeStr, String millis)
+>             throws Exception {
+>         return  ph2_coord_epochTime(dateTimeStr, millis);
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+821a841,845
+>     public static String ph1_coord_epochTime_echo(String dateTime, String millis) {
+>         
+>         return echoUnResolved("epochTime", "'"+dateTime+"'" + " , " + millis);
+>     }
+> 

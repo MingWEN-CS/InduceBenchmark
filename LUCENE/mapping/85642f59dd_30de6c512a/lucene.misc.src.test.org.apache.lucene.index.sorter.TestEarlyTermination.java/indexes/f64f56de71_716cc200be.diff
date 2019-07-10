@@ -1,0 +1,11 @@
+36a37
+> import org.apache.lucene.search.LeafCollector;
+150,152c151,154
+<         public void setNextReader(AtomicReaderContext context) throws IOException {
+<           super.setNextReader(context);
+<           assertFalse("segment should not be recognized as sorted as different sorter was used", segmentSorted);
+---
+>         public LeafCollector getLeafCollector(AtomicReaderContext context) throws IOException {
+>           final LeafCollector ret = super.getLeafCollector(context);
+>           assertTrue("segment should not be recognized as sorted as different sorter was used", ret.getClass() == in.getLeafCollector(context).getClass());
+>           return ret;

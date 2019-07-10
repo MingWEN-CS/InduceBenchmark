@@ -1,0 +1,455 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.cloud;
+
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Predicate;
+
+import com.codahale.metrics.Timer;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
+import org.apache.solr.common.SolrException;
+import org.apache.solr.common.SolrException.ErrorCode;
+import org.apache.solr.common.cloud.SolrZkClient;
+import org.apache.solr.common.cloud.ZkCmdExecutor;
+import org.apache.solr.common.util.Pair;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+
+
+public class DistributedQueue {
+  private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+  static final String PREFIX = "qn-";
+
+  
+
+
+
+
+
+
+
+
+  private static final Object _IMPLEMENTATION_NOTES = null;
+
+  final String dir;
+
+  final SolrZkClient zookeeper;
+
+  final Overseer.Stats stats;
+
+  
+
+
+  private final ReentrantLock updateLock = new ReentrantLock();
+
+  
+
+
+
+
+
+
+  private TreeSet<String> knownChildren = new TreeSet<>();
+
+  
+
+
+  private final Condition changed = updateLock.newCondition();
+
+  
+
+
+  private ChildWatcher lastWatcher = null;
+
+  public DistributedQueue(SolrZkClient zookeeper, String dir) {
+    this(zookeeper, dir, new Overseer.Stats());
+  }
+
+  public DistributedQueue(SolrZkClient zookeeper, String dir, Overseer.Stats stats) {
+    this.dir = dir;
+
+    ZkCmdExecutor cmdExecutor = new ZkCmdExecutor(zookeeper.getZkClientTimeout());
+    try {
+      cmdExecutor.ensureExists(dir, zookeeper);
+    } catch (KeeperException e) {
+      throw new SolrException(ErrorCode.SERVER_ERROR, e);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new SolrException(ErrorCode.SERVER_ERROR, e);
+    }
+
+    this.zookeeper = zookeeper;
+    this.stats = stats;
+  }
+
+  
+
+
+
+
+
+  public byte[] peek() throws KeeperException, InterruptedException {
+    Timer.Context time = stats.time(dir + "_peek");
+    try {
+      return firstElement();
+    } finally {
+      time.stop();
+    }
+  }
+
+  
+
+
+
+
+
+
+  public byte[] peek(boolean block) throws KeeperException, InterruptedException {
+    return block ? peek(Long.MAX_VALUE) : peek();
+  }
+
+  
+
+
+
+
+
+
+  public byte[] peek(long wait) throws KeeperException, InterruptedException {
+    Preconditions.checkArgument(wait > 0);
+    Timer.Context time;
+    if (wait == Long.MAX_VALUE) {
+      time = stats.time(dir + "_peek_wait_forever");
+    } else {
+      time = stats.time(dir + "_peek_wait" + wait);
+    }
+    updateLock.lockInterruptibly();
+    try {
+      long waitNanos = TimeUnit.MILLISECONDS.toNanos(wait);
+      while (waitNanos > 0) {
+        byte[] result = firstElement();
+        if (result != null) {
+          return result;
+        }
+        waitNanos = changed.awaitNanos(waitNanos);
+      }
+      return null;
+    } finally {
+      updateLock.unlock();
+      time.stop();
+    }
+  }
+
+  
+
+
+
+
+
+  public byte[] poll() throws KeeperException, InterruptedException {
+    Timer.Context time = stats.time(dir + "_poll");
+    try {
+      return removeFirst();
+    } finally {
+      time.stop();
+    }
+  }
+
+  
+
+
+
+
+  public byte[] remove() throws NoSuchElementException, KeeperException, InterruptedException {
+    Timer.Context time = stats.time(dir + "_remove");
+    try {
+      byte[] result = removeFirst();
+      if (result == null) {
+        throw new NoSuchElementException();
+      }
+      return result;
+    } finally {
+      time.stop();
+    }
+  }
+
+  
+
+
+
+
+  public byte[] take() throws KeeperException, InterruptedException {
+    
+    Timer.Context timer = stats.time(dir + "_take");
+    updateLock.lockInterruptibly();
+    try {
+      while (true) {
+        byte[] result = removeFirst();
+        if (result != null) {
+          return result;
+        }
+        changed.await();
+      }
+    } finally {
+      updateLock.unlock();
+      timer.stop();
+    }
+  }
+
+  
+
+
+
+
+
+
+  public void offer(byte[] data) throws KeeperException, InterruptedException {
+    Timer.Context time = stats.time(dir + "_offer");
+    try {
+      while (true) {
+        try {
+          
+          
+          
+          zookeeper.create(dir + "/" + PREFIX, data, CreateMode.PERSISTENT_SEQUENTIAL, true);
+          return;
+        } catch (KeeperException.NoNodeException e) {
+          try {
+            zookeeper.create(dir, new byte[0], CreateMode.PERSISTENT, true);
+          } catch (KeeperException.NodeExistsException ne) {
+            
+          }
+        }
+      }
+    } finally {
+      time.stop();
+    }
+  }
+
+  public Overseer.Stats getStats() {
+    return stats;
+  }
+
+  
+
+
+
+
+
+  private String firstChild(boolean remove) throws KeeperException, InterruptedException {
+    updateLock.lockInterruptibly();
+    try {
+      
+      if (lastWatcher != null && !knownChildren.isEmpty()) {
+        return remove ? knownChildren.pollFirst() : knownChildren.first();
+      }
+
+      
+      ChildWatcher newWatcher = new ChildWatcher();
+      knownChildren = fetchZkChildren(newWatcher);
+      lastWatcher = newWatcher; 
+      if (knownChildren.isEmpty()) {
+        return null;
+      }
+      changed.signalAll();
+      return remove ? knownChildren.pollFirst() : knownChildren.first();
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  
+
+
+  TreeSet<String> fetchZkChildren(Watcher watcher) throws InterruptedException, KeeperException {
+    while (true) {
+      try {
+        TreeSet<String> orderedChildren = new TreeSet<>();
+
+        List<String> childNames = zookeeper.getChildren(dir, watcher, true);
+        stats.setQueueLength(childNames.size());
+        for (String childName : childNames) {
+          
+          if (!childName.regionMatches(0, PREFIX, 0, PREFIX.length())) {
+            LOG.debug("Found child node with improper name: " + childName);
+            continue;
+          }
+          orderedChildren.add(childName);
+        }
+        return orderedChildren;
+      } catch (KeeperException.NoNodeException e) {
+        zookeeper.makePath(dir, false, true);
+        
+      }
+    }
+  }
+
+  
+
+
+
+
+
+  Collection<Pair<String, byte[]>> peekElements(int max, long waitMillis, Predicate<String> acceptFilter) throws KeeperException, InterruptedException {
+    List<String> foundChildren = new ArrayList<>();
+    long waitNanos = TimeUnit.MILLISECONDS.toNanos(waitMillis);
+    while (true) {
+      
+      firstChild(false);
+
+      updateLock.lockInterruptibly();
+      try {
+        for (String child : knownChildren) {
+          if (acceptFilter.test(child)) {
+            foundChildren.add(child);
+          }
+        }
+        if (!foundChildren.isEmpty()) {
+          break;
+        }
+        if (waitNanos <= 0) {
+          break;
+        }
+        waitNanos = changed.awaitNanos(waitNanos);
+      } finally {
+        updateLock.unlock();
+      }
+
+      if (!foundChildren.isEmpty()) {
+        break;
+      }
+    }
+
+    
+    
+    
+    List<Pair<String, byte[]>> result = new ArrayList<>();
+    for (String child : foundChildren) {
+      if (result.size() >= max) {
+        break;
+      }
+      try {
+        byte[] data = zookeeper.getData(dir + "/" + child, null, null, true);
+        result.add(new Pair<>(child, data));
+      } catch (KeeperException.NoNodeException e) {
+        
+        updateLock.lockInterruptibly();
+        try {
+          knownChildren.remove(child);
+        } finally {
+          updateLock.unlock();
+        }
+      }
+    }
+    return result;
+  }
+
+  
+
+
+
+
+  private byte[] firstElement() throws KeeperException, InterruptedException {
+    while (true) {
+      String firstChild = firstChild(false);
+      if (firstChild == null) {
+        return null;
+      }
+      try {
+        return zookeeper.getData(dir + "/" + firstChild, null, null, true);
+      } catch (KeeperException.NoNodeException e) {
+        
+        updateLock.lockInterruptibly();
+        try {
+          knownChildren.remove(firstChild);
+        } finally {
+          updateLock.unlock();
+        }
+      }
+    }
+  }
+
+  private byte[] removeFirst() throws KeeperException, InterruptedException {
+    while (true) {
+      String firstChild = firstChild(true);
+      if (firstChild == null) {
+        return null;
+      }
+      try {
+        String path = dir + "/" + firstChild;
+        byte[] result = zookeeper.getData(path, null, null, true);
+        zookeeper.delete(path, -1, true);
+        return result;
+      } catch (KeeperException.NoNodeException e) {
+        
+        updateLock.lockInterruptibly();
+        try {
+          knownChildren.remove(firstChild);
+        } finally {
+          updateLock.unlock();
+        }
+      }
+    }
+  }
+
+  @VisibleForTesting boolean hasWatcher() throws InterruptedException {
+    updateLock.lockInterruptibly();
+    try {
+      return lastWatcher != null;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  private class ChildWatcher implements Watcher {
+
+    @Override
+    public void process(WatchedEvent event) {
+      
+      if (Event.EventType.None.equals(event.getType()) && !Event.KeeperState.Expired.equals(event.getState())) {
+        return;
+      }
+      updateLock.lock();
+      try {
+        
+        if (lastWatcher == this) {
+          lastWatcher = null;
+        }
+        
+        changed.signalAll();
+      } finally {
+        updateLock.unlock();
+      }
+    }
+  }
+}

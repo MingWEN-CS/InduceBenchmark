@@ -1,0 +1,237 @@
+package org.apache.lucene.store;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+
+
+
+
+
+
+
+
+public class RAMDirectory extends Directory implements Serializable {
+
+  private static final long serialVersionUID = 1l;
+
+  HashMap fileMap = new HashMap();
+  private Set fileNames = fileMap.keySet();
+  Collection files = fileMap.values();
+  long sizeInBytes = 0;
+  
+  
+  
+  
+
+  
+  public RAMDirectory() {
+    setLockFactory(new SingleInstanceLockFactory());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public RAMDirectory(Directory dir) throws IOException {
+    this(dir, false);
+  }
+  
+  private RAMDirectory(Directory dir, boolean closeDir) throws IOException {
+    this();
+    Directory.copy(dir, this, closeDir);
+  }
+
+  
+
+
+
+
+
+
+  public RAMDirectory(File dir) throws IOException {
+    this(FSDirectory.getDirectory(dir), true);
+  }
+
+  
+
+
+
+
+
+
+  public RAMDirectory(String dir) throws IOException {
+    this(FSDirectory.getDirectory(dir), true);
+  }
+
+  
+  public synchronized final String[] list() {
+    String[] result = new String[fileNames.size()];
+    int i = 0;
+    Iterator it = fileNames.iterator();
+    while (it.hasNext())
+      result[i++] = (String)it.next();
+    return result;
+  }
+
+  
+  public final boolean fileExists(String name) {
+    RAMFile file;
+    synchronized (this) {
+      file = (RAMFile)fileMap.get(name);
+    }
+    return file != null;
+  }
+
+  
+
+
+  public final long fileModified(String name) throws IOException {
+    RAMFile file;
+    synchronized (this) {
+      file = (RAMFile)fileMap.get(name);
+    }
+    if (file==null)
+      throw new FileNotFoundException(name);
+    return file.getLastModified();
+  }
+
+  
+
+
+  public void touchFile(String name) throws IOException {
+    RAMFile file;
+    synchronized (this) {
+      file = (RAMFile)fileMap.get(name);
+    }
+    if (file==null)
+      throw new FileNotFoundException(name);
+    
+    long ts2, ts1 = System.currentTimeMillis();
+    do {
+      try {
+        Thread.sleep(0, 1);
+      } catch (InterruptedException e) {}
+      ts2 = System.currentTimeMillis();
+    } while(ts1 == ts2);
+    
+    file.setLastModified(ts2);
+  }
+
+  
+
+
+  public final long fileLength(String name) throws IOException {
+    RAMFile file;
+    synchronized (this) {
+      file = (RAMFile)fileMap.get(name);
+    }
+    if (file==null)
+      throw new FileNotFoundException(name);
+    return file.getLength();
+  }
+  
+  
+
+
+  public synchronized final long sizeInBytes() {
+    return sizeInBytes;
+  }
+  
+  
+
+
+  public synchronized final void deleteFile(String name) throws IOException {
+    RAMFile file = (RAMFile)fileMap.get(name);
+    if (file!=null) {
+        fileMap.remove(name);
+        file.directory = null;
+        sizeInBytes -= file.sizeInBytes;       
+    } else
+      throw new FileNotFoundException(name);
+  }
+
+  
+
+
+  public synchronized final void renameFile(String from, String to) throws IOException {
+    RAMFile fromFile = (RAMFile)fileMap.get(from);
+    if (fromFile==null)
+      throw new FileNotFoundException(from);
+    RAMFile toFile = (RAMFile)fileMap.get(to);
+    if (toFile!=null) {
+      sizeInBytes -= toFile.sizeInBytes;       
+      toFile.directory = null;
+    }
+    fileMap.remove(from);
+    fileMap.put(to, fromFile);
+  }
+
+  
+  public IndexOutput createOutput(String name) {
+    RAMFile file = new RAMFile(this);
+    synchronized (this) {
+      RAMFile existing = (RAMFile)fileMap.get(name);
+      if (existing!=null) {
+        sizeInBytes -= existing.sizeInBytes;
+        existing.directory = null;
+      }
+      fileMap.put(name, file);
+    }
+    return new RAMOutputStream(file);
+  }
+
+  
+  public final IndexInput openInput(String name) throws IOException {
+    RAMFile file;
+    synchronized (this) {
+      file = (RAMFile)fileMap.get(name);
+    }
+    if (file == null)
+      throw new FileNotFoundException(name);
+    return new RAMInputStream(file);
+  }
+
+  
+  public final void close() {
+    fileMap = null;
+    fileNames = null;
+    files = null;
+  }
+
+}

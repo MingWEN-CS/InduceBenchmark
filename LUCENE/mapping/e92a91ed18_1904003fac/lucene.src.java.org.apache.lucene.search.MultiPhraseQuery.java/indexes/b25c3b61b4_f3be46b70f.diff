@@ -1,0 +1,16 @@
+178,179c178,179
+<       for (int i=0; i<postingsFreqs.length; i++) {
+<         Term[] terms = termArrays.get(i);
+---
+>       for (int pos=0; pos<postingsFreqs.length; pos++) {
+>         Term[] terms = termArrays.get(pos);
+190,191c190,191
+<           for(int j=0;j<terms.length;j++) {
+<             docFreq += reader.docFreq(terms[i]);
+---
+>           for(int termIdx=0;termIdx<terms.length;termIdx++) {
+>             docFreq += reader.docFreq(terms[termIdx]);
+212c212
+<         postingsFreqs[i] = new PhraseQuery.PostingsAndFreq(postingsEnum, docFreq, positions.get(i).intValue());
+---
+>         postingsFreqs[pos] = new PhraseQuery.PostingsAndFreq(postingsEnum, docFreq, positions.get(pos).intValue());

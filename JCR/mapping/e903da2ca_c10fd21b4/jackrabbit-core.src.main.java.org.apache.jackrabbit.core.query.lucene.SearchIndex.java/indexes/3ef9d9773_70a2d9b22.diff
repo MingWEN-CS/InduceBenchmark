@@ -1,0 +1,48 @@
+96,112c96,118
+<     public static final List VALID_SYSTEM_INDEX_NODE_TYPE_NAMES
+<         = Collections.unmodifiableList(Arrays.asList(new Name[]{
+<             NameConstants.NT_CHILDNODEDEFINITION,
+<             NameConstants.NT_FROZENNODE,
+<             NameConstants.NT_NODETYPE,
+<             NameConstants.NT_PROPERTYDEFINITION,
+<             NameConstants.NT_VERSION,
+<             NameConstants.NT_VERSIONEDCHILD,
+<             NameConstants.NT_VERSIONHISTORY,
+<             NameConstants.NT_VERSIONLABELS,
+<             NameConstants.REP_NODETYPES,
+<             NameConstants.REP_SYSTEM,
+<             NameConstants.REP_VERSIONSTORAGE,
+<             
+<             NameConstants.NT_BASE,
+<             NameConstants.MIX_REFERENCEABLE
+<         }));
+---
+>     
+> 
+> 
+> 
+>     public static final Collection<Name> VALID_SYSTEM_INDEX_NODE_TYPE_NAMES =
+>         Collections.unmodifiableCollection(Arrays.asList(
+>                 NameConstants.NT_CHILDNODEDEFINITION,
+>                 NameConstants.NT_FROZENNODE,
+>                 NameConstants.NT_NODETYPE,
+>                 NameConstants.NT_PROPERTYDEFINITION,
+>                 NameConstants.NT_VERSION,
+>                 NameConstants.NT_VERSIONEDCHILD,
+>                 NameConstants.NT_VERSIONHISTORY,
+>                 NameConstants.NT_VERSIONLABELS,
+>                 NameConstants.REP_NODETYPES,
+>                 NameConstants.REP_SYSTEM,
+>                 NameConstants.REP_VERSIONSTORAGE,
+>                 
+>                 NameConstants.NT_BASE,
+>                 NameConstants.MIX_REFERENCEABLE));
+>         
+>     
+> 
+114,115c120,121
+<     private static final DefaultQueryNodeFactory DEFAULT_QUERY_NODE_FACTORY = new DefaultQueryNodeFactory(
+<             VALID_SYSTEM_INDEX_NODE_TYPE_NAMES);
+---
+>     private static final DefaultQueryNodeFactory DEFAULT_QUERY_NODE_FACTORY =
+>         new DefaultQueryNodeFactory(VALID_SYSTEM_INDEX_NODE_TYPE_NAMES);

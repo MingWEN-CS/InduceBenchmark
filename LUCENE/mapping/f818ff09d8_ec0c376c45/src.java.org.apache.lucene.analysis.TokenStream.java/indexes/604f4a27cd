@@ -1,0 +1,110 @@
+package org.apache.lucene.analysis;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import org.apache.lucene.index.Payload;
+
+import java.io.IOException;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public abstract class TokenStream {
+
+  
+
+
+
+  public Token next() throws IOException {
+    final Token reusableToken = new Token();
+    Token nextToken = next(reusableToken);
+
+    if (nextToken != null) {
+      Payload p = nextToken.getPayload();
+      if (p != null) {
+        nextToken.setPayload((Payload) p.clone());
+      }
+    }
+
+    return nextToken;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public Token next(final Token reusableToken) throws IOException {
+    
+    assert reusableToken != null;
+    return next();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public void reset() throws IOException {}
+  
+  
+  public void close() throws IOException {}
+}

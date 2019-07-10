@@ -1,0 +1,8 @@
+178,181c178,179
+<     try {
+<       cache.deleteFile(dest);
+<     } catch (FileNotFoundException fnfe) {
+<       
+---
+>     if (cache.fileNameExists(dest)) {
+>       throw new IllegalArgumentException("target file " + dest + " already exists");

@@ -1,0 +1,10 @@
+66d65
+< 
+909c908
+<       if (!fieldInfo.isIndexed()) {
+---
+>       if (fieldInfo.getIndexOptions() == IndexOptions.NONE) {
+1538c1537
+<         if (fieldInfo.hasDocValues()) {
+---
+>         if (fieldInfo.getDocValuesType() != DocValuesType.NONE) {

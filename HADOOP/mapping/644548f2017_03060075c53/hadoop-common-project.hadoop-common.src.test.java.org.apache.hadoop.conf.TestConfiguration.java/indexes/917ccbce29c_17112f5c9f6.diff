@@ -1,0 +1,28 @@
+170a171,173
+>     
+>     declareProperty("my.user.group", "${user.name} ${user.name}",
+>         "hadoop_user hadoop_user");
+1511c1514
+<   public void testInvalidSubstitutation() {
+---
+>   public void testInvalidSubstitution() {
+1525,1543d1527
+< 
+<     
+<     
+<     
+< 
+<     final String expVal1 = "${test.var2}";
+<     String testVar1 = "test.var1";
+<     configuration.set(testVar1, expVal1);
+<     configuration.set("test.var2", "${test.var3}");
+<     configuration.set("test.var3", "${test.var1}");
+<     assertEquals("Unexpected value", expVal1, configuration.get(testVar1));
+< 
+<     
+<     
+<     final String expVal2 = "foo2${test.var2}bar2";
+<     configuration.set(testVar1, expVal2);
+<     configuration.set("test.var2", "foo3${test.var3}bar3");
+<     configuration.set("test.var3", "foo1${test.var1}bar1");
+<     assertEquals("Unexpected value", expVal2, configuration.get(testVar1));

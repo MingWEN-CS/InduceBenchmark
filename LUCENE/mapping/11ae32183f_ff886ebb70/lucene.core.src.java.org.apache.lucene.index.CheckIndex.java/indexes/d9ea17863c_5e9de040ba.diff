@@ -1,0 +1,8 @@
+454c454
+<     SegmentInfos sis = new SegmentInfos();
+---
+>     SegmentInfos sis = null;
+465c465
+<       sis.read(dir, lastSegmentsFile);
+---
+>       sis = SegmentInfos.readCommit(dir, lastSegmentsFile);

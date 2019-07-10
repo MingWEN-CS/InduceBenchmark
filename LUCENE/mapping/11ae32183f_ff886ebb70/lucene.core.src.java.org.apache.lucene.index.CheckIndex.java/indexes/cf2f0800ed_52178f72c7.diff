@@ -1,0 +1,12 @@
+41a42
+> import org.apache.lucene.util.Accountables;
+535c536
+<       AtomicReader reader = null;
+---
+>       SegmentReader reader = null;
+662a664,668
+>         
+>         if (verbose) {
+>           msg(infoStream, "detailed segment RAM usage: ");
+>           msg(infoStream, Accountables.toString(reader));
+>         }

@@ -1,0 +1,119 @@
+28a29
+> import java.util.LinkedHashSet;
+30a32
+> import java.util.Set;
+168c170,188
+<   protected void invalidateHostRoleCommandStatusCache(HostRoleCommandEntity hostRoleCommandEntity) {
+---
+> 
+> 
+>   protected void invalidateHostRoleCommandStatusSummaryCache(Set<Long> requestIds) {
+>     for (Long requestId : requestIds) {
+>       if (null != requestId) {
+>         invalidateHostRoleCommandStatusSummaryCache(requestId);
+>       }
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   protected void invalidateHostRoleCommandStatusSummaryCache(
+>       HostRoleCommandEntity hostRoleCommandEntity) {
+196c216
+<   protected Map<Long, HostRoleCommandStatusSummaryDTO> loadAggregateCounts(Long requestId) {
+---
+>   private Map<Long, HostRoleCommandStatusSummaryDTO> loadAggregateCounts(Long requestId) {
+199,202c219,221
+<     
+<     
+<     ReadWriteLock lock = transactionLocks.getLock(LockArea.HRC_STATUS_CACHE);
+<     lock.readLock().lock();
+---
+>     EntityManager entityManager = entityManagerProvider.get();
+>     TypedQuery<HostRoleCommandStatusSummaryDTO> query = entityManager.createQuery(SUMMARY_DTO,
+>         HostRoleCommandStatusSummaryDTO.class);
+204,219c223,234
+<     try {
+<       TypedQuery<HostRoleCommandStatusSummaryDTO> query = entityManagerProvider.get().createQuery(
+<           SUMMARY_DTO, HostRoleCommandStatusSummaryDTO.class);
+< 
+<       query.setParameter("requestId", requestId);
+<       query.setParameter("aborted", HostRoleStatus.ABORTED);
+<       query.setParameter("completed", HostRoleStatus.COMPLETED);
+<       query.setParameter("failed", HostRoleStatus.FAILED);
+<       query.setParameter("holding", HostRoleStatus.HOLDING);
+<       query.setParameter("holding_failed", HostRoleStatus.HOLDING_FAILED);
+<       query.setParameter("holding_timedout", HostRoleStatus.HOLDING_TIMEDOUT);
+<       query.setParameter("in_progress", HostRoleStatus.IN_PROGRESS);
+<       query.setParameter("pending", HostRoleStatus.PENDING);
+<       query.setParameter("queued", HostRoleStatus.QUEUED);
+<       query.setParameter("timedout", HostRoleStatus.TIMEDOUT);
+<       query.setParameter("skipped_failed", HostRoleStatus.SKIPPED_FAILED);
+---
+>     query.setParameter("requestId", requestId);
+>     query.setParameter("aborted", HostRoleStatus.ABORTED);
+>     query.setParameter("completed", HostRoleStatus.COMPLETED);
+>     query.setParameter("failed", HostRoleStatus.FAILED);
+>     query.setParameter("holding", HostRoleStatus.HOLDING);
+>     query.setParameter("holding_failed", HostRoleStatus.HOLDING_FAILED);
+>     query.setParameter("holding_timedout", HostRoleStatus.HOLDING_TIMEDOUT);
+>     query.setParameter("in_progress", HostRoleStatus.IN_PROGRESS);
+>     query.setParameter("pending", HostRoleStatus.PENDING);
+>     query.setParameter("queued", HostRoleStatus.QUEUED);
+>     query.setParameter("timedout", HostRoleStatus.TIMEDOUT);
+>     query.setParameter("skipped_failed", HostRoleStatus.SKIPPED_FAILED);
+221,225c236,237
+<       for (HostRoleCommandStatusSummaryDTO dto : daoUtils.selectList(query)) {
+<         map.put(dto.getStageId(), dto);
+<       }
+<     } finally {
+<       lock.readLock().unlock();
+---
+>     for (HostRoleCommandStatusSummaryDTO dto : daoUtils.selectList(query)) {
+>       map.put(dto.getStageId(), dto);
+247d258
+<           Map<Long, HostRoleCommandStatusSummaryDTO> hrcCommandStatusByStageId = loadAggregateCounts(requestId);
+249c260,270
+<           return hrcCommandStatusByStageId;
+---
+>           
+>           
+>           ReadWriteLock lock = transactionLocks.getLock(LockArea.HRC_STATUS_CACHE);
+>           lock.readLock().lock();
+> 
+>           try{
+>             Map<Long, HostRoleCommandStatusSummaryDTO> hrcCommandStatusByStageId = loadAggregateCounts(requestId);
+>             return hrcCommandStatusByStageId;
+>           } finally {
+>             lock.readLock().unlock();
+>           }
+584c605
+<     invalidateHostRoleCommandStatusCache(entity);
+---
+>     invalidateHostRoleCommandStatusSummaryCache(entity);
+593c614
+<     invalidateHostRoleCommandStatusCache(entity);
+---
+>     invalidateHostRoleCommandStatusSummaryCache(entity);
+608a630
+>     Set<Long> requestsToInvalidate = new LinkedHashSet<>();
+612,613c634,637
+<       managedList.add(entityManager.merge(entity));
+<       invalidateHostRoleCommandStatusCache(entity);
+---
+>       entity = entityManager.merge(entity);
+>       managedList.add(entity);
+> 
+>       requestsToInvalidate.add(entity.getRequestId());
+615a640,641
+>     invalidateHostRoleCommandStatusSummaryCache(requestsToInvalidate);
+> 
+624c650
+<     invalidateHostRoleCommandStatusCache(entity);
+---
+>     invalidateHostRoleCommandStatusSummaryCache(entity);

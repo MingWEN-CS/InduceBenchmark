@@ -1,0 +1,106 @@
+85,86c85
+<         ,"/spellcheck/suggestions/[0]=='brwn'"
+<         ,"/spellcheck/suggestions/[1]/numFound==1"
+---
+>         ,"/spellcheck/suggestions/brwn/numFound==1"
+88,96c87,92
+<     try {
+<       assertJQ(req("qt",rh, SpellCheckComponent.COMPONENT_NAME, "true", SpellingParams.SPELLCHECK_BUILD, "true", "q","lowerfilt:(this OR brwn)",
+<           SpellingParams.SPELLCHECK_COUNT,"5", SpellingParams.SPELLCHECK_EXTENDED_RESULTS,"false", SpellingParams.SPELLCHECK_MAX_RESULTS_FOR_SUGGEST, "6")
+<           ,"/spellcheck/suggestions/[1]/numFound==1"
+<        );
+<       fail("there should have been no suggestions (6<7)");
+<     } catch(Exception e) {
+<       
+<     }
+---
+> 
+>    assertJQ(req("qt",rh, SpellCheckComponent.COMPONENT_NAME, "true", SpellingParams.SPELLCHECK_BUILD, "true", "q","lowerfilt:(this OR brwn)",
+>        SpellingParams.SPELLCHECK_COUNT,"5", SpellingParams.SPELLCHECK_EXTENDED_RESULTS,"false", SpellingParams.SPELLCHECK_MAX_RESULTS_FOR_SUGGEST, "6")
+>        ,"/spellcheck/suggestions=={}");
+>    
+> 
+100,101c96
+<         ,"/spellcheck/suggestions/[0]=='brwn'"
+<         ,"/spellcheck/suggestions/[1]/numFound==1"
+---
+>         ,"/spellcheck/suggestions/brwn/numFound==1"
+103,112c98,103
+<     try {
+<       assertJQ(req("qt",rh, SpellCheckComponent.COMPONENT_NAME, "true", SpellingParams.SPELLCHECK_BUILD, "true", "q","lowerfilt:(this OR brwn)",
+<           "fq", "id:[0 TO 9]",  "fq", "lowerfilt:th*", 
+<           SpellingParams.SPELLCHECK_COUNT,"5", SpellingParams.SPELLCHECK_EXTENDED_RESULTS,"false", SpellingParams.SPELLCHECK_MAX_RESULTS_FOR_SUGGEST, ".80")
+<           ,"/spellcheck/suggestions/[1]/numFound==1"
+<        );
+<       fail("there should have been no suggestions ((.8 * 8)<7)");
+<     } catch(Exception e) {
+<       
+<     }
+---
+> 
+>     assertJQ(req("qt",rh, SpellCheckComponent.COMPONENT_NAME, "true", SpellingParams.SPELLCHECK_BUILD, "true", "q","lowerfilt:(this OR brwn)",
+>         "fq", "id:[0 TO 9]",  "fq", "lowerfilt:th*", 
+>         SpellingParams.SPELLCHECK_COUNT,"5", SpellingParams.SPELLCHECK_EXTENDED_RESULTS,"false", SpellingParams.SPELLCHECK_MAX_RESULTS_FOR_SUGGEST, ".80")
+>         ,"/spellcheck/suggestions=={}");
+>     
+118,119c109
+<         ,"/spellcheck/suggestions/[0]=='brwn'"
+<         ,"/spellcheck/suggestions/[1]/numFound==1"
+---
+>         ,"/spellcheck/suggestions/brwn/numFound==1"
+121,130c111,116
+<     try {
+<       assertJQ(req("qt",rh, SpellCheckComponent.COMPONENT_NAME, "true", SpellingParams.SPELLCHECK_BUILD, "true", "q","lowerfilt:(this OR brwn)",
+<           "fq", "id:[0 TO 9]", SpellingParams.SPELLCHECK_MAX_RESULTS_FOR_SUGGEST_FQ, "lowerfilt:th*", 
+<           SpellingParams.SPELLCHECK_COUNT,"5", SpellingParams.SPELLCHECK_EXTENDED_RESULTS,"false", SpellingParams.SPELLCHECK_MAX_RESULTS_FOR_SUGGEST, ".64")
+<           ,"/spellcheck/suggestions/[1]/numFound==1"
+<        );
+<       fail("there should have been no suggestions ((.64 * 10)<7)");
+<     } catch(Exception e) {
+<       
+<     }
+---
+> 
+>     assertJQ(req("qt",rh, SpellCheckComponent.COMPONENT_NAME, "true", SpellingParams.SPELLCHECK_BUILD, "true", "q","lowerfilt:(this OR brwn)",
+>         "fq", "id:[0 TO 9]", SpellingParams.SPELLCHECK_MAX_RESULTS_FOR_SUGGEST_FQ, "lowerfilt:th*", 
+>         SpellingParams.SPELLCHECK_COUNT,"5", SpellingParams.SPELLCHECK_EXTENDED_RESULTS,"false", SpellingParams.SPELLCHECK_MAX_RESULTS_FOR_SUGGEST, ".64")
+>         ,"/spellcheck/suggestions=={}");
+>     
+136,137c122
+<        ,"/spellcheck/suggestions/[0]=='bluo'"
+<        ,"/spellcheck/suggestions/[1]/numFound==5"
+---
+>        ,"/spellcheck/suggestions/bluo/numFound==5"
+141c126
+<        ,"/spellcheck/suggestions/[1]/suggestion==[{'word':'blud','freq':1}, {'word':'blue','freq':1}, {'word':'blee','freq':1}]"
+---
+>        ,"/spellcheck/suggestions/bluo/suggestion==[{'word':'blud','freq':1}, {'word':'blue','freq':1}, {'word':'blee','freq':1}]"
+148c133
+<        ,"/spellcheck=={'suggestions':['documemt',{'numFound':1,'startOffset':0,'endOffset':8,'suggestion':['document']}]}"
+---
+>        ,"/spellcheck=={'suggestions':{'documemt':{'numFound':1,'startOffset':0,'endOffset':8,'suggestion':['document']}}}"
+155c140
+<        ,"/spellcheck=={'suggestions':['12346',{'numFound':1,'startOffset':0,'endOffset':5,'suggestion':['12345']}]}"
+---
+>        ,"/spellcheck=={'suggestions':{'12346':{'numFound':1,'startOffset':0,'endOffset':5,'suggestion':['12345']}}}"
+189c174
+<     final String jsonNl = "map";
+---
+>     final String jsonNl = (random().nextBoolean() ? "map" : "arrntv");
+195a181,188
+>         case "arrntv":
+>           testsList.add("/spellcheck/collations/collation/misspellingsAndCorrections/[0]/name=='documemtsss'");
+>           testsList.add("/spellcheck/collations/collation/misspellingsAndCorrections/[0]/type=='str'");
+>           testsList.add("/spellcheck/collations/collation/misspellingsAndCorrections/[0]/value=='document'");
+>           testsList.add("/spellcheck/collations/collation/misspellingsAndCorrections/[1]/name=='broens'");
+>           testsList.add("/spellcheck/collations/collation/misspellingsAndCorrections/[1]/type=='str'");
+>           testsList.add("/spellcheck/collations/collation/misspellingsAndCorrections/[1]/value=='brown'");
+>           break;
+314c307
+<             ,"/spellcheck/suggestions/[1]/suggestion==[{'word':'document','freq':2}]"
+---
+>             ,"/spellcheck/suggestions/documenq/suggestion==[{'word':'document','freq':2}]"
+318c311
+<             ,"/spellcheck/suggestions/[1]/suggestion==[{'word':'document','freq':2}]"
+---
+>             ,"/spellcheck/suggestions/documenq/suggestion==[{'word':'document','freq':2}]"

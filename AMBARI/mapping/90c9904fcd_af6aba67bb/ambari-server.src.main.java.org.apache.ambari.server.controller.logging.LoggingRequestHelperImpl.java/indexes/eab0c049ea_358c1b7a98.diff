@@ -1,0 +1,57 @@
+28a29
+> import org.apache.commons.lang.StringUtils;
+41a43
+> import java.net.HttpCookie;
+44a47
+> import java.util.ArrayList;
+46a50
+> import java.util.List;
+78a83,86
+>   private static final String COOKIE_HEADER = "Cookie";
+> 
+>   private static final String SET_COOKIES_HEADER = "Set-Cookie";
+> 
+112,113c120
+< 
+<       HttpURLConnection httpURLConnection  = (HttpURLConnection)logSearchURI.toURL().openConnection();
+---
+>       HttpURLConnection httpURLConnection  = (HttpURLConnection) logSearchURI.toURL().openConnection();
+117a125
+>       addCookiesFromCookieStore(httpURLConnection);
+121a130
+>       addCookiesToCookieStoreFromResponse(httpURLConnection);
+124,125c133
+<       StringReader stringReader =
+<         new StringReader(buffer.toString());
+---
+>       StringReader stringReader = new StringReader(buffer.toString());
+139a148,168
+>   private void addCookiesFromCookieStore(HttpURLConnection httpURLConnection) {
+>     if (LoggingCookieStore.INSTANCE.getCookiesMap().size() > 0) {
+>       List<String> cookiesStrList = new ArrayList<>();
+>       for (Map.Entry<String, String> entry : LoggingCookieStore.INSTANCE.getCookiesMap().entrySet()) {
+>         cookiesStrList.add(String.format("%s=%s", entry.getKey(), entry.getValue()));
+>       }
+>       httpURLConnection.setRequestProperty(COOKIE_HEADER, StringUtils.join(cookiesStrList, "; "));
+>     }
+>   }
+> 
+>   private void addCookiesToCookieStoreFromResponse(HttpURLConnection httpURLConnection) {
+>     Map<String, List<String>> headerFields = httpURLConnection.getHeaderFields();
+>     List<String> cookiesHeader = headerFields.get(SET_COOKIES_HEADER);
+>     if (cookiesHeader != null) {
+>       for (String cookie : cookiesHeader) {
+>         HttpCookie cookie1 = HttpCookie.parse(cookie).get(0);
+>         LoggingCookieStore.INSTANCE.addCookie(cookie1.getName(), cookie1.getValue());
+>       }
+>     }
+>   }
+> 
+226a256,257
+>       addCookiesFromCookieStore(httpURLConnection);
+> 
+230a262,263
+>       addCookiesToCookieStoreFromResponse(httpURLConnection);
+> 
+376a410
+> 

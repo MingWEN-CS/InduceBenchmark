@@ -1,0 +1,19 @@
+31d30
+< import org.apache.lucene.codecs.BlockTreeTermsReader;
+33a33,34
+> import org.apache.lucene.codecs.blocktree.BlockTreeTermsReader;
+> import org.apache.lucene.codecs.blocktree.Stats;
+58a60
+> 
+240c242
+<       public Map<String,BlockTreeTermsReader.Stats> blockTreeStats = null;
+---
+>       public Map<String,Stats> blockTreeStats = null;
+1119c1121
+<           final BlockTreeTermsReader.Stats stats = ((BlockTreeTermsReader.FieldReader) fieldTerms).computeStats();
+---
+>           final Stats stats = ((BlockTreeTermsReader.FieldReader) fieldTerms).computeStats();
+1252c1254
+<       for(Map.Entry<String,BlockTreeTermsReader.Stats> ent : status.blockTreeStats.entrySet()) {
+---
+>       for(Map.Entry<String,Stats> ent : status.blockTreeStats.entrySet()) {

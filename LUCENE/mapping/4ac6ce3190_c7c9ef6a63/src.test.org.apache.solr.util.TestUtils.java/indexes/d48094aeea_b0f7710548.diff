@@ -1,0 +1,6 @@
+64a65,69
+>     
+>     arr = StrUtils.splitFileNames("/h/s,/h/\\,s,");
+>     assertEquals(2,arr.size());
+>     assertEquals("/h/s",arr.get(0));
+>     assertEquals("/h/,s",arr.get(1));

@@ -1,0 +1,5 @@
+176c176,177
+<             throw new RuntimeException(ex);
+---
+>             
+>             LOG.error("Error while acquiring lock", ex);

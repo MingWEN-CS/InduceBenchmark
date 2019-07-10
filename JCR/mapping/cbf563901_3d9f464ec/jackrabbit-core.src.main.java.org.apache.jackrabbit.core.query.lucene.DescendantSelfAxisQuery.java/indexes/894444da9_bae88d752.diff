@@ -1,0 +1,52 @@
+19a20
+> import org.apache.jackrabbit.core.id.NodeId;
+21a23
+> import org.apache.lucene.index.Term;
+31a34
+> import javax.jcr.ItemNotFoundException;
+197c200
+<     public void extractTerms(Set terms) {
+---
+>     public void extractTerms(Set<Term> terms) {
+243,245c246,249
+<                 try {
+<                     while ((sn = result.nextScoreNode()) != null) {
+<                         Node node = session.getNodeById(sn.getNodeId());
+---
+>                 while ((sn = result.nextScoreNode()) != null) {
+>                     NodeId id = sn.getNodeId();
+>                     try {
+>                         Node node = session.getNodeById(id);
+246a251,255
+>                     } catch (ItemNotFoundException e) {
+>                         
+>                         log.warn("Access denied to node id {}.", id);
+>                     } catch (RepositoryException e) {
+>                         throw Util.createIOException(e);
+248,249d256
+<                 } catch (RepositoryException e) {
+<                     throw Util.createIOException(e);
+300c307,310
+<                     if (scoreNodes.hasNext()) {
+---
+>                     currentTraversal = null;
+>                     
+>                     
+>                     while (scoreNodes.hasNext()) {
+301a312
+>                         NodeId id = sn.getNodeId();
+303,305c314,320
+<                             Node node = session.getNodeById(sn.getNodeId());
+<                             currentTraversal = new NodeTraversingQueryHits(node,
+<                                     getMinLevels() == 0);
+---
+>                             Node node = session.getNodeById(id);
+>                             currentTraversal = new NodeTraversingQueryHits(
+>                                     node, getMinLevels() == 0);
+>                             break;
+>                         } catch (ItemNotFoundException e) {
+>                             
+>                             log.warn("Access denied to node id {}.", id);
+309,310d323
+<                     } else {
+<                         currentTraversal = null;

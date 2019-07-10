@@ -1,0 +1,10 @@
+72a73
+>   private final String segmentSuffix;
+91a93
+>     this.segmentSuffix = segmentSuffix;
+290,291c292,293
+<         IndexFileNames.segmentFileName(segment, "", FIELDS_EXTENSION),
+<         IndexFileNames.segmentFileName(segment, "", FIELDS_INDEX_EXTENSION));
+---
+>         IndexFileNames.segmentFileName(segment, segmentSuffix, FIELDS_EXTENSION),
+>         IndexFileNames.segmentFileName(segment, segmentSuffix, FIELDS_INDEX_EXTENSION));

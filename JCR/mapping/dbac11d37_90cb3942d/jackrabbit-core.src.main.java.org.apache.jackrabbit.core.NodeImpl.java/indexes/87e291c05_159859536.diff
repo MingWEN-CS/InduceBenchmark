@@ -1,0 +1,38 @@
+523,525c523,524
+<         PropertyDefinition[] pda = nodeType.getAutoCreatedPropertyDefinitions();
+<         for (int i = 0; i < pda.length; i++) {
+<             PropertyDefinitionImpl pd = (PropertyDefinitionImpl) pda[i];
+---
+>         for (PropertyDefinition aPda : nodeType.getAutoCreatedPropertyDefinitions()) {
+>             PropertyDefinitionImpl pd = (PropertyDefinitionImpl) aPda;
+530,532c529,530
+<         NodeDefinition[] nda = nodeType.getAutoCreatedNodeDefinitions();
+<         for (int i = 0; i < nda.length; i++) {
+<             NodeDefinitionImpl nd = (NodeDefinitionImpl) nda[i];
+---
+>         for (NodeDefinition aNda : nodeType.getAutoCreatedNodeDefinitions()) {
+>             NodeDefinitionImpl nd = (NodeDefinitionImpl) aNda;
+921,923c919,920
+<             PropertyDefinition[] pda = mixin.getAutoCreatedPropertyDefinitions();
+<             for (int i = 0; i < pda.length; i++) {
+<                 PropertyDefinitionImpl pd = (PropertyDefinitionImpl) pda[i];
+---
+>             for (PropertyDefinition aPda : mixin.getAutoCreatedPropertyDefinitions()) {
+>                 PropertyDefinitionImpl pd = (PropertyDefinitionImpl) aPda;
+933,935c930,931
+<             NodeDefinition[] nda = mixin.getAutoCreatedNodeDefinitions();
+<             for (int i = 0; i < nda.length; i++) {
+<                 NodeDefinitionImpl nd = (NodeDefinitionImpl) nda[i];
+---
+>             for (NodeDefinition aNda : mixin.getAutoCreatedNodeDefinitions()) {
+>                 NodeDefinitionImpl nd = (NodeDefinitionImpl) aNda;
+1789,1790c1785,1786
+<             for (int i = 0; i < mixinNames.length; i++) {
+<                 node.addMixin(mixinNames[i]);
+---
+>             for (Name mixinName : mixinNames) {
+>                 node.addMixin(mixinName);
+3412c3408
+<         
+---
+> 

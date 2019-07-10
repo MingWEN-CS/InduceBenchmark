@@ -1,0 +1,10 @@
+57,58c57
+< 
+<   public void initialize(Configuration conf, FileSystem fs) throws IOException{
+---
+>   public void initialize(Configuration conf, FileSystem fs) {
+140,141c139
+<   public static TrashPolicy getInstance(Configuration conf, FileSystem fs)
+<       throws IOException {
+---
+>   public static TrashPolicy getInstance(Configuration conf, FileSystem fs) {

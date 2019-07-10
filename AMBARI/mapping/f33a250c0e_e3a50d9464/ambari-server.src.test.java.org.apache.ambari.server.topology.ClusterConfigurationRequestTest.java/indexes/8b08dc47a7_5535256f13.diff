@@ -1,0 +1,90 @@
+52a53,54
+> import org.apache.ambari.server.state.ConfigHelper;
+> import org.apache.ambari.server.state.StackId;
+105a108,114
+>   @Mock(type = MockType.NICE)
+>   private ConfigHelper configHelper;
+> 
+>   private final String STACK_NAME = "testStack";
+>   private final String STACK_VERSION = "1";
+>   private final Map<String, Map<String, String>> stackProperties = new HashMap<>();
+> 
+223a233,234
+>     expect(stack.getName()).andReturn(STACK_NAME).anyTimes();
+>     expect(stack.getVersion()).andReturn(STACK_VERSION).anyTimes();
+248a260
+>     expect(topology.getAmbariContext()).andReturn(ambariContext).anyTimes();
+259c271,272
+<       expect(ambariContext.getClusterName(Long.valueOf(1))).andReturn("testCluster").anyTimes();
+---
+>     expect(ambariContext.getConfigHelper()).andReturn(configHelper).anyTimes();
+>     expect(ambariContext.getClusterName(Long.valueOf(1))).andReturn("testCluster").anyTimes();
+262a276,278
+>     expect(configHelper.getDefaultStackProperties(
+>         EasyMock.eq(new StackId(STACK_NAME, STACK_VERSION)))).andReturn(stackProperties).anyTimes();
+> 
+280,282c296,297
+<     PowerMock.replay(stack, blueprint, topology, controller, clusters, kerberosHelper, ambariContext,
+<       AmbariContext
+<         .class);
+---
+>     PowerMock.replay(stack, blueprint, topology, controller, clusters, kerberosHelper,
+>         ambariContext, AmbariContext.class, configHelper);
+288c303
+<     verify(blueprint, topology, ambariContext, controller, kerberosHelper);
+---
+>     verify(blueprint, topology, ambariContext, controller, kerberosHelper, configHelper);
+311,312c326,328
+<     expect(stack.getAllConfigurationTypes(anyString())).andReturn(Collections.singletonList("testConfigType")
+<     ).anyTimes();
+---
+>     expect(stack.getName()).andReturn(STACK_NAME).anyTimes();
+>     expect(stack.getVersion()).andReturn(STACK_VERSION).anyTimes();
+>     expect(stack.getAllConfigurationTypes(anyString())).andReturn(Collections.<String>singletonList("testConfigType")).anyTimes();
+333a350
+>     expect(topology.getAmbariContext()).andReturn(ambariContext).anyTimes();
+338a356,357
+> 
+>     expect(ambariContext.getConfigHelper()).andReturn(configHelper).anyTimes();
+342a362,363
+>     expect(configHelper.getDefaultStackProperties(
+>         EasyMock.eq(new StackId(STACK_NAME, STACK_VERSION)))).andReturn(stackProperties).anyTimes();
+345,346c366
+<       AmbariContext
+<         .class);
+---
+>         AmbariContext.class, configHelper);
+352c372
+<     verify(blueprint, topology, ambariContext, controller);
+---
+>     verify(blueprint, topology, ambariContext, controller, configHelper);
+367a388
+>     expect(topology.getAmbariContext()).andReturn(ambariContext).anyTimes();
+380c401,406
+<     EasyMock.replay(stack, blueprint, topology);
+---
+>     expect(ambariContext.getConfigHelper()).andReturn(configHelper).anyTimes();
+> 
+>     expect(configHelper.getDefaultStackProperties(
+>         EasyMock.eq(new StackId(STACK_NAME, STACK_VERSION)))).andReturn(stackProperties).anyTimes();
+> 
+>     EasyMock.replay(stack, blueprint, topology, ambariContext, configHelper);
+391c417
+<     verify(stack, blueprint, topology);
+---
+>     verify(stack, blueprint, topology, ambariContext, configHelper);
+411a438
+>     expect(topology.getAmbariContext()).andReturn(ambariContext).anyTimes();
+422c449,454
+<     EasyMock.replay(stack, blueprint, topology);
+---
+>     expect(ambariContext.getConfigHelper()).andReturn(configHelper).anyTimes();
+> 
+>     expect(configHelper.getDefaultStackProperties(
+>         EasyMock.eq(new StackId(STACK_NAME, STACK_VERSION)))).andReturn(stackProperties).anyTimes();
+> 
+>     EasyMock.replay(stack, blueprint, topology, ambariContext, configHelper);
+434c466
+<     verify(stack, blueprint, topology);
+---
+>     verify(stack, blueprint, topology, ambariContext, configHelper);

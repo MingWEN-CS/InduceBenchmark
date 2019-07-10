@@ -1,0 +1,10 @@
+24a25
+> import org.apache.commons.lang.StringUtils;
+46c47
+<     userEntity.setUserName("userName");
+---
+>     userEntity.setUserName("username"); 
+52c53
+<     Assert.assertEquals("userName", SecurityHelperImpl.getInstance().getCurrentUserName());
+---
+>     Assert.assertEquals("username", SecurityHelperImpl.getInstance().getCurrentUserName());

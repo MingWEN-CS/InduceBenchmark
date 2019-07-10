@@ -1,0 +1,28 @@
+172a173,175
+> 
+>   private static final Map<ClassLoader, Map<String, Class<?>>>
+>     CACHE_CLASSES = new WeakHashMap<ClassLoader, Map<String, Class<?>>>();
+1032c1035,1055
+<     return Class.forName(name, true, classLoader);
+---
+>     Map<String, Class<?>> map;
+>     
+>     synchronized (CACHE_CLASSES) {
+>       map = CACHE_CLASSES.get(classLoader);
+>       if (map == null) {
+>         map = Collections.synchronizedMap(
+>           new WeakHashMap<String, Class<?>>());
+>         CACHE_CLASSES.put(classLoader, map);
+>       }
+>     }
+> 
+>     Class clazz = map.get(name);
+>     if (clazz == null) {
+>       clazz = Class.forName(name, true, classLoader);
+>       if (clazz != null) {
+>         
+>         map.put(name, clazz);
+>       }
+>     }
+> 
+>     return clazz;

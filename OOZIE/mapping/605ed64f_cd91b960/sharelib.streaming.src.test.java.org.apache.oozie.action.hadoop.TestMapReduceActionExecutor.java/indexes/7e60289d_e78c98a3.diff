@@ -1,0 +1,95 @@
+82a83,91
+>         String actionXml = "<map-reduce>"
+>                 + "        <prepare>"
+>                 + "          <delete path=\"${nameNode}/user/${wf:user()}/mr/${outputDir}\"/>"
+>                 + "        </prepare>"
+>                 + "        <configuration>"
+>                 + "          <property><name>bb</name><value>BB</value></property>"
+>                 + "          <property><name>cc</name><value>from_action</value></property>"
+>                 + "        </configuration>"
+>                 + "      </map-reduce>";
+91,99c100
+<         + "      <map-reduce>"
+<         + "        <prepare>"
+<         + "          <delete path=\"${nameNode}/user/${wf:user()}/mr/${outputDir}\"/>"
+<         + "        </prepare>"
+<         + "        <configuration>"
+<         + "          <property><name>bb</name><value>BB</value></property>"
+<         + "          <property><name>cc</name><value>from_action</value></property>"
+<         + "        </configuration>"
+<         + "      </map-reduce>"
+---
+>         + actionXml
+121c122
+<         defaultConf.set("outputDir", "output-data-dir");
+---
+>         defaultConf.set("outputDir", "default-output-dir");
+136,137c137,138
+<         Element eConf = XmlUtils.parseXml(mrAction.getConf());
+<         eConf = eConf.getChild("name-node", eConf.getNamespace());
+---
+>         Element eAction = XmlUtils.parseXml(mrAction.getConf());
+>         Element eConf = eAction.getChild("name-node", eAction.getNamespace());
+139,140c140
+<         eConf = XmlUtils.parseXml(mrAction.getConf());
+<         eConf = eConf.getChild("job-tracker", eConf.getNamespace());
+---
+>         eConf = eAction.getChild("job-tracker", eAction.getNamespace());
+144,145c144
+<         eConf = XmlUtils.parseXml(mrAction.getConf());
+<         eConf = eConf.getChild("configuration", eConf.getNamespace());
+---
+>         eConf = eAction.getChild("configuration", eAction.getNamespace());
+147c146
+<         assertEquals("output-data-dir", actionConf.get("outputDir"));
+---
+>         assertEquals("default-output-dir", actionConf.get("outputDir"));
+155a155,202
+>         
+>         actionXml = "<map-reduce>"
+>                 + "        <prepare>"
+>                 + "          <delete path=\"${nameNode}/user/${wf:user()}/mr/${outputDir}\"/>"
+>                 + "        </prepare>"
+>                 + "        <configuration>"
+>                 + "          <property><name>cc</name><value>${cc}/action_cc</value></property>"
+>                 + "        </configuration>"
+>                 + "      </map-reduce>";
+> 
+>         wfXml = "<workflow-app xmlns=\"uri:oozie:workflow:0.5\" name=\"map-reduce-wf\">"
+>                 + "<global>"
+>                 + "<job-tracker>${jobTracker}</job-tracker>"
+>                 + "<name-node>${nameNode}</name-node>"
+>                 + "<configuration><property><name>outputDir</name><value>global-output-dir</value></property></configuration>"
+>                 + "</global>"
+>                 + "    <start to=\"mr-node\"/>"
+>                 + "    <action name=\"mr-node\">"
+>                 + actionXml
+>                 + "    <ok to=\"end\"/>"
+>                 + "    <error to=\"fail\"/>"
+>                 + "</action>"
+>                 + "<kill name=\"fail\">"
+>                 + "    <message>Map/Reduce failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>"
+>                 + "</kill>"
+>                 + "<end name=\"end\"/>"
+>                 + "</workflow-app>";
+> 
+>          writer = new FileWriter(getTestCaseDir() + "/workflow.xml");
+>          IOUtils.copyCharStream(new StringReader(wfXml), writer);
+> 
+>          wfId = new SubmitXCommand(conf).call();
+>          new StartXCommand(wfId).call();
+>          sleep(3000);
+> 
+>          mrAction = WorkflowActionQueryExecutor.getInstance().get(WorkflowActionQuery.GET_ACTION,
+>                  wfId + "@mr-node");
+> 
+>          
+>          eAction = XmlUtils.parseXml(mrAction.getConf());
+>          eConf = eAction.getChild("configuration", eAction.getNamespace());
+>          actionConf = new XConfiguration(new StringReader(XmlUtils.prettyPrint(eConf).toString()));
+>          
+>          assertEquals("from_default/action_cc", actionConf.get("cc"));
+>          
+>          eConf = eAction.getChild("name-node", eAction.getNamespace());
+>          assertEquals(getNameNodeUri(), eConf.getText());
+>          assertEquals("global-output-dir", actionConf.get("outputDir"));

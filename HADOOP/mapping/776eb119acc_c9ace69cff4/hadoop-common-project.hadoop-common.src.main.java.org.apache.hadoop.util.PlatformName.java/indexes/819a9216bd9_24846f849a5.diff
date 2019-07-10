@@ -1,0 +1,9 @@
+28c28
+< @InterfaceAudience.Private
+---
+> @InterfaceAudience.LimitedPrivate({"HBase"})
+52,53c52
+<     System.out.println("platform name: " + PLATFORM_NAME);
+<     System.out.println("java vendor name: " + JAVA_VENDOR_NAME);
+---
+>     System.out.println(PLATFORM_NAME);

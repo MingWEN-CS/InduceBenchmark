@@ -1,0 +1,8 @@
+20a21
+> import java.util.Collections;
+24a26
+> import org.apache.lucene.util.Version;
+42c44
+<     private Analyzer defaultAnalyzer =  new StandardAnalyzer(new String[]{});
+---
+>     private Analyzer defaultAnalyzer =  new StandardAnalyzer(Version.LUCENE_24, Collections.emptySet());

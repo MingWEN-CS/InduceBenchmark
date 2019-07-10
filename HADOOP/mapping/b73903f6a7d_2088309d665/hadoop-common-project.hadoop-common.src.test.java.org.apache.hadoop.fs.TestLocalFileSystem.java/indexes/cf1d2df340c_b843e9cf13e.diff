@@ -1,0 +1,93 @@
+30a31
+> import org.junit.After;
+40a42
+>   private final File base = new File(TEST_ROOT_DIR);
+42c44
+<   private FileSystem fileSys;
+---
+>   private LocalFileSystem fileSys;
+55a58,64
+>   
+>   @After
+>   public void after() throws IOException {
+>     base.setWritable(true);
+>     FileUtil.fullyDelete(base);
+>     assertTrue(!base.exists());
+>   }
+272d280
+<     colonFile.createNewFile();
+277a286,359
+>   
+>   @Test
+>   public void testReportChecksumFailure() throws IOException {
+>     base.mkdirs();
+>     assertTrue(base.exists() && base.isDirectory());
+>     
+>     final File dir1 = new File(base, "dir1");
+>     final File dir2 = new File(dir1, "dir2");
+>     dir2.mkdirs();
+>     assertTrue(dir2.exists() && dir2.canWrite());
+>     
+>     final String dataFileName = "corruptedData";
+>     final Path dataPath = new Path(new File(dir2, dataFileName).toURI());
+>     final Path checksumPath = fileSys.getChecksumFile(dataPath);
+>     final FSDataOutputStream fsdos = fileSys.create(dataPath);
+>     try {
+>       fsdos.writeUTF("foo");
+>     } finally {
+>       fsdos.close();
+>     }
+>     assertTrue(fileSys.pathToFile(dataPath).exists());
+>     final long dataFileLength = fileSys.getFileStatus(dataPath).getLen();
+>     assertTrue(dataFileLength > 0);
+>     
+>     
+>     assertTrue(fileSys.pathToFile(checksumPath).exists());
+>     final long checksumFileLength = fileSys.getFileStatus(checksumPath).getLen();
+>     assertTrue(checksumFileLength > 0);
+>     
+>     
+>     
+>     
+>     base.setWritable(false);
+>     
+>     FSDataInputStream dataFsdis = fileSys.open(dataPath);
+>     FSDataInputStream checksumFsdis = fileSys.open(checksumPath);
+>     
+>     boolean retryIsNecessary = fileSys.reportChecksumFailure(dataPath, dataFsdis, 0, checksumFsdis, 0);
+>     assertTrue(!retryIsNecessary);
+>     
+>     
+>     assertTrue(!fileSys.pathToFile(dataPath).exists());
+>     
+>     assertTrue(!fileSys.pathToFile(checksumPath).exists());
+>     
+>     
+>     File[] dir1files = dir1.listFiles(new FileFilter() {
+>       @Override
+>       public boolean accept(File pathname) {
+>         return pathname != null && !pathname.getName().equals("dir2");
+>       }
+>     });
+>     assertTrue(dir1files != null);
+>     assertTrue(dir1files.length == 1);
+>     File badFilesDir = dir1files[0];
+>     
+>     File[] badFiles = badFilesDir.listFiles();
+>     assertTrue(badFiles != null);
+>     assertTrue(badFiles.length == 2);
+>     boolean dataFileFound = false;
+>     boolean checksumFileFound = false;
+>     for (File badFile: badFiles) {
+>       if (badFile.getName().startsWith(dataFileName)) {
+>         assertTrue(dataFileLength == badFile.length());
+>         dataFileFound = true;
+>       } else if (badFile.getName().contains(dataFileName + ".crc")) {
+>         assertTrue(checksumFileLength == badFile.length());
+>         checksumFileFound = true;
+>       }
+>     }
+>     assertTrue(dataFileFound);
+>     assertTrue(checksumFileFound);
+>   }
+>   

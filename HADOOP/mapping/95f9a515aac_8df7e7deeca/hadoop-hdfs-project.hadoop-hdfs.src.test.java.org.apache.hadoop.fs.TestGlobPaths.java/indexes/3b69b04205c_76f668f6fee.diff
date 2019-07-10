@@ -1,0 +1,269 @@
+22a23
+> import java.util.Arrays;
+26a28
+> import org.apache.hadoop.fs.permission.FsPermission;
+30a33,34
+> import com.google.common.base.Joiner;
+> 
+786a791,1051
+>   
+> 
+> 
+>   private static interface FSTestWrapperGlobTest {
+>     void run(FSTestWrapper wrap, FileSystem fs, FileContext fc)
+>         throws Exception;
+>   }
+> 
+>   
+> 
+> 
+>   private static void testOnFileSystem(FSTestWrapperGlobTest test) throws Exception {
+>     Configuration conf = new HdfsConfiguration();
+>     MiniDFSCluster cluster = new MiniDFSCluster.Builder(conf).build();
+>     try {
+>       FileSystem fs = FileSystem.get(conf);
+>       test.run(new FileSystemTestWrapper(fs), fs, null);
+>     } finally {
+>       cluster.shutdown();
+>     }
+>   }
+> 
+>   
+> 
+> 
+>   private static void testOnFileContext(FSTestWrapperGlobTest test) throws Exception {
+>     Configuration conf = new HdfsConfiguration();
+>     MiniDFSCluster cluster = new MiniDFSCluster.Builder(conf).build();
+>     try {
+>       FileContext fc = FileContext.getFileContext(conf);
+>       test.run(new FileContextTestWrapper(fc), null, fc);
+>     } finally {
+>       cluster.shutdown();
+>     }
+>   }
+>   
+>   
+> 
+> 
+>   private static class AcceptAllPathFilter implements PathFilter {
+>     @Override
+>     public boolean accept(Path path) {
+>       return true;
+>     }
+>   }
+> 
+>   
+> 
+> 
+>   private static class AcceptPathsEndingInZ implements PathFilter {
+>     @Override
+>     public boolean accept(Path path) {
+>       String stringPath = path.toUri().getPath();
+>       return stringPath.endsWith("z");
+>     }
+>   }
+> 
+>   
+> 
+> 
+>   private static class TestGlobWithSymlinks implements FSTestWrapperGlobTest {
+>     public void run(FSTestWrapper wrap, FileSystem fs, FileContext fc)
+>         throws Exception {
+>       
+>       
+>       wrap.mkdir(new Path("/alpha"),
+>           FsPermission.getDirDefault(), false);
+>       wrap.createSymlink(new Path("/alpha"), new Path("/alphaLink"), false);
+>       wrap.mkdir(new Path("/alphaLink/beta"),
+>           FsPermission.getDirDefault(), false);
+>       
+>       FileStatus[] statuses =
+>           wrap.globStatus(new Path("/alpha
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private static class TestGlobWithSymlinksToSymlinks
+>       implements FSTestWrapperGlobTest {
+>     public void run(FSTestWrapper wrap, FileSystem fs, FileContext fc)
+>         throws Exception {
+>       
+>       
+>       wrap.mkdir(new Path("/alpha"), FsPermission.getDirDefault(), false);
+>       wrap.createSymlink(new Path("/alpha"), new Path("/alphaLink"), false);
+>       wrap.createSymlink(new Path("/alphaLink"),
+>           new Path("/alphaLinkLink"), false);
+>       wrap.mkdir(new Path("/alpha/beta"), FsPermission.getDirDefault(), false);
+>       
+>       FileStatus statuses[] =
+>           wrap.globStatus(new Path("/alphaLinkLink"), new AcceptAllPathFilter());
+>       Assert.assertEquals(1, statuses.length);
+>       Assert.assertEquals("/alphaLinkLink",
+>           statuses[0].getPath().toUri().getPath());
+>       statuses =
+>           wrap.globStatus(new Path("/alphaLinkLink
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> gammaLinkLinkLink"),
+>               new AcceptAllPathFilter());
+>       Assert.assertEquals(1, statuses.length);
+>       Assert.assertEquals("/alpha/beta/gammaLinkLinkLink",
+>           statuses[0].getPath().toUri().getPath());
+>       statuses = wrap.globStatus(new Path("/alpha/beta
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private static class TestGlobSymlinksWithCustomPathFilter
+>       implements FSTestWrapperGlobTest {
+>     public void run(FSTestWrapper wrap, FileSystem fs, FileContext fc)
+>         throws Exception {
+>       
+>       
+>       wrap.mkdir(new Path("/alpha"), FsPermission.getDirDefault(), false);
+>       wrap.createSymlink(new Path("/alpha"), new Path("/alphaLinkz"), false);
+>       wrap.mkdir(new Path("/alpha/beta"), FsPermission.getDirDefault(), false);
+>       wrap.mkdir(new Path("/alpha/betaz"), FsPermission.getDirDefault(), false);
+>       
+>       FileStatus statuses[] =
+>           wrap.globStatus(new Path("/alpha/beta"), new AcceptPathsEndingInZ());
+>       Assert.assertNull(statuses);
+>       statuses =
+>           wrap.globStatus(new Path("/alphaLinkz/betaz"), new AcceptPathsEndingInZ());
+>       Assert.assertEquals(1, statuses.length);
+>       Assert.assertEquals("/alphaLinkz/betaz",
+>           statuses[0].getPath().toUri().getPath());
+>       statuses =
+>           wrap.globStatus(new Path("
+> 
+> 
+> 
+> *"), new AcceptAllPathFilter());
+>       Assert.assertEquals("/alpha/beta;/alpha/betaz;" +
+>           "/alphaLinkz/beta;/alphaLinkz/betaz",
+>           TestPath.mergeStatuses(statuses));
+>     }
+>   }
+> 
+>   @Test
+>   public void testGlobSymlinksWithCustomPathFilterOnFS() throws Exception {
+>     testOnFileSystem(new TestGlobSymlinksWithCustomPathFilter());
+>   }
+> 
+>   @Test
+>   public void testGlobSymlinksWithCustomPathFilterOnFC() throws Exception {
+>     testOnFileContext(new TestGlobSymlinksWithCustomPathFilter());
+>   }
+> 
+>   
+> 
+> 
+>   private static class TestGlobFillsInScheme
+>       implements FSTestWrapperGlobTest {
+>     public void run(FSTestWrapper wrap, FileSystem fs, FileContext fc) 
+>         throws Exception {
+>       
+>       wrap.mkdir(new Path("/alpha"), FsPermission.getDirDefault(), false);
+>       wrap.createSymlink(new Path("/alpha"), new Path("/alphaLink"), false);
+>       FileStatus statuses[] =
+>           wrap.globStatus(new Path("/alphaLink"), new AcceptAllPathFilter());
+>       Assert.assertEquals(1, statuses.length);
+>       Path path = statuses[0].getPath();
+>       Assert.assertEquals("/alphaLink", path.toUri().getPath());
+>       Assert.assertEquals("hdfs", path.toUri().getScheme());
+>       if (fc != null) {
+>         
+>         
+>         statuses =
+>             wrap.globStatus(new Path("file:
+>         Assert.assertEquals(1, statuses.length);
+>         Path filePath = statuses[0].getPath();
+>         Assert.assertEquals("file", filePath.toUri().getScheme());
+>         Assert.assertEquals("/", filePath.toUri().getPath());
+>       } else {
+>         
+>         Assert.assertEquals("hdfs", fs.getScheme());
+>       }
+>     }
+>   }
+> 
+>   @Test
+>   public void testGlobFillsInSchemeOnFS() throws Exception {
+>     testOnFileSystem(new TestGlobFillsInScheme());
+>   }
+> 
+>   @Test
+>   public void testGlobFillsInSchemeOnFC() throws Exception {
+>     testOnFileContext(new TestGlobFillsInScheme());
+>   }

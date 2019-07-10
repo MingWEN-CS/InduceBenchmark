@@ -1,0 +1,166 @@
+18c18
+< import java.io.Serializable;
+---
+> 
+20c20
+< import java.net.URL;
+---
+> import java.util.HashSet;
+26a27
+> import com.codahale.metrics.MetricRegistry;
+28,30c29,30
+< import org.apache.solr.common.util.NamedList;
+< import org.apache.solr.common.util.SimpleOrderedMap;
+< import org.apache.solr.core.SolrCore;
+---
+> import org.apache.solr.metrics.MetricsMap;
+> import org.apache.solr.metrics.SolrMetricManager;
+66a67,69
+>   private MetricsMap cacheMap;
+>   private Set<String> metricNames = new HashSet<>();
+>   private MetricRegistry registry;
+215,219d217
+<   public String getVersion() {
+<     return SolrCore.version;
+<   }
+< 
+<   @Override
+229,238d226
+<   @Override
+<   public String getSource() {
+<     return null;
+<   }
+< 
+<   @Override
+<   public URL[] getDocs() {
+<     return null;
+<   }
+< 
+249,272c237,287
+<   public NamedList getStatistics() {
+<     NamedList<Serializable> lst = new SimpleOrderedMap<>();
+<     if (cache == null) return lst;
+<     ConcurrentLFUCache.Stats stats = cache.getStats();
+<     long lookups = stats.getCumulativeLookups();
+<     long hits = stats.getCumulativeHits();
+<     long inserts = stats.getCumulativePuts();
+<     long evictions = stats.getCumulativeEvictions();
+<     long size = stats.getCurrentSize();
+< 
+<     lst.add("lookups", lookups);
+<     lst.add("hits", hits);
+<     lst.add("hitratio", calcHitRatio(lookups, hits));
+<     lst.add("inserts", inserts);
+<     lst.add("evictions", evictions);
+<     lst.add("size", size);
+< 
+<     lst.add("warmupTime", warmupTime);
+<     lst.add("timeDecay", timeDecay);
+< 
+<     long clookups = 0;
+<     long chits = 0;
+<     long cinserts = 0;
+<     long cevictions = 0;
+---
+>   public void initializeMetrics(SolrMetricManager manager, String registryName, String scope) {
+>     registry = manager.registry(registryName);
+>     cacheMap = new MetricsMap((detailed, map) -> {
+>       if (cache != null) {
+>         ConcurrentLFUCache.Stats stats = cache.getStats();
+>         long lookups = stats.getCumulativeLookups();
+>         long hits = stats.getCumulativeHits();
+>         long inserts = stats.getCumulativePuts();
+>         long evictions = stats.getCumulativeEvictions();
+>         long size = stats.getCurrentSize();
+> 
+>         map.put("lookups", lookups);
+>         map.put("hits", hits);
+>         map.put("hitratio", calcHitRatio(lookups, hits));
+>         map.put("inserts", inserts);
+>         map.put("evictions", evictions);
+>         map.put("size", size);
+> 
+>         map.put("warmupTime", warmupTime);
+>         map.put("timeDecay", timeDecay);
+> 
+>         long clookups = 0;
+>         long chits = 0;
+>         long cinserts = 0;
+>         long cevictions = 0;
+> 
+>         
+>         for (ConcurrentLFUCache.Stats statistics : statsList) {
+>           clookups += statistics.getCumulativeLookups();
+>           chits += statistics.getCumulativeHits();
+>           cinserts += statistics.getCumulativePuts();
+>           cevictions += statistics.getCumulativeEvictions();
+>         }
+>         map.put("cumulative_lookups", clookups);
+>         map.put("cumulative_hits", chits);
+>         map.put("cumulative_hitratio", calcHitRatio(clookups, chits));
+>         map.put("cumulative_inserts", cinserts);
+>         map.put("cumulative_evictions", cevictions);
+> 
+>         if (detailed && showItems != 0) {
+>           Map items = cache.getMostUsedItems(showItems == -1 ? Integer.MAX_VALUE : showItems);
+>           for (Map.Entry e : (Set<Map.Entry>) items.entrySet()) {
+>             Object k = e.getKey();
+>             Object v = e.getValue();
+> 
+>             String ks = "item_" + k;
+>             String vs = v.toString();
+>             map.put(ks, vs);
+>           }
+> 
+>         }
+274,295d288
+<     
+<     for (ConcurrentLFUCache.Stats statistics : statsList) {
+<       clookups += statistics.getCumulativeLookups();
+<       chits += statistics.getCumulativeHits();
+<       cinserts += statistics.getCumulativePuts();
+<       cevictions += statistics.getCumulativeEvictions();
+<     }
+<     lst.add("cumulative_lookups", clookups);
+<     lst.add("cumulative_hits", chits);
+<     lst.add("cumulative_hitratio", calcHitRatio(clookups, chits));
+<     lst.add("cumulative_inserts", cinserts);
+<     lst.add("cumulative_evictions", cevictions);
+< 
+<     if (showItems != 0) {
+<       Map items = cache.getMostUsedItems(showItems == -1 ? Integer.MAX_VALUE : showItems);
+<       for (Map.Entry e : (Set<Map.Entry>) items.entrySet()) {
+<         Object k = e.getKey();
+<         Object v = e.getValue();
+< 
+<         String ks = "item_" + k;
+<         String vs = v.toString();
+<         lst.add(ks, vs);
+296a290,292
+>     });
+>     manager.registerGauge(this, registryName, cacheMap, true, scope, getCategory().toString());
+>   }
+298c294,302
+<     }
+---
+>   
+>   MetricsMap getMetricsMap() {
+>     return cacheMap;
+>   }
+> 
+>   @Override
+>   public Set<String> getMetricNames() {
+>     return metricNames;
+>   }
+300c304,306
+<     return lst;
+---
+>   @Override
+>   public MetricRegistry getMetricRegistry() {
+>     return registry;
+305c311
+<     return name + getStatistics().toString();
+---
+>     return name + cacheMap != null ? cacheMap.getValue().toString() : "";
+306a313
+> 

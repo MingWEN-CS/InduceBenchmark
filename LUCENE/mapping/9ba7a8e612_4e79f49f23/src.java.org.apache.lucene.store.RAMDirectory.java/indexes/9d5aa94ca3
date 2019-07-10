@@ -1,0 +1,191 @@
+package org.apache.lucene.store;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.Serializable;
+import java.util.Hashtable;
+import java.util.Enumeration;
+
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.store.IndexOutput;
+
+
+
+
+
+
+
+
+public final class RAMDirectory extends Directory implements Serializable {
+
+  private static final long serialVersionUID = 1l;
+
+  Hashtable files = new Hashtable();
+
+  
+  public RAMDirectory() {
+    setLockFactory(new SingleInstanceLockFactory());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  public RAMDirectory(Directory dir) throws IOException {
+    this(dir, false);
+  }
+  
+  private RAMDirectory(Directory dir, boolean closeDir) throws IOException {
+    this();
+    final String[] files = dir.list();
+    byte[] buf = new byte[BufferedIndexOutput.BUFFER_SIZE];
+    for (int i = 0; i < files.length; i++) {
+      
+      IndexOutput os = createOutput(files[i]);
+      
+      IndexInput is = dir.openInput(files[i]);
+      
+      long len = is.length();
+      long readCount = 0;
+      while (readCount < len) {
+        int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len ? (int)(len - readCount) : BufferedIndexOutput.BUFFER_SIZE;
+        is.readBytes(buf, 0, toRead);
+        os.writeBytes(buf, toRead);
+        readCount += toRead;
+      }
+
+      
+      is.close();
+      os.close();
+    }
+    if(closeDir)
+      dir.close();
+  }
+
+  
+
+
+
+
+  public RAMDirectory(File dir) throws IOException {
+    this(FSDirectory.getDirectory(dir, false), true);
+  }
+
+  
+
+
+
+
+  public RAMDirectory(String dir) throws IOException {
+    this(FSDirectory.getDirectory(dir, false), true);
+  }
+
+  
+  public synchronized final String[] list() {
+    String[] result = new String[files.size()];
+    int i = 0;
+    Enumeration names = files.keys();
+    while (names.hasMoreElements())
+      result[i++] = (String)names.nextElement();
+    return result;
+  }
+
+  
+  public final boolean fileExists(String name) {
+    RAMFile file = (RAMFile)files.get(name);
+    return file != null;
+  }
+
+  
+  public final long fileModified(String name) {
+    RAMFile file = (RAMFile)files.get(name);
+    return file.lastModified;
+  }
+
+  
+  public void touchFile(String name) {
+
+
+    RAMFile file = (RAMFile)files.get(name);
+    long ts2, ts1 = System.currentTimeMillis();
+    do {
+      try {
+        Thread.sleep(0, 1);
+      } catch (InterruptedException e) {}
+      ts2 = System.currentTimeMillis();
+
+
+
+    } while(ts1 == ts2);
+
+    file.lastModified = ts2;
+
+
+
+  }
+
+  
+  public final long fileLength(String name) {
+    RAMFile file = (RAMFile)files.get(name);
+    return file.length;
+  }
+
+  
+  public final void deleteFile(String name) {
+    files.remove(name);
+  }
+
+  
+  public final void renameFile(String from, String to) {
+    RAMFile file = (RAMFile)files.get(from);
+    files.remove(from);
+    files.put(to, file);
+  }
+
+  
+
+  public final IndexOutput createOutput(String name) {
+    RAMFile file = new RAMFile();
+    files.put(name, file);
+    return new RAMOutputStream(file);
+  }
+
+  
+  public final IndexInput openInput(String name) throws IOException {
+    RAMFile file = (RAMFile)files.get(name);
+    if (file == null) {
+      throw new FileNotFoundException(name);
+    }
+    return new RAMInputStream(file);
+  }
+
+  
+  public final void close() {
+    files = null;
+  }
+}

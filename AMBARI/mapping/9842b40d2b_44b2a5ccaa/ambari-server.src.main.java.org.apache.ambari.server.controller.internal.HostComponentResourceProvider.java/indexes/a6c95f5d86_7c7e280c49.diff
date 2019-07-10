@@ -1,0 +1,15 @@
+405c405,408
+< 
+---
+>     String clusterName = requestProperties.get(RequestOperationLevel.OPERATION_CLUSTER_ID);
+>     if (clusterName != null && !clusterName.isEmpty()) {
+>       clusterNames.add(clusterName);
+>     }
+420c423,427
+<       clusterNames.add(request.getClusterName());
+---
+>       if((clusterName == null || clusterName.isEmpty()) 
+>               && (request.getClusterName() != null 
+>               && !request.getClusterName().isEmpty())) {
+>         clusterNames.add(request.getClusterName());
+>       }

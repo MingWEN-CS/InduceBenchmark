@@ -1,0 +1,323 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.security;
+
+import java.io.BufferedInputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableUtils;
+import org.apache.hadoop.security.token.Token;
+import org.apache.hadoop.security.token.TokenIdentifier;
+
+
+
+
+
+@InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
+@InterfaceStability.Evolving
+public class Credentials implements Writable {
+  private static final Log LOG = LogFactory.getLog(Credentials.class);
+
+  private  Map<Text, byte[]> secretKeysMap = new HashMap<Text, byte[]>();
+  private  Map<Text, Token<? extends TokenIdentifier>> tokenMap = 
+    new HashMap<Text, Token<? extends TokenIdentifier>>(); 
+
+  
+
+
+  public Credentials() {
+  }
+  
+  
+
+
+
+  public Credentials(Credentials credentials) {
+    this.addAll(credentials);
+  }
+  
+  
+
+
+
+
+  public Token<? extends TokenIdentifier> getToken(Text alias) {
+    return tokenMap.get(alias);
+  }
+  
+  
+
+
+
+
+  public void addToken(Text alias, Token<? extends TokenIdentifier> t) {
+    if (t != null) {
+      tokenMap.put(alias, t);
+    } else {
+      LOG.warn("Null token ignored for " + alias);
+    }
+  }
+  
+  
+
+
+  public Collection<Token<? extends TokenIdentifier>> getAllTokens() {
+    return tokenMap.values();
+  }
+  
+  
+
+
+  public int numberOfTokens() {
+    return tokenMap.size();
+  }
+
+  
+
+
+
+
+  public byte[] getSecretKey(Text alias) {
+    return secretKeysMap.get(alias);
+  }
+  
+  
+
+
+  public int numberOfSecretKeys() {
+    return secretKeysMap.size();
+  }
+  
+  
+
+
+
+
+  public void addSecretKey(Text alias, byte[] key) {
+    secretKeysMap.put(alias, key);
+  }
+
+  
+
+
+
+  public void removeSecretKey(Text alias) {
+    secretKeysMap.remove(alias);
+  }
+
+  
+
+
+  public List<Text> getAllSecretKeys() {
+    List<Text> list = new java.util.ArrayList<Text>();
+    list.addAll(secretKeysMap.keySet());
+
+    return list;
+  }
+
+  
+
+
+
+
+
+
+  public static Credentials readTokenStorageFile(Path filename, Configuration conf)
+  throws IOException {
+    FSDataInputStream in = null;
+    Credentials credentials = new Credentials();
+    try {
+      in = filename.getFileSystem(conf).open(filename);
+      credentials.readTokenStorageStream(in);
+      in.close();
+      return credentials;
+    } catch(IOException ioe) {
+      throw new IOException("Exception reading " + filename, ioe);
+    } finally {
+      IOUtils.cleanup(LOG, in);
+    }
+  }
+
+  
+
+
+
+
+
+
+  public static Credentials readTokenStorageFile(File filename, Configuration conf)
+      throws IOException {
+    DataInputStream in = null;
+    Credentials credentials = new Credentials();
+    try {
+      in = new DataInputStream(new BufferedInputStream(
+          new FileInputStream(filename)));
+      credentials.readTokenStorageStream(in);
+      return credentials;
+    } catch(IOException ioe) {
+      throw new IOException("Exception reading " + filename, ioe);
+    } finally {
+      IOUtils.cleanup(LOG, in);
+    }
+  }
+  
+  
+
+
+
+  public void readTokenStorageStream(DataInputStream in) throws IOException {
+    byte[] magic = new byte[TOKEN_STORAGE_MAGIC.length];
+    in.readFully(magic);
+    if (!Arrays.equals(magic, TOKEN_STORAGE_MAGIC)) {
+      throw new IOException("Bad header found in token storage.");
+    }
+    byte version = in.readByte();
+    if (version != TOKEN_STORAGE_VERSION) {
+      throw new IOException("Unknown version " + version + 
+                            " in token storage.");
+    }
+    readFields(in);
+  }
+  
+  private static final byte[] TOKEN_STORAGE_MAGIC = "HDTS".getBytes();
+  private static final byte TOKEN_STORAGE_VERSION = 0;
+  
+  public void writeTokenStorageToStream(DataOutputStream os)
+    throws IOException {
+    os.write(TOKEN_STORAGE_MAGIC);
+    os.write(TOKEN_STORAGE_VERSION);
+    write(os);
+  }
+
+  public void writeTokenStorageFile(Path filename, 
+                                    Configuration conf) throws IOException {
+    FSDataOutputStream os = filename.getFileSystem(conf).create(filename);
+    writeTokenStorageToStream(os);
+    os.close();
+  }
+
+  
+
+
+
+
+  @Override
+  public void write(DataOutput out) throws IOException {
+    
+    WritableUtils.writeVInt(out, tokenMap.size());
+    for(Map.Entry<Text, 
+        Token<? extends TokenIdentifier>> e: tokenMap.entrySet()) {
+      e.getKey().write(out);
+      e.getValue().write(out);
+    }
+    
+    
+    WritableUtils.writeVInt(out, secretKeysMap.size());
+    for(Map.Entry<Text, byte[]> e : secretKeysMap.entrySet()) {
+      e.getKey().write(out);
+      WritableUtils.writeVInt(out, e.getValue().length);
+      out.write(e.getValue());
+    }
+  }
+  
+  
+
+
+
+
+  @Override
+  public void readFields(DataInput in) throws IOException {
+    secretKeysMap.clear();
+    tokenMap.clear();
+    
+    int size = WritableUtils.readVInt(in);
+    for(int i=0; i<size; i++) {
+      Text alias = new Text();
+      alias.readFields(in);
+      Token<? extends TokenIdentifier> t = new Token<TokenIdentifier>();
+      t.readFields(in);
+      tokenMap.put(alias, t);
+    }
+    
+    size = WritableUtils.readVInt(in);
+    for(int i=0; i<size; i++) {
+      Text alias = new Text();
+      alias.readFields(in);
+      int len = WritableUtils.readVInt(in);
+      byte[] value = new byte[len];
+      in.readFully(value);
+      secretKeysMap.put(alias, value);
+    }
+  }
+ 
+  
+
+
+
+
+  public void addAll(Credentials other) {
+    addAll(other, true);
+  }
+
+  
+
+
+
+
+  public void mergeAll(Credentials other) {
+    addAll(other, false);
+  }
+
+  private void addAll(Credentials other, boolean overwrite) {
+    for(Map.Entry<Text, byte[]> secret: other.secretKeysMap.entrySet()) {
+      Text key = secret.getKey();
+      if (!secretKeysMap.containsKey(key) || overwrite) {
+        secretKeysMap.put(key, secret.getValue());
+      }
+    }
+    for(Map.Entry<Text, Token<?>> token: other.tokenMap.entrySet()){
+      Text key = token.getKey();
+      if (!tokenMap.containsKey(key) || overwrite) {
+        tokenMap.put(key, token.getValue());
+      }
+    }
+  }
+}

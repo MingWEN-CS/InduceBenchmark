@@ -1,0 +1,8 @@
+545c545
+<     if (prevStageId > 0) {
+---
+>     if (prevStageId >= 0) {
+568c568
+<           if (c.getStatus().isFailedState()) {
+---
+>           if (c.getStatus().isFailedAndNotSkippableState()) {

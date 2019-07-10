@@ -1,0 +1,41 @@
+576a577,578
+>                 checkAddedChildNodes();
+> 
+734d735
+<                 long t1 = System.currentTimeMillis();
+735a737
+>                     long t1 = System.currentTimeMillis();
+974a977,1009
+>         private void checkAddedChildNodes() throws ItemStateException {
+>             for (ItemState state : local.addedStates()) {
+>                 checkAddedChildNode(state);
+>             }
+>             for (ItemState state : local.modifiedStates()) {
+>                 checkAddedChildNode(state);
+>             }
+>         }
+> 
+>         private void checkAddedChildNode(ItemState state) throws ItemStateException {
+>             if (state.isNode()) {
+>                 NodeState node = (NodeState) state;
+>                 for (ChildNodeEntry child : node.getAddedChildNodeEntries()) {
+>                     NodeId id = child.getId();
+>                     if (local.get(id) == null &&
+>                             !id.equals(RepositoryImpl.VERSION_STORAGE_NODE_ID) &&
+>                             !id.equals(RepositoryImpl.ACTIVITIES_NODE_ID) &&
+>                             !id.equals(RepositoryImpl.NODETYPES_NODE_ID) &&
+>                             !cache.isCached(id) &&
+>                             !persistMgr.exists(id)) {
+>                         String msg = "Trying to add a non-existing child node: " + id;
+>                         log.debug(msg);
+>                         throw new ItemStateException(msg);
+>                     }
+>                 }
+>             }
+>         }
+> 
+>         
+> 
+> 
+> 
+> 

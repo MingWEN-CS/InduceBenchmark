@@ -1,0 +1,77 @@
+21a22
+> 
+26a28
+> import org.apache.oozie.coord.input.logic.CoordInputLogicEvaluatorUtil;
+34a37
+> import org.jdom.JDOMException;
+64d66
+< 
+351c353
+<                             eval.setVariable("resolved_path", resolvedURIPaths.toString());
+---
+>                             eval.setVariable(CoordELConstants.RESOLVED_PATH, resolvedURIPaths.toString());
+358a361
+> 
+368a372,375
+>                 if (!StringUtils.isEmpty(resolvedURIPaths.toString()) && eval.getVariable(CoordELConstants.RESOLVED_PATH) == null) {
+>                     eval.setVariable(CoordELConstants.RESOLVED_PATH, resolvedURIPaths.toString());
+>                 }
+> 
+378c385
+<                 eval.setVariable("is_resolved", Boolean.FALSE);
+---
+>                 eval.setVariable(CoordELConstants.IS_RESOLVED, Boolean.FALSE);
+387c394
+<                 eval.setVariable("is_resolved", Boolean.TRUE);
+---
+>                 eval.setVariable(CoordELConstants.IS_RESOLVED, Boolean.TRUE);
+391c398
+<             eval.setVariable("is_resolved", Boolean.TRUE);
+---
+>             eval.setVariable(CoordELConstants.IS_RESOLVED, Boolean.TRUE);
+497a505,516
+>         if (eval.getVariable(".datain." + dataInName) == null
+>                 && !StringUtils.isEmpty(eval.getVariable(".actionInputLogic").toString())) {
+>             try {
+>                 return new CoordInputLogicEvaluatorUtil().getInputDependencies(dataInName,
+>                         (SyncCoordAction) eval.getVariable(COORD_ACTION));
+>             }
+>             catch (JDOMException e) {
+>                 XLog.getLog(CoordELFunctions.class).error(e);
+>                 throw new RuntimeException(e.getMessage());
+>             }
+>         }
+> 
+499c518,522
+<         Boolean unresolved = (Boolean) eval.getVariable(".datain." + dataInName + ".unresolved");
+---
+>         Object unResolvedObj = eval.getVariable(".datain." + dataInName + ".unresolved");
+>         if (unResolvedObj == null) {
+>             return uris;
+>         }
+>         Boolean unresolved = Boolean.parseBoolean(unResolvedObj.toString());
+838c861
+<         if (val == null || val.equals("data-in") == false) {
+---
+>         if ((val == null || val.equals("data-in") == false)) {
+1115c1138,1139
+<                             eval.setVariable("resolved_path", resolvedURIPaths.toString());
+---
+>                             eval.setVariable(CoordELConstants.RESOLVED_PATH, resolvedURIPaths.toString());
+> 
+1132a1157,1159
+>                 if (!StringUtils.isEmpty(resolvedURIPaths.toString()) && eval.getVariable(CoordELConstants.RESOLVED_PATH) == null) {
+>                     eval.setVariable(CoordELConstants.RESOLVED_PATH, resolvedURIPaths.toString());
+>                 }
+1142c1169
+<                 eval.setVariable("is_resolved", Boolean.FALSE);
+---
+>                 eval.setVariable(CoordELConstants.IS_RESOLVED, Boolean.FALSE);
+1151c1178
+<                 eval.setVariable("is_resolved", Boolean.TRUE);
+---
+>                 eval.setVariable(CoordELConstants.IS_RESOLVED, Boolean.TRUE);
+1155c1182
+<             eval.setVariable("is_resolved", Boolean.FALSE);
+---
+>             eval.setVariable(CoordELConstants.IS_RESOLVED, Boolean.FALSE);

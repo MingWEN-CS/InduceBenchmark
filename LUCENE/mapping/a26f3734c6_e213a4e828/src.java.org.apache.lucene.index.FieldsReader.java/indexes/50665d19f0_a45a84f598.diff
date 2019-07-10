@@ -1,0 +1,14 @@
+25a26
+> import org.apache.lucene.util.CloseableThreadLocal;
+61c62
+<   private ThreadLocal fieldsStreamTL = new ThreadLocal();
+---
+>   private CloseableThreadLocal fieldsStreamTL = new CloseableThreadLocal();
+158,162c159
+<       IndexInput localFieldsStream = (IndexInput) fieldsStreamTL.get();
+<       if (localFieldsStream != null) {
+<         localFieldsStream.close();
+<         fieldsStreamTL.set(null);
+<       }
+---
+>       fieldsStreamTL.close();

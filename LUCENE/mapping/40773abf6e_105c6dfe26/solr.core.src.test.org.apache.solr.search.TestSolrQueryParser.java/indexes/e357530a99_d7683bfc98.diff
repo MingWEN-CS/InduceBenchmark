@@ -1,0 +1,315 @@
+40,49c40,49
+<     v="how now brown cow";
+<     assertU(adoc("id","1", "text",v,  "text_np",v));
+<     v="now cow";
+<     assertU(adoc("id","2", "text",v,  "text_np",v));
+<     assertU(adoc("id","3", "foo_s","a ' \" \\ {! ) } ( { z"));  
+< 
+<     assertU(adoc("id","10", "qqq_s","X"));
+<     assertU(adoc("id","11", "www_s","X"));
+<     assertU(adoc("id","12", "eee_s","X"));
+<     assertU(adoc("id","13", "eee_s","'balance'"));
+---
+>     v = "how now brown cow";
+>     assertU(adoc("id", "1", "text", v, "text_np", v));
+>     v = "now cow";
+>     assertU(adoc("id", "2", "text", v, "text_np", v));
+>     assertU(adoc("id", "3", "foo_s", "a ' \" \\ {! ) } ( { z"));  
+> 
+>     assertU(adoc("id", "10", "qqq_s", "X"));
+>     assertU(adoc("id", "11", "www_s", "X"));
+>     assertU(adoc("id", "12", "eee_s", "X"));
+>     assertU(adoc("id", "13", "eee_s", "'balance'", "rrr_s", "/leading_slash"));
+57,58c57,58
+<     assertQ(req("q","text:now-cow", "indent","true")
+<         ,"
+---
+>     assertQ(req("q", "text:now-cow", "indent", "true")
+>         , "
+61,62c61,62
+<     assertQ(req("q","text_np:now-cow", "indent","true")
+<         ,"
+---
+>     assertQ(req("q", "text_np:now-cow", "indent", "true")
+>         , "
+68,69c68,69
+<     assertJQ(req("q","qaz {!term f=text v=$qq} wsx", "qq","now")
+<         ,"/response/numFound==2"
+---
+>     assertJQ(req("q", "qaz {!term f=text v=$qq} wsx", "qq", "now")
+>         , "/response/numFound==2"
+72,73c72,73
+<     assertJQ(req("q","qaz {!term f=text v=$qq} wsx", "qq","nomatch")
+<         ,"/response/numFound==0"
+---
+>     assertJQ(req("q", "qaz {!term f=text v=$qq} wsx", "qq", "nomatch")
+>         , "/response/numFound==0"
+76,77c76,77
+<     assertJQ(req("q","qaz {!term f=text}now wsx", "qq","now")
+<         ,"/response/numFound==2"
+---
+>     assertJQ(req("q", "qaz {!term f=text}now wsx", "qq", "now")
+>         , "/response/numFound==2"
+80,81c80,81
+<     assertJQ(req("q","qaz {!term f=foo_s v='a \\' \" \\\\ {! ) } ( { z'} wsx")           
+<         ,"/response/numFound==1"
+---
+>     assertJQ(req("q", "qaz {!term f=foo_s v='a \\' \" \\\\ {! ) } ( { z'} wsx")           
+>         , "/response/numFound==1"
+84,85c84,85
+<     assertJQ(req("q","qaz {!term f=foo_s v=\"a ' \\\" \\\\ {! ) } ( { z\"} wsx")         
+<         ,"/response/numFound==1"
+---
+>     assertJQ(req("q", "qaz {!term f=foo_s v=\"a ' \\\" \\\\ {! ) } ( { z\"} wsx")         
+>         , "/response/numFound==1"
+89,90c89,90
+<     assertJQ(req("q","qaz {!join from=www_s to=eee_s}{!join from=qqq_s to=www_s}id:10" )
+<         ,"/response/docs/[0]/id=='12'"
+---
+>     assertJQ(req("q", "qaz {!join from=www_s to=eee_s}{!join from=qqq_s to=www_s}id:10")
+>         , "/response/docs/[0]/id=='12'"
+97,98c97,98
+<     assertJQ(req("q","eee_s:'balance'", "indent","true")
+<         ,"/response/numFound==1"
+---
+>     assertJQ(req("q", "eee_s:'balance'", "indent", "true")
+>         , "/response/numFound==1"
+105,106c105,106
+<     assertJQ(req("q","*", "df","doesnotexist_s")
+<         ,"/response/docs/[0]=="   
+---
+>     assertJQ(req("q", "*", "df", "doesnotexist_s")
+>         , "/response/docs/[0]=="   
+108,109c108,112
+<     assertJQ(req("q","doesnotexist_s:*")
+<         ,"/response/numFound==0"   
+---
+>     assertJQ(req("q", "doesnotexist_s:*")
+>         , "/response/numFound==0"   
+>     );
+>     assertJQ(req("q", "doesnotexist_s:( * * * )")
+>         , "/response/numFound==0"   
+111,113d113
+<     assertJQ(req("q","doesnotexist_s:( * * * )")
+<         ,"/response/numFound==0"   
+<      );
+116,117c116,117
+<     assertJQ(req("q","foo_dt:\"2013-03-08T00:46:15Z/DAY+000MILLISECONDS+00SECONDS+00MINUTES+00HOURS+0000000000YEARS+6MONTHS+3DAYS\"", "debug","query")
+<         ,"/debug/parsedquery=='foo_dt:2013-09-11T00:00:00Z'"
+---
+>     assertJQ(req("q", "foo_dt:\"2013-03-08T00:46:15Z/DAY+000MILLISECONDS+00SECONDS+00MINUTES+00HOURS+0000000000YEARS+6MONTHS+3DAYS\"", "debug", "query")
+>         , "/debug/parsedquery=='foo_dt:2013-09-11T00:00:00Z'"
+126c126
+<     String subqq="_query_:\"{!v=$qq}\"";
+---
+>     String subqq = "_query_:\"{!v=$qq}\"";
+128,131c128,131
+<     assertJQ(req("q","_query_:\"\\\"how brown\\\"~2\""
+<         , "debug","query"
+<     )
+<         ,"/response/docs/[0]/id=='1'"
+---
+>     assertJQ(req("q", "_query_:\"\\\"how brown\\\"~2\""
+>         , "debug", "query"
+>         )
+>         , "/response/docs/[0]/id=='1'"
+134,137c134,137
+<     assertJQ(req("q",subqq, "qq","\"how brown\"~2"
+<         , "debug","query"
+<     )
+<         ,"/response/docs/[0]/id=='1'"
+---
+>     assertJQ(req("q", subqq, "qq", "\"how brown\"~2"
+>         , "debug", "query"
+>         )
+>         , "/response/docs/[0]/id=='1'"
+141,144c141,144
+<     assertJQ(req("q",subqq+"~1", "qq","\"how brown\"~2"
+<         , "debug","query"
+<     )
+<         ,"/response/docs/[0]/id=='1'"
+---
+>     assertJQ(req("q", subqq + "~1", "qq", "\"how brown\"~2"
+>         , "debug", "query"
+>         )
+>         , "/response/docs/[0]/id=='1'"
+148,151c148,151
+<     assertJQ(req("q","  {!v=$qq}~1", "qq","\"how brown\"~2"
+<         , "debug","query"
+<     )
+<         ,"/response/docs/[0]/id=='1'"
+---
+>     assertJQ(req("q", "  {!v=$qq}~1", "qq", "\"how brown\"~2"
+>         , "debug", "query"
+>         )
+>         , "/response/docs/[0]/id=='1'"
+154,157c154,157
+<     assertJQ(req("fq","id:1", "fl","id,score", "q", subqq+"^3", "qq","text:x^2"
+<         , "debug","query"
+<     )
+<         ,"/debug/parsedquery_toString=='((text:x)^2.0)^3.0'"
+---
+>     assertJQ(req("fq", "id:1", "fl", "id,score", "q", subqq + "^3", "qq", "text:x^2"
+>         , "debug", "query"
+>         )
+>         , "/debug/parsedquery_toString=='((text:x)^2.0)^3.0'"
+160,163c160,163
+<     assertJQ(req("fq","id:1", "fl","id,score", "q", "  {!v=$qq}^3", "qq","text:x^2"
+<         , "debug","query"
+<     )
+<         ,"/debug/parsedquery_toString=='((text:x)^2.0)^3.0'"
+---
+>     assertJQ(req("fq", "id:1", "fl", "id,score", "q", "  {!v=$qq}^3", "qq", "text:x^2"
+>         , "debug", "query"
+>         )
+>         , "/debug/parsedquery_toString=='((text:x)^2.0)^3.0'"
+169d168
+< 
+176c175
+<     assertTrue( q instanceof BoostQuery);
+---
+>     assertTrue(q instanceof BoostQuery);
+182c181
+<     assertTrue( q instanceof BoostQuery);
+---
+>     assertTrue(q instanceof BoostQuery);
+191,192c190,191
+<     assertJQ(req("q","id:1 id:2  id:3")
+<         ,"/response/numFound==3"
+---
+>     assertJQ(req("q", "id:1 id:2  id:3")
+>         , "/response/numFound==3"
+196,197c195,196
+<     assertJQ(req("q","id:1 ")
+<         ,"/response/numFound==1"  
+---
+>     assertJQ(req("q", "id:1 ")
+>         , "/response/numFound==1"  
+214,215c213,214
+<     assertJQ(req("q","id:1   id:3 */ id:10 */ id:11")
+<         ,"/response/numFound==2"
+---
+>     assertJQ(req("q", "id:1   id:3 */ id:10 */ id:11")
+>         , "/response/numFound==2"
+224,226c223,225
+<     for (int i=0; i<10; i++) {
+<       assertJQ(req("q","*:* "+ i, "fq","filter(just_to_clear_the_cache) filter(id:10000" + i + ") filter(id:10001" + i + ")")
+<           ,"/response/numFound==0"
+---
+>     for (int i = 0; i < 10; i++) {
+>       assertJQ(req("q", "*:* " + i, "fq", "filter(just_to_clear_the_cache) filter(id:10000" + i + ") filter(id:10001" + i + ")")
+>           , "/response/numFound==0"
+229c228
+<     assertU(adoc("id","777"));
+---
+>     assertU(adoc("id", "777"));
+246,247c245,246
+<     assertJQ(req("q","doesnotexist filter(id:1) filter(qqq_s:X) filter(abcdefg)")
+<         ,"/response/numFound==2"
+---
+>     assertJQ(req("q", "doesnotexist filter(id:1) filter(qqq_s:X) filter(abcdefg)")
+>         , "/response/numFound==2"
+250,252c249,251
+<     inserts+=3;
+<     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue() );
+<     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue() );
+---
+>     inserts += 3;
+>     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue());
+>     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue());
+254,255c253,254
+<     assertJQ(req("q","doesnotexist2 filter(id:1) filter(qqq_s:X) filter(abcdefg)")
+<         ,"/response/numFound==2"
+---
+>     assertJQ(req("q", "doesnotexist2 filter(id:1) filter(qqq_s:X) filter(abcdefg)")
+>         , "/response/numFound==2"
+258,260c257,259
+<     hits+=3;
+<     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue() );
+<     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue() );
+---
+>     hits += 3;
+>     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue());
+>     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue());
+263,264c262,263
+<     assertJQ(req("q","doesnotexist3", "fq","id:1", "fq", "qqq_s:X", "fq", "abcdefg")
+<         ,"/response/numFound==0"
+---
+>     assertJQ(req("q", "doesnotexist3", "fq", "id:1", "fq", "qqq_s:X", "fq", "abcdefg")
+>         , "/response/numFound==0"
+267,269c266,268
+<     hits+=3;
+<     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue() );
+<     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue() );
+---
+>     hits += 3;
+>     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue());
+>     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue());
+272,273c271,272
+<     assertJQ(req("q","*:* doesnotexist4", "fq","(id:* +(filter(id:1) filter(qqq_s:X) filter(abcdefg)) )")
+<         ,"/response/numFound==2"
+---
+>     assertJQ(req("q", "*:* doesnotexist4", "fq", "(id:* +(filter(id:1) filter(qqq_s:X) filter(abcdefg)) )")
+>         , "/response/numFound==2"
+276,279c275,278
+<     inserts+=1;  
+<     hits+=3;
+<     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue() );
+<     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue() );
+---
+>     inserts += 1;  
+>     hits += 3;
+>     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue());
+>     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue());
+282,283c281,282
+<     assertJQ(req("q","*:* doesnotexist5", "fq","(id:* +(filter(id:1) filter(qqq_s:X) filter(abcdefg)) )")
+<         ,"/response/numFound==2"
+---
+>     assertJQ(req("q", "*:* doesnotexist5", "fq", "(id:* +(filter(id:1) filter(qqq_s:X) filter(abcdefg)) )")
+>         , "/response/numFound==2"
+286,288c285,287
+<     hits+=1;  
+<     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue() );
+<     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue() );
+---
+>     hits += 1;  
+>     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue());
+>     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue());
+292,293c291,292
+<     assertJQ(req("q","*:* +filter(id:1 filter(qqq_s:X) abcdefg)")
+<         ,"/response/numFound==2"
+---
+>     assertJQ(req("q", "*:* +filter(id:1 filter(qqq_s:X) abcdefg)")
+>         , "/response/numFound==2"
+296,299c295,298
+<     hits+=1;  
+<     inserts+=1; 
+<     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue() );
+<     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue() );
+---
+>     hits += 1;  
+>     inserts += 1; 
+>     assertEquals(inserts, ((Long) filterCacheStats.getStatistics().get("inserts")).longValue());
+>     assertEquals(hits, ((Long) filterCacheStats.getStatistics().get("hits")).longValue());
+302,303c301,306
+<     assertJQ(req("q","+filter(*:*) +filter(id:1)", "fl","id,score", "sort","id asc")
+<         ,"/response/docs/[0]/score==0.0"
+---
+>     assertJQ(req("q", "+filter(*:*) +filter(id:1)", "fl", "id,score", "sort", "id asc")
+>         , "/response/docs/[0]/score==0.0"
+>     );
+> 
+>     assertJQ(req("q", "+filter(*:*)^=10 +filter(id:1)", "fl", "id,score", "sort", "id asc")
+>         , "/response/docs/[0]/score==10.0"
+306,307c309,316
+<     assertJQ(req("q","+filter(*:*)^=10 +filter(id:1)", "fl","id,score", "sort","id asc")
+<         ,"/response/docs/[0]/score==10.0" 
+---
+>   }
+> 
+> 
+>   @Test
+>   public void testRegex() throws Exception {
+>     
+>     assertJQ(req("q", "rrr_s:/\\/lead.*/", "fl","id")
+>         , "/response/docs==[{id:'13'}]"

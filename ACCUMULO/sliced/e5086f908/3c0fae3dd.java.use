@@ -1,0 +1,173 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+43	MockCurrentState.mergeInfo	MergeInfo	variable	79	use	org.apache.accumulo.server.master.TestMergeState.MockCurrentState.merges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	78	80
+38	info	MergeInfo	param	63	define	org.apache.accumulo.server.master.TestMergeState.MockCurrentState.MockCurrentState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	63	65
+38	info	MergeInfo	param	64	use	org.apache.accumulo.server.master.TestMergeState.MockCurrentState.MockCurrentState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	63	65
+43	MockCurrentState.mergeInfo	MergeInfo	variable	64	set	org.apache.accumulo.server.master.TestMergeState.MockCurrentState.MockCurrentState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	63	65
+44	MockCurrentState.someTServer	TServerInstance	variable	74	use	org.apache.accumulo.server.master.TestMergeState.MockCurrentState.onlineTabletServers	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	73	75
+55	state	MockCurrentState	param	179	define	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+54	metaDataStateStore	MetaDataStateStore	param	179	define	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+55	state	MockCurrentState	param	180	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+54	metaDataStateStore	MetaDataStateStore	param	182	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+55	state	MockCurrentState	param	183	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+56	stats	MergeStats	variable	180	define	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+52	tss	TabletLocationState	variable	182	define	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+56	stats	MergeStats	variable	180	set	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+43	MockCurrentState.mergeInfo	MergeInfo	variable	180	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+56	stats	MergeStats	variable	181	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+53	WAITING_FOR_OFFLINE		variable	181	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+56	stats	MergeStats	variable	183	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+52	tss	TabletLocationState	variable	183	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+51	extent		variable	183	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+52	tss	TabletLocationState	variable	183	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+52	tss	TabletLocationState	variable	183	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+50	chopped		variable	183	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+56	stats	MergeStats	variable	185	use	org.apache.accumulo.server.master.TestMergeState.scan	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	179	186
+92	instance	Instance	variable	91	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	92	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+87	bw	BatchWriter	variable	93	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+97	splits	String[]	variable	96	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+100	tableId	Text	variable	98	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+96	pr	Text	variable	99	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+90	defaultTablet	Mutation	variable	109	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	115	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+86	auths	TCredentials	variable	116	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+94	metaDataStateStore	MetaDataStateStore	variable	119	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+89	count	int	variable	120	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	129	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	135	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+95	newState	MergeState	variable	136	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+91	deleter	BatchDeleter	variable	140	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+101	tablet	KeyExtent	variable	150	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+102	walogs	Collection<Collection>	variable	170	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+79	s	String	variable	100	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+80	split	Text	variable	101	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+78	prevRow	Mutation	variable	102	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+82	tss	TabletLocationState	variable	121	define	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+92	instance	Instance	variable	91	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	92	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+87	bw	BatchWriter	variable	93	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+97	splits	String[]	variable	96	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+100	tableId	Text	variable	98	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+96	pr	Text	variable	99	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+80	split	Text	variable	101	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+78	prevRow	Mutation	variable	102	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+96	pr	Text	variable	106	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+90	defaultTablet	Mutation	variable	109	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	115	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+86	auths	TCredentials	variable	116	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+94	metaDataStateStore	MetaDataStateStore	variable	119	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+89	count	int	variable	120	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	129	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	135	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+95	newState	MergeState	variable	136	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+91	deleter	BatchDeleter	variable	140	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	146	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+101	tablet	KeyExtent	variable	150	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	151	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	157	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	161	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	165	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	169	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+102	walogs	Collection<Collection>	variable	170	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	174	set	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+92	instance	Instance	variable	92	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	93	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+97	splits	String[]	variable	100	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+79	s	String	variable	101	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+100	tableId	Text	variable	102	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+80	split	Text	variable	102	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+96	pr	Text	variable	102	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+78	prevRow	Mutation	variable	103	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+77	METADATA_CURRENT_LOCATION_COLUMN_FAMILY		variable	103	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+78	prevRow	Mutation	variable	104	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+87	bw	BatchWriter	variable	105	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+78	prevRow	Mutation	variable	105	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+80	split	Text	variable	106	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+100	tableId	Text	variable	109	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+96	pr	Text	variable	109	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+90	defaultTablet	Mutation	variable	110	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+77	METADATA_CURRENT_LOCATION_COLUMN_FAMILY		variable	110	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+87	bw	BatchWriter	variable	111	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+90	defaultTablet	Mutation	variable	111	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+87	bw	BatchWriter	variable	112	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+100	tableId	Text	variable	115	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+92	instance	Instance	variable	119	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+86	auths	TCredentials	variable	119	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	119	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+94	metaDataStateStore	MetaDataStateStore	variable	121	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+81	HOSTED		variable	122	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+82	tss	TabletLocationState	variable	122	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	122	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+97	splits	String[]	variable	125	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+128	length		variable	125	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+89	count	int	variable	125	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+100	tableId	Text	variable	129	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	130	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	131	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	132	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	132	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	135	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+94	metaDataStateStore	MetaDataStateStore	variable	135	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	136	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	136	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	136	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+53	WAITING_FOR_OFFLINE		variable	137	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+95	newState	MergeState	variable	137	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	140	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+84	NO_AUTHS		variable	140	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+91	deleter	BatchDeleter	variable	141	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+77	METADATA_CURRENT_LOCATION_COLUMN_FAMILY		variable	141	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+91	deleter	BatchDeleter	variable	142	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+91	deleter	BatchDeleter	variable	143	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	146	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+94	metaDataStateStore	MetaDataStateStore	variable	146	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+53	WAITING_FOR_OFFLINE		variable	147	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	147	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	147	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	147	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+100	tableId	Text	variable	150	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+101	tablet	KeyExtent	variable	151	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	152	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	153	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	153	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+94	metaDataStateStore	MetaDataStateStore	variable	154	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+101	tablet	KeyExtent	variable	154	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	154	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+44	MockCurrentState.someTServer	TServerInstance	variable	154	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	157	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+94	metaDataStateStore	MetaDataStateStore	variable	157	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+85	WAITING_FOR_CHOPPED		variable	158	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	158	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	158	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	158	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+101	tablet	KeyExtent	variable	161	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	162	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	163	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+93	m	Mutation	variable	163	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	165	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+94	metaDataStateStore	MetaDataStateStore	variable	165	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+53	WAITING_FOR_OFFLINE		variable	166	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	166	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	166	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	166	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+101	tablet	KeyExtent	variable	169	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+94	metaDataStateStore	MetaDataStateStore	variable	171	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+101	tablet	KeyExtent	variable	171	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	171	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+44	MockCurrentState.someTServer	TServerInstance	variable	171	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+102	walogs	Collection<Collection>	variable	171	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	174	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+94	metaDataStateStore	MetaDataStateStore	variable	174	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+83	MERGING		variable	175	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+99	stats	MergeStats	variable	175	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+88	connector	Connector	variable	175	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+98	state	MockCurrentState	variable	175	use	org.apache.accumulo.server.master.TestMergeState.test	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	90	175
+106	c	Connector	param	83	define	org.apache.accumulo.server.master.TestMergeState.update	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	83	87
+107	m	Mutation	param	83	define	org.apache.accumulo.server.master.TestMergeState.update	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	83	87
+106	c	Connector	param	84	use	org.apache.accumulo.server.master.TestMergeState.update	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	83	87
+107	m	Mutation	param	85	use	org.apache.accumulo.server.master.TestMergeState.update	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	83	87
+105	bw	BatchWriter	variable	84	define	org.apache.accumulo.server.master.TestMergeState.update	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	83	87
+105	bw	BatchWriter	variable	84	set	org.apache.accumulo.server.master.TestMergeState.update	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	83	87
+104	METADATA_TABLE_NAME		variable	84	use	org.apache.accumulo.server.master.TestMergeState.update	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	83	87
+105	bw	BatchWriter	variable	85	use	org.apache.accumulo.server.master.TestMergeState.update	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	83	87
+105	bw	BatchWriter	variable	86	use	org.apache.accumulo.server.master.TestMergeState.update	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e5086f908/3c0fae3dd.java	83	87

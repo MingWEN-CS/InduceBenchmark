@@ -1,0 +1,18 @@
+1337,1351c1337
+<       if(cd.getCloudDescriptor().getCollectionName() !=null && cloudDesc.getCoreNodeName() != null ) {
+<         
+<         if(zkStateReader.getClusterState().hasCollection(cloudDesc.getCollectionName())){
+<         DocCollection coll = zkStateReader.getClusterState().getCollection(cloudDesc.getCollectionName());
+<          if(!"true".equals(coll.getStr("autoCreated"))){
+<            Slice slice = coll.getSlice(cloudDesc.getShardId());
+<            if(slice != null){
+<              if(slice.getReplica(cloudDesc.getCoreNodeName()) == null) {
+<                log.info("core_removed This core is removed from ZK");
+<                throw new SolrException(ErrorCode.NOT_FOUND,cloudDesc.getCoreNodeName() +" is removed");
+<              }
+<            }
+<          }
+<         }
+<       }
+---
+> 

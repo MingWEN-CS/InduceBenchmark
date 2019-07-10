@@ -1,0 +1,37 @@
+1252c1252,1257
+<             r.setMaintenanceState(maintenanceStateHelper.getEffectiveState(sch, host).name());
+---
+>             MaintenanceState effectiveMaintenanceState = maintenanceStateHelper.getEffectiveState(sch, host);
+>             if(filterByMaintenanceState(request, effectiveMaintenanceState)) {
+>               continue;
+>             }
+>             r.setMaintenanceState(effectiveMaintenanceState.name());
+> 
+1303c1308,1313
+<             r.setMaintenanceState(maintenanceStateHelper.getEffectiveState(sch, host).name());
+---
+>             MaintenanceState effectiveMaintenanceState = maintenanceStateHelper.getEffectiveState(sch, host);
+>             if(filterByMaintenanceState(request, effectiveMaintenanceState)) {
+>               continue;
+>             }
+>             r.setMaintenanceState(effectiveMaintenanceState.name());
+> 
+1311a1322,1339
+>   private boolean filterByMaintenanceState(ServiceComponentHostRequest request, MaintenanceState effectiveMaintenanceState) {
+>     if (request.getMaintenanceState() != null) {
+>       MaintenanceState desiredMaintenanceState = MaintenanceState.valueOf(request.getMaintenanceState());
+>       if (desiredMaintenanceState.equals(MaintenanceState.ON)) {
+>         
+> 
+> 
+> 
+>         if (effectiveMaintenanceState.equals(MaintenanceState.OFF)) {
+>           return true;
+>         }
+>       } else if (!desiredMaintenanceState.equals(effectiveMaintenanceState)){
+>         return true;
+>       }
+>     }
+>     return false;
+>   }
+> 

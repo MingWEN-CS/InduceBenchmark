@@ -1,0 +1,28 @@
+29a30
+> import com.codahale.metrics.Timer;
+37d37
+< import org.apache.solr.util.stats.TimerContext;
+122c122
+<     TimerContext time = stats.time(dir + "_peek");
+---
+>     Timer.Context time = stats.time(dir + "_peek");
+150c150
+<     TimerContext time;
+---
+>     Timer.Context time;
+180c180
+<     TimerContext time = stats.time(dir + "_poll");
+---
+>     Timer.Context time = stats.time(dir + "_poll");
+194c194
+<     TimerContext time = stats.time(dir + "_remove");
+---
+>     Timer.Context time = stats.time(dir + "_remove");
+213c213
+<     TimerContext timer = stats.time(dir + "_take");
+---
+>     Timer.Context timer = stats.time(dir + "_take");
+237c237
+<     TimerContext time = stats.time(dir + "_offer");
+---
+>     Timer.Context time = stats.time(dir + "_offer");

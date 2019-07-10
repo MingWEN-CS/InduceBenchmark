@@ -1,0 +1,4 @@
+311c311
+<     return name + cacheMap != null ? cacheMap.getValue().toString() : "";
+---
+>     return name + (cacheMap != null ? cacheMap.getValue().toString() : "");

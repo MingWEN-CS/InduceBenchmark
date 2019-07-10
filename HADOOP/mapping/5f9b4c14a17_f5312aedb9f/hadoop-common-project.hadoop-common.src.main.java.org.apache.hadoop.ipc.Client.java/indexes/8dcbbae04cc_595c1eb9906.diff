@@ -1,0 +1,27 @@
+47a48
+> import java.util.concurrent.atomic.AtomicInteger;
+107c108
+<   private int counter;                            
+---
+>   private final AtomicInteger counter = new AtomicInteger(); 
+218,220c219
+<       synchronized (Client.this) {
+<         this.id = counter++;
+<       }
+---
+>       this.id = nextCallId();
+1562a1562,1575
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private int nextCallId() {
+>     return counter.getAndIncrement() & 0x7FFFFFFF;
+>   }

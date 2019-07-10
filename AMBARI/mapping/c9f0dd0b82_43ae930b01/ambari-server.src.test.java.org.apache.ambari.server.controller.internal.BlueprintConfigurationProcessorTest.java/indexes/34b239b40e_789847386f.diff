@@ -1,0 +1,53 @@
+50a51
+> import org.apache.commons.collections.map.HashedMap;
+141a143,144
+> 
+>     expect(stack.getCardinality("MYSQL_SERVER")).andReturn(new Cardinality("0-1")).anyTimes();
+2913c2916
+<       "falcon/" + expectedHostName + "@EXAMPLE.COM", falconStartupProperties.get("*.falcon.service.authentication.kerberos.principal"));
+---
+>         "falcon/" + expectedHostName + "@EXAMPLE.COM", falconStartupProperties.get("*.falcon.service.authentication.kerberos.principal"));
+3126c3129
+<       "localhost", stormSiteProperties.get("nimbus.childopts"));
+---
+>         "localhost", stormSiteProperties.get("nimbus.childopts"));
+3528a3532,3570
+>   @Test
+>   public void testGetRequiredHostGroups___validComponentCountofZero() throws Exception {
+>     Map<String, Map<String, String>> properties = new HashMap<String, Map<String, String>>();
+>     Map<String, String> hiveSite = new HashMap<String, String>();
+>     properties.put("hive-site", hiveSite);
+>     Map<String, String> hiveEnv = new HashMap<String, String>();
+>     properties.put("hive-env", hiveEnv);
+> 
+>     hiveSite.put("javax.jdo.option.ConnectionURL", "localhost:1111");
+>     
+>     hiveEnv.put("hive_database", "New Database");
+> 
+> 
+>     Configuration clusterConfig = new Configuration(properties,
+>         Collections.<String, Map<String, Map<String, String>>>emptyMap());
+> 
+>     Collection<String> hgComponents1 = new HashSet<String>();
+>     hgComponents1.add("HIVE_SERVER");
+>     hgComponents1.add("NAMENODE");
+>     TestHostGroup group1 = new TestHostGroup("group1", hgComponents1, Collections.singleton("host1"));
+> 
+>     Collection<String> hgComponents2 = new HashSet<String>();
+>     hgComponents2.add("DATANODE");
+>     TestHostGroup group2 = new TestHostGroup("group2", hgComponents2, Collections.singleton("host2"));
+> 
+>     Collection<TestHostGroup> hostGroups = new ArrayList<TestHostGroup>();
+>     hostGroups.add(group1);
+>     hostGroups.add(group2);
+> 
+>     ClusterTopology topology = createClusterTopology("c1", bp, clusterConfig, hostGroups);
+>     BlueprintConfigurationProcessor updater = new BlueprintConfigurationProcessor(topology);
+> 
+>     
+>     Collection<String> requiredGroups = updater.getRequiredHostGroups();
+>     System.out.println("Required Groups: " + requiredGroups);
+> 
+> 
+>   }
+> 

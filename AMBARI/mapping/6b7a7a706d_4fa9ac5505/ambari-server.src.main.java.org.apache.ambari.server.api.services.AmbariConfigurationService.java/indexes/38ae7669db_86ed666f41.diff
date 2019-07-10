@@ -1,0 +1,52 @@
+99c99
+<       Collections.EMPTY_MAP));
+---
+>       Collections.emptyMap()));
+111c111
+<       defaultValue = "AmbariConfiguration/data, AmbariConfiguration/id, AmbariConfiguration/type",
+---
+>       defaultValue = "AmbariConfiguration/properties, AmbariConfiguration/category",
+114c114
+<       defaultValue = "AmbariConfiguration/id",
+---
+>       defaultValue = "AmbariConfiguration/category",
+126c126
+<       Collections.EMPTY_MAP));
+---
+>       Collections.emptyMap()));
+130c130
+<   @Path("{configurationId}")
+---
+>   @Path("{category}")
+145c145
+<                                          @PathParam("configurationId") String configurationId) {
+---
+>                                          @PathParam("category") String category) {
+147c147
+<       Collections.singletonMap(Resource.Type.AmbariConfiguration, configurationId)));
+---
+>       Collections.singletonMap(Resource.Type.AmbariConfiguration, category)));
+151c151
+<   @Path("{configurationId}")
+---
+>   @Path("{category}")
+170c170
+<                                             @PathParam("configurationId") String configurationId) {
+---
+>                                             @PathParam("category") String category) {
+172c172
+<       Collections.singletonMap(Resource.Type.AmbariConfiguration, configurationId)));
+---
+>       Collections.singletonMap(Resource.Type.AmbariConfiguration, category)));
+176c176
+<   @Path("{configurationId}")
+---
+>   @Path("{category}")
+188c188
+<                                             @PathParam("configurationId") String configurationId) {
+---
+>                                             @PathParam("category") String category) {
+190c190
+<       Collections.singletonMap(Resource.Type.AmbariConfiguration, configurationId)));
+---
+>       Collections.singletonMap(Resource.Type.AmbariConfiguration, category)));

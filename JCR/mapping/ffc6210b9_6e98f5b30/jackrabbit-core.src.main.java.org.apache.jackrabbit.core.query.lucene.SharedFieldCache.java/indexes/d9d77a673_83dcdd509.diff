@@ -1,0 +1,8 @@
+166,167c166,169
+<                 c = Arrays.copyOf(c, index - offset + 1);
+<                 c[index - offset] = item;
+---
+>                 Comparable<?>[] newC = new Comparable[index - offset + 1];
+>                 System.arraycopy(c, 0, newC, 0, c.length);
+>                 newC[index - offset] = item;
+>                 c = newC;

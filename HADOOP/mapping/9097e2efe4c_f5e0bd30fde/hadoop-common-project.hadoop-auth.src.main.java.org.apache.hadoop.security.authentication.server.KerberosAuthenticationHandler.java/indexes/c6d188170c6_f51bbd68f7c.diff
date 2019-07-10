@@ -1,0 +1,261 @@
+20a21
+> import org.ietf.jgss.GSSException;
+50a52,53
+> import com.google.common.collect.HashMultimap;
+> 
+67a71,74
+> 
+> 
+> 
+> 
+69c76,77
+<   private static Logger LOG = LoggerFactory.getLogger(KerberosAuthenticationHandler.class);
+---
+>   private static final Logger LOG = LoggerFactory.getLogger(
+>       KerberosAuthenticationHandler.class);
+120,121c128,129
+<                                   AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
+<                                   options),};
+---
+>               AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
+>               options), };
+132a141
+> 
+137a147
+> 
+150a161,196
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private HashMultimap<String, String> serverPrincipalMap =
+>       HashMultimap.create();
+180a227
+> 
+227a275,286
+>         KerberosName kerbName = new KerberosName(spnegoPrincipal);
+>         if (kerbName.getHostName() != null
+>             && kerbName.getRealm() != null
+>             && kerbName.getServiceName() != null
+>             && kerbName.getServiceName().equals("HTTP")) {
+>           LOG.trace("Map server: {} to principal: {}", kerbName.getHostName(),
+>               spnegoPrincipal);
+>           serverPrincipalMap.put(kerbName.getHostName(), spnegoPrincipal);
+>         } else {
+>           LOG.warn("HTTP principal: {} is invalid for SPNEGO!",
+>               spnegoPrincipal);
+>         }
+230,236c289,295
+<         gssManager = Subject.doAs(serverSubject, new PrivilegedExceptionAction<GSSManager>() {
+< 
+<           @Override
+<           public GSSManager run() throws Exception {
+<             return GSSManager.getInstance();
+<           }
+<         });
+---
+>         gssManager = Subject.doAs(serverSubject,
+>             new PrivilegedExceptionAction<GSSManager>() {
+>               @Override
+>               public GSSManager run() throws Exception {
+>                 return GSSManager.getInstance();
+>               }
+>             });
+326a386,387
+> 
+> 
+328,329c389,391
+<   public AuthenticationToken authenticate(HttpServletRequest request, final HttpServletResponse response)
+<     throws IOException, AuthenticationException {
+---
+>   public AuthenticationToken authenticate(HttpServletRequest request,
+>       final HttpServletResponse response)
+>       throws IOException, AuthenticationException {
+331c393,394
+<     String authorization = request.getHeader(KerberosAuthenticator.AUTHORIZATION);
+---
+>     String authorization = request.getHeader(
+>         KerberosAuthenticator.AUTHORIZATION);
+333c396,397
+<     if (authorization == null || !authorization.startsWith(KerberosAuthenticator.NEGOTIATE)) {
+---
+>     if (authorization == null
+>         || !authorization.startsWith(KerberosAuthenticator.NEGOTIATE)) {
+337c401
+<         LOG.trace("SPNEGO starting");
+---
+>         LOG.trace("SPNEGO starting for url: {}", request.getRequestURL());
+339c403,404
+<         LOG.warn("'" + KerberosAuthenticator.AUTHORIZATION + "' does not start with '" +
+---
+>         LOG.warn("'" + KerberosAuthenticator.AUTHORIZATION +
+>             "' does not start with '" +
+343c408,409
+<       authorization = authorization.substring(KerberosAuthenticator.NEGOTIATE.length()).trim();
+---
+>       authorization = authorization.substring(
+>           KerberosAuthenticator.NEGOTIATE.length()).trim();
+349,386c415,445
+<         token = Subject.doAs(serverSubject, new PrivilegedExceptionAction<AuthenticationToken>() {
+< 
+<           @Override
+<           public AuthenticationToken run() throws Exception {
+<             AuthenticationToken token = null;
+<             GSSContext gssContext = null;
+<             GSSCredential gssCreds = null;
+<             try {
+<               gssCreds = gssManager.createCredential(
+<                   gssManager.createName(
+<                       KerberosUtil.getServicePrincipal("HTTP", serverName),
+<                       KerberosUtil.getOidInstance("NT_GSS_KRB5_PRINCIPAL")),
+<                   GSSCredential.INDEFINITE_LIFETIME,
+<                   new Oid[]{
+<                     KerberosUtil.getOidInstance("GSS_SPNEGO_MECH_OID"),
+<                     KerberosUtil.getOidInstance("GSS_KRB5_MECH_OID")},
+<                   GSSCredential.ACCEPT_ONLY);
+<               gssContext = gssManager.createContext(gssCreds);
+<               byte[] serverToken = gssContext.acceptSecContext(clientToken, 0, clientToken.length);
+<               if (serverToken != null && serverToken.length > 0) {
+<                 String authenticate = base64.encodeToString(serverToken);
+<                 response.setHeader(KerberosAuthenticator.WWW_AUTHENTICATE,
+<                                    KerberosAuthenticator.NEGOTIATE + " " + authenticate);
+<               }
+<               if (!gssContext.isEstablished()) {
+<                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+<                 LOG.trace("SPNEGO in progress");
+<               } else {
+<                 String clientPrincipal = gssContext.getSrcName().toString();
+<                 KerberosName kerberosName = new KerberosName(clientPrincipal);
+<                 String userName = kerberosName.getShortName();
+<                 token = new AuthenticationToken(userName, clientPrincipal, getType());
+<                 response.setStatus(HttpServletResponse.SC_OK);
+<                 LOG.trace("SPNEGO completed for principal [{}]", clientPrincipal);
+<               }
+<             } finally {
+<               if (gssContext != null) {
+<                 gssContext.dispose();
+---
+>         token = Subject.doAs(serverSubject,
+>             new PrivilegedExceptionAction<AuthenticationToken>() {
+>               private Set<String> serverPrincipals =
+>                   serverPrincipalMap.get(serverName);
+>               @Override
+>               public AuthenticationToken run() throws Exception {
+>                 if (LOG.isTraceEnabled()) {
+>                   LOG.trace("SPNEGO with principals: {}",
+>                       serverPrincipals.toString());
+>                 }
+>                 AuthenticationToken token = null;
+>                 Exception lastException = null;
+>                 for (String serverPrincipal : serverPrincipals) {
+>                   try {
+>                     token = runWithPrincipal(serverPrincipal, clientToken,
+>                         base64, response);
+>                   } catch (Exception ex) {
+>                     lastException = ex;
+>                     LOG.trace("Auth {} failed with {}", serverPrincipal, ex);
+>                   } finally {
+>                       if (token != null) {
+>                         LOG.trace("Auth {} successfully", serverPrincipal);
+>                         break;
+>                     }
+>                   }
+>                 }
+>                 if (token != null) {
+>                   return token;
+>                 } else {
+>                   throw new AuthenticationException(lastException);
+>                 }
+388,394c447
+<               if (gssCreds != null) {
+<                 gssCreds.dispose();
+<               }
+<             }
+<             return token;
+<           }
+<         });
+---
+>             });
+398,399c451
+<         }
+<         else {
+---
+>         } else {
+406a459,505
+>   private AuthenticationToken runWithPrincipal(String serverPrincipal,
+>       byte[] clientToken, Base64 base64, HttpServletResponse response) throws
+>       IOException, AuthenticationException, ClassNotFoundException,
+>       GSSException, IllegalAccessException, NoSuchFieldException {
+>     GSSContext gssContext = null;
+>     GSSCredential gssCreds = null;
+>     AuthenticationToken token = null;
+>     try {
+>       LOG.trace("SPNEGO initiated with principal {}", serverPrincipal);
+>       gssCreds = this.gssManager.createCredential(
+>           this.gssManager.createName(serverPrincipal,
+>               KerberosUtil.getOidInstance("NT_GSS_KRB5_PRINCIPAL")),
+>           GSSCredential.INDEFINITE_LIFETIME,
+>           new Oid[]{
+>               KerberosUtil.getOidInstance("GSS_SPNEGO_MECH_OID"),
+>               KerberosUtil.getOidInstance("GSS_KRB5_MECH_OID")},
+>           GSSCredential.ACCEPT_ONLY);
+>       gssContext = this.gssManager.createContext(gssCreds);
+>       byte[] serverToken = gssContext.acceptSecContext(clientToken, 0,
+>           clientToken.length);
+>       if (serverToken != null && serverToken.length > 0) {
+>         String authenticate = base64.encodeToString(serverToken);
+>         response.setHeader(KerberosAuthenticator.WWW_AUTHENTICATE,
+>                            KerberosAuthenticator.NEGOTIATE + " " +
+>                            authenticate);
+>       }
+>       if (!gssContext.isEstablished()) {
+>         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+>         LOG.trace("SPNEGO in progress");
+>       } else {
+>         String clientPrincipal = gssContext.getSrcName().toString();
+>         KerberosName kerberosName = new KerberosName(clientPrincipal);
+>         String userName = kerberosName.getShortName();
+>         token = new AuthenticationToken(userName, clientPrincipal, getType());
+>         response.setStatus(HttpServletResponse.SC_OK);
+>         LOG.trace("SPNEGO completed for principal [{}]", clientPrincipal);
+>       }
+>     } finally {
+>       if (gssContext != null) {
+>         gssContext.dispose();
+>       }
+>       if (gssCreds != null) {
+>         gssCreds.dispose();
+>       }
+>     }
+>     return token;
+>   }

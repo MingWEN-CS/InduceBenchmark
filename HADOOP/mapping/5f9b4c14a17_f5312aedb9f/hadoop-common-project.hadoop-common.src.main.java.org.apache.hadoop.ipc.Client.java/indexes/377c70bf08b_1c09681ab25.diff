@@ -1,0 +1,31 @@
+20a21,22
+> import static org.apache.hadoop.ipc.RpcConstants.CONNECTION_CONTEXT_CALL_ID;
+> 
+65a68,69
+> import org.apache.hadoop.ipc.ProtobufRpcEngine.RpcRequestMessageWrapper;
+> import org.apache.hadoop.ipc.RPC.RpcKind;
+66a71
+> import org.apache.hadoop.ipc.protobuf.IpcConnectionContextProtos.IpcConnectionContextProto;
+836,837c841
+<       DataOutputBuffer buf = new DataOutputBuffer();
+<       ProtoUtil.makeIpcConnectionContext(
+---
+>       IpcConnectionContextProto message = ProtoUtil.makeIpcConnectionContext(
+840c844,850
+<           authMethod).writeTo(buf);
+---
+>           authMethod);
+>       RpcRequestHeaderProto connectionContextHeader =
+>           ProtoUtil.makeRpcRequestHeader(RpcKind.RPC_PROTOCOL_BUFFER,
+>               OperationProto.RPC_FINAL_PACKET, CONNECTION_CONTEXT_CALL_ID,
+>               clientId);
+>       RpcRequestMessageWrapper request =
+>           new RpcRequestMessageWrapper(connectionContextHeader, message);
+843,846c853,854
+<       int bufLen = buf.getLength();
+< 
+<       out.writeInt(bufLen);
+<       out.write(buf.getData(), 0, bufLen);
+---
+>       out.writeInt(request.getLength());
+>       request.write(out);

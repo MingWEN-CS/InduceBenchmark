@@ -1,0 +1,70 @@
+62a63
+> import com.google.common.cache.Cache;
+64d64
+< import com.google.common.cache.CacheLoader;
+124c124,131
+<   private final LoadingCache<Long, Map<Long, HostRoleCommandStatusSummaryDTO>> hrcStatusSummaryCache;
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private final Cache<Long, Map<Long, HostRoleCommandStatusSummaryDTO>> hrcStatusSummaryCache;
+255,272c262
+<       .build(new CacheLoader<Long, Map<Long, HostRoleCommandStatusSummaryDTO>>() {
+<         @Override
+<         public Map<Long, HostRoleCommandStatusSummaryDTO> load(Long requestId) throws Exception {
+<           LOG.debug("Cache miss for host role command status summary object for request {}, fetching from JPA", requestId);
+< 
+<           
+<           
+<           ReadWriteLock lock = transactionLocks.getLock(LockArea.HRC_STATUS_CACHE);
+<           lock.readLock().lock();
+< 
+<           try{
+<             Map<Long, HostRoleCommandStatusSummaryDTO> hrcCommandStatusByStageId = loadAggregateCounts(requestId);
+<             return hrcCommandStatusByStageId;
+<           } finally {
+<             lock.readLock().unlock();
+<           }
+<         }
+<       });
+---
+>       .build();
+671a662,666
+> 
+> 
+> 
+> 
+> 
+673,674c668,674
+<     if (hostRoleCommandStatusSummaryCacheEnabled) {
+<       return hrcStatusSummaryCache.getUnchecked(requestId);
+---
+>     if (!hostRoleCommandStatusSummaryCacheEnabled) {
+>       return loadAggregateCounts(requestId);
+>     }
+> 
+>     Map<Long, HostRoleCommandStatusSummaryDTO> map = hrcStatusSummaryCache.getIfPresent(requestId);
+>     if (null != map) {
+>       return map;
+676,677c676,688
+<     else {
+<       return loadAggregateCounts(requestId); 
+---
+> 
+>     
+>     
+>     ReadWriteLock lock = transactionLocks.getLock(LockArea.HRC_STATUS_CACHE);
+>     lock.readLock().lock();
+> 
+>     try {
+>       map = loadAggregateCounts(requestId);
+>       hrcStatusSummaryCache.put(requestId, map);
+> 
+>       return map;
+>     } finally {
+>       lock.readLock().unlock();

@@ -1,0 +1,26 @@
+32a33
+> import org.apache.jackrabbit.core.id.NodeIdFactory;
+183a185,186
+>     private final NodeIdFactory nodeIdFactory;
+> 
+196c199,200
+<                                   ISMLocking locking)
+---
+>                                   ISMLocking locking,
+>                                   NodeIdFactory nodeIdFactory)
+203a208
+>         this.nodeIdFactory = nodeIdFactory;
+1117c1122
+<     
+---
+> 
+1444c1449
+<     
+---
+> 
+1850a1856,1860
+> 
+>     public NodeIdFactory getNodeIdFactory() {
+>         return this.nodeIdFactory;
+>     }
+> 

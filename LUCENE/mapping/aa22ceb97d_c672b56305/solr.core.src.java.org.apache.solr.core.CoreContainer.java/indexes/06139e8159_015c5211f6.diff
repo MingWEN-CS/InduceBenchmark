@@ -1,0 +1,19 @@
+71a72
+> import org.apache.solr.logging.log4j.Log4jWatcher;
+403c404
+<             log.warn("Log watching is not yet implemented for log4j");
+---
+>             fname = "Log4j";
+409,410c410
+<         log.warn("Unable to read SLF4J version.  LogWatcher will be disabled: "
+<             + ex);
+---
+>         log.warn("Unable to read SLF4J version.  LogWatcher will be disabled: " + ex);
+417,419c417,419
+< 
+< 
+< 
+---
+>         }
+>         else if( "Log4j".equals(fname) ) {
+>           logging = new Log4jWatcher(slf4jImpl);

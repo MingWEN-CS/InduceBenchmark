@@ -1,0 +1,334 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.schema;
+
+import org.apache.solr.common.SolrException;
+import org.apache.solr.request.XMLWriter;
+import org.apache.solr.request.TextResponseWriter;
+import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.search.SortField;
+import org.apache.solr.search.function.ValueSource;
+import org.apache.solr.search.function.OrdFieldSource;
+import org.apache.solr.util.DateMathParser;
+  
+import java.util.Map;
+import java.io.IOException;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.Locale;
+import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
+import java.text.ParsePosition;
+import java.text.ParseException;
+import java.text.FieldPosition;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class DateField extends FieldType {
+
+  public static TimeZone UTC = TimeZone.getTimeZone("UTC");
+
+  
+
+  
+  protected static final TimeZone MATH_TZ = UTC;
+  
+  protected static final Locale MATH_LOCALE = Locale.US;
+
+  
+
+
+
+  protected static final TimeZone CANONICAL_TZ = UTC;
+  
+
+
+
+  protected static final Locale CANONICAL_LOCALE = Locale.US;
+  
+  
+  
+  
+  
+  
+  protected void init(IndexSchema schema, Map<String,String> args) {
+  }
+
+  protected static String NOW = "NOW";
+  protected static char Z = 'Z';
+  
+  public String toInternal(String val) {
+    return toInternal(parseMath(null, val));
+  }
+
+  
+
+
+
+
+
+  public Date parseMath(Date now, String val) {
+    String math = null;
+    final DateMathParser p = new DateMathParser(MATH_TZ, MATH_LOCALE);
+    
+    if (null != now) p.setNow(now);
+    
+    if (val.startsWith(NOW)) {
+      math = val.substring(NOW.length());
+    } else {
+      final int zz = val.indexOf(Z);
+      if (0 < zz) {
+        math = val.substring(zz+1);
+        try {
+          p.setNow(toObject(val.substring(0,zz)));
+        } catch (ParseException e) {
+          throw new SolrException( SolrException.ErrorCode.BAD_REQUEST,
+                                   "Invalid Date in Date Math String:'"
+                                   +val+'\'',e);
+        }
+      } else {
+        throw new SolrException( SolrException.ErrorCode.BAD_REQUEST,
+                                 "Invalid Date String:'" +val+'\'');
+      }
+    }
+
+    if (null == math || math.equals("")) {
+      return p.getNow();
+    }
+    
+    try {
+      return p.parseMath(math);
+    } catch (ParseException e) {
+      throw new SolrException( SolrException.ErrorCode.BAD_REQUEST,
+                               "Invalid Date Math String:'" +val+'\'',e);
+    }
+  }
+  
+  public String toInternal(Date val) {
+    return formatDate(val);
+  }
+
+  public String indexedToReadable(String indexedForm) {
+    return indexedForm + Z;
+  }
+
+  public String toExternal(Fieldable f) {
+    return indexedToReadable(f.stringValue());
+  }
+  public Date toObject(String indexedForm) throws java.text.ParseException {
+    return parseDate(indexedToReadable(indexedForm));
+  }
+
+  @Override
+  public Date toObject(Fieldable f) {
+    try {
+      return parseDate( toExternal(f) );
+    }
+    catch( ParseException ex ) {
+      throw new RuntimeException( ex );
+    }
+  }
+
+  public SortField getSortField(SchemaField field,boolean reverse) {
+    return getStringSort(field,reverse);
+  }
+
+  public ValueSource getValueSource(SchemaField field) {
+    return new OrdFieldSource(field.name);
+  }
+
+  public void write(XMLWriter xmlWriter, String name, Fieldable f) throws IOException {
+    xmlWriter.writeDate(name, toExternal(f));
+  }
+
+  public void write(TextResponseWriter writer, String name, Fieldable f) throws IOException {
+    writer.writeDate(name, toExternal(f));
+  }
+
+  
+
+
+
+
+
+
+
+  protected DateFormat getThreadLocalDateFormat() {
+    return fmtThreadLocal.get();
+  }
+
+  
+
+
+
+  protected String formatDate(Date d) {
+    return fmtThreadLocal.get().format(d);
+  }
+
+  
+
+
+
+   protected Date parseDate(String s) throws ParseException {
+     return fmtThreadLocal.get().parse(s);
+   }
+  
+  
+
+
+
+
+  private final static ThreadLocalDateFormat fmtThreadLocal
+    = new ThreadLocalDateFormat(new ISO8601CanonicalDateFormat());
+  
+  private static class ISO8601CanonicalDateFormat extends SimpleDateFormat {
+    
+    protected NumberFormat millisParser
+      = NumberFormat.getIntegerInstance(CANONICAL_LOCALE);
+
+    protected NumberFormat millisFormat = new DecimalFormat(".###", 
+      new DecimalFormatSymbols(CANONICAL_LOCALE));
+
+    public ISO8601CanonicalDateFormat() {
+      super("yyyy-MM-dd'T'HH:mm:ss", CANONICAL_LOCALE);
+      this.setTimeZone(CANONICAL_TZ);
+    }
+
+    public Date parse(String i, ParsePosition p) {
+      
+      Date d = super.parse(i, p);
+      int milliIndex = p.getIndex();
+      
+      if (null != d &&
+          -1 == p.getErrorIndex() &&
+          milliIndex + 1 < i.length() &&
+          '.' == i.charAt(milliIndex)) {
+        p.setIndex( ++milliIndex ); 
+        Number millis = millisParser.parse(i, p);
+        if (-1 == p.getErrorIndex()) {
+          int endIndex = p.getIndex();
+            d = new Date(d.getTime()
+                         + (long)(millis.doubleValue() *
+                                  Math.pow(10, (3-endIndex+milliIndex))));
+        }
+      }
+      return d;
+    }
+
+    public StringBuffer format(Date d, StringBuffer toAppendTo,
+                               FieldPosition pos) {
+      
+      super.format(d, toAppendTo, pos);
+      
+      long millis = d.getTime() % 1000l;
+      if (0l == millis) {
+        return toAppendTo;
+      }
+      int posBegin = toAppendTo.length();
+      toAppendTo.append(millisFormat.format(millis / 1000d));
+      if (DateFormat.MILLISECOND_FIELD == pos.getField()) {
+        pos.setBeginIndex(posBegin);
+        pos.setEndIndex(toAppendTo.length());
+      }
+      return toAppendTo;
+    }
+
+    public Object clone() {
+      ISO8601CanonicalDateFormat c
+        = (ISO8601CanonicalDateFormat) super.clone();
+      c.millisParser = NumberFormat.getIntegerInstance(CANONICAL_LOCALE);
+      c.millisFormat = new DecimalFormat(".###", 
+        new DecimalFormatSymbols(CANONICAL_LOCALE));
+      return c;
+    }
+  }
+  
+  private static class ThreadLocalDateFormat extends ThreadLocal<DateFormat> {
+    DateFormat proto;
+    public ThreadLocalDateFormat(DateFormat d) {
+      super();
+      proto = d;
+    }
+    protected DateFormat initialValue() {
+      return (DateFormat) proto.clone();
+    }
+  }
+  
+}

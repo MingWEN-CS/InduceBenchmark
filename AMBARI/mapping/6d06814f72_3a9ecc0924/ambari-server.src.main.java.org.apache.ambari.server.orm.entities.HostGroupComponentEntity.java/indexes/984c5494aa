@@ -1,0 +1,129 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.orm.entities;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+
+
+
+@IdClass(HostGroupComponentEntityPK.class)
+@Table(name = "hostgroup_component")
+@Entity
+public class HostGroupComponentEntity {
+
+  @Id
+  @Column(name = "hostgroup_name", nullable = false, insertable = false, updatable = false)
+  private String hostGroupName;
+
+  @Id
+  @Column(name = "blueprint_name", nullable = false, insertable = false, updatable = false)
+  private String blueprintName;
+
+  @Id
+  @Column(name = "name", nullable = false, insertable = true, updatable = false)
+  private String name;
+
+  @ManyToOne
+  @JoinColumns({
+      @JoinColumn(name = "hostgroup_name", referencedColumnName = "name", nullable = false),
+      @JoinColumn(name = "blueprint_name", referencedColumnName = "blueprint_name", nullable = false)
+  })
+  private HostGroupEntity hostGroup;
+
+
+  
+
+
+
+
+  public String getName() {
+    return name;
+  }
+
+  
+
+
+
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  
+
+
+
+
+  public HostGroupEntity getHostGroupEntity() {
+    return hostGroup;
+  }
+
+  
+
+
+
+
+  public void setHostGroupEntity(HostGroupEntity entity) {
+    this.hostGroup = entity;
+  }
+
+  
+
+
+
+
+  public String getHostGroupName() {
+    return hostGroupName;
+  }
+
+  
+
+
+
+
+  public void setHostGroupName(String hostGroupName) {
+    this.hostGroupName = hostGroupName;
+  }
+
+  
+
+
+
+
+  public String getBlueprintName() {
+    return blueprintName;
+  }
+
+  
+
+
+
+
+  public void setBlueprintName(String blueprintName) {
+    this.blueprintName = blueprintName;
+  }
+}

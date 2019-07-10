@@ -1,0 +1,98 @@
+72a73
+> import org.apache.lucene.store.NoLockFactory;
+781c782
+<         assertTrue("segment generation should be > 1 but got " + gen, gen > 1);
+---
+>         assertTrue("segment generation should be > 0 but got " + gen, gen > 0);
+841c842
+<         assertTrue("segment generation should be > 1 but got " + gen, gen > 1);
+---
+>         assertTrue("segment generation should be > 0 but got " + gen, gen > 0);
+906c907
+<         assertTrue("segment generation should be > 1 but got " + gen, gen > 1);
+---
+>         assertTrue("segment generation should be > 0 but got " + gen, gen > 0);
+2329c2330
+<     dir.setMaxSizeInBytes(dir.getRecomputedActualSizeInBytes());
+---
+>     dir.setMaxSizeInBytes(Math.max(1, dir.getRecomputedActualSizeInBytes()));
+2647c2648
+<     assertTrue("segment generation should be > 1 but got " + gen, gen > 1);
+---
+>     assertTrue("segment generation should be > 0 but got " + gen, gen > 0);
+2676c2677,2678
+< 
+---
+>     writer.commit();
+>     
+3537c3539,3540
+< 
+---
+>     writer.commit();
+>     
+3588c3591,3592
+< 
+---
+>     writer.commit();
+>     
+3672a3677
+>       writer2.commit();
+4954a4960,5017
+>   
+>   public void testNoCommits() throws Exception {
+>     
+>     
+>     
+>     Directory dir = new RAMDirectory();
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+>     try {
+>       IndexReader.listCommits(dir);
+>       fail("listCommits should have thrown an exception over empty index");
+>     } catch (IndexNotFoundException e) {
+>       
+>     }
+>     
+>     writer.close();
+>     assertEquals("expected 1 commits!", 1, IndexReader.listCommits(dir).size());
+>   }
+> 
+>   public void testEmptyFSDirWithNoLock() throws Exception {
+>     
+>     
+>     
+>     FSDirectory dir = FSDirectory.open(new File(TEMP_DIR, "emptyFSDirNoLock"), NoLockFactory.getNoLockFactory());
+>     new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))).close();
+>   }
+> 
+>   public void testEmptyDirRollback() throws Exception {
+>     
+>     
+>     
+>     Directory dir = new MockRAMDirectory();
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(
+>         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+>         .setMaxBufferedDocs(2));
+>     
+>     assertEquals(0, dir.listAll().length);
+>     Document doc = new Document();
+>     
+>     doc.add(new Field("c", "val", Store.YES, Index.ANALYZED, TermVector.WITH_POSITIONS_OFFSETS));
+>     writer.addDocument(doc);
+>     
+>     assertEquals("only the stored and term vector files should exist in the directory", 5, dir.listAll().length);
+>     
+>     doc = new Document();
+>     doc.add(new Field("c", "val", Store.YES, Index.ANALYZED, TermVector.WITH_POSITIONS_OFFSETS));
+>     writer.addDocument(doc);
+>     
+>     assertTrue("flush should have occurred and files created", dir.listAll().length > 5);
+>    
+>     
+>     writer.rollback();
+>     assertEquals("no files should exist in the directory after rollback", 0, dir.listAll().length);
+> 
+>     
+>     writer.close();
+>     assertEquals("expected a no-op close after IW.rollback()", 0, dir.listAll().length);
+>   }
+>   

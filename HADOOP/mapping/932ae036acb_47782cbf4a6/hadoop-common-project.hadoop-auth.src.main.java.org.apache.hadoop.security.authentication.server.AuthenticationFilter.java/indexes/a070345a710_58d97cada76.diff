@@ -1,0 +1,26 @@
+221a222,234
+>     validity = Long.parseLong(config.getProperty(AUTH_TOKEN_VALIDITY, "36000"))
+>         * 1000; 
+>     initializeSecretProvider(filterConfig);
+> 
+>     initializeAuthHandler(authHandlerClassName, filterConfig);
+> 
+> 
+>     cookieDomain = config.getProperty(COOKIE_DOMAIN, null);
+>     cookiePath = config.getProperty(COOKIE_PATH, null);
+>   }
+> 
+>   protected void initializeAuthHandler(String authHandlerClassName, FilterConfig filterConfig)
+>       throws ServletException {
+232a246
+>   }
+234,235c248,249
+<     validity = Long.parseLong(config.getProperty(AUTH_TOKEN_VALIDITY, "36000"))
+<         * 1000; 
+---
+>   protected void initializeSecretProvider(FilterConfig filterConfig)
+>       throws ServletException {
+257,259d270
+< 
+<     cookieDomain = config.getProperty(COOKIE_DOMAIN, null);
+<     cookiePath = config.getProperty(COOKIE_PATH, null);

@@ -1,0 +1,115 @@
+36,54c36,37
+< import org.apache.lucene.index.BinaryDocValues;
+< import org.apache.lucene.index.PointValues;
+< import org.apache.lucene.index.DocValuesType;
+< import org.apache.lucene.index.FieldInfo;
+< import org.apache.lucene.index.FieldInfos;
+< import org.apache.lucene.index.FieldInvertState;
+< import org.apache.lucene.index.Fields;
+< import org.apache.lucene.index.IndexOptions;
+< import org.apache.lucene.index.LeafReader;
+< import org.apache.lucene.index.NumericDocValues;
+< import org.apache.lucene.index.OrdTermState;
+< import org.apache.lucene.index.PostingsEnum;
+< import org.apache.lucene.index.SortedDocValues;
+< import org.apache.lucene.index.SortedNumericDocValues;
+< import org.apache.lucene.index.SortedSetDocValues;
+< import org.apache.lucene.index.StoredFieldVisitor;
+< import org.apache.lucene.index.TermState;
+< import org.apache.lucene.index.Terms;
+< import org.apache.lucene.index.TermsEnum;
+---
+> import org.apache.lucene.document.Document;
+> import org.apache.lucene.index.*;
+61,66c44
+< import org.apache.lucene.util.ArrayUtil;
+< import org.apache.lucene.util.Bits;
+< import org.apache.lucene.util.ByteBlockPool;
+< import org.apache.lucene.util.BytesRef;
+< import org.apache.lucene.util.BytesRefArray;
+< import org.apache.lucene.util.BytesRefBuilder;
+---
+> import org.apache.lucene.util.*;
+68,69d45
+< import org.apache.lucene.util.BytesRefHash;
+< import org.apache.lucene.util.Counter;
+72,75d47
+< import org.apache.lucene.util.IntBlockPool;
+< import org.apache.lucene.util.RamUsageEstimator;
+< import org.apache.lucene.util.RecyclingByteBlockAllocator;
+< import org.apache.lucene.util.RecyclingIntBlockAllocator;
+297a270,309
+>   public static MemoryIndex fromDocument(Document document, Analyzer analyzer) {
+>     return fromDocument(document, analyzer, false, false, 0);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static MemoryIndex fromDocument(Document document, Analyzer analyzer, boolean storeOffsets, boolean storePayloads) {
+>     return fromDocument(document, analyzer, storeOffsets, storePayloads, 0);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static MemoryIndex fromDocument(Document document, Analyzer analyzer, boolean storeOffsets, boolean storePayloads, long maxReusedBytes) {
+>     MemoryIndex mi = new MemoryIndex(storeOffsets, storePayloads, maxReusedBytes);
+>     for (IndexableField field : document) {
+>       mi.addField(field, analyzer);
+>     }
+>     return mi;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+341a354,386
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   public void addField(IndexableField field, Analyzer analyzer) {
+>     addField(field, analyzer, 1.0f);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public void addField(IndexableField field, Analyzer analyzer, float boost) {
+>     if (field.fieldType().docValuesType() != DocValuesType.NONE)
+>       throw new IllegalArgumentException("MemoryIndex does not support DocValues fields");
+>     if (field.fieldType().pointDimensionCount() != 0)
+>       throw new IllegalArgumentException("MemoryIndex does not support Points");
+>     if (analyzer == null) {
+>       addField(field.name(), field.tokenStream(null, null), boost);
+>     }
+>     else {
+>       addField(field.name(), field.tokenStream(analyzer, null), boost,
+>           analyzer.getPositionIncrementGap(field.name()), analyzer.getOffsetGap(field.name()));
+>     }
+>   }

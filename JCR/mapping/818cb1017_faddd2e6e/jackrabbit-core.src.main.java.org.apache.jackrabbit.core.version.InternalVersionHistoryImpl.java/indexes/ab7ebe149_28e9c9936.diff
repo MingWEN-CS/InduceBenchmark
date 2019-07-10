@@ -1,0 +1,14 @@
+383a384,389
+>         InternalActivityImpl activity = v.getActivity();
+>         if (activity != null) {
+>             activity.removeVersion(v);
+>         }
+> 
+>         
+521a528,533
+>         if (src.hasProperty(NameConstants.JCR_ACTIVITY)) {
+>             InternalValue act = src.getProperty(NameConstants.JCR_ACTIVITY).internalGetValue();
+>             vNode.setPropertyValue(NameConstants.JCR_ACTIVITY, act);
+>         }
+> 
+>         

@@ -1,0 +1,12 @@
+308c308
+<     assert !onlyUseNewAPI && tokenWrapper != null;
+---
+>     assert tokenWrapper != null;
+372c372
+<     if (onlyUseNewAPI)
+---
+>     if (tokenWrapper == null)
+396c396
+<     if (onlyUseNewAPI)
+---
+>     if (tokenWrapper == null)

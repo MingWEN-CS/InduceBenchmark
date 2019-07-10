@@ -1,0 +1,4 @@
+718c718
+<     public CachingMultiIndexReader getIndexReader(boolean initCache) throws IOException {
+---
+>     public synchronized CachingMultiIndexReader getIndexReader(boolean initCache) throws IOException {

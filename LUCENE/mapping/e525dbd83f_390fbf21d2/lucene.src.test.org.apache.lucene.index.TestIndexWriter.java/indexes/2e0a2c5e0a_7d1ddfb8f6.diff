@@ -1,0 +1,11 @@
+43d42
+< import org.apache.lucene.analysis.StopAnalyzer;
+46,47d44
+< import org.apache.lucene.analysis.MockAnalyzer;
+< import org.apache.lucene.analysis.WhitespaceTokenizer;
+49d45
+< import org.apache.lucene.analysis.standard.StandardTokenizer;
+1725c1721
+<         return new TokenFilter(new StandardTokenizer(TEST_VERSION_CURRENT, reader)) {
+---
+>         return new TokenFilter(new MockTokenizer(reader, MockTokenizer.SIMPLE, true)) {

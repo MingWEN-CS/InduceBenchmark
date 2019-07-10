@@ -1,0 +1,12 @@
+33a34
+> import java.util.Random;
+132a134
+>     Random random = newRandom();
+134c136
+<     IndexWriter writer = new IndexWriter(directory, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+---
+>     IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer()));
+152c154
+<     writer = new IndexWriter(target, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+---
+>     writer = new IndexWriter(target, newIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer()));

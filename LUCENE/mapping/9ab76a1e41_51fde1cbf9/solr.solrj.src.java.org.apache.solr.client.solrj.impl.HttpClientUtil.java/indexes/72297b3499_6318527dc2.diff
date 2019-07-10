@@ -1,0 +1,40 @@
+49a50
+> import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+125c126
+<   
+---
+> 
+126a128
+>     
+175,182c177
+<     schemaRegistryProvider = new SchemaRegistryProvider() {
+< 
+<       @Override
+<       public Registry<ConnectionSocketFactory> getSchemaRegistry() {
+<         return RegistryBuilder.<ConnectionSocketFactory> create()
+<             .register("http", PlainConnectionSocketFactory.getSocketFactory()).build();
+<       }
+<     };
+---
+>     schemaRegistryProvider = new DefaultSchemaRegistryProvider();
+183a179
+>   }
+184a181,192
+>   private static final class DefaultSchemaRegistryProvider extends SchemaRegistryProvider {
+>     @Override
+>     public Registry<ConnectionSocketFactory> getSchemaRegistry() {
+>       
+>       
+>       
+>       
+>       RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.<ConnectionSocketFactory>create();
+>       builder.register("http", PlainConnectionSocketFactory.getSocketFactory());
+>       builder.register("https", SSLConnectionSocketFactory.getSystemSocketFactory());
+>       return builder.build();
+>     }
+195,197c203
+<     PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(schemaRegistryProvider.getSchemaRegistry());
+< 
+<     return createClient(params, cm);
+---
+>     return createClient(params, new PoolingHttpClientConnectionManager(schemaRegistryProvider.getSchemaRegistry()));

@@ -1,0 +1,877 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+106	t	Throwable	param	317	define	org.apache.lucene.index.DefaultIndexingChain.abort	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	314	326
+107	t	Throwable	param	323	define	org.apache.lucene.index.DefaultIndexingChain.abort	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	314	326
+280	DefaultIndexingChain.storedFieldsConsumer	StoredFieldsConsumer	variable	316	use	org.apache.lucene.index.DefaultIndexingChain.abort	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	314	326
+281	DefaultIndexingChain.termsHash	TermsHash	variable	322	use	org.apache.lucene.index.DefaultIndexingChain.abort	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	314	326
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	326	use	org.apache.lucene.index.DefaultIndexingChain.abort	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	314	326
+101	docWriter	DocumentsWriterPerThread	param	75	define	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+101	docWriter	DocumentsWriterPerThread	param	76	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+101	docWriter	DocumentsWriterPerThread	param	77	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+101	docWriter	DocumentsWriterPerThread	param	78	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+101	docWriter	DocumentsWriterPerThread	param	79	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+101	docWriter	DocumentsWriterPerThread	param	82	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+101	docWriter	DocumentsWriterPerThread	param	83	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+101	docWriter	DocumentsWriterPerThread	param	84	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+101	docWriter	DocumentsWriterPerThread	param	86	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+101	docWriter	DocumentsWriterPerThread	param	87	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+101	docWriter	DocumentsWriterPerThread	param	89	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+102	termVectorsWriter	TermsHash	variable	81	define	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+273	DefaultIndexingChain.docWriter	DocumentsWriterPerThread	variable	76	set	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+275	DefaultIndexingChain.fieldInfos	FieldInfos.Builder	variable	77	set	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	78	set	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+271	DefaultIndexingChain.bytesUsed	Counter	variable	79	set	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+280	DefaultIndexingChain.storedFieldsConsumer	StoredFieldsConsumer	variable	83	set	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+102	termVectorsWriter	TermsHash	variable	84	set	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+280	DefaultIndexingChain.storedFieldsConsumer	StoredFieldsConsumer	variable	86	set	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+102	termVectorsWriter	TermsHash	variable	87	set	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+281	DefaultIndexingChain.termsHash	TermsHash	variable	89	set	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+100	docState		variable	78	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+99	bytesUsed		variable	79	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+102	termVectorsWriter	TermsHash	variable	89	use	org.apache.lucene.index.DefaultIndexingChain.DefaultIndexingChain	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	75	89
+110	th	Throwable	param	367	define	org.apache.lucene.index.DefaultIndexingChain.finishStoredFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	364	370
+110	th	Throwable	param	368	use	org.apache.lucene.index.DefaultIndexingChain.finishStoredFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	364	370
+280	DefaultIndexingChain.storedFieldsConsumer	StoredFieldsConsumer	variable	366	use	org.apache.lucene.index.DefaultIndexingChain.finishStoredFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	364	370
+127	state	SegmentWriteState	param	118	define	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+127	state	SegmentWriteState	param	122	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+127	state	SegmentWriteState	param	123	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+127	state	SegmentWriteState	param	125	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+127	state	SegmentWriteState	param	131	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+127	state	SegmentWriteState	param	137	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+127	state	SegmentWriteState	param	145	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+127	state	SegmentWriteState	param	162	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+127	state	SegmentWriteState	param	172	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+127	state	SegmentWriteState	param	172	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+127	state	SegmentWriteState	param	172	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+126	sortMap	Sorter.DocMap	variable	122	define	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+124	maxDoc	int	variable	123	define	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	124	define	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+123	fieldsToFlush	Map<String,TermsHashPerField>	variable	151	define	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+118	i	int	variable	152	define	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+119	perField	PerField	variable	153	define	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+126	sortMap	Sorter.DocMap	variable	122	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+124	maxDoc	int	variable	123	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	124	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	130	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	136	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	143	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	150	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+123	fieldsToFlush	Map<String,TermsHashPerField>	variable	151	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+118	i	int	variable	152	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+119	perField	PerField	variable	153	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+119	perField	PerField	variable	158	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	171	set	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+126	sortMap	Sorter.DocMap	variable	125	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	126	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	127	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	127	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+126	sortMap	Sorter.DocMap	variable	131	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	132	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	133	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	133	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+126	sortMap	Sorter.DocMap	variable	137	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	138	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	139	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	139	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+280	DefaultIndexingChain.storedFieldsConsumer	StoredFieldsConsumer	variable	144	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+124	maxDoc	int	variable	144	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+280	DefaultIndexingChain.storedFieldsConsumer	StoredFieldsConsumer	variable	145	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+126	sortMap	Sorter.DocMap	variable	145	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	146	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	147	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	147	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+118	i	int	variable	152	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	152	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+356	length		variable	152	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+118	i	int	variable	153	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	153	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+119	perField	PerField	variable	154	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+119	perField	PerField	variable	155	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+88	PerField.invertState	FieldInvertState	variable	155	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+123	fieldsToFlush	Map<String,TermsHashPerField>	variable	156	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+119	perField	PerField	variable	156	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+87	PerField.fieldInfo	FieldInfo	variable	156	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+20	name		variable	156	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+119	perField	PerField	variable	156	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+93	PerField.termsHashPerField	TermsHashPerField	variable	156	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+119	perField	PerField	variable	158	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+89	PerField.next	PerField	variable	158	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+281	DefaultIndexingChain.termsHash	TermsHash	variable	162	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+123	fieldsToFlush	Map<String,TermsHashPerField>	variable	162	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+126	sortMap	Sorter.DocMap	variable	162	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	163	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	164	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	164	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+273	DefaultIndexingChain.docWriter	DocumentsWriterPerThread	variable	172	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+121	directory		variable	172	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+125	segmentInfo		variable	172	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+122	fieldInfos		variable	172	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+120	DEFAULT		variable	172	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	173	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	174	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+128	t0	long	variable	174	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+126	sortMap	Sorter.DocMap	variable	177	use	org.apache.lucene.index.DefaultIndexingChain.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	118	177
+140	name	String	param	596	define	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+136	fieldType	IndexableFieldType	param	596	define	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+139	invert	boolean	param	596	define	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+140	name	String	param	599	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+140	name	String	param	601	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+140	name	String	param	608	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+136	fieldType	IndexableFieldType	param	612	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+139	invert	boolean	param	614	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+139	invert	boolean	param	630	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+136	fieldType	IndexableFieldType	param	634	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+138	hashPos	int	variable	599	define	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	600	define	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+135	fi	FieldInfo	variable	608	define	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+141	newFields	PerField[]	variable	625	define	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+138	hashPos	int	variable	599	set	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	600	set	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	602	set	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+135	fi	FieldInfo	variable	608	set	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	614	set	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	615	set	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+89	PerField.next	PerField	variable	615	set	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	616	set	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+141	newFields	PerField[]	variable	625	set	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+276	DefaultIndexingChain.fields	PerField[]	variable	627	set	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+278	DefaultIndexingChain.hashMask	int	variable	599	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+138	hashPos	int	variable	600	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	600	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	601	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	601	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+87	PerField.fieldInfo	FieldInfo	variable	601	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	602	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+89	PerField.next	PerField	variable	602	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	605	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+275	DefaultIndexingChain.fieldInfos	FieldInfos.Builder	variable	608	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+135	fi	FieldInfo	variable	612	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+135	fi	FieldInfo	variable	614	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+138	hashPos	int	variable	615	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	615	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+138	hashPos	int	variable	616	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	616	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+282	DefaultIndexingChain.totalFieldCount	int	variable	620	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	620	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+356	length		variable	620	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+282	DefaultIndexingChain.totalFieldCount	int	variable	624	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+276	DefaultIndexingChain.fields	PerField[]	variable	624	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+356	length		variable	624	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+282	DefaultIndexingChain.totalFieldCount	int	variable	625	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+134	NUM_BYTES_OBJECT_REF		variable	625	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+276	DefaultIndexingChain.fields	PerField[]	variable	626	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+141	newFields	PerField[]	variable	626	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+276	DefaultIndexingChain.fields	PerField[]	variable	626	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+356	length		variable	626	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+141	newFields	PerField[]	variable	627	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	630	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+88	PerField.invertState	FieldInvertState	variable	630	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	634	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+87	PerField.fieldInfo	FieldInfo	variable	634	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	635	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+137	fp	PerField	variable	638	use	org.apache.lucene.index.DefaultIndexingChain.getOrAddField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	596	638
+145	name	String	param	583	define	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+145	name	String	param	584	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+145	name	String	param	586	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+144	hashPos	int	variable	584	define	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+143	fp	PerField	variable	585	define	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+144	hashPos	int	variable	584	set	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+143	fp	PerField	variable	585	set	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+143	fp	PerField	variable	587	set	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+278	DefaultIndexingChain.hashMask	int	variable	584	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+144	hashPos	int	variable	585	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	585	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+143	fp	PerField	variable	586	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+143	fp	PerField	variable	586	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+87	PerField.fieldInfo	FieldInfo	variable	586	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+143	fp	PerField	variable	587	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+89	PerField.next	PerField	variable	587	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+143	fp	PerField	variable	589	use	org.apache.lucene.index.DefaultIndexingChain.getPerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	583	590
+161	fp	PerField	param	527	define	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+159	dvType	DocValuesType	param	527	define	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+160	field	IndexableField	param	527	define	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	543	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	550	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	557	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	564	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	571	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	529	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	533	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	533	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+159	dvType	DocValuesType	param	533	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	535	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+159	dvType	DocValuesType	param	535	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+159	dvType	DocValuesType	param	539	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	542	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	543	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	545	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+160	field	IndexableField	param	545	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	549	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	550	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	552	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+160	field	IndexableField	param	552	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	556	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	557	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	559	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+160	field	IndexableField	param	559	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	563	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	564	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	566	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+160	field	IndexableField	param	566	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	570	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	571	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+161	fp	PerField	param	573	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+160	field	IndexableField	param	573	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+159	dvType	DocValuesType	param	577	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+158	docID	int	variable	537	define	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+158	docID	int	variable	537	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	543	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	550	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	557	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	564	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	571	set	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+87	PerField.fieldInfo	FieldInfo	variable	529	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+153	NONE		variable	529	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+275	DefaultIndexingChain.fieldInfos	FieldInfos.Builder	variable	533	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+87	PerField.fieldInfo	FieldInfo	variable	533	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+162	number		variable	533	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+87	PerField.fieldInfo	FieldInfo	variable	533	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+20	name		variable	533	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+87	PerField.fieldInfo	FieldInfo	variable	535	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	537	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+27	docID		variable	537	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+154	NUMERIC		variable	541	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	542	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+87	PerField.fieldInfo	FieldInfo	variable	543	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+271	DefaultIndexingChain.bytesUsed	Counter	variable	543	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	545	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+158	docID	int	variable	545	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+152	BINARY		variable	548	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	549	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+87	PerField.fieldInfo	FieldInfo	variable	550	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+271	DefaultIndexingChain.bytesUsed	Counter	variable	550	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	552	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+158	docID	int	variable	552	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+155	SORTED		variable	555	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	556	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+87	PerField.fieldInfo	FieldInfo	variable	557	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+271	DefaultIndexingChain.bytesUsed	Counter	variable	557	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	559	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+158	docID	int	variable	559	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+156	SORTED_NUMERIC		variable	562	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	563	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+87	PerField.fieldInfo	FieldInfo	variable	564	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+271	DefaultIndexingChain.bytesUsed	Counter	variable	564	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	566	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+158	docID	int	variable	566	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+157	SORTED_SET		variable	569	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	570	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+87	PerField.fieldInfo	FieldInfo	variable	571	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+271	DefaultIndexingChain.bytesUsed	Counter	variable	571	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+85	PerField.docValuesWriter	DocValuesWriter	variable	573	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+158	docID	int	variable	573	use	org.apache.lucene.index.DefaultIndexingChain.indexDocValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	527	577
+172	fp	PerField	param	507	define	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+171	field	IndexableField	param	507	define	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+172	fp	PerField	param	521	set	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+171	field	IndexableField	param	508	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+171	field	IndexableField	param	510	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+172	fp	PerField	param	514	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+172	fp	PerField	param	515	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+172	fp	PerField	param	515	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+172	fp	PerField	param	518	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+172	fp	PerField	param	520	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+172	fp	PerField	param	521	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+172	fp	PerField	param	523	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+171	field	IndexableField	param	523	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+173	pointDimensionCount	int	variable	508	define	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+170	dimensionNumBytes	int	variable	510	define	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+173	pointDimensionCount	int	variable	508	set	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+170	dimensionNumBytes	int	variable	510	set	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+91	PerField.pointValuesWriter	PointValuesWriter	variable	521	set	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+87	PerField.fieldInfo	FieldInfo	variable	514	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+275	DefaultIndexingChain.fieldInfos	FieldInfos.Builder	variable	515	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+87	PerField.fieldInfo	FieldInfo	variable	515	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+162	number		variable	515	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+87	PerField.fieldInfo	FieldInfo	variable	515	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+20	name		variable	515	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+173	pointDimensionCount	int	variable	515	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+170	dimensionNumBytes	int	variable	515	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+87	PerField.fieldInfo	FieldInfo	variable	518	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+173	pointDimensionCount	int	variable	518	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+170	dimensionNumBytes	int	variable	518	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+91	PerField.pointValuesWriter	PointValuesWriter	variable	520	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+273	DefaultIndexingChain.docWriter	DocumentsWriterPerThread	variable	521	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+87	PerField.fieldInfo	FieldInfo	variable	521	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+91	PerField.pointValuesWriter	PointValuesWriter	variable	523	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	523	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+27	docID		variable	523	use	org.apache.lucene.index.DefaultIndexingChain.indexPoint	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	507	523
+189	state	SegmentWriteState	param	92	define	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+189	state	SegmentWriteState	param	93	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+189	state	SegmentWriteState	param	104	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+189	state	SegmentWriteState	param	105	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+189	state	SegmentWriteState	param	114	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+187	indexSort	Sort	variable	93	define	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+186	comparators	List<Sorter.DocComparator>	variable	98	define	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+188	sorter	Sorter	variable	112	define	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+183	i	int	variable	99	define	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+185	sortField	SortField	variable	100	define	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+184	perField	PerField	variable	101	define	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+182	cmp	Sorter.DocComparator	variable	105	define	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+187	indexSort	Sort	variable	93	set	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+186	comparators	List<Sorter.DocComparator>	variable	98	set	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+183	i	int	variable	99	set	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+185	sortField	SortField	variable	100	set	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+184	perField	PerField	variable	101	set	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+182	cmp	Sorter.DocComparator	variable	105	set	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+188	sorter	Sorter	variable	112	set	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+187	indexSort	Sort	variable	94	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+183	i	int	variable	99	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+187	indexSort	Sort	variable	99	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+187	indexSort	Sort	variable	100	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+183	i	int	variable	100	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+185	sortField	SortField	variable	101	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+184	perField	PerField	variable	102	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+184	perField	PerField	variable	102	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+85	PerField.docValuesWriter	DocValuesWriter	variable	102	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+277	DefaultIndexingChain.finishedDocValues	Set<String>	variable	103	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+184	perField	PerField	variable	103	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+87	PerField.fieldInfo	FieldInfo	variable	103	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+20	name		variable	103	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+184	perField	PerField	variable	104	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+85	PerField.docValuesWriter	DocValuesWriter	variable	104	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+184	perField	PerField	variable	105	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+85	PerField.docValuesWriter	DocValuesWriter	variable	105	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+185	sortField	SortField	variable	105	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+186	comparators	List<Sorter.DocComparator>	variable	106	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+182	cmp	Sorter.DocComparator	variable	106	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+277	DefaultIndexingChain.finishedDocValues	Set<String>	variable	107	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+184	perField	PerField	variable	107	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+87	PerField.fieldInfo	FieldInfo	variable	107	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+20	name		variable	107	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+187	indexSort	Sort	variable	112	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+188	sorter	Sorter	variable	114	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+186	comparators	List<Sorter.DocComparator>	variable	114	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+186	comparators	List<Sorter.DocComparator>	variable	114	use	org.apache.lucene.index.DefaultIndexingChain.maybeSortSegment	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	92	114
+192	ae	AbortingException	param	397	define	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+193	th	Throwable	param	412	define	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+192	ae	AbortingException	param	399	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+193	th	Throwable	param	415	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+198	fieldCount	int	variable	377	define	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+199	fieldGen	long	variable	379	define	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+197	aborting	boolean	variable	392	define	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+195	field	IndexableField	variable	394	define	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+196	i	int	variable	403	define	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+198	fieldCount	int	variable	377	set	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+199	fieldGen	long	variable	379	set	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+197	aborting	boolean	variable	392	set	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+198	fieldCount	int	variable	395	set	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+197	aborting	boolean	variable	398	set	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+196	i	int	variable	403	set	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+279	DefaultIndexingChain.nextFieldGen	long	variable	379	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+281	DefaultIndexingChain.termsHash	TermsHash	variable	388	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	390	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+27	docID		variable	390	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	394	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+194	doc		variable	394	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+195	field	IndexableField	variable	395	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+199	fieldGen	long	variable	395	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+198	fieldCount	int	variable	395	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+197	aborting	boolean	variable	401	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+196	i	int	variable	403	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+198	fieldCount	int	variable	403	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+196	i	int	variable	404	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+276	DefaultIndexingChain.fields	PerField[]	variable	404	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+281	DefaultIndexingChain.termsHash	TermsHash	variable	411	use	org.apache.lucene.index.DefaultIndexingChain.processDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	373	415
+208	field	IndexableField	param	419	define	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+210	fieldGen	long	param	419	define	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+209	fieldCount	int	param	419	define	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+206	th	Throwable	param	461	define	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	420	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	421	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	426	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	433	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	434	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+210	fieldGen	long	param	438	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	439	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+209	fieldCount	int	param	442	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+210	fieldGen	long	param	443	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	455	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	457	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	460	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+206	th	Throwable	param	462	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	475	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+208	field	IndexableField	param	481	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+209	fieldCount	int	param	484	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+211	fieldName	String	variable	420	define	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	421	define	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	423	define	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+213	first	boolean	variable	438	define	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+215	value	String	variable	455	define	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+207	dvType	DocValuesType	variable	467	define	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+211	fieldName	String	variable	420	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	421	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	423	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	437	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+213	first	boolean	variable	438	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+276	DefaultIndexingChain.fields	PerField[]	variable	442	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	443	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+86	PerField.fieldGen	long	variable	443	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	452	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+215	value	String	variable	455	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+207	dvType	DocValuesType	variable	467	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	473	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	479	set	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	425	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	430	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+153	NONE		variable	430	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	433	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+211	fieldName	String	variable	437	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	437	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	438	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+86	PerField.fieldGen	long	variable	438	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	439	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+213	first	boolean	variable	439	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+213	first	boolean	variable	441	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	442	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+211	fieldName	String	variable	446	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	446	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	450	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	451	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+211	fieldName	String	variable	452	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	452	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	454	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+215	value	String	variable	456	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+215	value	String	variable	456	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+215	value	String	variable	457	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+280	DefaultIndexingChain.storedFieldsConsumer	StoredFieldsConsumer	variable	460	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	460	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+87	PerField.fieldInfo	FieldInfo	variable	460	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	467	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+207	dvType	DocValuesType	variable	468	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+211	fieldName	String	variable	469	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+207	dvType	DocValuesType	variable	471	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+153	NONE		variable	471	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	472	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+211	fieldName	String	variable	473	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	473	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	475	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+207	dvType	DocValuesType	variable	475	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	477	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	478	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+211	fieldName	String	variable	479	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+212	fieldType	IndexableFieldType	variable	479	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+214	fp	PerField	variable	481	use	org.apache.lucene.index.DefaultIndexingChain.processField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	419	484
+223	newHashSize	int	variable	330	define	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+221	newHashArray	PerField[]	variable	333	define	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+222	newHashMask	int	variable	336	define	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+219	j	int	variable	337	define	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+217	fp0	PerField	variable	338	define	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+218	hashPos2	int	variable	340	define	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+220	nextFP0	PerField	variable	341	define	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+223	newHashSize	int	variable	330	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+221	newHashArray	PerField[]	variable	333	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+222	newHashMask	int	variable	336	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+219	j	int	variable	337	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+217	fp0	PerField	variable	338	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+218	hashPos2	int	variable	340	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+220	nextFP0	PerField	variable	341	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+217	fp0	PerField	variable	342	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+89	PerField.next	PerField	variable	342	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+221	newHashArray	PerField[]	variable	343	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+217	fp0	PerField	variable	344	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	348	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+278	DefaultIndexingChain.hashMask	int	variable	349	set	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	330	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+356	length		variable	330	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+223	newHashSize	int	variable	331	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	331	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+356	length		variable	331	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+223	newHashSize	int	variable	333	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+223	newHashSize	int	variable	336	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+219	j	int	variable	337	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	337	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+356	length		variable	337	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+219	j	int	variable	338	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	338	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+217	fp0	PerField	variable	339	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+217	fp0	PerField	variable	340	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+87	PerField.fieldInfo	FieldInfo	variable	340	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+222	newHashMask	int	variable	340	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+217	fp0	PerField	variable	341	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+89	PerField.next	PerField	variable	341	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+218	hashPos2	int	variable	342	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+221	newHashArray	PerField[]	variable	342	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+218	hashPos2	int	variable	343	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+217	fp0	PerField	variable	343	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+220	nextFP0	PerField	variable	344	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+221	newHashArray	PerField[]	variable	348	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+222	newHashMask	int	variable	349	use	org.apache.lucene.index.DefaultIndexingChain.rehash	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	329	349
+226	docID	int	param	354	define	org.apache.lucene.index.DefaultIndexingChain.startStoredFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	354	360
+225	th	Throwable	param	357	define	org.apache.lucene.index.DefaultIndexingChain.startStoredFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	354	360
+226	docID	int	param	356	use	org.apache.lucene.index.DefaultIndexingChain.startStoredFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	354	360
+225	th	Throwable	param	358	use	org.apache.lucene.index.DefaultIndexingChain.startStoredFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	354	360
+280	DefaultIndexingChain.storedFieldsConsumer	StoredFieldsConsumer	variable	356	use	org.apache.lucene.index.DefaultIndexingChain.startStoredFields	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	354	360
+233	name	String	param	487	define	org.apache.lucene.index.DefaultIndexingChain.verifyUnIndexedFieldType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	487	504
+232	ft	IndexableFieldType	param	487	define	org.apache.lucene.index.DefaultIndexingChain.verifyUnIndexedFieldType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	487	504
+232	ft	IndexableFieldType	param	488	use	org.apache.lucene.index.DefaultIndexingChain.verifyUnIndexedFieldType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	487	504
+233	name	String	param	490	use	org.apache.lucene.index.DefaultIndexingChain.verifyUnIndexedFieldType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	487	504
+232	ft	IndexableFieldType	param	492	use	org.apache.lucene.index.DefaultIndexingChain.verifyUnIndexedFieldType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	487	504
+233	name	String	param	494	use	org.apache.lucene.index.DefaultIndexingChain.verifyUnIndexedFieldType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	487	504
+232	ft	IndexableFieldType	param	496	use	org.apache.lucene.index.DefaultIndexingChain.verifyUnIndexedFieldType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	487	504
+233	name	String	param	498	use	org.apache.lucene.index.DefaultIndexingChain.verifyUnIndexedFieldType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	487	504
+232	ft	IndexableFieldType	param	500	use	org.apache.lucene.index.DefaultIndexingChain.verifyUnIndexedFieldType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	487	504
+233	name	String	param	502	use	org.apache.lucene.index.DefaultIndexingChain.verifyUnIndexedFieldType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	487	504
+247	state	SegmentWriteState	param	225	define	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+246	sortMap	Sorter.DocMap	param	225	define	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+247	state	SegmentWriteState	param	226	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+247	state	SegmentWriteState	param	236	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+247	state	SegmentWriteState	param	240	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+247	state	SegmentWriteState	param	241	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+247	state	SegmentWriteState	param	247	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+246	sortMap	Sorter.DocMap	param	247	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+247	state	SegmentWriteState	param	251	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+247	state	SegmentWriteState	param	270	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+247	state	SegmentWriteState	param	273	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+247	state	SegmentWriteState	param	277	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+245	maxDoc	int	variable	226	define	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+244	dvConsumer	DocValuesConsumer	variable	227	define	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+248	success	boolean	variable	228	define	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+242	i	int	variable	230	define	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	231	define	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+241	fmt	DocValuesFormat	variable	240	define	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+245	maxDoc	int	variable	226	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+244	dvConsumer	DocValuesConsumer	variable	227	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+248	success	boolean	variable	228	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+242	i	int	variable	230	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	231	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+241	fmt	DocValuesFormat	variable	240	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+244	dvConsumer	DocValuesConsumer	variable	241	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	248	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+85	PerField.docValuesWriter	DocValuesWriter	variable	248	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	253	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+248	success	boolean	variable	261	set	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+242	i	int	variable	230	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	230	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+356	length		variable	230	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+242	i	int	variable	231	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	231	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	232	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	233	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+85	PerField.docValuesWriter	DocValuesWriter	variable	233	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	234	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+87	PerField.fieldInfo	FieldInfo	variable	234	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+153	NONE		variable	234	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+125	segmentInfo		variable	236	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	236	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+87	PerField.fieldInfo	FieldInfo	variable	236	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+20	name		variable	236	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+244	dvConsumer	DocValuesConsumer	variable	238	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+241	fmt	DocValuesFormat	variable	241	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+277	DefaultIndexingChain.finishedDocValues	Set<String>	variable	244	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	244	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+87	PerField.fieldInfo	FieldInfo	variable	244	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+20	name		variable	244	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	245	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+85	PerField.docValuesWriter	DocValuesWriter	variable	245	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+245	maxDoc	int	variable	245	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	247	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+85	PerField.docValuesWriter	DocValuesWriter	variable	247	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+244	dvConsumer	DocValuesConsumer	variable	247	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	249	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+87	PerField.fieldInfo	FieldInfo	variable	249	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+153	NONE		variable	249	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+125	segmentInfo		variable	251	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	251	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+87	PerField.fieldInfo	FieldInfo	variable	251	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+20	name		variable	251	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+243	perField	PerField	variable	253	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+89	PerField.next	PerField	variable	253	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+248	success	boolean	variable	263	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+244	dvConsumer	DocValuesConsumer	variable	264	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+244	dvConsumer	DocValuesConsumer	variable	266	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+244	dvConsumer	DocValuesConsumer	variable	271	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+125	segmentInfo		variable	273	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+244	dvConsumer	DocValuesConsumer	variable	275	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+125	segmentInfo		variable	277	use	org.apache.lucene.index.DefaultIndexingChain.writeDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	225	277
+259	state	SegmentWriteState	param	281	define	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+258	sortMap	Sorter.DocMap	param	281	define	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+259	state	SegmentWriteState	param	285	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+259	state	SegmentWriteState	param	286	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+259	state	SegmentWriteState	param	288	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+259	state	SegmentWriteState	param	290	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+259	state	SegmentWriteState	param	298	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+259	state	SegmentWriteState	param	299	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+258	sortMap	Sorter.DocMap	param	299	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+260	success	boolean	variable	282	define	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+256	normsConsumer	NormsConsumer	variable	283	define	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+257	normsFormat	NormsFormat	variable	286	define	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+254	fi	FieldInfo	variable	290	define	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+255	perField	PerField	variable	291	define	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+260	success	boolean	variable	282	set	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+256	normsConsumer	NormsConsumer	variable	283	set	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+257	normsFormat	NormsFormat	variable	286	set	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+256	normsConsumer	NormsConsumer	variable	288	set	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+255	perField	PerField	variable	291	set	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+260	success	boolean	variable	303	set	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+257	normsFormat	NormsFormat	variable	287	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+257	normsFormat	NormsFormat	variable	288	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+122	fieldInfos		variable	290	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+254	fi	FieldInfo	variable	291	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+20	name		variable	291	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+255	perField	PerField	variable	292	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+254	fi	FieldInfo	variable	296	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+254	fi	FieldInfo	variable	296	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+153	NONE		variable	296	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+255	perField	PerField	variable	297	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+90	PerField.norms	NormValuesWriter	variable	297	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+254	fi	FieldInfo	variable	297	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+20	name		variable	297	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+255	perField	PerField	variable	298	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+90	PerField.norms	NormValuesWriter	variable	298	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+255	perField	PerField	variable	299	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+90	PerField.norms	NormValuesWriter	variable	299	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+256	normsConsumer	NormsConsumer	variable	299	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+260	success	boolean	variable	305	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+256	normsConsumer	NormsConsumer	variable	306	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+256	normsConsumer	NormsConsumer	variable	308	use	org.apache.lucene.index.DefaultIndexingChain.writeNorms	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	281	308
+269	state	SegmentWriteState	param	181	define	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+268	sortMap	Sorter.DocMap	param	181	define	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+269	state	SegmentWriteState	param	191	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+269	state	SegmentWriteState	param	195	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+269	state	SegmentWriteState	param	199	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+269	state	SegmentWriteState	param	202	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+268	sortMap	Sorter.DocMap	param	202	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+269	state	SegmentWriteState	param	206	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+267	pointsWriter	PointsWriter	variable	182	define	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+270	success	boolean	variable	183	define	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+265	i	int	variable	185	define	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	186	define	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+264	fmt	PointsFormat	variable	195	define	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+267	pointsWriter	PointsWriter	variable	182	set	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+270	success	boolean	variable	183	set	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+265	i	int	variable	185	set	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	186	set	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+264	fmt	PointsFormat	variable	195	set	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+267	pointsWriter	PointsWriter	variable	199	set	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	203	set	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+91	PerField.pointValuesWriter	PointValuesWriter	variable	203	set	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	208	set	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+270	success	boolean	variable	214	set	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+265	i	int	variable	185	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	185	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+356	length		variable	185	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+265	i	int	variable	186	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+274	DefaultIndexingChain.fieldHash	PerField[]	variable	186	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	187	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	188	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+91	PerField.pointValuesWriter	PointValuesWriter	variable	188	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	189	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+87	PerField.fieldInfo	FieldInfo	variable	189	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+125	segmentInfo		variable	191	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	191	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+87	PerField.fieldInfo	FieldInfo	variable	191	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+20	name		variable	191	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+267	pointsWriter	PointsWriter	variable	193	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+264	fmt	PointsFormat	variable	196	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	197	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+87	PerField.fieldInfo	FieldInfo	variable	197	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+20	name		variable	197	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+264	fmt	PointsFormat	variable	199	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	202	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+91	PerField.pointValuesWriter	PointValuesWriter	variable	202	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+267	pointsWriter	PointsWriter	variable	202	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	204	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+87	PerField.fieldInfo	FieldInfo	variable	204	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+125	segmentInfo		variable	206	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	206	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+87	PerField.fieldInfo	FieldInfo	variable	206	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+20	name		variable	206	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+266	perField	PerField	variable	208	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+89	PerField.next	PerField	variable	208	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+267	pointsWriter	PointsWriter	variable	211	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+267	pointsWriter	PointsWriter	variable	212	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+270	success	boolean	variable	216	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+267	pointsWriter	PointsWriter	variable	217	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+267	pointsWriter	PointsWriter	variable	219	use	org.apache.lucene.index.DefaultIndexingChain.writePoints	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	181	219
+21	other	PerField	param	689	define	org.apache.lucene.index.DefaultIndexingChain.PerField.compareTo	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	689	691
+21	other	PerField	param	690	use	org.apache.lucene.index.DefaultIndexingChain.PerField.compareTo	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	689	691
+87	PerField.fieldInfo	FieldInfo	variable	690	use	org.apache.lucene.index.DefaultIndexingChain.PerField.compareTo	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	689	691
+87	PerField.fieldInfo	FieldInfo	variable	690	use	org.apache.lucene.index.DefaultIndexingChain.PerField.compareTo	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	689	691
+20	name		variable	690	use	org.apache.lucene.index.DefaultIndexingChain.PerField.compareTo	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	689	691
+29	normValue	long	variable	695	define	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+29	normValue	long	variable	700	set	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+29	normValue	long	variable	702	set	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+87	PerField.fieldInfo	FieldInfo	variable	694	use	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+88	PerField.invertState	FieldInvertState	variable	696	use	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+28	length		variable	696	use	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+92	PerField.similarity	Similarity	variable	702	use	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+88	PerField.invertState	FieldInvertState	variable	702	use	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+90	PerField.norms	NormValuesWriter	variable	704	use	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	704	use	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+27	docID		variable	704	use	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+29	normValue	long	variable	704	use	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+93	PerField.termsHashPerField	TermsHashPerField	variable	707	use	org.apache.lucene.index.DefaultIndexingChain.PerField.finish	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	693	707
+71	field	IndexableField	param	713	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+73	first	boolean	param	713	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+59	e	MaxBytesLengthExceededException	param	798	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+64	th	Throwable	param	808	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+73	first	boolean	param	714	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+71	field	IndexableField	param	720	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+71	field	IndexableField	param	741	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+71	field	IndexableField	param	745	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+73	first	boolean	param	745	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+71	field	IndexableField	param	760	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+71	field	IndexableField	param	762	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+71	field	IndexableField	param	764	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+71	field	IndexableField	param	767	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+71	field	IndexableField	param	779	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+71	field	IndexableField	param	786	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+59	e	MaxBytesLengthExceededException	param	802	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+59	e	MaxBytesLengthExceededException	param	807	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+64	th	Throwable	param	809	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+71	field	IndexableField	param	834	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+72	fieldType	IndexableFieldType	variable	720	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+74	indexOptions	IndexOptions	variable	722	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+66	analyzed	boolean	variable	729	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+69	checkOffsets	boolean	variable	733	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+82	succeededInProcessingField	boolean	variable	740	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+81	stream	TokenStream	variable	741	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+78	posIncr	int	variable	756	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+80	startOffset	int	variable	775	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+70	endOffset	int	variable	776	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+62	prefix	byte[]	variable	799	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+57	bigTerm	BytesRef	variable	800	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+60	msg	String	variable	802	define	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+72	fieldType	IndexableFieldType	variable	720	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+74	indexOptions	IndexOptions	variable	722	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+66	analyzed	boolean	variable	729	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+69	checkOffsets	boolean	variable	733	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+82	succeededInProcessingField	boolean	variable	740	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+94	PerField.tokenStream	TokenStream	variable	741	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+81	stream	TokenStream	variable	741	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+78	posIncr	int	variable	756	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	769	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+80	startOffset	int	variable	775	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+70	endOffset	int	variable	776	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	781	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+62	prefix	byte[]	variable	799	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+57	bigTerm	BytesRef	variable	800	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+60	msg	String	variable	802	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+82	succeededInProcessingField	boolean	variable	822	set	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	717	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+72	fieldType	IndexableFieldType	variable	722	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+87	PerField.fieldInfo	FieldInfo	variable	723	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+74	indexOptions	IndexOptions	variable	723	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+72	fieldType	IndexableFieldType	variable	725	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+87	PerField.fieldInfo	FieldInfo	variable	726	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+72	fieldType	IndexableFieldType	variable	729	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	729	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+67	analyzer		variable	729	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+74	indexOptions	IndexOptions	variable	733	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+65	DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS		variable	733	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	741	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+67	analyzer		variable	741	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+94	PerField.tokenStream	TokenStream	variable	741	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+81	stream	TokenStream	variable	743	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	744	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+81	stream	TokenStream	variable	744	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+93	PerField.termsHashPerField	TermsHashPerField	variable	745	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+81	stream	TokenStream	variable	747	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	756	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+79	position		variable	757	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+78	posIncr	int	variable	757	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	758	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+79	position		variable	758	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	758	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+75	lastPosition		variable	758	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+78	posIncr	int	variable	759	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+78	posIncr	int	variable	761	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+78	posIncr	int	variable	762	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+78	posIncr	int	variable	764	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	764	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+75	lastPosition		variable	764	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	764	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+79	position		variable	764	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	766	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+79	position		variable	766	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	767	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+79	position		variable	767	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+75	lastPosition		variable	769	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	769	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+79	position		variable	769	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+78	posIncr	int	variable	770	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+77	numOverlap		variable	771	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+69	checkOffsets	boolean	variable	774	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	775	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+61	offset		variable	775	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	775	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	776	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+61	offset		variable	776	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	776	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+80	startOffset	int	variable	777	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	777	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+76	lastStartOffset		variable	777	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+70	endOffset	int	variable	777	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+80	startOffset	int	variable	777	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+80	startOffset	int	variable	779	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+70	endOffset	int	variable	779	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	779	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+76	lastStartOffset		variable	779	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+76	lastStartOffset		variable	781	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+80	startOffset	int	variable	781	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+28	length		variable	784	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	785	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+28	length		variable	785	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+93	PerField.termsHashPerField	TermsHashPerField	variable	797	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	800	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+57	bigTerm	BytesRef	variable	801	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+58	bytes		variable	801	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+57	bigTerm	BytesRef	variable	801	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+61	offset		variable	801	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+62	prefix	byte[]	variable	801	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+87	PerField.fieldInfo	FieldInfo	variable	802	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+20	name		variable	802	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+62	prefix	byte[]	variable	802	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	803	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	804	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+60	msg	String	variable	804	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+60	msg	String	variable	807	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+81	stream	TokenStream	variable	814	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+79	position		variable	818	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	818	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+61	offset		variable	819	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+88	PerField.invertState	FieldInvertState	variable	819	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+82	succeededInProcessingField	boolean	variable	824	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	824	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	825	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+87	PerField.fieldInfo	FieldInfo	variable	825	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+20	name		variable	825	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+66	analyzed	boolean	variable	829	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+79	position		variable	830	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	830	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+87	PerField.fieldInfo	FieldInfo	variable	830	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+20	name		variable	830	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+61	offset		variable	831	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	831	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+87	PerField.fieldInfo	FieldInfo	variable	831	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+20	name		variable	831	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+68	boost		variable	834	use	org.apache.lucene.index.DefaultIndexingChain.PerField.invert	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	713	834
+15	fieldInfo	FieldInfo	param	670	define	org.apache.lucene.index.DefaultIndexingChain.PerField.PerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	670	676
+16	invert	boolean	param	670	define	org.apache.lucene.index.DefaultIndexingChain.PerField.PerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	670	676
+15	fieldInfo	FieldInfo	param	671	use	org.apache.lucene.index.DefaultIndexingChain.PerField.PerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	670	676
+16	invert	boolean	param	673	use	org.apache.lucene.index.DefaultIndexingChain.PerField.PerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	670	676
+87	PerField.fieldInfo	FieldInfo	variable	671	set	org.apache.lucene.index.DefaultIndexingChain.PerField.PerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	670	676
+92	PerField.similarity	Similarity	variable	672	set	org.apache.lucene.index.DefaultIndexingChain.PerField.PerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	670	676
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	672	use	org.apache.lucene.index.DefaultIndexingChain.PerField.PerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	670	676
+17	similarity		variable	672	use	org.apache.lucene.index.DefaultIndexingChain.PerField.PerField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	670	676
+88	PerField.invertState	FieldInvertState	variable	679	set	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+93	PerField.termsHashPerField	TermsHashPerField	variable	680	set	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+90	PerField.norms	NormValuesWriter	variable	684	set	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+87	PerField.fieldInfo	FieldInfo	variable	679	use	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+20	name		variable	679	use	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+281	DefaultIndexingChain.termsHash	TermsHash	variable	680	use	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+88	PerField.invertState	FieldInvertState	variable	680	use	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+87	PerField.fieldInfo	FieldInfo	variable	680	use	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+87	PerField.fieldInfo	FieldInfo	variable	681	use	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+90	PerField.norms	NormValuesWriter	variable	682	use	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+87	PerField.fieldInfo	FieldInfo	variable	684	use	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685
+272	DefaultIndexingChain.docState	DocumentsWriterPerThread.DocState	variable	684	use	org.apache.lucene.index.DefaultIndexingChain.PerField.setInvertState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/64b86331c2/79c285b493.java	678	685

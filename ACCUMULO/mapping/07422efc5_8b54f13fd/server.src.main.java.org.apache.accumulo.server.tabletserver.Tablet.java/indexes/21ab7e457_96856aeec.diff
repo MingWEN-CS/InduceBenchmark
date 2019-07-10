@@ -1,0 +1,6 @@
+1720c1720,1722
+<     Collections.sort(ranges);
+---
+>     if (ranges.size() > 1) {
+>       Collections.sort(ranges);
+>     }

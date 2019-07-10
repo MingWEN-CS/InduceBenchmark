@@ -1,0 +1,16 @@
+22d21
+< import java.io.Reader;
+36a36
+> import org.apache.oozie.coord.input.dependency.CoordOldInputDependency;
+555a556
+>         CoordinatorActionBean actionBean = new CoordinatorActionBean();
+557c558
+<             caicc.pathExists(nonExistDir, new XConfiguration(), getTestUser());
+---
+>             new CoordOldInputDependency().pathExists(actionBean, nonExistDir, new XConfiguration(), getTestUser());
+561,562c562,563
+<             assertEquals(caicc.getCoordActionErrorCode(), "E0901");
+<             assertTrue(caicc.getCoordActionErrorMsg().contains("not in Oozie's whitelist"));
+---
+>             assertEquals(actionBean.getErrorCode(), "E0901");
+>             assertTrue(actionBean.getErrorMessage().contains("not in Oozie's whitelist"));

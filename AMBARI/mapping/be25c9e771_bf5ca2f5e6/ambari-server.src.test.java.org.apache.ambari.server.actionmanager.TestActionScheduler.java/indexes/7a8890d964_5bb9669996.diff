@@ -1,0 +1,25 @@
+203,205c203,206
+<     assertTrue(ac.get(0) instanceof ExecutionCommand);
+<     assertEquals("1-977", ((ExecutionCommand) (ac.get(0))).getCommandId());
+<     assertEquals(clusterHostInfo, ((ExecutionCommand) (ac.get(0))).getClusterHostInfo());
+---
+>     AgentCommand scheduledCommand = ac.get(0);
+>     assertTrue(scheduledCommand instanceof ExecutionCommand);
+>     assertEquals("1-977", ((ExecutionCommand) scheduledCommand).getCommandId());
+>     assertEquals(clusterHostInfo, ((ExecutionCommand) scheduledCommand).getClusterHostInfo());
+208,211c209,214
+<     ac = waitForQueueSize(hostname, aq, 1, scheduler);
+<     assertTrue(ac.get(0) instanceof ExecutionCommand);
+<     assertEquals("1-977", ((ExecutionCommand) (ac.get(0))).getCommandId());
+<     assertEquals(clusterHostInfo, ((ExecutionCommand) (ac.get(0))).getClusterHostInfo());
+---
+>     ac = waitForQueueSize(hostname, aq, 2, scheduler);
+>     
+>     scheduledCommand = ac.get(1);
+>     assertTrue(scheduledCommand instanceof ExecutionCommand);
+>     assertEquals("1-977", ((ExecutionCommand) scheduledCommand).getCommandId());
+>     assertEquals(clusterHostInfo, ((ExecutionCommand) scheduledCommand).getClusterHostInfo());
+316a320,322
+>     assertFalse(aq.dequeue(hostname, AgentCommandType.CANCEL_COMMAND).isEmpty());
+> 
+>     

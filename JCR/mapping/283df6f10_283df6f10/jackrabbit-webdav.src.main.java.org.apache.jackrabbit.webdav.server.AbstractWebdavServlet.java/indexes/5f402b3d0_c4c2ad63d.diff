@@ -1,0 +1,6 @@
+599c599
+<         doPut(request, response, resource);
+---
+>         response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+1389d1388
+< 

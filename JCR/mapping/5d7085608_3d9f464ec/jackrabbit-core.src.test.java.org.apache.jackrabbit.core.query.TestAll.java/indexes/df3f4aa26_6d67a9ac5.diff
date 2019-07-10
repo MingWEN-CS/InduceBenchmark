@@ -1,0 +1,6 @@
+19a20
+> import org.apache.jackrabbit.test.ConcurrentTestSuite;
+38c39
+<         TestSuite suite = new TestSuite("Search tests");
+---
+>         TestSuite suite = new ConcurrentTestSuite("Search tests");

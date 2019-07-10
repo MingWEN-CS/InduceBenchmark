@@ -1,0 +1,2513 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.fs;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.TreeSet;
+import java.util.Map.Entry;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.HadoopIllegalArgumentException;
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem.Statistics;
+import org.apache.hadoop.fs.Options.CreateOpts;
+import org.apache.hadoop.fs.permission.AclEntry;
+import org.apache.hadoop.fs.permission.AclStatus;
+import org.apache.hadoop.fs.permission.FsAction;
+import org.apache.hadoop.fs.permission.FsPermission;
+import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.FS_DEFAULT_NAME_KEY;
+import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.FS_DEFAULT_NAME_DEFAULT;
+import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.ipc.RpcClientException;
+import org.apache.hadoop.ipc.RpcServerException;
+import org.apache.hadoop.ipc.UnexpectedServerException;
+import org.apache.hadoop.fs.InvalidPathException;
+import org.apache.hadoop.security.AccessControlException;
+import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.hadoop.security.token.Token;
+import org.apache.hadoop.util.ShutdownHookManager;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@InterfaceAudience.Public
+@InterfaceStability.Evolving 
+public class FileContext {
+  
+  public static final Log LOG = LogFactory.getLog(FileContext.class);
+  
+
+
+
+
+
+
+
+
+
+  public static final FsPermission DEFAULT_PERM = FsPermission.getDefault();
+  
+
+
+  public static final FsPermission DIR_DEFAULT_PERM = FsPermission.getDirDefault();
+  
+
+
+  public static final FsPermission FILE_DEFAULT_PERM = FsPermission.getFileDefault();
+
+  
+
+
+  public static final int SHUTDOWN_HOOK_PRIORITY = 20;
+
+  
+
+
+  static final Map<FileContext, Set<Path>> DELETE_ON_EXIT = 
+    new IdentityHashMap<FileContext, Set<Path>>();
+
+  
+  static final FileContextFinalizer FINALIZER = 
+    new FileContextFinalizer();
+  
+  private static final PathFilter DEFAULT_FILTER = new PathFilter() {
+    @Override
+    public boolean accept(final Path file) {
+      return true;
+    }
+  };
+  
+  
+
+
+
+
+   
+  private final AbstractFileSystem defaultFS; 
+  private Path workingDir;          
+  private FsPermission umask;
+  private final Configuration conf;
+  private final UserGroupInformation ugi;
+  final boolean resolveSymlinks;
+
+  private FileContext(final AbstractFileSystem defFs,
+    final FsPermission theUmask, final Configuration aConf) {
+    defaultFS = defFs;
+    umask = FsPermission.getUMask(aConf);
+    conf = aConf;
+    try {
+      ugi = UserGroupInformation.getCurrentUser();
+    } catch (IOException e) {
+      LOG.error("Exception in getCurrentUser: ",e);
+      throw new RuntimeException("Failed to get the current user " +
+      		"while creating a FileContext", e);
+    }
+    
+
+
+
+
+
+
+
+    workingDir = defaultFS.getInitialWorkingDirectory();
+    if (workingDir == null) {
+      workingDir = defaultFS.getHomeDirectory();
+    }
+    resolveSymlinks = conf.getBoolean(
+        CommonConfigurationKeys.FS_CLIENT_RESOLVE_REMOTE_SYMLINKS_KEY,
+        CommonConfigurationKeys.FS_CLIENT_RESOLVE_REMOTE_SYMLINKS_DEFAULT);
+    util = new Util(); 
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  Path fixRelativePart(Path p) {
+    if (p.isUriPathAbsolute()) {
+      return p;
+    } else {
+      return new Path(workingDir, p);
+    }
+  }
+
+  
+
+
+  static void processDeleteOnExit() {
+    synchronized (DELETE_ON_EXIT) {
+      Set<Entry<FileContext, Set<Path>>> set = DELETE_ON_EXIT.entrySet();
+      for (Entry<FileContext, Set<Path>> entry : set) {
+        FileContext fc = entry.getKey();
+        Set<Path> paths = entry.getValue();
+        for (Path path : paths) {
+          try {
+            fc.delete(path, true);
+          } catch (IOException e) {
+            LOG.warn("Ignoring failure to deleteOnExit for path " + path);
+          }
+        }
+      }
+      DELETE_ON_EXIT.clear();
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  protected AbstractFileSystem getFSofPath(final Path absOrFqPath)
+      throws UnsupportedFileSystemException, IOException {
+    absOrFqPath.checkNotSchemeWithRelative();
+    absOrFqPath.checkNotRelative();
+
+    try { 
+      
+      defaultFS.checkPath(absOrFqPath);
+      return defaultFS;
+    } catch (Exception e) { 
+      return getAbstractFileSystem(ugi, absOrFqPath.toUri(), conf);
+    }
+  }
+  
+  private static AbstractFileSystem getAbstractFileSystem(
+      UserGroupInformation user, final URI uri, final Configuration conf)
+      throws UnsupportedFileSystemException, IOException {
+    try {
+      return user.doAs(new PrivilegedExceptionAction<AbstractFileSystem>() {
+        @Override
+        public AbstractFileSystem run() throws UnsupportedFileSystemException {
+          return AbstractFileSystem.get(uri, conf);
+        }
+      });
+    } catch (InterruptedException ex) {
+      LOG.error(ex);
+      throw new IOException("Failed to get the AbstractFileSystem for path: "
+          + uri, ex);
+    }
+  }
+  
+  
+
+
+
+
+  
+
+
+
+
+
+
+
+  public static FileContext getFileContext(final AbstractFileSystem defFS,
+                    final Configuration aConf) {
+    return new FileContext(defFS, FsPermission.getUMask(aConf), aConf);
+  }
+  
+  
+
+
+
+
+
+
+  protected static FileContext getFileContext(
+    final AbstractFileSystem defaultFS) {
+    return getFileContext(defaultFS, new Configuration());
+  }
+ 
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+  public static FileContext getFileContext()
+      throws UnsupportedFileSystemException {
+    return getFileContext(new Configuration());
+  }
+
+  
+
+
+
+
+  public static FileContext getLocalFSFileContext()
+      throws UnsupportedFileSystemException {
+    return getFileContext(FsConstants.LOCAL_FS_URI);
+  }
+
+  
+
+
+
+
+
+
+
+
+  public static FileContext getFileContext(final URI defaultFsUri)
+      throws UnsupportedFileSystemException {
+    return getFileContext(defaultFsUri, new Configuration());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public static FileContext getFileContext(final URI defaultFsUri,
+      final Configuration aConf) throws UnsupportedFileSystemException {
+    UserGroupInformation currentUser = null;
+    AbstractFileSystem defaultAfs = null;
+    if (defaultFsUri.getScheme() == null) {
+      return getFileContext(aConf);
+    }
+    try {
+      currentUser = UserGroupInformation.getCurrentUser();
+      defaultAfs = getAbstractFileSystem(currentUser, defaultFsUri, aConf);
+    } catch (UnsupportedFileSystemException ex) {
+      throw ex;
+    } catch (IOException ex) {
+      LOG.error(ex);
+      throw new RuntimeException(ex);
+    }
+    return getFileContext(defaultAfs, aConf);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  public static FileContext getFileContext(final Configuration aConf)
+      throws UnsupportedFileSystemException {
+    final URI defaultFsUri = URI.create(aConf.get(FS_DEFAULT_NAME_KEY,
+        FS_DEFAULT_NAME_DEFAULT));
+    if (   defaultFsUri.getScheme() != null
+        && !defaultFsUri.getScheme().trim().isEmpty()) {
+      return getFileContext(defaultFsUri, aConf);
+    }
+    throw new UnsupportedFileSystemException(String.format(
+        "%s: URI configured via %s carries no scheme",
+        defaultFsUri, FS_DEFAULT_NAME_KEY));
+  }
+
+  
+
+
+
+
+
+
+
+  public static FileContext getLocalFSFileContext(final Configuration aConf)
+      throws UnsupportedFileSystemException {
+    return getFileContext(FsConstants.LOCAL_FS_URI, aConf);
+  }
+
+  
+  @InterfaceAudience.Private
+  @InterfaceStability.Unstable 
+
+  public AbstractFileSystem getDefaultFileSystem() {
+    return defaultFS;
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setWorkingDirectory(final Path newWDir) throws IOException {
+    newWDir.checkNotSchemeWithRelative();
+    
+
+
+  
+    final Path newWorkingDir = new Path(workingDir, newWDir);
+    FileStatus status = getFileStatus(newWorkingDir);
+    if (status.isFile()) {
+      throw new FileNotFoundException("Cannot setWD to a file");
+    }
+    workingDir = newWorkingDir;
+  }
+  
+  
+
+
+  public Path getWorkingDirectory() {
+    return workingDir;
+  }
+  
+  
+
+
+
+  public UserGroupInformation getUgi() {
+    return ugi;
+  }
+  
+  
+
+
+
+
+  public Path getHomeDirectory() {
+    return defaultFS.getHomeDirectory();
+  }
+  
+  
+
+
+
+  public FsPermission getUMask() {
+    return umask;
+  }
+  
+  
+
+
+
+  public void setUMask(final FsPermission newUmask) {
+    umask = newUmask;
+  }
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public Path resolvePath(final Path f) throws FileNotFoundException,
+      UnresolvedLinkException, AccessControlException, IOException {
+    return resolve(f);
+  }
+  
+  
+
+
+
+
+
+
+
+  public Path makeQualified(final Path path) {
+    return path.makeQualified(defaultFS.getUri(), getWorkingDirectory());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public FSDataOutputStream create(final Path f,
+      final EnumSet<CreateFlag> createFlag, Options.CreateOpts... opts)
+      throws AccessControlException, FileAlreadyExistsException,
+      FileNotFoundException, ParentNotDirectoryException,
+      UnsupportedFileSystemException, IOException {
+    Path absF = fixRelativePart(f);
+
+    
+    
+    
+
+    CreateOpts.Perms permOpt = CreateOpts.getOpt(CreateOpts.Perms.class, opts);
+    FsPermission permission = (permOpt != null) ? permOpt.getValue() :
+                                      FILE_DEFAULT_PERM;
+    permission = permission.applyUMask(umask);
+
+    final CreateOpts[] updatedOpts = 
+                      CreateOpts.setOpt(CreateOpts.perms(permission), opts);
+    return new FSLinkResolver<FSDataOutputStream>() {
+      @Override
+      public FSDataOutputStream next(final AbstractFileSystem fs, final Path p) 
+        throws IOException {
+        return fs.create(p, createFlag, updatedOpts);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void mkdir(final Path dir, final FsPermission permission,
+      final boolean createParent) throws AccessControlException,
+      FileAlreadyExistsException, FileNotFoundException,
+      ParentNotDirectoryException, UnsupportedFileSystemException, 
+      IOException {
+    final Path absDir = fixRelativePart(dir);
+    final FsPermission absFerms = (permission == null ? 
+          FsPermission.getDirDefault() : permission).applyUMask(umask);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        fs.mkdir(p, absFerms, createParent);
+        return null;
+      }
+    }.resolve(this, absDir);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public boolean delete(final Path f, final boolean recursive)
+      throws AccessControlException, FileNotFoundException,
+      UnsupportedFileSystemException, IOException {
+    Path absF = fixRelativePart(f);
+    return new FSLinkResolver<Boolean>() {
+      @Override
+      public Boolean next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return Boolean.valueOf(fs.delete(p, recursive));
+      }
+    }.resolve(this, absF);
+  }
+ 
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public FSDataInputStream open(final Path f) throws AccessControlException,
+      FileNotFoundException, UnsupportedFileSystemException, IOException {
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<FSDataInputStream>() {
+      @Override
+      public FSDataInputStream next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.open(p);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public FSDataInputStream open(final Path f, final int bufferSize)
+      throws AccessControlException, FileNotFoundException,
+      UnsupportedFileSystemException, IOException {
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<FSDataInputStream>() {
+      @Override
+      public FSDataInputStream next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.open(p, bufferSize);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public boolean setReplication(final Path f, final short replication)
+      throws AccessControlException, FileNotFoundException,
+      IOException {
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<Boolean>() {
+      @Override
+      public Boolean next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return Boolean.valueOf(fs.setReplication(p, replication));
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void rename(final Path src, final Path dst,
+      final Options.Rename... options) throws AccessControlException,
+      FileAlreadyExistsException, FileNotFoundException,
+      ParentNotDirectoryException, UnsupportedFileSystemException,
+      IOException {
+    final Path absSrc = fixRelativePart(src);
+    final Path absDst = fixRelativePart(dst);
+    AbstractFileSystem srcFS = getFSofPath(absSrc);
+    AbstractFileSystem dstFS = getFSofPath(absDst);
+    if(!srcFS.getUri().equals(dstFS.getUri())) {
+      throw new IOException("Renames across AbstractFileSystems not supported");
+    }
+    try {
+      srcFS.rename(absSrc, absDst, options);
+    } catch (UnresolvedLinkException e) {
+      
+
+
+
+      final Path source = resolveIntermediate(absSrc);    
+      new FSLinkResolver<Void>() {
+        @Override
+        public Void next(final AbstractFileSystem fs, final Path p) 
+          throws IOException, UnresolvedLinkException {
+          fs.rename(source, p, options);
+          return null;
+        }
+      }.resolve(this, absDst);
+    }
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setPermission(final Path f, final FsPermission permission)
+      throws AccessControlException, FileNotFoundException,
+      UnsupportedFileSystemException, IOException {
+    final Path absF = fixRelativePart(f);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        fs.setPermission(p, permission);
+        return null;
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setOwner(final Path f, final String username,
+      final String groupname) throws AccessControlException,
+      UnsupportedFileSystemException, FileNotFoundException,
+      IOException {
+    if ((username == null) && (groupname == null)) {
+      throw new HadoopIllegalArgumentException(
+          "username and groupname cannot both be null");
+    }
+    final Path absF = fixRelativePart(f);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        fs.setOwner(p, username, groupname);
+        return null;
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setTimes(final Path f, final long mtime, final long atime)
+      throws AccessControlException, FileNotFoundException,
+      UnsupportedFileSystemException, IOException {
+    final Path absF = fixRelativePart(f);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        fs.setTimes(p, mtime, atime);
+        return null;
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public FileChecksum getFileChecksum(final Path f)
+      throws AccessControlException, FileNotFoundException,
+      IOException {
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<FileChecksum>() {
+      @Override
+      public FileChecksum next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.getFileChecksum(p);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setVerifyChecksum(final boolean verifyChecksum, final Path f)
+      throws AccessControlException, FileNotFoundException,
+      UnsupportedFileSystemException, IOException {
+    final Path absF = resolve(fixRelativePart(f));
+    getFSofPath(absF).setVerifyChecksum(verifyChecksum);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public FileStatus getFileStatus(final Path f) throws AccessControlException,
+      FileNotFoundException, UnsupportedFileSystemException, IOException {
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<FileStatus>() {
+      @Override
+      public FileStatus next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.getFileStatus(p);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @InterfaceAudience.LimitedPrivate({"HDFS", "Hive"})
+  public void access(final Path path, final FsAction mode)
+      throws AccessControlException, FileNotFoundException,
+      UnsupportedFileSystemException, IOException {
+    final Path absPath = fixRelativePart(path);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(AbstractFileSystem fs, Path p) throws IOException,
+          UnresolvedLinkException {
+        fs.access(p, mode);
+        return null;
+      }
+    }.resolve(this, absPath);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public FileStatus getFileLinkStatus(final Path f)
+      throws AccessControlException, FileNotFoundException,
+      UnsupportedFileSystemException, IOException {
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<FileStatus>() {
+      @Override
+      public FileStatus next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        FileStatus fi = fs.getFileLinkStatus(p);
+        if (fi.isSymlink()) {
+          fi.setSymlink(FSLinkResolver.qualifySymlinkTarget(fs.getUri(), p,
+              fi.getSymlink()));
+        }
+        return fi;
+      }
+    }.resolve(this, absF);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public Path getLinkTarget(final Path f) throws AccessControlException,
+      FileNotFoundException, UnsupportedFileSystemException, IOException {
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<Path>() {
+      @Override
+      public Path next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        FileStatus fi = fs.getFileLinkStatus(p);
+        return fi.getSymlink();
+      }
+    }.resolve(this, absF);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
+  @InterfaceStability.Evolving
+  public BlockLocation[] getFileBlockLocations(final Path f, final long start,
+      final long len) throws AccessControlException, FileNotFoundException,
+      UnsupportedFileSystemException, IOException {
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<BlockLocation[]>() {
+      @Override
+      public BlockLocation[] next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.getFileBlockLocations(p, start, len);
+      }
+    }.resolve(this, absF);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public FsStatus getFsStatus(final Path f) throws AccessControlException,
+      FileNotFoundException, UnsupportedFileSystemException, IOException {
+    if (f == null) {
+      return defaultFS.getFsStatus();
+    }
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<FsStatus>() {
+      @Override
+      public FsStatus next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.getFsStatus(p);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void createSymlink(final Path target, final Path link,
+      final boolean createParent) throws AccessControlException,
+      FileAlreadyExistsException, FileNotFoundException,
+      ParentNotDirectoryException, UnsupportedFileSystemException, 
+      IOException { 
+    final Path nonRelLink = fixRelativePart(link);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        fs.createSymlink(target, p, createParent);
+        return null;
+      }
+    }.resolve(this, nonRelLink);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public RemoteIterator<FileStatus> listStatus(final Path f) throws
+      AccessControlException, FileNotFoundException,
+      UnsupportedFileSystemException, IOException {
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<RemoteIterator<FileStatus>>() {
+      @Override
+      public RemoteIterator<FileStatus> next(
+          final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.listStatusIterator(p);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+  public RemoteIterator<Path> listCorruptFileBlocks(Path path)
+    throws IOException {
+    final Path absF = fixRelativePart(path);
+    return new FSLinkResolver<RemoteIterator<Path>>() {
+      @Override
+      public RemoteIterator<Path> next(final AbstractFileSystem fs,
+                                       final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.listCorruptFileBlocks(p);
+      }
+    }.resolve(this, absF);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public RemoteIterator<LocatedFileStatus> listLocatedStatus(
+      final Path f) throws
+      AccessControlException, FileNotFoundException,
+      UnsupportedFileSystemException, IOException {
+    final Path absF = fixRelativePart(f);
+    return new FSLinkResolver<RemoteIterator<LocatedFileStatus>>() {
+      @Override
+      public RemoteIterator<LocatedFileStatus> next(
+          final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.listLocatedStatus(p);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public boolean deleteOnExit(Path f) throws AccessControlException,
+      IOException {
+    if (!this.util().exists(f)) {
+      return false;
+    }
+    synchronized (DELETE_ON_EXIT) {
+      if (DELETE_ON_EXIT.isEmpty()) {
+        ShutdownHookManager.get().addShutdownHook(FINALIZER, SHUTDOWN_HOOK_PRIORITY);
+      }
+      
+      Set<Path> set = DELETE_ON_EXIT.get(this);
+      if (set == null) {
+        set = new TreeSet<Path>();
+        DELETE_ON_EXIT.put(this, set);
+      }
+      set.add(f);
+    }
+    return true;
+  }
+  
+  private final Util util;
+  public Util util() {
+    return util;
+  }
+  
+  
+  
+
+
+
+
+
+  public class Util {
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public boolean exists(final Path f) throws AccessControlException,
+      UnsupportedFileSystemException, IOException {
+      try {
+        FileStatus fs = FileContext.this.getFileStatus(f);
+        assert fs != null;
+        return true;
+      } catch (FileNotFoundException e) {
+        return false;
+      }
+    }
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public ContentSummary getContentSummary(Path f)
+        throws AccessControlException, FileNotFoundException,
+        UnsupportedFileSystemException, IOException {
+      FileStatus status = FileContext.this.getFileStatus(f);
+      if (status.isFile()) {
+        return new ContentSummary(status.getLen(), 1, 0);
+      }
+      long[] summary = {0, 0, 1};
+      RemoteIterator<FileStatus> statusIterator = 
+        FileContext.this.listStatus(f);
+      while(statusIterator.hasNext()) {
+        FileStatus s = statusIterator.next();
+        ContentSummary c = s.isDirectory() ? getContentSummary(s.getPath()) :
+                                       new ContentSummary(s.getLen(), 1, 0);
+        summary[0] += c.getLength();
+        summary[1] += c.getFileCount();
+        summary[2] += c.getDirectoryCount();
+      }
+      return new ContentSummary(summary[0], summary[1], summary[2]);
+    }
+    
+    
+
+
+    public FileStatus[] listStatus(Path[] files) throws AccessControlException,
+        FileNotFoundException, IOException {
+      return listStatus(files, DEFAULT_FILTER);
+    }
+     
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public FileStatus[] listStatus(Path f, PathFilter filter)
+        throws AccessControlException, FileNotFoundException,
+        UnsupportedFileSystemException, IOException {
+      ArrayList<FileStatus> results = new ArrayList<FileStatus>();
+      listStatus(results, f, filter);
+      return results.toArray(new FileStatus[results.size()]);
+    }
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public FileStatus[] listStatus(Path[] files, PathFilter filter)
+        throws AccessControlException, FileNotFoundException, IOException {
+      ArrayList<FileStatus> results = new ArrayList<FileStatus>();
+      for (int i = 0; i < files.length; i++) {
+        listStatus(results, files[i], filter);
+      }
+      return results.toArray(new FileStatus[results.size()]);
+    }
+  
+    
+
+
+
+    private void listStatus(ArrayList<FileStatus> results, Path f,
+        PathFilter filter) throws AccessControlException,
+        FileNotFoundException, IOException {
+      FileStatus[] listing = listStatus(f);
+      if (listing != null) {
+        for (int i = 0; i < listing.length; i++) {
+          if (filter.accept(listing[i].getPath())) {
+            results.add(listing[i]);
+          }
+        }
+      }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public FileStatus[] listStatus(final Path f) throws AccessControlException,
+        FileNotFoundException, UnsupportedFileSystemException,
+        IOException {
+      final Path absF = fixRelativePart(f);
+      return new FSLinkResolver<FileStatus[]>() {
+        @Override
+        public FileStatus[] next(final AbstractFileSystem fs, final Path p) 
+          throws IOException, UnresolvedLinkException {
+          return fs.listStatus(p);
+        }
+      }.resolve(FileContext.this, absF);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public RemoteIterator<LocatedFileStatus> listFiles(
+        final Path f, final boolean recursive) throws AccessControlException,
+        FileNotFoundException, UnsupportedFileSystemException, 
+        IOException {
+      return new RemoteIterator<LocatedFileStatus>() {
+        private Stack<RemoteIterator<LocatedFileStatus>> itors = 
+          new Stack<RemoteIterator<LocatedFileStatus>>();
+        RemoteIterator<LocatedFileStatus> curItor = listLocatedStatus(f);
+        LocatedFileStatus curFile;
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+        @Override
+        public boolean hasNext() throws IOException {
+          while (curFile == null) {
+            if (curItor.hasNext()) {
+              handleFileStat(curItor.next());
+            } else if (!itors.empty()) {
+              curItor = itors.pop();
+            } else {
+              return false;
+            }
+          }
+          return true;
+        }
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        private void handleFileStat(LocatedFileStatus stat)
+        throws IOException {
+          if (stat.isFile()) { 
+            curFile = stat;
+          } else if (stat.isSymlink()) { 
+            
+            FileStatus symstat = FileContext.this.getFileStatus(
+                stat.getSymlink());
+            if (symstat.isFile() || (recursive && symstat.isDirectory())) {
+              itors.push(curItor);
+              curItor = listLocatedStatus(stat.getPath());
+            }
+          } else if (recursive) { 
+            itors.push(curItor);
+            curItor = listLocatedStatus(stat.getPath());
+          }
+        }
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        @Override
+        public LocatedFileStatus next() throws IOException {
+          if (hasNext()) {
+            LocatedFileStatus result = curFile;
+            curFile = null;
+            return result;
+          } 
+          throw new java.util.NoSuchElementException("No more entry in " + f);
+        }
+      };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public FileStatus[] globStatus(Path pathPattern)
+        throws AccessControlException, UnsupportedFileSystemException,
+        IOException {
+      return new Globber(FileContext.this, pathPattern, DEFAULT_FILTER).glob();
+    }
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public FileStatus[] globStatus(final Path pathPattern,
+        final PathFilter filter) throws AccessControlException,
+        UnsupportedFileSystemException, IOException {
+      return new Globber(FileContext.this, pathPattern, filter).glob();
+    }
+
+    
+
+
+
+    public boolean copy(final Path src, final Path dst)
+        throws AccessControlException, FileAlreadyExistsException,
+        FileNotFoundException, ParentNotDirectoryException,
+        UnsupportedFileSystemException, IOException {
+      return copy(src, dst, false, false);
+    }
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public boolean copy(final Path src, final Path dst, boolean deleteSource,
+        boolean overwrite) throws AccessControlException,
+        FileAlreadyExistsException, FileNotFoundException,
+        ParentNotDirectoryException, UnsupportedFileSystemException, 
+        IOException {
+      src.checkNotSchemeWithRelative();
+      dst.checkNotSchemeWithRelative();
+      Path qSrc = makeQualified(src);
+      Path qDst = makeQualified(dst);
+      checkDest(qSrc.getName(), qDst, overwrite);
+      FileStatus fs = FileContext.this.getFileStatus(qSrc);
+      if (fs.isDirectory()) {
+        checkDependencies(qSrc, qDst);
+        mkdir(qDst, FsPermission.getDirDefault(), true);
+        FileStatus[] contents = listStatus(qSrc);
+        for (FileStatus content : contents) {
+          copy(makeQualified(content.getPath()), makeQualified(new Path(qDst,
+              content.getPath().getName())), deleteSource, overwrite);
+        }
+      } else {
+        InputStream in=null;
+        OutputStream out = null;
+        try {
+          in = open(qSrc);
+          EnumSet<CreateFlag> createFlag = overwrite ? EnumSet.of(
+              CreateFlag.CREATE, CreateFlag.OVERWRITE) : 
+                EnumSet.of(CreateFlag.CREATE);
+          out = create(qDst, createFlag);
+          IOUtils.copyBytes(in, out, conf, true);
+        } finally {
+          IOUtils.closeStream(out);
+          IOUtils.closeStream(in);
+        }
+      }
+      if (deleteSource) {
+        return delete(qSrc, true);
+      } else {
+        return true;
+      }
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  private void checkDest(String srcName, Path dst, boolean overwrite)
+      throws AccessControlException, IOException {
+    try {
+      FileStatus dstFs = getFileStatus(dst);
+      if (dstFs.isDirectory()) {
+        if (null == srcName) {
+          throw new IOException("Target " + dst + " is a directory");
+        }
+        
+        checkDest(null, new Path(dst, srcName), overwrite);
+      } else if (!overwrite) {
+        throw new IOException("Target " + new Path(dst, srcName)
+            + " already exists");
+      }
+    } catch (FileNotFoundException e) {
+      
+    }
+  }
+   
+  
+  
+  
+  
+  private static void checkDependencies(Path qualSrc, Path qualDst)
+    throws IOException {
+    if (isSameFS(qualSrc, qualDst)) {
+      String srcq = qualSrc.toString() + Path.SEPARATOR;
+      String dstq = qualDst.toString() + Path.SEPARATOR;
+      if (dstq.startsWith(srcq)) {
+        if (srcq.length() == dstq.length()) {
+          throw new IOException("Cannot copy " + qualSrc + " to itself.");
+        } else {
+          throw new IOException("Cannot copy " + qualSrc +
+                             " to its subdirectory " + qualDst);
+        }
+      }
+    }
+  }
+  
+  
+
+
+
+
+
+  private static boolean isSameFS(Path qualPath1, Path qualPath2) {
+    URI srcUri = qualPath1.toUri();
+    URI dstUri = qualPath2.toUri();
+    return (srcUri.getScheme().equals(dstUri.getScheme()) && 
+        !(srcUri.getAuthority() != null && dstUri.getAuthority() != null && srcUri
+        .getAuthority().equals(dstUri.getAuthority())));
+  }
+
+  
+
+
+  static class FileContextFinalizer implements Runnable {
+    @Override
+    public synchronized void run() {
+      processDeleteOnExit();
+    }
+  }
+
+  
+
+
+
+  protected Path resolve(final Path f) throws FileNotFoundException,
+      UnresolvedLinkException, AccessControlException, IOException {
+    return new FSLinkResolver<Path>() {
+      @Override
+      public Path next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.resolvePath(p);
+      }
+    }.resolve(this, f);
+  }
+
+  
+
+
+
+
+
+  protected Path resolveIntermediate(final Path f) throws IOException {
+    return new FSLinkResolver<FileStatus>() {
+      @Override
+      public FileStatus next(final AbstractFileSystem fs, final Path p) 
+        throws IOException, UnresolvedLinkException {
+        return fs.getFileLinkStatus(p);
+      }
+    }.resolve(this, f).getPath();
+  }
+
+  
+
+
+
+
+
+
+
+
+  Set<AbstractFileSystem> resolveAbstractFileSystems(final Path f)
+      throws IOException {
+    final Path absF = fixRelativePart(f);
+    final HashSet<AbstractFileSystem> result 
+      = new HashSet<AbstractFileSystem>();
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p)
+          throws IOException, UnresolvedLinkException {
+        result.add(fs);
+        fs.getFileStatus(p);
+        return null;
+      }
+    }.resolve(this, absF);
+    return result;
+  }
+
+  
+
+
+
+
+
+
+
+  public static Statistics getStatistics(URI uri) {
+    return AbstractFileSystem.getStatistics(uri);
+  }
+
+  
+
+
+
+  public static void clearStatistics() {
+    AbstractFileSystem.clearStatistics();
+  }
+
+  
+
+
+
+  public static void printStatistics() {
+    AbstractFileSystem.printStatistics();
+  }
+
+  
+
+
+
+  public static Map<URI, Statistics> getAllStatistics() {
+    return AbstractFileSystem.getAllStatistics();
+  }
+  
+  
+
+
+
+
+
+
+
+  @InterfaceAudience.LimitedPrivate( { "HDFS", "MapReduce" })
+  public List<Token<?>> getDelegationTokens(
+      Path p, String renewer) throws IOException {
+    Set<AbstractFileSystem> afsSet = resolveAbstractFileSystems(p);
+    List<Token<?>> tokenList = 
+        new ArrayList<Token<?>>();
+    for (AbstractFileSystem afs : afsSet) {
+      List<Token<?>> afsTokens = afs.getDelegationTokens(renewer);
+      tokenList.addAll(afsTokens);
+    }
+    return tokenList;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  public void modifyAclEntries(final Path path, final List<AclEntry> aclSpec)
+      throws IOException {
+    Path absF = fixRelativePart(path);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        fs.modifyAclEntries(p, aclSpec);
+        return null;
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+  public void removeAclEntries(final Path path, final List<AclEntry> aclSpec)
+      throws IOException {
+    Path absF = fixRelativePart(path);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        fs.removeAclEntries(p, aclSpec);
+        return null;
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+  public void removeDefaultAcl(Path path)
+      throws IOException {
+    Path absF = fixRelativePart(path);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        fs.removeDefaultAcl(p);
+        return null;
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+  public void removeAcl(Path path) throws IOException {
+    Path absF = fixRelativePart(path);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        fs.removeAcl(p);
+        return null;
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+  public void setAcl(Path path, final List<AclEntry> aclSpec)
+      throws IOException {
+    Path absF = fixRelativePart(path);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        fs.setAcl(p, aclSpec);
+        return null;
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+  public AclStatus getAclStatus(Path path) throws IOException {
+    Path absF = fixRelativePart(path);
+    return new FSLinkResolver<AclStatus>() {
+      @Override
+      public AclStatus next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        return fs.getAclStatus(p);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public void setXAttr(Path path, String name, byte[] value)
+      throws IOException {
+    setXAttr(path, name, value, EnumSet.of(XAttrSetFlag.CREATE,
+        XAttrSetFlag.REPLACE));
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setXAttr(Path path, final String name, final byte[] value,
+      final EnumSet<XAttrSetFlag> flag) throws IOException {
+    final Path absF = fixRelativePart(path);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        fs.setXAttr(p, name, value, flag);
+        return null;
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public byte[] getXAttr(Path path, final String name) throws IOException {
+    final Path absF = fixRelativePart(path);
+    return new FSLinkResolver<byte[]>() {
+      @Override
+      public byte[] next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        return fs.getXAttr(p, name);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public Map<String, byte[]> getXAttrs(Path path) throws IOException {
+    final Path absF = fixRelativePart(path);
+    return new FSLinkResolver<Map<String, byte[]>>() {
+      @Override
+      public Map<String, byte[]> next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        return fs.getXAttrs(p);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public Map<String, byte[]> getXAttrs(Path path, final List<String> names)
+      throws IOException {
+    final Path absF = fixRelativePart(path);
+    return new FSLinkResolver<Map<String, byte[]>>() {
+      @Override
+      public Map<String, byte[]> next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        return fs.getXAttrs(p, names);
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public void removeXAttr(Path path, final String name) throws IOException {
+    final Path absF = fixRelativePart(path);
+    new FSLinkResolver<Void>() {
+      @Override
+      public Void next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        fs.removeXAttr(p, name);
+        return null;
+      }
+    }.resolve(this, absF);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public List<String> listXAttrs(Path path) throws IOException {
+    final Path absF = fixRelativePart(path);
+    return new FSLinkResolver<List<String>>() {
+      @Override
+      public List<String> next(final AbstractFileSystem fs, final Path p)
+          throws IOException {
+        return fs.listXAttrs(p);
+      }
+    }.resolve(this, absF);
+  }
+}

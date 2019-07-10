@@ -1,0 +1,43 @@
+47a48
+> import org.apache.solr.cloud.ZkController;
+48a50
+> import org.apache.solr.common.cloud.DocCollection;
+125a128,135
+>     ZkController zkController = core.getCoreDescriptor().getCoreContainer().getZkController();
+>     if (zkController != null) {
+>       DocCollection dc = zkController.getClusterState().getCollection(core.getCoreDescriptor().getCollectionName());
+>       if (dc.getRealtimeReplicas() == 1) {
+>         commitWithinSoftCommit = false;
+>         commitTracker.setOpenSearcher(true);
+>       }
+>     }
+235a246,250
+>       if ( (cmd.getFlags() & UpdateCommand.IGNORE_INDEXWRITER) != 0) {
+>         if (ulog != null) ulog.add(cmd);
+>         return 1;
+>       }
+> 
+406a422,426
+>     if ( (cmd.getFlags() & UpdateCommand.IGNORE_INDEXWRITER) != 0 ) {
+>       if (ulog != null) ulog.delete(cmd);
+>       return;
+>     }
+> 
+465a486,490
+>       if ( (cmd.getFlags() & UpdateCommand.IGNORE_INDEXWRITER) != 0) {
+>         if (ulog != null) ulog.deleteByQuery(cmd);
+>         madeIt = true;
+>         return;
+>       }
+566c591
+<         SolrIndexWriter.setCommitData(iw.get());
+---
+>         SolrIndexWriter.setCommitData(iw.get(), cmd.getVersion());
+650c675
+<             SolrIndexWriter.setCommitData(writer);
+---
+>             SolrIndexWriter.setCommitData(writer, cmd.getVersion());
+841c866
+<           SolrIndexWriter.setCommitData(writer);
+---
+>           SolrIndexWriter.setCommitData(writer, cmd.getVersion());

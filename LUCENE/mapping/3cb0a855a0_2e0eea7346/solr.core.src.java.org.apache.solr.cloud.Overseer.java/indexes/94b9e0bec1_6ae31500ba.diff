@@ -1,0 +1,160 @@
+106a107,110
+> 
+>     private final Map<String, Object> updateNodes = new LinkedHashMap<String,Object>();
+>     private boolean isClusterStateModified = false;
+>     
+117a122
+>       reader.ephemeralCollectionData = Collections.unmodifiableMap(updateNodes);
+173,175c178,179
+<                   zkClient.setData(ZkStateReader.CLUSTER_STATE,
+<                       ZkStateReader.toJSON(clusterState), true);
+< 
+---
+>                   updateZkStates(clusterState);
+>                   
+259c263
+< 
+---
+>                 if(!updateNodes.isEmpty()) break;
+263,265c267
+<               lastUpdatedTime = System.nanoTime();
+<               zkClient.setData(ZkStateReader.CLUSTER_STATE,
+<                   ZkStateReader.toJSON(clusterState), true);
+---
+>               updateZkStates(clusterState);
+296a299,323
+>     private void updateZkStates(ClusterState clusterState) throws KeeperException, InterruptedException {
+>       if(!updateNodes.isEmpty()) {
+>         for (Entry<String, Object> e : updateNodes.entrySet()) {
+>           if (e.getValue() == null) {
+>             if (zkClient.exists(e.getKey(), true)) zkClient.delete(e.getKey(), 0, true);
+>           } else {
+>             if (zkClient.exists(e.getKey(), true)) {
+>               log.info("going to update_collection", e.getKey());
+>               zkClient.setData(e.getKey(), ZkStateReader.toJSON(e.getValue()), true);
+>             } else {
+>               log.info("going to create_collection {}", e.getValue());
+>               zkClient.create(e.getKey(), ZkStateReader.toJSON(e.getValue()), CreateMode.PERSISTENT, true);
+>             }
+>           }
+>         }
+>         updateNodes.clear();
+>       }
+> 
+>       if(isClusterStateModified) {
+>         lastUpdatedTime = System.nanoTime();
+>         zkClient.setData(ZkStateReader.CLUSTER_STATE, ZkStateReader.toJSON(clusterState), true);
+>         isClusterStateModified = false;
+>       }
+>     }
+> 
+409c436,437
+<       Slice sl = clusterState.getSlice(coll, slice);
+---
+>       DocCollection collection = clusterState.getCollection(coll);
+>       Slice sl = collection.getSlice(slice);
+422c450
+<       return clusterState;
+---
+>       return newState(clusterState, singletonMap(coll, collection));
+443c471
+<       return createCollection(clusterState,collection,shardNames,message);
+---
+>       return createCollection(clusterState, collection, shardNames, message);
+812d839
+< 
+817,819d843
+<         
+< 
+< 
+840a865,871
+>         isClusterStateModified = true;
+>         log.info("_extern {} {}", collectionName, newCollection.isExternal());
+>         if (newCollection.isExternal()) {
+>           updateNodes.put(ZkStateReader.getCollectionPath(collectionName),
+>               new ClusterState(-1, Collections.<String>emptySet(), singletonMap(newCollection.getName(), newCollection), state.getStateReader()));
+>           return state;
+>         }
+842,845c873
+< 
+<           return state.copyWith(singletonMap(newCollection.getName(), newCollection));
+< 
+< 
+---
+>         return newState(state, singletonMap(newCollection.getName(), newCollection));
+887,888c915,916
+<         Map<String, DocCollection> newCollections = new LinkedHashMap<>(state.getCollectionStates());  
+<         DocCollection coll = newCollections.get(collectionName);
+---
+> 
+>         DocCollection coll = state.getCollectionOrNull(collectionName) ;
+907d934
+<         newCollections.put(collectionName, newCollection);
+911c938
+<         return new ClusterState(state.getLiveNodes(), newCollections);
+---
+>         return newState(state, singletonMap(collectionName, newCollection));
+914a942
+>         DocCollection coll = state.getCollectionOrNull(collectionName);
+916,917d943
+<         final Map<String, DocCollection> newCollections = new LinkedHashMap<>(state.getCollectionStates());
+<         DocCollection coll = newCollections.get(collectionName);
+968,969c994,1014
+<         newCollections.put(collectionName, newCollection);
+<         return new ClusterState(state.getLiveNodes(), newCollections);
+---
+>         return newState(state, singletonMap(collectionName, newCollection));
+>       }
+> 
+>       private ClusterState newState(ClusterState state, Map<String, DocCollection> colls) {
+>         for (Entry<String, DocCollection> e : colls.entrySet()) {
+>           DocCollection c = e.getValue();
+>           if (c == null) {
+>             isClusterStateModified = true;
+>             state = state.copyWith(singletonMap(e.getKey(), (DocCollection) null));
+>             continue;
+>           }
+> 
+>           if (c.isExternal()) {
+>             state.getStateReader().updateExternCollection(c);
+>             updateNodes.put(ZkStateReader.getCollectionPath(c.getName()), new ClusterState(-1, Collections.<String>emptySet(), singletonMap(c.getName(), c), state.getStateReader()));
+>           } else {
+>             isClusterStateModified = true;
+>             state = state.copyWith(singletonMap(e.getKey(), c));
+>           }
+>         }
+>         return state;
+971,973d1015
+<     private ClusterState newState(ClusterState state, Map<String, DocCollection> colls) {
+<       return state.copyWith(colls);
+<     }
+980a1023,1031
+>         DocCollection coll = clusterState.getCollectionOrNull(collection);
+>         if(coll !=null) {
+>           isClusterStateModified = true;
+>           if(coll.isExternal()){
+>             try {
+>               log.info("Deleting state for collection : {}", collection);
+>               zkClient.delete(ZkStateReader.getCollectionPath(collection),-1,true);
+>             } catch (Exception e) {
+>               throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,"Unable to remove collection state :"+collection);
+982c1033,1039
+<         return clusterState.copyWith(singletonMap(collection, (DocCollection)null));
+---
+>             }
+>             return clusterState;
+>           } else{
+>             return clusterState.copyWith(singletonMap(collection,(DocCollection)null));
+>           }
+>         }
+>         return clusterState;
+1064d1120
+< 
+1078,1079d1133
+< 
+< 
+1083d1136
+< 
+1086,1087d1138
+< 
+< 

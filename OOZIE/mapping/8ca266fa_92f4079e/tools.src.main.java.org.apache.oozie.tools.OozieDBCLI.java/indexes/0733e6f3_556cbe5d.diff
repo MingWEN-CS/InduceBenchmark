@@ -1,0 +1,26 @@
+601c601
+<     private void convertClobToBlobinDerby(Connection conn) throws Exception {
+---
+>     private void convertClobToBlobinDerby(Connection conn, String startingVersion) throws Exception {
+615,616c615,624
+<                 for (int i = 0; i < columnNames.size(); i++) {
+<                     Clob confClob = rs.getClob(columnNames.get(i));
+---
+>                 for (String column : columnNames) {
+>                     if (startingVersion.equals(DB_VERSION_PRE_4_0)
+>                             && tableName.equals("COORD_ACTIONS") && column.equals("push_missing_dependencies")) {
+>                         
+>                         
+>                         
+>                         
+>                         continue;
+>                     }
+>                     Clob confClob = rs.getClob(column);
+621c629
+<                             + columnNames.get(i) + "=? where id = ?");
+---
+>                             + column + "=? where id = ?");
+679c687
+<             convertClobToBlobinDerby(conn);
+---
+>             convertClobToBlobinDerby(conn, startingVersion);

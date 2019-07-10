@@ -1,0 +1,42 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.accumulo.tracer;
+
+import org.easymock.EasyMock;
+import org.junit.Test;
+
+public class ZooTraceClientTest {
+
+  @Test
+  public void testConnectFailureRetries() throws Exception {
+    ZooTraceClient client = EasyMock.createMockBuilder(ZooTraceClient.class).addMockedMethod("updateHostsFromZooKeeper").createStrictMock();
+    client.setRetryPause(0l);
+
+    client.updateHostsFromZooKeeper();
+    EasyMock.expectLastCall().andThrow(new RuntimeException()).once();
+    client.updateHostsFromZooKeeper();
+    EasyMock.expectLastCall();
+
+    EasyMock.replay(client);
+
+    client.setInitialTraceHosts();
+    
+    EasyMock.verify(client);
+
+  }
+
+}

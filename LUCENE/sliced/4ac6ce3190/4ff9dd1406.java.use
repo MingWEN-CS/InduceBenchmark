@@ -1,0 +1,25 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+7	input	TokenStream	param	69	define	org.apache.solr.analysis.KeepWordFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	69	71
+7	input	TokenStream	param	70	use	org.apache.solr.analysis.KeepWordFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	69	71
+23	KeepWordFilterFactory.words	Set<String>	variable	70	use	org.apache.solr.analysis.KeepWordFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	69	71
+22	KeepWordFilterFactory.ignoreCase	boolean	variable	70	use	org.apache.solr.analysis.KeepWordFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	69	71
+15	loader	ResourceLoader	param	41	define	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+14	e	IOException	param	51	define	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+15	loader	ResourceLoader	param	47	use	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+14	e	IOException	param	52	use	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+17	wordFile	String	variable	42	define	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+16	wlist	List<String>	variable	47	define	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+17	wordFile	String	variable	42	set	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+22	KeepWordFilterFactory.ignoreCase	boolean	variable	43	set	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+16	wlist	List<String>	variable	47	set	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+23	KeepWordFilterFactory.words	Set<String>	variable	48	set	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+17	wordFile	String	variable	45	use	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+17	wordFile	String	variable	47	use	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+16	wlist	List<String>	variable	49	use	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+22	KeepWordFilterFactory.ignoreCase	boolean	variable	49	use	org.apache.solr.analysis.KeepWordFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	41	54
+19	ignoreCase	boolean	param	65	define	org.apache.solr.analysis.KeepWordFilterFactory.setIgnoreCase	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	65	67
+19	ignoreCase	boolean	param	66	use	org.apache.solr.analysis.KeepWordFilterFactory.setIgnoreCase	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	65	67
+22	KeepWordFilterFactory.ignoreCase	boolean	variable	66	set	org.apache.solr.analysis.KeepWordFilterFactory.setIgnoreCase	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	65	67
+21	words	Set<String>	param	61	define	org.apache.solr.analysis.KeepWordFilterFactory.setWords	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	61	63
+21	words	Set<String>	param	62	use	org.apache.solr.analysis.KeepWordFilterFactory.setWords	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	61	63
+23	KeepWordFilterFactory.words	Set<String>	variable	62	set	org.apache.solr.analysis.KeepWordFilterFactory.setWords	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/4ff9dd1406.java	61	63

@@ -1,0 +1,58 @@
+757c757,758
+<         JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher(session, reader);
+---
+>         JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher(
+>                 session, reader, getContext().getItemStateManager());
+760c761,802
+<                 searcher.execute(query, sort, resultFetchHint)) {
+---
+>                 searcher.execute(query, sort, resultFetchHint,
+>                         QueryImpl.DEFAULT_SELECTOR_NAME)) {
+>             public void close() throws IOException {
+>                 try {
+>                     super.close();
+>                 } finally {
+>                     PerQueryCache.getInstance().dispose();
+>                     Util.closeOrRelease(reader);
+>                 }
+>             }
+>         };
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     public MultiColumnQueryHits executeQuery(SessionImpl session,
+>                                              MultiColumnQuery query,
+>                                              Path[] orderProps,
+>                                              boolean[] orderSpecs,
+>                                              long resultFetchHint)
+>             throws IOException {
+>         checkOpen();
+> 
+>         Sort sort = new Sort(createSortFields(orderProps, orderSpecs));
+> 
+>         final IndexReader reader = getIndexReader();
+>         JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher(
+>                 session, reader, getContext().getItemStateManager());
+>         searcher.setSimilarity(getSimilarity());
+>         return new FilterMultiColumnQueryHits(
+>                 query.execute(searcher, sort, resultFetchHint)) {
+992a1035,1041
+>     protected SortComparatorSource getSortComparatorSource() {
+>         return scs;
+>     }
+> 
+>     
+> 
+> 

@@ -1,0 +1,22 @@
+4187,4194c4187,4195
+<       if (null != rr.getBaseUrl()) {
+<         if (rr.isVerifyBaseUrl()) {
+<           verifyRepository(rr);
+<         }
+<         if (rr.getRepositoryVersionId() != null) {
+<           throw new AmbariException("Can't directly update repositories in repository_version, update the repository_version instead");
+<         }
+<         ambariMetaInfo.updateRepoBaseURL(rr.getStackName(), rr.getStackVersion(), rr.getOsType(), rr.getRepoId(), rr.getBaseUrl());
+---
+>       if (null == rr.getBaseUrl() && null == rr.getMirrorsList()) {
+>         throw new AmbariException("Repo Base Url or Mirrors List must be specified.");
+>       }
+> 
+>       if (rr.isVerifyBaseUrl()) {
+>         verifyRepository(rr);
+>       }
+>       if (rr.getRepositoryVersionId() != null) {
+>         throw new AmbariException("Can't directly update repositories in repository_version, update the repository_version instead");
+4195a4197,4198
+>       ambariMetaInfo.updateRepo(rr.getStackName(), rr.getStackVersion(), rr.getOsType(), rr.getRepoId(), rr.getBaseUrl(), rr.getMirrorsList());
+> 

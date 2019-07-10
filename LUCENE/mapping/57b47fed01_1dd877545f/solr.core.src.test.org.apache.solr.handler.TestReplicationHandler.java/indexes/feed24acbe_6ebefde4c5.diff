@@ -1,0 +1,4 @@
+1277c1277
+<     Directory dir = FSDirectory.open(Paths.get(dataDir, "index"));
+---
+>     Directory dir = FSDirectory.open(Paths.get(dataDir).resolve("index"));

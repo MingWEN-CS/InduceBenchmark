@@ -1,0 +1,301 @@
+23a24,25
+> import java.io.FileReader;
+> import java.io.FileWriter;
+63c65
+<   @Test
+---
+>   @Test (timeout = 30000)
+64a67,70
+>     if (Path.WINDOWS) {
+>       return;
+>     }
+> 
+67c73
+<     NativeIO.Stat stat = NativeIO.getFstat(fos.getFD());
+---
+>     NativeIO.POSIX.Stat stat = NativeIO.POSIX.getFstat(fos.getFD());
+75c81,82
+<       NativeIO.Stat.S_IFREG, stat.getMode() & NativeIO.Stat.S_IFMT);
+---
+>       NativeIO.POSIX.Stat.S_IFREG,
+>       stat.getMode() & NativeIO.POSIX.Stat.S_IFMT);
+84c91
+<   @Test
+---
+>   @Test (timeout = 30000)
+85a93,96
+>     if (Path.WINDOWS) {
+>       return;
+>     }
+> 
+99c110
+<               NativeIO.Stat stat = NativeIO.getFstat(fos.getFD());
+---
+>               NativeIO.POSIX.Stat stat = NativeIO.POSIX.getFstat(fos.getFD());
+104c115,116
+<                 NativeIO.Stat.S_IFREG, stat.getMode() & NativeIO.Stat.S_IFMT);
+---
+>                 NativeIO.POSIX.Stat.S_IFREG,
+>                 stat.getMode() & NativeIO.POSIX.Stat.S_IFMT);
+125c137
+<   @Test
+---
+>   @Test (timeout = 30000)
+126a139,142
+>     if (Path.WINDOWS) {
+>       return;
+>     }
+> 
+131c147
+<       NativeIO.Stat stat = NativeIO.getFstat(fos.getFD());
+---
+>       NativeIO.POSIX.Stat stat = NativeIO.POSIX.getFstat(fos.getFD());
+138c154,243
+<   @Test
+---
+>   @Test (timeout = 30000)
+>   public void testSetFilePointer() throws Exception {
+>     if (!Path.WINDOWS) {
+>       return;
+>     }
+> 
+>     LOG.info("Set a file pointer on Windows");
+>     try {
+>       File testfile = new File(TEST_DIR, "testSetFilePointer");
+>       assertTrue("Create test subject",
+>           testfile.exists() || testfile.createNewFile());
+>       FileWriter writer = new FileWriter(testfile);
+>       try {
+>         for (int i = 0; i < 200; i++)
+>           if (i < 100)
+>             writer.write('a');
+>           else
+>             writer.write('b');
+>         writer.flush();
+>       } catch (Exception writerException) {
+>         fail("Got unexpected exception: " + writerException.getMessage());
+>       } finally {
+>         writer.close();
+>       }
+> 
+>       FileDescriptor fd = NativeIO.Windows.createFile(
+>           testfile.getCanonicalPath(),
+>           NativeIO.Windows.GENERIC_READ,
+>           NativeIO.Windows.FILE_SHARE_READ |
+>           NativeIO.Windows.FILE_SHARE_WRITE |
+>           NativeIO.Windows.FILE_SHARE_DELETE,
+>           NativeIO.Windows.OPEN_EXISTING);
+>       NativeIO.Windows.setFilePointer(fd, 120, NativeIO.Windows.FILE_BEGIN);
+>       FileReader reader = new FileReader(fd);
+>       try {
+>         int c = reader.read();
+>         assertTrue("Unexpected character: " + c, c == 'b');
+>       } catch (Exception readerException) {
+>         fail("Got unexpected exception: " + readerException.getMessage());
+>       } finally {
+>         reader.close();
+>       }
+>     } catch (Exception e) {
+>       fail("Got unexpected exception: " + e.getMessage());
+>     }
+>   }
+> 
+>   @Test (timeout = 30000)
+>   public void testCreateFile() throws Exception {
+>     if (!Path.WINDOWS) {
+>       return;
+>     }
+> 
+>     LOG.info("Open a file on Windows with SHARE_DELETE shared mode");
+>     try {
+>       File testfile = new File(TEST_DIR, "testCreateFile");
+>       assertTrue("Create test subject",
+>           testfile.exists() || testfile.createNewFile());
+> 
+>       FileDescriptor fd = NativeIO.Windows.createFile(
+>           testfile.getCanonicalPath(),
+>           NativeIO.Windows.GENERIC_READ,
+>           NativeIO.Windows.FILE_SHARE_READ |
+>           NativeIO.Windows.FILE_SHARE_WRITE |
+>           NativeIO.Windows.FILE_SHARE_DELETE,
+>           NativeIO.Windows.OPEN_EXISTING);
+> 
+>       FileInputStream fin = new FileInputStream(fd);
+>       try {
+>         fin.read();
+> 
+>         File newfile = new File(TEST_DIR, "testRenamedFile");
+> 
+>         boolean renamed = testfile.renameTo(newfile);
+>         assertTrue("Rename failed.", renamed);
+> 
+>         fin.read();
+>       } catch (Exception e) {
+>         fail("Got unexpected exception: " + e.getMessage());
+>       }
+>       finally {
+>         fin.close();
+>       }
+>     } catch (Exception e) {
+>       fail("Got unexpected exception: " + e.getMessage());
+>     }
+> 
+>   }
+> 
+>   @Test (timeout = 30000)
+139a245,248
+>     if (Path.WINDOWS) {
+>       return;
+>     }
+> 
+142c251
+<       FileDescriptor fd = NativeIO.open(
+---
+>       FileDescriptor fd = NativeIO.POSIX.open(
+144c253
+<         NativeIO.O_WRONLY, 0700);
+---
+>         NativeIO.POSIX.O_WRONLY, 0700);
+152c261
+<   @Test
+---
+>   @Test (timeout = 30000)
+153a263,266
+>     if (Path.WINDOWS) {
+>       return;
+>     }
+> 
+155c268
+<     FileDescriptor fd = NativeIO.open(
+---
+>     FileDescriptor fd = NativeIO.POSIX.open(
+157c270
+<       NativeIO.O_WRONLY | NativeIO.O_CREAT, 0700);
+---
+>       NativeIO.POSIX.O_WRONLY | NativeIO.POSIX.O_CREAT, 0700);
+168c281
+<       fd = NativeIO.open(
+---
+>       fd = NativeIO.POSIX.open(
+170c283
+<         NativeIO.O_WRONLY | NativeIO.O_CREAT | NativeIO.O_EXCL, 0700);
+---
+>         NativeIO.POSIX.O_WRONLY | NativeIO.POSIX.O_CREAT | NativeIO.POSIX.O_EXCL, 0700);
+182c295
+<   @Test
+---
+>   @Test (timeout = 30000)
+183a297,300
+>     if (Path.WINDOWS) {
+>       return;
+>     }
+> 
+185c302
+<       FileDescriptor fd = NativeIO.open(
+---
+>       FileDescriptor fd = NativeIO.POSIX.open(
+187c304
+<         NativeIO.O_WRONLY | NativeIO.O_CREAT, 0700);
+---
+>         NativeIO.POSIX.O_WRONLY | NativeIO.POSIX.O_CREAT, 0700);
+199c316
+<   @Test
+---
+>   @Test (timeout = 30000)
+200a318,321
+>     if (Path.WINDOWS) {
+>       return;
+>     }
+> 
+202c323
+<       NativeIO.chmod("/this/file/doesnt/exist", 777);
+---
+>       NativeIO.POSIX.chmod("/this/file/doesnt/exist", 777);
+211c332
+<     NativeIO.chmod(toChmod.getAbsolutePath(), 0777);
+---
+>     NativeIO.POSIX.chmod(toChmod.getAbsolutePath(), 0777);
+213c334
+<     NativeIO.chmod(toChmod.getAbsolutePath(), 0000);
+---
+>     NativeIO.POSIX.chmod(toChmod.getAbsolutePath(), 0000);
+215c336
+<     NativeIO.chmod(toChmod.getAbsolutePath(), 0644);
+---
+>     NativeIO.POSIX.chmod(toChmod.getAbsolutePath(), 0644);
+220c341
+<   @Test
+---
+>   @Test (timeout = 30000)
+221a343,346
+>     if (Path.WINDOWS) {
+>       return;
+>     }
+> 
+224,225c349,351
+<       NativeIO.posix_fadvise(fis.getFD(), 0, 0,
+<                              NativeIO.POSIX_FADV_SEQUENTIAL);
+---
+>       NativeIO.POSIX.posix_fadvise(
+>           fis.getFD(), 0, 0,
+>           NativeIO.POSIX.POSIX_FADV_SEQUENTIAL);
+238,239c364,366
+<       NativeIO.posix_fadvise(fis.getFD(), 0, 1024,
+<                              NativeIO.POSIX_FADV_SEQUENTIAL);
+---
+>       NativeIO.POSIX.posix_fadvise(
+>           fis.getFD(), 0, 1024,
+>           NativeIO.POSIX.POSIX_FADV_SEQUENTIAL);
+247,248c374,376
+<       NativeIO.posix_fadvise(null, 0, 1024,
+<                              NativeIO.POSIX_FADV_SEQUENTIAL);
+---
+>       NativeIO.POSIX.posix_fadvise(
+>           null, 0, 1024,
+>           NativeIO.POSIX.POSIX_FADV_SEQUENTIAL);
+256c384
+<   @Test
+---
+>   @Test (timeout = 30000)
+262,263c390,392
+<       NativeIO.sync_file_range(fos.getFD(), 0, 1024,
+<                                NativeIO.SYNC_FILE_RANGE_WRITE);
+---
+>       NativeIO.POSIX.sync_file_range(
+>           fos.getFD(), 0, 1024,
+>           NativeIO.POSIX.SYNC_FILE_RANGE_WRITE);
+274,275c403,405
+<       NativeIO.sync_file_range(fos.getFD(), 0, 1024,
+<                                NativeIO.SYNC_FILE_RANGE_WRITE);
+---
+>       NativeIO.POSIX.sync_file_range(
+>           fos.getFD(), 0, 1024,
+>           NativeIO.POSIX.SYNC_FILE_RANGE_WRITE);
+289c419
+<   @Test
+---
+>   @Test (timeout = 30000)
+291c421,425
+<     assertFalse(NativeIO.getUserName(0).isEmpty());
+---
+>     if (Path.WINDOWS) {
+>       return;
+>     }
+> 
+>     assertFalse(NativeIO.POSIX.getUserName(0).isEmpty());
+294c428
+<   @Test
+---
+>   @Test (timeout = 30000)
+296c430,434
+<     assertFalse(NativeIO.getGroupName(0).isEmpty());
+---
+>     if (Path.WINDOWS) {
+>       return;
+>     }
+> 
+>     assertFalse(NativeIO.POSIX.getGroupName(0).isEmpty());
+299c437
+<   @Test
+---
+>   @Test (timeout = 30000)

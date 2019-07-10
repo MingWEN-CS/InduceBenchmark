@@ -1,0 +1,5 @@
+210,211c210
+<         Object highlightKey = highlight(text, matchedTokens, prefixToken);
+<         result = new LookupResult(highlightKey.toString(), highlightKey, score, payload);
+---
+>         result = new LookupResult(text, highlight(text, matchedTokens, prefixToken), score, payload);

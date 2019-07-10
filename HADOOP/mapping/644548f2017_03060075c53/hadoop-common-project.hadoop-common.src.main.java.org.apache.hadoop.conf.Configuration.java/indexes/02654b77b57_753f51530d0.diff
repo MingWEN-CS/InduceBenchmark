@@ -1,0 +1,10 @@
+1454,1456c1454
+<     valueString = valueString.toLowerCase();
+< 
+<     if ("true".equals(valueString))
+---
+>     if (StringUtils.equalsIgnoreCase("true", valueString))
+1458c1456
+<     else if ("false".equals(valueString))
+---
+>     else if (StringUtils.equalsIgnoreCase("false", valueString))

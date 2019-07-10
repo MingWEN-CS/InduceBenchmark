@@ -1,0 +1,6 @@
+614,615c614,615
+<   public void newIndexWriter(boolean rollback, boolean forceNewDir) throws IOException {
+<     solrCoreState.newIndexWriter(core, rollback, forceNewDir);
+---
+>   public void newIndexWriter(boolean rollback) throws IOException {
+>     solrCoreState.newIndexWriter(core, rollback);

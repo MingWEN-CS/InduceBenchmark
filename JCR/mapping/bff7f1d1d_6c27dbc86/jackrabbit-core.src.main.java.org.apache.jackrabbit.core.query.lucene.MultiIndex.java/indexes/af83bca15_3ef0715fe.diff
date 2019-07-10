@@ -1,0 +1,89 @@
+31a32,33
+> import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
+> import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
+360c362,365
+<     void createInitialIndex(ItemStateManager stateMgr, NodeId rootId, Path rootPath)
+---
+> 
+>     void createInitialIndex(ItemStateManager stateMgr,
+>                             NodeId rootId,
+>                             Path rootPath)
+365a371
+>                 long count = 0;
+369c375
+<                 createIndex(rootState, rootPath, stateMgr);
+---
+>                 count = createIndex(rootState, rootPath, stateMgr, count);
+370a377
+>                 log.info("Created initial index for {} nodes", new Long(count));
+1051c1058,1064
+<     private void createIndex(NodeState node, Path path, ItemStateManager stateMgr)
+---
+> 
+> 
+> 
+>     private long createIndex(NodeState node,
+>                              Path path,
+>                              ItemStateManager stateMgr,
+>                              long count)
+1055c1068
+<             return;
+---
+>             return count;
+1057a1071,1078
+>         if (++count % 100 == 0) {
+>             PathResolver resolver = new DefaultNamePathResolver(
+>                     handler.getContext().getNamespaceRegistry());
+>             log.info("indexing... {} ({})", resolver.getJCRPath(path), new Long(count));
+>         }
+>         if (count % 10 == 0) {
+>             checkIndexingQueue(true);
+>         }
+1072c1093
+<                 createIndex(childState, childPath, stateMgr);
+---
+>                 count = createIndex(childState, childPath, stateMgr, count);
+1074a1096
+>         return count;
+1145a1168,1170
+> 
+> 
+> 
+1146a1172,1185
+>         checkIndexingQueue(false);
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     private void checkIndexingQueue(boolean transactionPresent) {
+1156c1195
+<             log.debug("updating index with {} nodes from indexing queue.",
+---
+>             log.info("updating index with {} nodes from indexing queue.",
+1160,1161c1199
+<             Iterator it = finished.keySet().iterator();
+<             while (it.hasNext()) {
+---
+>             for (Iterator it = finished.keySet().iterator(); it.hasNext(); ) {
+1166c1204,1214
+<                 update(finished.keySet(), finished.values());
+---
+>                 if (transactionPresent) {
+>                     for (Iterator it = finished.keySet().iterator(); it.hasNext(); ) {
+>                         executeAndLog(new DeleteNode(getTransactionId(), (UUID) it.next()));
+>                     }
+>                     for (Iterator it = finished.values().iterator(); it.hasNext(); ) {
+>                         executeAndLog(new AddNode(
+>                                 getTransactionId(), (Document) it.next()));
+>                     }
+>                 } else {
+>                     update(finished.keySet(), finished.values());
+>                 }

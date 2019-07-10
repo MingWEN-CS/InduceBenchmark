@@ -1,0 +1,82 @@
+303a304
+>   
+307a309,311
+>   private static final boolean ibmJava = System.getProperty("java.vendor").contains("IBM");
+>   private static final boolean aix = System.getProperty("os.name").equals("AIX");
+> 
+310,314c314,322
+<     if (System.getProperty("java.vendor").contains("IBM")) {
+<       return windows ? (is64Bit
+<           ? "com.ibm.security.auth.module.Win64LoginModule"
+<           : "com.ibm.security.auth.module.NTLoginModule")
+<         : "com.ibm.security.auth.module.LinuxLoginModule";
+---
+>     if (ibmJava) {
+>       if (windows) {
+>         return is64Bit ? "com.ibm.security.auth.module.Win64LoginModule"
+>             : "com.ibm.security.auth.module.NTLoginModule";
+>       } else if (aix) {
+>         return "com.ibm.security.auth.module.AIXLoginModule";
+>       } else {
+>         return "com.ibm.security.auth.module.LinuxLoginModule";
+>       }
+326c334
+<       if (System.getProperty("java.vendor").contains("IBM")) {
+---
+>       if (ibmJava) {
+330a339,341
+>         } else if (aix) {
+>           return (Class<? extends Principal>)
+>              cl.loadClass("com.ibm.security.auth.AIXPrincipal");
+421,423c432,438
+<       USER_KERBEROS_OPTIONS.put("doNotPrompt", "true");
+<       USER_KERBEROS_OPTIONS.put("useTicketCache", "true");
+<       USER_KERBEROS_OPTIONS.put("renewTGT", "true");
+---
+>       if (ibmJava) {
+>         USER_KERBEROS_OPTIONS.put("useDefaultCcache", "true");
+>       } else {
+>         USER_KERBEROS_OPTIONS.put("doNotPrompt", "true");
+>         USER_KERBEROS_OPTIONS.put("useTicketCache", "true");
+>         USER_KERBEROS_OPTIONS.put("renewTGT", "true");
+>       }
+426c441,446
+<         USER_KERBEROS_OPTIONS.put("ticketCache", ticketCache);
+---
+>         if (ibmJava) {
+>           
+>           System.setProperty("KRB5CCNAME", ticketCache);
+>         } else {
+>           USER_KERBEROS_OPTIONS.put("ticketCache", ticketCache);
+>         }
+437,440c457,464
+<       KEYTAB_KERBEROS_OPTIONS.put("doNotPrompt", "true");
+<       KEYTAB_KERBEROS_OPTIONS.put("useKeyTab", "true");
+<       KEYTAB_KERBEROS_OPTIONS.put("storeKey", "true");
+<       KEYTAB_KERBEROS_OPTIONS.put("refreshKrb5Config", "true");
+---
+>       if (ibmJava) {
+>         KEYTAB_KERBEROS_OPTIONS.put("credsType", "both");
+>       } else {
+>         KEYTAB_KERBEROS_OPTIONS.put("doNotPrompt", "true");
+>         KEYTAB_KERBEROS_OPTIONS.put("useKeyTab", "true");
+>         KEYTAB_KERBEROS_OPTIONS.put("storeKey", "true");
+>         KEYTAB_KERBEROS_OPTIONS.put("refreshKrb5Config", "true");
+>       }
+465c489,494
+<         KEYTAB_KERBEROS_OPTIONS.put("keyTab", keytabFile);
+---
+>         if (ibmJava) {
+>           KEYTAB_KERBEROS_OPTIONS.put("useKeytab",
+>               prependFileAuthority(keytabFile));
+>         } else {
+>           KEYTAB_KERBEROS_OPTIONS.put("keyTab", keytabFile);
+>         }
+472a502,506
+>   private static String prependFileAuthority(String keytabPath) {
+>     return keytabPath.startsWith("file:
+>         : "file:
+>   }
+> 
+668a703
+>         LOG.debug("failure to login", le);

@@ -1,0 +1,70 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.orm.entities;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "ambari_configuration")
+@NamedQueries({
+  @NamedQuery(
+    name = "AmbariConfigurationEntity.findByType",
+    query = "select ace from AmbariConfigurationEntity ace where ace.configurationBaseEntity.type = :typeName")
+})
+
+public class AmbariConfigurationEntity {
+
+  @Id
+  @Column(name = "id")
+  private Long id;
+
+  @OneToOne(cascade = CascadeType.ALL)
+  @MapsId
+  @JoinColumn(name = "id")
+  private ConfigurationBaseEntity configurationBaseEntity;
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public ConfigurationBaseEntity getConfigurationBaseEntity() {
+    return configurationBaseEntity;
+  }
+
+  public void setConfigurationBaseEntity(ConfigurationBaseEntity configurationBaseEntity) {
+    this.configurationBaseEntity = configurationBaseEntity;
+  }
+
+  @Override
+  public String toString() {
+    return "AmbariConfigurationEntity{" +
+      "id=" + id +
+      ", configurationBaseEntity=" + configurationBaseEntity +
+      '}';
+  }
+}

@@ -1,0 +1,25 @@
+21a22
+> import org.apache.lucene.analysis.util.ResourceLoaderAware;
+24a26
+> import org.apache.solr.client.solrj.SolrClient;
+27d28
+< import org.apache.solr.client.solrj.SolrClient;
+50d50
+< import org.apache.lucene.analysis.util.ResourceLoaderAware;
+61d60
+< 
+83,85d81
+< import static java.util.Collections.singletonList;
+< import static java.util.Collections.singletonMap;
+< 
+334d329
+<       HttpSolrClient solr = new HttpSolrClient(coreUrl);
+336c331
+<       try {
+---
+>       try (HttpSolrClient solr = new HttpSolrClient(coreUrl)) {
+361,362d355
+<       } finally {
+<         solr.shutdown();
+364d356
+< 

@@ -1,0 +1,41 @@
+709a710,738
+> 
+> 
+>   public static UserGroupInformation getUGIFromSubject(Subject subject)
+>       throws IOException {
+>     if (subject == null) {
+>       throw new IOException("Subject must not be null");
+>     }
+> 
+>     if (subject.getPrincipals(KerberosPrincipal.class).isEmpty()) {
+>       throw new IOException("Provided Subject must contain a KerberosPrincipal");
+>     }
+> 
+>     KerberosPrincipal principal =
+>         subject.getPrincipals(KerberosPrincipal.class).iterator().next();
+> 
+>     User ugiUser = new User(principal.getName(),
+>         AuthenticationMethod.KERBEROS, null);
+>     subject.getPrincipals().add(ugiUser);
+>     UserGroupInformation ugi = new UserGroupInformation(subject);
+>     ugi.setLogin(null);
+>     ugi.setAuthenticationMethod(AuthenticationMethod.KERBEROS);
+>     return ugi;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+1107a1137,1144
+>   public static boolean isLoginTicketBased()  throws IOException {
+>     return getLoginUser().isKrbTkt;
+>   }
+> 
+>   
+> 
+> 
+> 
+1622d1658
+< 

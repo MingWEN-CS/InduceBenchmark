@@ -1,0 +1,270 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.net;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.net.InetAddress;
+
+import javax.naming.CommunicationException;
+import javax.naming.NameNotFoundException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.util.Shell;
+import org.apache.hadoop.util.Time;
+
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+
+
+
+public class TestDNS {
+
+  private static final Log LOG = LogFactory.getLog(TestDNS.class);
+  private static final String DEFAULT = "default";
+
+  
+  
+  private static final String DUMMY_HOSTNAME = "-DUMMY_HOSTNAME";
+  private static final String INVALID_DNS_SERVER = "0.0.0.0";
+
+  
+
+
+
+  @Test
+  public void testGetLocalHost() throws Exception {
+    String hostname = DNS.getDefaultHost(DEFAULT);
+    assertNotNull(hostname);
+  }
+
+  
+
+
+
+
+  @Test
+  public void testGetLocalHostIsFast() throws Exception {
+    String hostname1 = DNS.getDefaultHost(DEFAULT);
+    assertNotNull(hostname1);
+    String hostname2 = DNS.getDefaultHost(DEFAULT);
+    long t1 = Time.now();
+    String hostname3 = DNS.getDefaultHost(DEFAULT);
+    long t2 = Time.now();
+    assertEquals(hostname3, hostname2);
+    assertEquals(hostname2, hostname1);
+    long interval = t2 - t1;
+    assertTrue(
+        "Took too long to determine local host - caching is not working",
+        interval < 20000);
+  }
+
+  
+
+
+
+  @Test
+  public void testLocalHostHasAnAddress() throws Exception {
+    assertNotNull(getLocalIPAddr());
+  }
+
+  private InetAddress getLocalIPAddr() throws UnknownHostException {
+    String hostname = DNS.getDefaultHost(DEFAULT);
+    InetAddress localhost = InetAddress.getByName(hostname);
+    return localhost;
+  }
+
+  
+
+
+  @Test
+  public void testNullInterface() throws Exception {
+    String host = DNS.getDefaultHost(null);  
+    assertThat(host, is(DNS.getDefaultHost(DEFAULT)));
+    try {
+      String ip = DNS.getDefaultIP(null);
+      fail("Expected a NullPointerException, got " + ip);
+    } catch (NullPointerException npe) {
+      
+    }
+  }
+
+  
+
+
+
+  @Test
+  public void testNullDnsServer() throws Exception {
+    String host = DNS.getDefaultHost(getLoopbackInterface(), null);
+    assertThat(host, is(DNS.getDefaultHost(getLoopbackInterface())));
+  }
+
+  
+
+
+
+  @Test
+  public void testDefaultDnsServer() throws Exception {
+    String host = DNS.getDefaultHost(getLoopbackInterface(), DEFAULT);
+    assertThat(host, is(DNS.getDefaultHost(getLoopbackInterface())));
+  }
+
+  
+
+
+  @Test
+  public void testIPsOfUnknownInterface() throws Exception {
+    try {
+      DNS.getIPs("name-of-an-unknown-interface");
+      fail("Got an IP for a bogus interface");
+    } catch (UnknownHostException e) {
+      assertEquals("No such interface name-of-an-unknown-interface",
+          e.getMessage());
+    }
+  }
+
+  
+
+
+  @Test
+  public void testGetIPWithDefault() throws Exception {
+    String[] ips = DNS.getIPs(DEFAULT);
+    assertEquals("Should only return 1 default IP", 1, ips.length);
+    assertEquals(getLocalIPAddr().getHostAddress(), ips[0].toString());
+    String ip = DNS.getDefaultIP(DEFAULT);
+    assertEquals(ip, ips[0].toString());
+  }
+
+  
+
+
+  @Test
+  public void testRDNS() throws Exception {
+    InetAddress localhost = getLocalIPAddr();
+    try {
+      String s = DNS.reverseDns(localhost, null);
+      LOG.info("Local reverse DNS hostname is " + s);
+    } catch (NameNotFoundException | CommunicationException e) {
+      if (!localhost.isLinkLocalAddress() || localhost.isLoopbackAddress()) {
+        
+        
+        LOG.info("Reverse DNS failing as due to incomplete networking", e);
+        LOG.info("Address is " + localhost
+                + " Loopback=" + localhost.isLoopbackAddress()
+                + " Linklocal=" + localhost.isLinkLocalAddress());
+      }
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Test (timeout=60000)
+  public void testLookupWithHostsFallback() throws Exception {
+    assumeTrue(!Shell.WINDOWS);
+    final String oldHostname = changeDnsCachedHostname(DUMMY_HOSTNAME);
+
+    try {
+      String hostname = DNS.getDefaultHost(
+          getLoopbackInterface(), INVALID_DNS_SERVER, true);
+
+      
+      assertThat(hostname, not(DUMMY_HOSTNAME));
+    } finally {
+      
+      changeDnsCachedHostname(oldHostname);
+    }
+  }
+
+  
+
+
+
+
+
+  @Test(timeout=60000)
+  public void testLookupWithoutHostsFallback() throws Exception {
+    final String oldHostname = changeDnsCachedHostname(DUMMY_HOSTNAME);
+
+    try {
+      String hostname = DNS.getDefaultHost(
+          getLoopbackInterface(), INVALID_DNS_SERVER, false);
+
+      
+      
+      assertThat(hostname, is(DUMMY_HOSTNAME));
+    } finally {
+      
+      changeDnsCachedHostname(oldHostname);
+    }
+  }
+
+  private String getLoopbackInterface() throws SocketException {
+    return NetworkInterface.getByInetAddress(
+        InetAddress.getLoopbackAddress()).getName();
+  }
+
+  
+
+
+
+  private String changeDnsCachedHostname(final String newHostname)
+      throws Exception {
+    final String oldCachedHostname = DNS.getDefaultHost(DEFAULT);
+    Field field = DNS.class.getDeclaredField("cachedHostname");
+    field.setAccessible(true);
+    Field modifiersField = Field.class.getDeclaredField("modifiers");
+    modifiersField.setAccessible(true);
+    modifiersField.set(field, field.getModifiers() & ~Modifier.FINAL);
+    field.set(null, newHostname);
+    return oldCachedHostname;
+  }
+
+  
+
+
+
+
+  @Test
+  public void testLocalhostResolves() throws Exception {
+    InetAddress localhost = InetAddress.getByName("localhost");
+    assertNotNull("localhost is null", localhost);
+    LOG.info("Localhost IPAddr is " + localhost.toString());
+  }
+}

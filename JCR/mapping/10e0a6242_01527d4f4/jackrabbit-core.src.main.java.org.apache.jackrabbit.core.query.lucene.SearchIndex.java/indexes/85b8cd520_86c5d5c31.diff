@@ -1,0 +1,95 @@
+1596,1602c1596,1626
+<     protected void retrieveAggregateRoot(
+<             NodeState state, Map<NodeId, NodeState> map) {
+<         if (indexingConfig != null) {
+<             AggregateRule[] aggregateRules = indexingConfig.getAggregateRules();
+<             if (aggregateRules == null) {
+<                 return;
+<             }
+---
+>     protected void retrieveAggregateRoot(NodeState state,
+>             Map<NodeId, NodeState> aggregates) {
+>         retrieveAggregateRoot(state, aggregates, state.getNodeId().toString(), 0);
+>     }
+>     
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     private void retrieveAggregateRoot(NodeState state,
+>             Map<NodeId, NodeState> aggregates, String originNodeId, long level) {
+>         if (indexingConfig == null) {
+>             return;
+>         }
+>         AggregateRule[] aggregateRules = indexingConfig.getAggregateRules();
+>         if (aggregateRules == null) {
+>             return;
+>         }
+>         for (AggregateRule aggregateRule : aggregateRules) {
+>             NodeState root = null;
+1604,1609c1628
+<                 for (AggregateRule aggregateRule : aggregateRules) {
+<                     NodeState root = aggregateRule.getAggregateRoot(state);
+<                     if (root != null) {
+<                         map.put(root.getNodeId(), root);
+<                     }
+<                 }
+---
+>                 root = aggregateRule.getAggregateRoot(state);
+1611,1612c1630,1656
+<                 log.warn("Unable to get aggregate root for "
+<                         + state.getNodeId(), e);
+---
+>                 log.warn("Unable to get aggregate root for " + state.getNodeId(), e);
+>             }
+>             if (root == null) {
+>                 continue;
+>             }
+>             if (root.getNodeTypeName().equals(state.getNodeTypeName())) {
+>                 level++;
+>             } else {
+>                 level = 0;
+>             }
+> 
+>             
+>             if ((aggregateRule.getRecursiveAggregationLimit() == 0)
+>                     || (aggregateRule.getRecursiveAggregationLimit() != 0 && level <= aggregateRule
+>                             .getRecursiveAggregationLimit())) {
+> 
+>                 
+>                 
+>                 
+>                 if (aggregates.put(root.getNodeId(), root) == null) {
+>                     retrieveAggregateRoot(root, aggregates, originNodeId, level);
+>                 }
+>             } else {
+>                 log.warn(
+>                         "Reached {} levels of recursive aggregation for nodeId {}, type {}, will stop at nodeId {}. Are you sure this did not occur by mistake? Please check the indexing-configuration.xml.",
+>                         new Object[] { level, originNodeId,
+>                                 root.getNodeTypeName(), root.getNodeId() });
+1625c1669
+<             Set<NodeId> removedIds, Map<NodeId, NodeState> map) {
+---
+>             Set<NodeId> removedIds, Map<NodeId, NodeState> aggregates) {
+1651c1695,1696
+<                             map.put(nId, (NodeState) ism.getItemState(nId));
+---
+>                             NodeState nodeState = (NodeState) ism.getItemState(nId);
+>                             aggregates.put(nId, nodeState);
+1652a1698,1702
+> 
+>                             
+>                             int sizeBefore = aggregates.size();
+>                             retrieveAggregateRoot(nodeState, aggregates);
+>                             found += aggregates.size() - sizeBefore;

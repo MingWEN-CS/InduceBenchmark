@@ -1,0 +1,14 @@
+90a91,99
+>   private boolean isAlive(Process p) {
+>     try {
+>       p.exitValue();
+>       return false;
+>     } catch (IllegalThreadStateException e) {
+>       return true;
+>     }
+>   }
+> 
+140c149
+<             if (!p.isAlive()) {
+---
+>             if (!isAlive(p)) {

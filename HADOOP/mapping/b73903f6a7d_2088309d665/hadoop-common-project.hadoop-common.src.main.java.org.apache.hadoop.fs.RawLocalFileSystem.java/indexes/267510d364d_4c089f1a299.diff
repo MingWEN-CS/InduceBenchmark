@@ -1,0 +1,8 @@
+353c353
+<     String[] names = localf.list();
+---
+>     File[] names = localf.listFiles();
+361c361
+<         results[j] = getFileStatus(new Path(f, names[i]));
+---
+>         results[j] = getFileStatus(new Path(names[i].getAbsolutePath()));

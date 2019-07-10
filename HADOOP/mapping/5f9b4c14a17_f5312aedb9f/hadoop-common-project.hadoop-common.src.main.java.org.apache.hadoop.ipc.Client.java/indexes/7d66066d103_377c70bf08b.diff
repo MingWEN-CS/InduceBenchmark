@@ -1,0 +1,82 @@
+125,130d124
+<   private static final ExecutorService SEND_PARAMS_EXECUTOR = 
+<     Executors.newCachedThreadPool(
+<         new ThreadFactoryBuilder()
+<         .setDaemon(true)
+<         .setNameFormat("IPC Parameter Sending Thread #%d")
+<         .build());
+131a126,184
+>   private final ExecutorService sendParamsExecutor;
+>   private final static ClientExecutorServiceFactory clientExcecutorFactory =
+>       new ClientExecutorServiceFactory();
+> 
+>   private static class ClientExecutorServiceFactory {
+>     private int executorRefCount = 0;
+>     private ExecutorService clientExecutor = null;
+>     
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     synchronized ExecutorService refAndGetInstance() {
+>       if (executorRefCount == 0) {
+>         clientExecutor = Executors.newCachedThreadPool(
+>             new ThreadFactoryBuilder()
+>             .setDaemon(true)
+>             .setNameFormat("IPC Parameter Sending Thread #%d")
+>             .build());
+>       }
+>       executorRefCount++;
+>       
+>       return clientExecutor;
+>     }
+>     
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     synchronized ExecutorService unrefAndCleanup() {
+>       executorRefCount--;
+>       assert(executorRefCount >= 0);
+>       
+>       if (executorRefCount == 0) {
+>         clientExecutor.shutdown();
+>         try {
+>           if (!clientExecutor.awaitTermination(1, TimeUnit.MINUTES)) {
+>             clientExecutor.shutdownNow();
+>           }
+>         } catch (InterruptedException e) {
+>           LOG.error("Interrupted while waiting for clientExecutor" +
+>               "to stop", e);
+>           clientExecutor.shutdownNow();
+>         }
+>         clientExecutor = null;
+>       }
+>       
+>       return clientExecutor;
+>     }
+>   };
+204c257
+< 
+---
+>   
+891a945
+>       
+899c953
+<         Future<?> senderFuture = SEND_PARAMS_EXECUTOR.submit(new Runnable() {
+---
+>         Future<?> senderFuture = sendParamsExecutor.submit(new Runnable() {
+1094a1149
+>     this.sendParamsExecutor = clientExcecutorFactory.refAndGetInstance();
+1138a1194,1195
+>     
+>     clientExcecutorFactory.unrefAndCleanup();

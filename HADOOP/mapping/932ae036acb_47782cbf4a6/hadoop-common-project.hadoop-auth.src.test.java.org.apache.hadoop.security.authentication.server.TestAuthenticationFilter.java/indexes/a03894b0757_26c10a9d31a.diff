@@ -1,0 +1,228 @@
+41c41
+< import org.apache.hadoop.security.authentication.util.StringSignerSecretProvider;
+---
+> import org.apache.hadoop.security.authentication.util.StringSignerSecretProviderCreator;
+161c161,162
+<       Mockito.when(config.getInitParameter(AuthenticationFilter.AUTH_TOKEN_VALIDITY)).thenReturn(
+---
+>       Mockito.when(config.getInitParameter(
+>           AuthenticationFilter.AUTH_TOKEN_VALIDITY)).thenReturn(
+164,165c165,166
+<         new Vector<String>(Arrays.asList(AuthenticationFilter.AUTH_TYPE,
+<                                  AuthenticationFilter.AUTH_TOKEN_VALIDITY)).elements());
+---
+>           new Vector<String>(Arrays.asList(AuthenticationFilter.AUTH_TYPE,
+>                                            AuthenticationFilter.AUTH_TOKEN_VALIDITY)).elements());
+167,169c168,169
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+---
+>       Mockito.when(context.getAttribute(AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>           .thenReturn(null);
+193,213d192
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+<       filter.init(config);
+<       Assert.assertFalse(filter.isRandomSecret());
+<       Assert.assertFalse(filter.isCustomSignerSecretProvider());
+<     } finally {
+<       filter.destroy();
+<     }
+< 
+<     
+<     filter = new AuthenticationFilter();
+<     try {
+<       FilterConfig config = Mockito.mock(FilterConfig.class);
+<       Mockito.when(config.getInitParameter(AuthenticationFilter.AUTH_TYPE)).thenReturn("simple");
+<       Mockito.when(config.getInitParameter(AuthenticationFilter.SIGNATURE_SECRET)).thenReturn("secret");
+<       Mockito.when(config.getInitParameterNames()).thenReturn(
+<         new Vector<String>(Arrays.asList(AuthenticationFilter.AUTH_TYPE,
+<                                  AuthenticationFilter.SIGNATURE_SECRET)).elements());
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+281,285c260
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+306,310c281
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+348,352c319
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+375,379c342
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+394a358
+> 
+407,411c371,372
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       SignerSecretProvider secretProvider =
+>           getMockedServletContextWithStringSigner(config);
+416,421c377
+<       StringSignerSecretProvider secretProvider
+<               = new StringSignerSecretProvider();
+<       Properties secretProviderProps = new Properties();
+<       secretProviderProps.setProperty(
+<               AuthenticationFilter.SIGNATURE_SECRET, "secret");
+<       secretProvider.init(secretProviderProps, null, TOKEN_VALIDITY_SEC);
+---
+> 
+451,455c407
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+461,462c413,414
+<       StringSignerSecretProvider secretProvider
+<               = new StringSignerSecretProvider();
+---
+>       SignerSecretProvider secretProvider =
+>           StringSignerSecretProviderCreator.newStringSignerSecretProvider();
+503,507c455
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+512,513c460,461
+<       StringSignerSecretProvider secretProvider
+<               = new StringSignerSecretProvider();
+---
+>       SignerSecretProvider secretProvider =
+>           StringSignerSecretProviderCreator.newStringSignerSecretProvider();
+538a487,503
+>   private static SignerSecretProvider getMockedServletContextWithStringSigner(
+>       FilterConfig config) throws Exception {
+>     Properties secretProviderProps = new Properties();
+>     secretProviderProps.setProperty(AuthenticationFilter.SIGNATURE_SECRET,
+>                                     "secret");
+>     SignerSecretProvider secretProvider =
+>         StringSignerSecretProviderCreator.newStringSignerSecretProvider();
+>     secretProvider.init(secretProviderProps, null, TOKEN_VALIDITY_SEC);
+> 
+>     ServletContext context = Mockito.mock(ServletContext.class);
+>     Mockito.when(context.getAttribute(
+>             AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>             .thenReturn(secretProvider);
+>     Mockito.when(config.getServletContext()).thenReturn(context);
+>     return secretProvider;
+>   }
+> 
+552,556c517
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+606,610c567
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>     getMockedServletContextWithStringSigner(config);
+664,665c621,622
+<         StringSignerSecretProvider secretProvider
+<                 = new StringSignerSecretProvider();
+---
+>         SignerSecretProvider secretProvider =
+>             StringSignerSecretProviderCreator.newStringSignerSecretProvider();
+737,741c694
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+749,750c702,703
+<       StringSignerSecretProvider secretProvider
+<               = new StringSignerSecretProvider();
+---
+>       SignerSecretProvider secretProvider =
+>           StringSignerSecretProviderCreator.newStringSignerSecretProvider();
+798,802c751
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+866,870c815
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+878,879c823,824
+<       StringSignerSecretProvider secretProvider
+<               = new StringSignerSecretProvider();
+---
+>       SignerSecretProvider secretProvider =
+>           StringSignerSecretProviderCreator.newStringSignerSecretProvider();
+945,949c890
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+957,958c898,899
+<       StringSignerSecretProvider secretProvider
+<               = new StringSignerSecretProvider();
+---
+>       SignerSecretProvider secretProvider =
+>           StringSignerSecretProviderCreator.newStringSignerSecretProvider();
+992,996c933
+<       ServletContext context = Mockito.mock(ServletContext.class);
+<       Mockito.when(context.getAttribute(
+<               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+<               .thenReturn(null);
+<       Mockito.when(config.getServletContext()).thenReturn(context);
+---
+>       getMockedServletContextWithStringSigner(config);
+1016,1017c953,954
+<       StringSignerSecretProvider secretProvider
+<               = new StringSignerSecretProvider();
+---
+>       SignerSecretProvider secretProvider =
+>           StringSignerSecretProviderCreator.newStringSignerSecretProvider();

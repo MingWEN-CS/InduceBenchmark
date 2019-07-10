@@ -1,0 +1,21 @@
+73a74
+> import org.apache.solr.schema.IndexSchemaFactory;
+871c872
+<       schema = getSchemaFromZk(zkConfigName, dcore.getSchemaName(), config);
+---
+>       schema = IndexSchemaFactory.buildIndexSchema(dcore.getSchemaName(), config);
+915c916
+<           schema = new IndexSchema(config, dcore.getSchemaName(), null);
+---
+>           schema = IndexSchemaFactory.buildIndexSchema(dcore.getSchemaName(), config);
+924c925
+<       schema = new IndexSchema(config, dcore.getSchemaName(), null);
+---
+>       schema = IndexSchemaFactory.buildIndexSchema(dcore.getSchemaName(), config);
+1364,1369d1364
+< 
+<   private IndexSchema getSchemaFromZk(String zkConfigName, String schemaName,
+<       SolrConfig config)
+<       throws KeeperException, InterruptedException {
+<     return cfg.getSchemaFromZk(zkController, zkConfigName, schemaName, config);
+<   }

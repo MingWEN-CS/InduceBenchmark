@@ -1,0 +1,238 @@
+23d22
+< import org.apache.lucene.util.ScorerDocQueue;
+27,34c26
+< 
+< class DisjunctionSumScorer extends Scorer {
+<    
+<   private final int nrScorers;
+<   
+<   
+<   protected final List<Scorer> subScorers;
+<   
+---
+> class DisjunctionSumScorer extends DisjunctionScorer { 
+39,53c31
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   private final ScorerDocQueue scorerDocQueue;
+<   
+<   
+<   private int currentDoc = -1;
+---
+>   private int doc = -1;
+58c36
+<   private double currentScore = Float.NaN;
+---
+>   private double score = Float.NaN;
+72,74c50
+<     super(weight);
+<     
+<     nrScorers = subScorers.size();
+---
+>     super(weight, subScorers.toArray(new Scorer[subScorers.size()]), subScorers.size());
+79c55
+<     if (nrScorers <= 1) {
+---
+>     if (numScorers <= 1) {
+84,86d59
+<     this.subScorers = subScorers;
+< 
+<     scorerDocQueue  = initScorerDocQueue();
+96,104c69,84
+<   
+< 
+< 
+< 
+<   private ScorerDocQueue initScorerDocQueue() throws IOException {
+<     final ScorerDocQueue docQueue = new ScorerDocQueue(nrScorers);
+<     for (final Scorer se : subScorers) {
+<       if (se.nextDoc() != NO_MORE_DOCS) {
+<         docQueue.insert(se);
+---
+>   @Override
+>   public int nextDoc() throws IOException {
+>     while(true) {
+>       while (subScorers[0].docID() == doc) {
+>         if (subScorers[0].nextDoc() != NO_MORE_DOCS) {
+>           heapAdjust(0);
+>         } else {
+>           heapRemoveRoot();
+>           if (numScorers < minimumNrMatchers) {
+>             return doc = NO_MORE_DOCS;
+>           }
+>         }
+>       }
+>       afterNext();
+>       if (nrMatchers >= minimumNrMatchers) {
+>         break;
+107c87,88
+<     return docQueue; 
+---
+>     
+>     return doc;
+109d89
+< 
+111,118c91,97
+< 
+< 
+<   @Override
+<   public void score(Collector collector) throws IOException {
+<     collector.setScorer(this);
+<     while (nextDoc() != NO_MORE_DOCS) {
+<       collector.collect(currentDoc);
+<     }
+---
+>   private void afterNext() throws IOException {
+>     final Scorer sub = subScorers[0];
+>     doc = sub.docID();
+>     score = sub.score();
+>     nrMatchers = 1;
+>     countMatches(1);
+>     countMatches(2);
+120d98
+< 
+122,149d99
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Override
+<   public boolean score(Collector collector, int max, int firstDocID) throws IOException {
+<     
+<     collector.setScorer(this);
+<     while (currentDoc < max) {
+<       collector.collect(currentDoc);
+<       if (nextDoc() == NO_MORE_DOCS) {
+<         return false;
+<       }
+<     }
+<     return true;
+<   }
+< 
+<   @Override
+<   public int nextDoc() throws IOException {
+<     
+<     if (scorerDocQueue.size() < minimumNrMatchers || !advanceAfterCurrent()) {
+<       currentDoc = NO_MORE_DOCS;
+<     }
+<     return currentDoc;
+<   }
+< 
+151,191c101,111
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   protected boolean advanceAfterCurrent() throws IOException {
+<     do { 
+<       currentDoc = scorerDocQueue.topDoc();
+<       currentScore = scorerDocQueue.topScore();
+<       nrMatchers = 1;
+<       do { 
+<         if (!scorerDocQueue.topNextAndAdjustElsePop()) {
+<           if (scorerDocQueue.size() == 0) {
+<             break; 
+<           }
+<         }
+<         if (scorerDocQueue.topDoc() != currentDoc) {
+<           break; 
+<         }
+<         currentScore += scorerDocQueue.topScore();
+<         nrMatchers++;
+<       } while (true);
+<       
+<       if (nrMatchers >= minimumNrMatchers) {
+<         return true;
+<       } else if (scorerDocQueue.size() < minimumNrMatchers) {
+<         return false;
+<       }
+<     } while (true);
+---
+>   
+>   
+>   
+>   
+>   private void countMatches(int root) throws IOException {
+>     if (root < numScorers && subScorers[root].docID() == doc) {
+>       nrMatchers++;
+>       score += subScorers[root].score();
+>       countMatches((root<<1)+1);
+>       countMatches((root<<1)+2);
+>     }
+198c118,120
+<   public float score() throws IOException { return (float)currentScore; }
+---
+>   public float score() throws IOException { 
+>     return (float)score; 
+>   }
+202c124
+<     return currentDoc;
+---
+>     return doc;
+204,205d125
+<   
+<   
+207,208c127,128
+< 
+<   public int nrMatchers() {
+---
+>   @Override
+>   public float freq() throws IOException {
+224,235c144,151
+<     if (scorerDocQueue.size() < minimumNrMatchers) {
+<       return currentDoc = NO_MORE_DOCS;
+<     }
+<     if (target <= currentDoc) {
+<       return currentDoc;
+<     }
+<     do {
+<       if (scorerDocQueue.topDoc() >= target) {
+<         return advanceAfterCurrent() ? currentDoc : (currentDoc = NO_MORE_DOCS);
+<       } else if (!scorerDocQueue.topSkipToAndAdjustElsePop(target)) {
+<         if (scorerDocQueue.size() < minimumNrMatchers) {
+<           return currentDoc = NO_MORE_DOCS;
+---
+>     if (numScorers == 0) return doc = NO_MORE_DOCS;
+>     while (subScorers[0].docID() < target) {
+>       if (subScorers[0].advance(target) != NO_MORE_DOCS) {
+>         heapAdjust(0);
+>       } else {
+>         heapRemoveRoot();
+>         if (numScorers == 0) {
+>           return doc = NO_MORE_DOCS;
+238c154,162
+<     } while (true);
+---
+>     }
+>     
+>     afterNext();
+> 
+>     if (nrMatchers >= minimumNrMatchers) {
+>       return doc;
+>     } else {
+>       return nextDoc();
+>     }

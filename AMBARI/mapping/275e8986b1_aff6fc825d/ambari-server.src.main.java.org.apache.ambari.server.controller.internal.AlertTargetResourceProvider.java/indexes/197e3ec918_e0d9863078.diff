@@ -1,0 +1,71 @@
+33a34
+> import org.apache.ambari.server.api.resources.AlertTargetResourceDefinition;
+43a45,46
+> import org.apache.ambari.server.notifications.DispatchFactory;
+> import org.apache.ambari.server.notifications.NotificationDispatcher;
+107a111,113
+>   @Inject
+>   private static DispatchFactory dispatchFactory;
+> 
+129c135
+<         createAlertTargets(request.getProperties());
+---
+>         createAlertTargets(request.getProperties(), request.getRequestInfoProperties());
+229a236
+> 
+231c238
+<   private void createAlertTargets(Set<Map<String, Object>> requestMaps)
+---
+>   private void createAlertTargets(Set<Map<String, Object>> requestMaps, Map<String, String> requestInfoProps)
+253,254c260,263
+<       String properties = extractProperties(requestMap);
+<       if (StringUtils.isEmpty(properties)) {
+---
+>       Map<String, String> properties = extractProperties(requestMap);
+> 
+>       String propertiesJson = s_gson.toJson(properties);
+>       if (StringUtils.isEmpty(propertiesJson)) {
+258a268,272
+>       String validationProperty =  requestInfoProps.get(AlertTargetResourceDefinition.VALIDATE_CONFIG_DIRECTIVE);
+>       if (validationProperty != null && validationProperty.equalsIgnoreCase("true")) {
+>         validateTargetConfig(notificationType, properties);
+>       }
+> 
+289c303
+<       entity.setProperties(properties);
+---
+>       entity.setProperties(propertiesJson);
+347c361
+<       String properties = extractProperties(requestMap);
+---
+>       String properties = s_gson.toJson(extractProperties(requestMap));
+451,452c465,466
+<   private String extractProperties( Map<String, Object> requestMap ){
+<     Map<String, Object> normalizedMap = new HashMap<String, Object>(
+---
+>   private Map<String, String> extractProperties(Map<String, Object> requestMap) {
+>     Map<String, String> normalizedMap = new HashMap<String, String>(
+461c475
+<         normalizedMap.put(propKey, entry.getValue());
+---
+>         normalizedMap.put(propKey, entry.getValue().toString());
+465c479,495
+<     return s_gson.toJson(normalizedMap);
+---
+>     return normalizedMap;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+>   private void validateTargetConfig(String notificationType, Map<String, String> properties) {
+>     NotificationDispatcher dispatcher = dispatchFactory.getDispatcher(notificationType);
+>     if (dispatcher == null) {
+>       throw new IllegalArgumentException("Dispatcher for given notification type doesn't exist");
+>     }
+>     NotificationDispatcher.ConfigValidationResult validationResult = dispatcher.validateTargetConfig(properties);
+>     if (validationResult.getStatus() == NotificationDispatcher.ConfigValidationResult.Status.INVALID) {
+>       throw new IllegalArgumentException(validationResult.getMessage());
+>     }

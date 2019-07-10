@@ -1,0 +1,4171 @@
+package org.apache.lucene.index;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Similarity;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.Lock;
+import org.apache.lucene.store.LockObtainFailedException;
+import org.apache.lucene.store.AlreadyClosedException;
+import org.apache.lucene.util.BitVector;
+import org.apache.lucene.util.Constants;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class IndexWriter {
+
+  
+
+
+
+  public static long WRITE_LOCK_TIMEOUT = 1000;
+
+  private long writeLockTimeout = WRITE_LOCK_TIMEOUT;
+
+  
+
+
+  public static final String WRITE_LOCK_NAME = "write.lock";
+
+  
+
+
+
+  public final static int DEFAULT_MERGE_FACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
+
+  
+
+
+  public final static int DISABLE_AUTO_FLUSH = -1;
+
+  
+
+
+
+  public final static int DEFAULT_MAX_BUFFERED_DOCS = DISABLE_AUTO_FLUSH;
+
+  
+
+
+
+  public final static double DEFAULT_RAM_BUFFER_SIZE_MB = 16.0;
+
+  
+
+
+
+  public final static int DEFAULT_MAX_BUFFERED_DELETE_TERMS = DISABLE_AUTO_FLUSH;
+
+  
+
+
+
+  public final static int DEFAULT_MAX_MERGE_DOCS = LogDocMergePolicy.DEFAULT_MAX_MERGE_DOCS;
+
+  
+
+
+  public final static int DEFAULT_MAX_FIELD_LENGTH = 10000;
+
+  
+
+
+  public final static int DEFAULT_TERM_INDEX_INTERVAL = 128;
+
+  
+
+
+
+
+
+  public final static int MAX_TERM_LENGTH = DocumentsWriter.MAX_TERM_LENGTH;
+
+  
+
+
+
+
+  public final static double DEFAULT_MAX_SYNC_PAUSE_SECONDS;
+  static {
+    if (Constants.WINDOWS)
+      DEFAULT_MAX_SYNC_PAUSE_SECONDS = 10.0;
+    else
+      DEFAULT_MAX_SYNC_PAUSE_SECONDS = 0.0;
+  }
+
+  
+  
+  
+  
+  
+  
+  private final static int MERGE_READ_BUFFER_SIZE = 4096;
+
+  
+  private static Object MESSAGE_ID_LOCK = new Object();
+  private static int MESSAGE_ID = 0;
+  private int messageID = -1;
+
+  private Directory directory;  
+  private Analyzer analyzer;    
+
+  private Similarity similarity = Similarity.getDefault(); 
+
+  private volatile boolean commitPending; 
+  private SegmentInfos rollbackSegmentInfos;      
+  private HashMap rollbackSegments;
+
+  private SegmentInfos localRollbackSegmentInfos;      
+  private boolean localAutoCommit;                
+  private boolean autoCommit = true;              
+
+  private SegmentInfos segmentInfos = new SegmentInfos();       
+  private int syncCount;
+  private int syncCountSaved = -1;
+
+  private DocumentsWriter docWriter;
+  private IndexFileDeleter deleter;
+
+  private Set segmentsToOptimize = new HashSet();           
+
+  private Lock writeLock;
+
+  private int termIndexInterval = DEFAULT_TERM_INDEX_INTERVAL;
+
+  private boolean closeDir;
+  private boolean closed;
+  private boolean closing;
+
+  
+  
+  private HashSet mergingSegments = new HashSet();
+
+  private MergePolicy mergePolicy = new LogByteSizeMergePolicy();
+  private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
+  private LinkedList pendingMerges = new LinkedList();
+  private Set runningMerges = new HashSet();
+  private List mergeExceptions = new ArrayList();
+  private long mergeGen;
+  private boolean stopMerges;
+
+  private int flushCount;
+  private double maxSyncPauseSeconds = DEFAULT_MAX_SYNC_PAUSE_SECONDS;
+
+  
+  private SegmentInfo lastMergeInfo;
+
+  
+
+
+
+
+
+  protected final void ensureOpen() throws AlreadyClosedException {
+    if (closed) {
+      throw new AlreadyClosedException("this IndexWriter is closed");
+    }
+  }
+
+  
+
+
+
+
+  public void message(String message) {
+    if (infoStream != null)
+      infoStream.println("IW " + messageID + " [" + Thread.currentThread().getName() + "]: " + message);
+  }
+
+  private synchronized void setMessageID() {
+    if (infoStream != null && messageID == -1) {
+      synchronized(MESSAGE_ID_LOCK) {
+        messageID = MESSAGE_ID++;
+      }
+    }
+  }
+
+  
+
+
+
+  private LogMergePolicy getLogMergePolicy() {
+    if (mergePolicy instanceof LogMergePolicy)
+      return (LogMergePolicy) mergePolicy;
+    else
+      throw new IllegalArgumentException("this method can only be called when the merge policy is the default LogMergePolicy");
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public boolean getUseCompoundFile() {
+    return getLogMergePolicy().getUseCompoundFile();
+  }
+
+  
+
+
+
+
+
+
+
+
+  public void setUseCompoundFile(boolean value) {
+    getLogMergePolicy().setUseCompoundFile(value);
+    getLogMergePolicy().setUseCompoundDocStore(value);
+  }
+
+  
+
+
+
+  public void setSimilarity(Similarity similarity) {
+    ensureOpen();
+    this.similarity = similarity;
+  }
+
+  
+
+
+
+  public Similarity getSimilarity() {
+    ensureOpen();
+    return this.similarity;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setTermIndexInterval(int interval) {
+    ensureOpen();
+    this.termIndexInterval = interval;
+  }
+
+  
+
+
+
+  public int getTermIndexInterval() {
+    ensureOpen();
+    return termIndexInterval;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(String path, Analyzer a, boolean create, MaxFieldLength mfl)
+       throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(FSDirectory.getDirectory(path), a, create, true, null, true, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(String path, Analyzer a, boolean create)
+       throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(FSDirectory.getDirectory(path), a, create, true, null, true, DEFAULT_MAX_FIELD_LENGTH);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(File path, Analyzer a, boolean create, MaxFieldLength mfl)
+       throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(FSDirectory.getDirectory(path), a, create, true, null, true, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(File path, Analyzer a, boolean create)
+       throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(FSDirectory.getDirectory(path), a, create, true, null, true, DEFAULT_MAX_FIELD_LENGTH);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, Analyzer a, boolean create, MaxFieldLength mfl)
+       throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, create, false, null, true, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, Analyzer a, boolean create)
+       throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, create, false, null, true, DEFAULT_MAX_FIELD_LENGTH);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(String path, Analyzer a, MaxFieldLength mfl)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(FSDirectory.getDirectory(path), a, true, null, true, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(String path, Analyzer a)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(FSDirectory.getDirectory(path), a, true, null, true, DEFAULT_MAX_FIELD_LENGTH);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(File path, Analyzer a, MaxFieldLength mfl)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(FSDirectory.getDirectory(path), a, true, null, true, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(File path, Analyzer a)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(FSDirectory.getDirectory(path), a, true, null, true, DEFAULT_MAX_FIELD_LENGTH);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, Analyzer a, MaxFieldLength mfl)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, false, null, true, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, Analyzer a)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, false, null, true, DEFAULT_MAX_FIELD_LENGTH);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, boolean autoCommit, Analyzer a, MaxFieldLength mfl)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, false, null, autoCommit, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, boolean autoCommit, Analyzer a)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, false, null, autoCommit, DEFAULT_MAX_FIELD_LENGTH);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, boolean autoCommit, Analyzer a, boolean create, MaxFieldLength mfl)
+       throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, create, false, null, autoCommit, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, boolean autoCommit, Analyzer a, boolean create)
+       throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, create, false, null, autoCommit, DEFAULT_MAX_FIELD_LENGTH);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, false, deletionPolicy, true, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, boolean autoCommit, Analyzer a, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, false, deletionPolicy, autoCommit, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, boolean autoCommit, Analyzer a, IndexDeletionPolicy deletionPolicy)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, false, deletionPolicy, autoCommit, DEFAULT_MAX_FIELD_LENGTH);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, Analyzer a, boolean create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
+       throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, create, false, deletionPolicy, true, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, boolean autoCommit, Analyzer a, boolean create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
+       throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, create, false, deletionPolicy, autoCommit, mfl.getLimit());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public IndexWriter(Directory d, boolean autoCommit, Analyzer a, boolean create, IndexDeletionPolicy deletionPolicy)
+          throws CorruptIndexException, LockObtainFailedException, IOException {
+    init(d, a, create, false, deletionPolicy, autoCommit, DEFAULT_MAX_FIELD_LENGTH);
+  }
+
+  private void init(Directory d, Analyzer a, boolean closeDir, IndexDeletionPolicy deletionPolicy, boolean autoCommit, int maxFieldLength)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    if (IndexReader.indexExists(d)) {
+      init(d, a, false, closeDir, deletionPolicy, autoCommit, maxFieldLength);
+    } else {
+      init(d, a, true, closeDir, deletionPolicy, autoCommit, maxFieldLength);
+    }
+  }
+
+  private void init(Directory d, Analyzer a, final boolean create, boolean closeDir, IndexDeletionPolicy deletionPolicy, boolean autoCommit, int maxFieldLength)
+    throws CorruptIndexException, LockObtainFailedException, IOException {
+    this.closeDir = closeDir;
+    directory = d;
+    analyzer = a;
+    this.infoStream = defaultInfoStream;
+    this.maxFieldLength = maxFieldLength;
+    setMessageID();
+
+    if (create) {
+      
+      directory.clearLock(IndexWriter.WRITE_LOCK_NAME);
+    }
+
+    Lock writeLock = directory.makeLock(IndexWriter.WRITE_LOCK_NAME);
+    if (!writeLock.obtain(writeLockTimeout)) 
+      throw new LockObtainFailedException("Index locked for write: " + writeLock);
+    this.writeLock = writeLock;                   
+
+    try {
+      if (create) {
+        
+        
+        
+        
+        try {
+          segmentInfos.read(directory);
+          segmentInfos.clear();
+        } catch (IOException e) {
+          
+        }
+        segmentInfos.commit(directory);
+      } else {
+        segmentInfos.read(directory);
+
+        
+        
+        for(int i=0;i<segmentInfos.size();i++) {
+          final SegmentInfo info = segmentInfos.info(i);
+          List files = info.files();
+          for(int j=0;j<files.size();j++)
+            synced.add(files.get(j));
+        }
+      }
+
+      this.autoCommit = autoCommit;
+      setRollbackSegmentInfos();
+
+      docWriter = new DocumentsWriter(directory, this);
+      docWriter.setInfoStream(infoStream);
+
+      
+      
+      deleter = new IndexFileDeleter(directory,
+                                     deletionPolicy == null ? new KeepOnlyLastCommitDeletionPolicy() : deletionPolicy,
+                                     segmentInfos, infoStream, docWriter);
+
+      pushMaxBufferedDocs();
+
+      if (infoStream != null) {
+        message("init: create=" + create);
+        messageState();
+      }
+
+    } catch (IOException e) {
+      this.writeLock.release();
+      this.writeLock = null;
+      throw e;
+    }
+  }
+
+  private void setRollbackSegmentInfos() {
+    rollbackSegmentInfos = (SegmentInfos) segmentInfos.clone();
+    rollbackSegments = new HashMap();
+    final int size = rollbackSegmentInfos.size();
+    for(int i=0;i<size;i++)
+      rollbackSegments.put(rollbackSegmentInfos.info(i), new Integer(i));
+  }
+
+  
+
+
+  public void setMergePolicy(MergePolicy mp) {
+    ensureOpen();
+    if (mp == null)
+      throw new NullPointerException("MergePolicy must be non-null");
+
+    if (mergePolicy != mp)
+      mergePolicy.close();
+    mergePolicy = mp;
+    pushMaxBufferedDocs();
+    if (infoStream != null)
+      message("setMergePolicy " + mp);
+  }
+
+  
+
+
+
+  public MergePolicy getMergePolicy() {
+    ensureOpen();
+    return mergePolicy;
+  }
+
+  
+
+
+  public void setMergeScheduler(MergeScheduler mergeScheduler) throws CorruptIndexException, IOException {
+    ensureOpen();
+    if (mergeScheduler == null)
+      throw new NullPointerException("MergeScheduler must be non-null");
+
+    if (this.mergeScheduler != mergeScheduler) {
+      finishMerges(true);
+      this.mergeScheduler.close();
+    }
+    this.mergeScheduler = mergeScheduler;
+    if (infoStream != null)
+      message("setMergeScheduler " + mergeScheduler);
+  }
+
+  
+
+
+
+
+  public MergeScheduler getMergeScheduler() {
+    ensureOpen();
+    return mergeScheduler;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setMaxMergeDocs(int maxMergeDocs) {
+    getLogMergePolicy().setMaxMergeDocs(maxMergeDocs);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public int getMaxMergeDocs() {
+    return getLogMergePolicy().getMaxMergeDocs();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setMaxFieldLength(int maxFieldLength) {
+    ensureOpen();
+    this.maxFieldLength = maxFieldLength;
+    if (infoStream != null)
+      message("setMaxFieldLength " + maxFieldLength);
+  }
+
+  
+
+
+
+
+  public int getMaxFieldLength() {
+    ensureOpen();
+    return maxFieldLength;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setMaxBufferedDocs(int maxBufferedDocs) {
+    ensureOpen();
+    if (maxBufferedDocs != DISABLE_AUTO_FLUSH && maxBufferedDocs < 2)
+      throw new IllegalArgumentException(
+          "maxBufferedDocs must at least be 2 when enabled");
+    if (maxBufferedDocs == DISABLE_AUTO_FLUSH
+        && getRAMBufferSizeMB() == DISABLE_AUTO_FLUSH)
+      throw new IllegalArgumentException(
+          "at least one of ramBufferSize and maxBufferedDocs must be enabled");
+    docWriter.setMaxBufferedDocs(maxBufferedDocs);
+    pushMaxBufferedDocs();
+    if (infoStream != null)
+      message("setMaxBufferedDocs " + maxBufferedDocs);
+  }
+
+  
+
+
+
+
+  private void pushMaxBufferedDocs() {
+    if (docWriter.getMaxBufferedDocs() != DISABLE_AUTO_FLUSH) {
+      final MergePolicy mp = mergePolicy;
+      if (mp instanceof LogDocMergePolicy) {
+        LogDocMergePolicy lmp = (LogDocMergePolicy) mp;
+        final int maxBufferedDocs = docWriter.getMaxBufferedDocs();
+        if (lmp.getMinMergeDocs() != maxBufferedDocs) {
+          if (infoStream != null)
+            message("now push maxBufferedDocs " + maxBufferedDocs + " to LogDocMergePolicy");
+          lmp.setMinMergeDocs(maxBufferedDocs);
+        }
+      }
+    }
+  }
+
+  
+
+
+
+
+  public int getMaxBufferedDocs() {
+    ensureOpen();
+    return docWriter.getMaxBufferedDocs();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setRAMBufferSizeMB(double mb) {
+    if (mb != DISABLE_AUTO_FLUSH && mb <= 0.0)
+      throw new IllegalArgumentException(
+          "ramBufferSize should be > 0.0 MB when enabled");
+    if (mb == DISABLE_AUTO_FLUSH && getMaxBufferedDocs() == DISABLE_AUTO_FLUSH)
+      throw new IllegalArgumentException(
+          "at least one of ramBufferSize and maxBufferedDocs must be enabled");
+    docWriter.setRAMBufferSizeMB(mb);
+    if (infoStream != null)
+      message("setRAMBufferSizeMB " + mb);
+  }
+
+  
+
+
+  public double getRAMBufferSizeMB() {
+    return docWriter.getRAMBufferSizeMB();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public void setMaxBufferedDeleteTerms(int maxBufferedDeleteTerms) {
+    ensureOpen();
+    if (maxBufferedDeleteTerms != DISABLE_AUTO_FLUSH
+        && maxBufferedDeleteTerms < 1)
+      throw new IllegalArgumentException(
+          "maxBufferedDeleteTerms must at least be 1 when enabled");
+    docWriter.setMaxBufferedDeleteTerms(maxBufferedDeleteTerms);
+    if (infoStream != null)
+      message("setMaxBufferedDeleteTerms " + maxBufferedDeleteTerms);
+  }
+
+  
+
+
+
+
+  public int getMaxBufferedDeleteTerms() {
+    ensureOpen();
+    return docWriter.getMaxBufferedDeleteTerms();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void setMergeFactor(int mergeFactor) {
+    getLogMergePolicy().setMergeFactor(mergeFactor);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public int getMergeFactor() {
+    return getLogMergePolicy().getMergeFactor();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  public double getMaxSyncPauseSeconds() {
+    return maxSyncPauseSeconds;
+  }
+
+  
+
+
+
+
+
+
+  public void setMaxSyncPauseSeconds(double seconds) {
+    maxSyncPauseSeconds = seconds;
+  }
+
+  
+
+
+
+  public static void setDefaultInfoStream(PrintStream infoStream) {
+    IndexWriter.defaultInfoStream = infoStream;
+  }
+
+  
+
+
+
+
+  public static PrintStream getDefaultInfoStream() {
+    return IndexWriter.defaultInfoStream;
+  }
+
+  
+
+
+
+  public void setInfoStream(PrintStream infoStream) {
+    ensureOpen();
+    this.infoStream = infoStream;
+    setMessageID();
+    docWriter.setInfoStream(infoStream);
+    deleter.setInfoStream(infoStream);
+    if (infoStream != null)
+      messageState();
+  }
+
+  private void messageState() {
+    message("setInfoStream: dir=" + directory +
+            " autoCommit=" + autoCommit +
+            " mergePolicy=" + mergePolicy +
+            " mergeScheduler=" + mergeScheduler +
+            " ramBufferSizeMB=" + docWriter.getRAMBufferSizeMB() +
+            " maxBuffereDocs=" + docWriter.getMaxBufferedDocs() +
+            " maxBuffereDeleteTerms=" + docWriter.getMaxBufferedDeleteTerms() +
+            " maxFieldLength=" + maxFieldLength +
+            " index=" + segString());
+  }
+
+  
+
+
+
+  public PrintStream getInfoStream() {
+    ensureOpen();
+    return infoStream;
+  }
+
+  
+
+
+
+  public void setWriteLockTimeout(long writeLockTimeout) {
+    ensureOpen();
+    this.writeLockTimeout = writeLockTimeout;
+  }
+
+  
+
+
+
+  public long getWriteLockTimeout() {
+    ensureOpen();
+    return writeLockTimeout;
+  }
+
+  
+
+
+
+  public static void setDefaultWriteLockTimeout(long writeLockTimeout) {
+    IndexWriter.WRITE_LOCK_TIMEOUT = writeLockTimeout;
+  }
+
+  
+
+
+
+
+  public static long getDefaultWriteLockTimeout() {
+    return IndexWriter.WRITE_LOCK_TIMEOUT;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void close() throws CorruptIndexException, IOException {
+    close(true);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public void close(boolean waitForMerges) throws CorruptIndexException, IOException {
+    boolean doClose;
+    synchronized(this) {
+      
+      if (!closing) {
+        doClose = true;
+        closing = true;
+      } else
+        doClose = false;
+    }
+    if (doClose)
+      closeInternal(waitForMerges);
+    else
+      
+      
+      
+      waitForClose();
+  }
+
+  synchronized private void waitForClose() {
+    while(!closed && closing) {
+      try {
+        wait();
+      } catch (InterruptedException ie) {
+      }
+    }
+  }
+
+  private void closeInternal(boolean waitForMerges) throws CorruptIndexException, IOException {
+    try {
+      if (infoStream != null)
+        message("now flush at close");
+
+      docWriter.close();
+
+      
+      
+      flush(waitForMerges, true);
+
+      mergePolicy.close();
+
+      finishMerges(waitForMerges);
+
+      mergeScheduler.close();
+
+      if (infoStream != null)
+        message("now call final sync()");
+
+      sync(true, 0);
+
+      if (infoStream != null)
+        message("at close: " + segString());
+
+      synchronized(this) {
+        docWriter = null;
+        deleter.close();
+      }
+      
+      if (closeDir)
+        directory.close();
+
+      if (writeLock != null) {
+        writeLock.release();                          
+        writeLock = null;
+      }
+      synchronized(this) {
+        closed = true;
+      }
+
+    } finally {
+      synchronized(this) {
+        if (!closed)
+          closing = false;
+        notifyAll();
+      }
+    }
+  }
+
+  
+
+
+
+  private synchronized boolean flushDocStores() throws IOException {
+
+    List files = docWriter.files();
+
+    boolean useCompoundDocStore = false;
+
+    if (files.size() > 0) {
+      String docStoreSegment;
+
+      boolean success = false;
+      try {
+        docStoreSegment = docWriter.closeDocStore();
+        success = true;
+      } finally {
+        if (!success) {
+          if (infoStream != null)
+            message("hit exception closing doc store segment");
+          docWriter.abort(null);
+        }
+      }
+
+      useCompoundDocStore = mergePolicy.useCompoundDocStore(segmentInfos);
+      
+      if (useCompoundDocStore && docStoreSegment != null) {
+        
+
+        success = false;
+
+        final int numSegments = segmentInfos.size();
+        final String compoundFileName = docStoreSegment + "." + IndexFileNames.COMPOUND_FILE_STORE_EXTENSION;
+
+        try {
+          CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, compoundFileName);
+          final int size = files.size();
+          for(int i=0;i<size;i++)
+            cfsWriter.addFile((String) files.get(i));
+      
+          
+          cfsWriter.close();
+          success = true;
+
+        } finally {
+          if (!success) {
+            if (infoStream != null)
+              message("hit exception building compound file doc store for segment " + docStoreSegment);
+            deleter.deleteFile(compoundFileName);
+          }
+        }
+
+        for(int i=0;i<numSegments;i++) {
+          SegmentInfo si = segmentInfos.info(i);
+          if (si.getDocStoreOffset() != -1 &&
+              si.getDocStoreSegment().equals(docStoreSegment))
+            si.setDocStoreIsCompoundFile(true);
+        }
+
+        checkpoint();
+      }
+    }
+
+    return useCompoundDocStore;
+  }
+
+  
+  protected void finalize() throws Throwable {
+    try {
+      if (writeLock != null) {
+        writeLock.release();                        
+        writeLock = null;
+      }
+    } finally {
+      super.finalize();
+    }
+  }
+
+  
+  public Directory getDirectory() {
+    ensureOpen();
+    return directory;
+  }
+
+  
+  public Analyzer getAnalyzer() {
+    ensureOpen();
+    return analyzer;
+  }
+
+  
+  public synchronized int docCount() {
+    ensureOpen();
+    int count = docWriter.getNumDocsInRAM();
+    for (int i = 0; i < segmentInfos.size(); i++) {
+      SegmentInfo si = segmentInfos.info(i);
+      count += si.docCount;
+    }
+    return count;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  private int maxFieldLength;
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void addDocument(Document doc) throws CorruptIndexException, IOException {
+    addDocument(doc, analyzer);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  public void addDocument(Document doc, Analyzer analyzer) throws CorruptIndexException, IOException {
+    ensureOpen();
+    boolean doFlush = false;
+    boolean success = false;
+    try {
+      doFlush = docWriter.addDocument(doc, analyzer);
+      success = true;
+    } finally {
+      if (!success) {
+
+        if (infoStream != null)
+          message("hit exception adding document");
+
+        synchronized (this) {
+          
+          
+          if (docWriter != null) {
+            final List files = docWriter.abortedFiles();
+            if (files != null)
+              deleter.deleteNewFiles(files);
+          }
+        }
+      }
+    }
+    if (doFlush)
+      flush(true, false);
+  }
+
+  
+
+
+
+
+
+  public void deleteDocuments(Term term) throws CorruptIndexException, IOException {
+    ensureOpen();
+    boolean doFlush = docWriter.bufferDeleteTerm(term);
+    if (doFlush)
+      flush(true, false);
+  }
+
+  
+
+
+
+
+
+
+
+  public void deleteDocuments(Term[] terms) throws CorruptIndexException, IOException {
+    ensureOpen();
+    boolean doFlush = docWriter.bufferDeleteTerms(terms);
+    if (doFlush)
+      flush(true, false);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public void updateDocument(Term term, Document doc) throws CorruptIndexException, IOException {
+    ensureOpen();
+    updateDocument(term, doc, getAnalyzer());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  public void updateDocument(Term term, Document doc, Analyzer analyzer)
+      throws CorruptIndexException, IOException {
+    ensureOpen();
+    boolean doFlush = false;
+    boolean success = false;
+    try {
+      doFlush = docWriter.updateDocument(term, doc, analyzer);
+      success = true;
+    } finally {
+      if (!success) {
+
+        if (infoStream != null)
+          message("hit exception updating document");
+
+        synchronized (this) {
+          
+          
+          final List files = docWriter.abortedFiles();
+          if (files != null)
+            deleter.deleteNewFiles(files);
+        }
+      }
+    }
+    if (doFlush)
+      flush(true, false);
+  }
+
+  
+  final synchronized int getSegmentCount(){
+    return segmentInfos.size();
+  }
+
+  
+  final synchronized int getNumBufferedDocuments(){
+    return docWriter.getNumDocsInRAM();
+  }
+
+  
+  final synchronized int getDocCount(int i) {
+    if (i >= 0 && i < segmentInfos.size()) {
+      return segmentInfos.info(i).docCount;
+    } else {
+      return -1;
+    }
+  }
+
+  
+  final synchronized int getFlushCount() {
+    return flushCount;
+  }
+
+  final String newSegmentName() {
+    
+    
+    synchronized(segmentInfos) {
+      
+      
+      
+      
+      
+      commitPending = true;
+      return "_" + Integer.toString(segmentInfos.counter++, Character.MAX_RADIX);
+    }
+  }
+
+  
+
+  private PrintStream infoStream = null;
+  private static PrintStream defaultInfoStream = null;
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void optimize() throws CorruptIndexException, IOException {
+    optimize(true);
+  }
+
+  
+
+
+
+
+
+
+  public void optimize(int maxNumSegments) throws CorruptIndexException, IOException {
+    optimize(maxNumSegments, true);
+  }
+
+  
+
+
+
+
+  public void optimize(boolean doWait) throws CorruptIndexException, IOException {
+    optimize(1, true);
+  }
+
+  
+
+
+
+
+  public void optimize(int maxNumSegments, boolean doWait) throws CorruptIndexException, IOException {
+    ensureOpen();
+
+    if (maxNumSegments < 1)
+      throw new IllegalArgumentException("maxNumSegments must be >= 1; got " + maxNumSegments);
+
+    if (infoStream != null)
+      message("optimize: index now " + segString());
+
+    flush(true, false);
+
+    synchronized(this) {
+      resetMergeExceptions();
+      segmentsToOptimize = new HashSet();
+      final int numSegments = segmentInfos.size();
+      for(int i=0;i<numSegments;i++)
+        segmentsToOptimize.add(segmentInfos.info(i));
+      
+      
+      
+      Iterator it = pendingMerges.iterator();
+      while(it.hasNext()) {
+        final MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.next();
+        merge.optimize = true;
+        merge.maxNumSegmentsOptimize = maxNumSegments;
+      }
+
+      it = runningMerges.iterator();
+      while(it.hasNext()) {
+        final MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.next();
+        merge.optimize = true;
+        merge.maxNumSegmentsOptimize = maxNumSegments;
+      }
+    }
+
+    maybeMerge(maxNumSegments, true);
+
+    if (doWait) {
+      synchronized(this) {
+        while(optimizeMergesPending()) {
+          try {
+            wait();
+          } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+          }
+
+          if (mergeExceptions.size() > 0) {
+            
+            
+            final int size = mergeExceptions.size();
+            for(int i=0;i<size;i++) {
+              final MergePolicy.OneMerge merge = (MergePolicy.OneMerge) mergeExceptions.get(0);
+              if (merge.optimize) {
+                IOException err = new IOException("background merge hit exception: " + merge.segString(directory));
+                final Throwable t = merge.getException();
+                if (t != null)
+                  err.initCause(t);
+                throw err;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    
+    
+    
+  }
+
+  
+
+  private synchronized boolean optimizeMergesPending() {
+    Iterator it = pendingMerges.iterator();
+    while(it.hasNext())
+      if (((MergePolicy.OneMerge) it.next()).optimize)
+        return true;
+
+    it = runningMerges.iterator();
+    while(it.hasNext())
+      if (((MergePolicy.OneMerge) it.next()).optimize)
+        return true;
+
+    return false;
+  }
+
+  
+
+
+
+
+  public void expungeDeletes(boolean doWait)
+    throws CorruptIndexException, IOException {
+    ensureOpen();
+
+    if (infoStream != null)
+      message("expungeDeletes: index now " + segString());
+
+    MergePolicy.MergeSpecification spec;
+
+    synchronized(this) {
+      spec = mergePolicy.findMergesToExpungeDeletes(segmentInfos, this);
+      if (spec != null) {
+        final int numMerges = spec.merges.size();
+        for(int i=0;i<numMerges;i++)
+          registerMerge((MergePolicy.OneMerge) spec.merges.get(i));
+      }
+    }
+
+    mergeScheduler.merge(this);
+
+    if (spec != null && doWait) {
+      final int numMerges = spec.merges.size();
+      synchronized(this) {
+        boolean running = true;
+        while(running) {
+
+          running = false;
+          for(int i=0;i<numMerges;i++) {
+            final MergePolicy.OneMerge merge = (MergePolicy.OneMerge) spec.merges.get(i);
+            if (pendingMerges.contains(merge) || runningMerges.contains(merge))
+              running = true;
+            Throwable t = merge.getException();
+            if (t != null) {
+              IOException ioe = new IOException("background merge hit exception: " + merge.segString(directory));
+              ioe.initCause(t);
+              throw ioe;
+            }
+          }
+
+          if (running) {
+            try {
+              wait();
+            } catch (InterruptedException ie) {
+              Thread.currentThread().interrupt();
+            }
+          }
+        }
+      }
+    }
+
+    
+    
+    
+  }
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void expungeDeletes() throws CorruptIndexException, IOException {
+    expungeDeletes(true);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  public final void maybeMerge() throws CorruptIndexException, IOException {
+    maybeMerge(false);
+  }
+
+  private final void maybeMerge(boolean optimize) throws CorruptIndexException, IOException {
+    maybeMerge(1, optimize);
+  }
+
+  private final void maybeMerge(int maxNumSegmentsOptimize, boolean optimize) throws CorruptIndexException, IOException {
+    updatePendingMerges(maxNumSegmentsOptimize, optimize);
+    mergeScheduler.merge(this);
+  }
+
+  private synchronized void updatePendingMerges(int maxNumSegmentsOptimize, boolean optimize)
+    throws CorruptIndexException, IOException {
+    assert !optimize || maxNumSegmentsOptimize > 0;
+
+    if (stopMerges)
+      return;
+
+    final MergePolicy.MergeSpecification spec;
+    if (optimize) {
+      spec = mergePolicy.findMergesForOptimize(segmentInfos, this, maxNumSegmentsOptimize, segmentsToOptimize);
+
+      if (spec != null) {
+        final int numMerges = spec.merges.size();
+        for(int i=0;i<numMerges;i++) {
+          final MergePolicy.OneMerge merge = ((MergePolicy.OneMerge) spec.merges.get(i));
+          merge.optimize = true;
+          merge.maxNumSegmentsOptimize = maxNumSegmentsOptimize;
+        }
+      }
+
+    } else
+      spec = mergePolicy.findMerges(segmentInfos, this);
+
+    if (spec != null) {
+      final int numMerges = spec.merges.size();
+      for(int i=0;i<numMerges;i++)
+        registerMerge((MergePolicy.OneMerge) spec.merges.get(i));
+    }
+  }
+
+  
+
+
+  synchronized MergePolicy.OneMerge getNextMerge() {
+    if (pendingMerges.size() == 0)
+      return null;
+    else {
+      
+      MergePolicy.OneMerge merge = (MergePolicy.OneMerge) pendingMerges.removeFirst();
+      runningMerges.add(merge);
+      return merge;
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  private void startTransaction() throws IOException {
+
+    if (infoStream != null)
+      message("now start transaction");
+
+    assert docWriter.getNumBufferedDeleteTerms() == 0 :
+           "calling startTransaction with buffered delete terms not supported";
+    assert docWriter.getNumDocsInRAM() == 0 :
+           "calling startTransaction with buffered documents not supported";
+
+    localRollbackSegmentInfos = (SegmentInfos) segmentInfos.clone();
+    localAutoCommit = autoCommit;
+
+    if (localAutoCommit) {
+
+      if (infoStream != null)
+        message("flush at startTransaction");
+
+      flush(true, false);
+
+      
+      autoCommit = false;
+    } else
+      
+      
+      deleter.incRef(segmentInfos, false);
+  }
+
+  
+
+
+
+  private void rollbackTransaction() throws IOException {
+
+    if (infoStream != null)
+      message("now rollback transaction");
+
+    
+    autoCommit = localAutoCommit;
+
+    
+    
+    
+    
+    segmentInfos.clear();
+    segmentInfos.addAll(localRollbackSegmentInfos);
+    localRollbackSegmentInfos = null;
+
+    
+    
+    deleter.checkpoint(segmentInfos, false);
+
+    if (!autoCommit)
+      
+      deleter.decRef(segmentInfos);
+
+    deleter.refresh();
+    finishMerges(false);
+    lastMergeInfo = null;
+    stopMerges = false;
+  }
+
+  
+
+
+
+
+  private void commitTransaction() throws IOException {
+
+    if (infoStream != null)
+      message("now commit transaction");
+
+    
+    autoCommit = localAutoCommit;
+
+    
+    checkpoint();
+
+    if (autoCommit) {
+      boolean success = false;
+      try {
+        sync(true, 0);
+        success = true;
+      } finally {
+        if (!success) {
+          if (infoStream != null)
+            message("hit exception committing transaction");
+          rollbackTransaction();
+        }
+      }
+    } else
+      
+      deleter.decRef(localRollbackSegmentInfos);
+
+    localRollbackSegmentInfos = null;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public void abort() throws IOException {
+    ensureOpen();
+    if (autoCommit)
+      throw new IllegalStateException("abort() can only be called when IndexWriter was opened with autoCommit=false");
+
+    boolean doClose;
+    synchronized(this) {
+      
+      if (!closing) {
+        doClose = true;
+        closing = true;
+      } else
+        doClose = false;
+    }
+
+    if (doClose) {
+
+      finishMerges(false);
+
+      
+      
+      
+      mergePolicy.close();
+      mergeScheduler.close();
+
+      synchronized(this) {
+        
+        
+        
+        
+        
+        segmentInfos.clear();
+        segmentInfos.addAll(rollbackSegmentInfos);
+
+        docWriter.abort(null);
+
+        
+        
+        deleter.checkpoint(segmentInfos, false);
+        deleter.refresh();
+      }
+
+      commitPending = false;
+      closeInternal(false);
+    } else
+      waitForClose();
+  }
+
+  private synchronized void finishMerges(boolean waitForMerges) throws IOException {
+    if (!waitForMerges) {
+
+      stopMerges = true;
+
+      
+      Iterator it = pendingMerges.iterator();
+      while(it.hasNext()) {
+        final MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.next();
+        if (infoStream != null)
+          message("now abort pending merge " + merge.segString(directory));
+        merge.abort();
+        mergeFinish(merge);
+      }
+      pendingMerges.clear();
+      
+      it = runningMerges.iterator();
+      while(it.hasNext()) {
+        final MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.next();
+        if (infoStream != null)
+          message("now abort running merge " + merge.segString(directory));
+        merge.abort();
+      }
+
+      
+      
+      
+      
+      
+      while(runningMerges.size() > 0) {
+        if (infoStream != null)
+          message("now wait for " + runningMerges.size() + " running merge to abort");
+        try {
+          wait();
+        } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+        }
+      }
+
+      assert 0 == mergingSegments.size();
+
+      if (infoStream != null)
+        message("all running merges have aborted");
+
+    } else {
+      while(pendingMerges.size() > 0 || runningMerges.size() > 0) {
+        try {
+          wait();
+        } catch (InterruptedException ie) {
+        }
+      }
+      assert 0 == mergingSegments.size();
+    }
+  }
+ 
+  
+
+
+
+
+  private synchronized void checkpoint() throws IOException {
+    commitPending = true;
+    deleter.checkpoint(segmentInfos, false);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public synchronized void addIndexes(Directory[] dirs)
+    throws CorruptIndexException, IOException {
+
+    ensureOpen();
+    if (infoStream != null)
+      message("flush at addIndexes");
+    flush(true, false);
+
+    boolean success = false;
+
+    startTransaction();
+
+    try {
+      for (int i = 0; i < dirs.length; i++) {
+        SegmentInfos sis = new SegmentInfos();	  
+        sis.read(dirs[i]);
+        for (int j = 0; j < sis.size(); j++) {
+          segmentInfos.addElement(sis.info(j));	  
+        }
+      }
+
+      optimize();
+
+      success = true;
+    } finally {
+      if (success) {
+        commitTransaction();
+      } else {
+        rollbackTransaction();
+      }
+    }
+  }
+
+  private synchronized void resetMergeExceptions() {
+    mergeExceptions = new ArrayList();
+    mergeGen++;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public synchronized void addIndexesNoOptimize(Directory[] dirs)
+      throws CorruptIndexException, IOException {
+
+    ensureOpen();
+    if (infoStream != null)
+      message("flush at addIndexesNoOptimize");
+    flush(true, false);
+
+    boolean success = false;
+
+    startTransaction();
+
+    try {
+
+      for (int i = 0; i < dirs.length; i++) {
+        if (directory == dirs[i]) {
+          
+          throw new IllegalArgumentException("Cannot add this index to itself");
+        }
+
+        SegmentInfos sis = new SegmentInfos(); 
+        sis.read(dirs[i]);
+        for (int j = 0; j < sis.size(); j++) {
+          SegmentInfo info = sis.info(j);
+          segmentInfos.addElement(info); 
+        }
+      }
+
+      maybeMerge();
+
+      
+      
+      
+      
+      
+      copyExternalSegments();
+
+      success = true;
+
+    } finally {
+      if (success) {
+        commitTransaction();
+      } else {
+        rollbackTransaction();
+      }
+    }
+  }
+
+  
+
+
+  private synchronized void copyExternalSegments() throws CorruptIndexException, IOException {
+    final int numSegments = segmentInfos.size();
+    for(int i=0;i<numSegments;i++) {
+      SegmentInfo info = segmentInfos.info(i);
+      if (info.dir != directory) {
+        MergePolicy.OneMerge merge = new MergePolicy.OneMerge(segmentInfos.range(i, 1+i), info.getUseCompoundFile());
+        if (registerMerge(merge)) {
+          pendingMerges.remove(merge);
+          runningMerges.add(merge);
+          merge(merge);
+        } else
+          
+          
+          
+          
+          
+          
+          
+          
+          throw new MergePolicy.MergeException("segment \"" + info.name + " exists in external directory yet the MergeScheduler executed the merge in a separate thread",
+                                               directory);
+      }
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public synchronized void addIndexes(IndexReader[] readers)
+    throws CorruptIndexException, IOException {
+
+    ensureOpen();
+    optimize();					  
+
+    final String mergedName = newSegmentName();
+    SegmentMerger merger = new SegmentMerger(this, mergedName, null);
+
+    SegmentInfo info;
+
+    IndexReader sReader = null;
+    try {
+      if (segmentInfos.size() == 1){ 
+        sReader = SegmentReader.get(segmentInfos.info(0));
+        merger.add(sReader);
+      }
+
+      for (int i = 0; i < readers.length; i++)      
+        merger.add(readers[i]);
+
+      boolean success = false;
+
+      startTransaction();
+
+      try {
+        int docCount = merger.merge();                
+
+        if(sReader != null) {
+          sReader.close();
+          sReader = null;
+        }
+
+        segmentInfos.setSize(0);                      
+        info = new SegmentInfo(mergedName, docCount, directory, false, true,
+                               -1, null, false);
+        segmentInfos.addElement(info);
+
+        success = true;
+
+      } finally {
+        if (!success) {
+          if (infoStream != null)
+            message("hit exception in addIndexes during merge");
+
+          rollbackTransaction();
+        } else {
+          commitTransaction();
+        }
+      }
+    } finally {
+      if (sReader != null) {
+        sReader.close();
+      }
+    }
+    
+    if (mergePolicy instanceof LogMergePolicy && getUseCompoundFile()) {
+
+      boolean success = false;
+
+      startTransaction();
+
+      try {
+        merger.createCompoundFile(mergedName + ".cfs");
+        info.setUseCompoundFile(true);
+      } finally {
+        if (!success) {
+          if (infoStream != null)
+            message("hit exception building compound file in addIndexes during merge");
+
+          rollbackTransaction();
+        } else {
+          commitTransaction();
+        }
+      }
+    }
+  }
+
+  
+  
+  
+  void doAfterFlush()
+    throws IOException {
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  public final void flush() throws CorruptIndexException, IOException {  
+    flush(true, false);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public final void commit() throws CorruptIndexException, IOException {
+    commit(true);
+  }
+
+  private final void commit(boolean triggerMerges) throws CorruptIndexException, IOException {
+    flush(triggerMerges, true);
+    sync(true, 0);
+  }
+
+  
+
+
+
+
+
+
+
+  protected final void flush(boolean triggerMerge, boolean flushDocStores) throws CorruptIndexException, IOException {
+    ensureOpen();
+
+    if (doFlush(flushDocStores) && triggerMerge)
+      maybeMerge();
+  }
+
+  
+  
+  
+  private synchronized final boolean doFlush(boolean flushDocStores) throws CorruptIndexException, IOException {
+
+    
+
+    flushCount++;
+
+    
+    
+    if (docWriter.pauseAllThreads()) {
+      docWriter.resumeAllThreads();
+      return false;
+    }
+
+    try {
+
+      SegmentInfo newSegment = null;
+
+      final int numDocs = docWriter.getNumDocsInRAM();
+
+      
+      boolean flushDocs = numDocs > 0;
+
+      
+      
+      flushDocStores |= autoCommit;
+      String docStoreSegment = docWriter.getDocStoreSegment();
+      if (docStoreSegment == null)
+        flushDocStores = false;
+
+      
+      
+      
+      
+      
+      
+      
+      boolean flushDeletes = docWriter.hasDeletes();
+
+      int docStoreOffset = docWriter.getDocStoreOffset();
+
+      
+      
+      assert !autoCommit || 0 == docStoreOffset;
+
+      boolean docStoreIsCompoundFile = false;
+
+      if (infoStream != null) {
+        message("  flush: segment=" + docWriter.getSegment() +
+                " docStoreSegment=" + docWriter.getDocStoreSegment() +
+                " docStoreOffset=" + docStoreOffset +
+                " flushDocs=" + flushDocs +
+                " flushDeletes=" + flushDeletes +
+                " flushDocStores=" + flushDocStores +
+                " numDocs=" + numDocs +
+                " numBufDelTerms=" + docWriter.getNumBufferedDeleteTerms());
+        message("  index before flush " + segString());
+      }
+
+      
+      
+      
+      if (flushDocStores && (!flushDocs || !docWriter.getSegment().equals(docWriter.getDocStoreSegment()))) {
+        
+        if (infoStream != null)
+          message("  flush shared docStore segment " + docStoreSegment);
+      
+        docStoreIsCompoundFile = flushDocStores();
+        flushDocStores = false;
+      }
+
+      String segment = docWriter.getSegment();
+
+      
+      assert segment != null || !flushDocs;
+
+      if (flushDocs) {
+
+        boolean success = false;
+        final int flushedDocCount;
+
+        try {
+          flushedDocCount = docWriter.flush(flushDocStores);
+          success = true;
+        } finally {
+          if (!success) {
+            if (infoStream != null)
+              message("hit exception flushing segment " + segment);
+            docWriter.abort(null);
+            deleter.refresh(segment);
+          }
+        }
+        
+        if (0 == docStoreOffset && flushDocStores) {
+          
+          
+          
+          assert docStoreSegment != null;
+          assert docStoreSegment.equals(segment);
+          docStoreOffset = -1;
+          docStoreIsCompoundFile = false;
+          docStoreSegment = null;
+        }
+
+        
+        
+        
+        newSegment = new SegmentInfo(segment,
+                                     flushedDocCount,
+                                     directory, false, true,
+                                     docStoreOffset, docStoreSegment,
+                                     docStoreIsCompoundFile);
+      }
+
+      if (flushDeletes) {
+        try {
+          SegmentInfos rollback = (SegmentInfos) segmentInfos.clone();
+
+          boolean success = false;
+          try {
+            
+            
+            
+            
+            applyDeletes(newSegment);
+            success = true;
+          } finally {
+            if (!success) {
+              if (infoStream != null)
+                message("hit exception flushing deletes");
+                
+              
+              
+              final int size = rollback.size();
+              for(int i=0;i<size;i++) {
+                final String newDelFileName = segmentInfos.info(i).getDelFileName();
+                final String delFileName = rollback.info(i).getDelFileName();
+                if (newDelFileName != null && !newDelFileName.equals(delFileName))
+                  deleter.deleteFile(newDelFileName);
+              }
+
+              
+              deleter.refresh(segment);
+
+              
+              
+              
+              segmentInfos.clear();
+              segmentInfos.addAll(rollback);
+            }              
+          }
+        } finally {
+          
+          
+          docWriter.clearBufferedDeletes();
+        }
+      }
+
+      if (flushDocs)
+        segmentInfos.addElement(newSegment);
+
+      if (flushDocs || flushDeletes)
+        checkpoint();
+
+      doAfterFlush();
+
+      if (flushDocs && mergePolicy.useCompoundFile(segmentInfos, newSegment)) {
+        
+        boolean success = false;
+        try {
+          docWriter.createCompoundFile(segment);
+          success = true;
+        } finally {
+          if (!success) {
+            if (infoStream != null)
+              message("hit exception creating compound file for newly flushed segment " + segment);
+            deleter.deleteFile(segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
+          }
+        }
+
+        newSegment.setUseCompoundFile(true);
+        checkpoint();
+      }
+      
+      return flushDocs || flushDeletes;
+
+    } finally {
+      docWriter.clearFlushPending();
+      docWriter.resumeAllThreads();
+    }
+  }
+
+  
+
+
+  public final long ramSizeInBytes() {
+    ensureOpen();
+    return docWriter.getRAMUsed();
+  }
+
+  
+
+
+  public final synchronized int numRamDocs() {
+    ensureOpen();
+    return docWriter.getNumDocsInRAM();
+  }
+
+  private int ensureContiguousMerge(MergePolicy.OneMerge merge) {
+
+    int first = segmentInfos.indexOf(merge.segments.info(0));
+    if (first == -1)
+      throw new MergePolicy.MergeException("could not find segment " + merge.segments.info(0).name + " in current segments", directory);
+
+    final int numSegments = segmentInfos.size();
+    
+    final int numSegmentsToMerge = merge.segments.size();
+    for(int i=0;i<numSegmentsToMerge;i++) {
+      final SegmentInfo info = merge.segments.info(i);
+
+      if (first + i >= numSegments || !segmentInfos.info(first+i).equals(info)) {
+        if (segmentInfos.indexOf(info) == -1)
+          throw new MergePolicy.MergeException("MergePolicy selected a segment (" + info.name + ") that is not in the index", directory);
+        else
+          throw new MergePolicy.MergeException("MergePolicy selected non-contiguous segments to merge (" + merge + " vs " + segString() + "), which IndexWriter (currently) cannot handle",
+                                               directory);
+      }
+    }
+
+    return first;
+  }
+
+  
+
+
+
+
+
+
+
+
+  synchronized private void commitMergedDeletes(MergePolicy.OneMerge merge) throws IOException {
+    final SegmentInfos sourceSegmentsClone = merge.segmentsClone;
+    final SegmentInfos sourceSegments = merge.segments;
+
+    if (infoStream != null)
+      message("commitMerge " + merge.segString(directory));
+
+    
+    
+
+    BitVector deletes = null;
+    int docUpto = 0;
+
+    final int numSegmentsToMerge = sourceSegments.size();
+    for(int i=0;i<numSegmentsToMerge;i++) {
+      final SegmentInfo previousInfo = sourceSegmentsClone.info(i);
+      final SegmentInfo currentInfo = sourceSegments.info(i);
+
+      assert currentInfo.docCount == previousInfo.docCount;
+
+      final int docCount = currentInfo.docCount;
+
+      if (previousInfo.hasDeletions()) {
+
+        
+        
+        
+        
+        
+        
+
+        assert currentInfo.hasDeletions();
+
+        
+        BitVector previousDeletes = new BitVector(previousInfo.dir, previousInfo.getDelFileName());
+
+        if (!currentInfo.getDelFileName().equals(previousInfo.getDelFileName())) {
+          
+          
+          
+          if (deletes == null)
+            deletes = new BitVector(merge.info.docCount);
+
+          BitVector currentDeletes = new BitVector(currentInfo.dir, currentInfo.getDelFileName());
+          for(int j=0;j<docCount;j++) {
+            if (previousDeletes.get(j))
+              assert currentDeletes.get(j);
+            else {
+              if (currentDeletes.get(j))
+                deletes.set(docUpto);
+              docUpto++;
+            }
+          }
+        } else
+          docUpto += docCount - previousDeletes.count();
+        
+      } else if (currentInfo.hasDeletions()) {
+        
+        
+        if (deletes == null)
+          deletes = new BitVector(merge.info.docCount);
+        BitVector currentDeletes = new BitVector(directory, currentInfo.getDelFileName());
+
+        for(int j=0;j<docCount;j++) {
+          if (currentDeletes.get(j))
+            deletes.set(docUpto);
+          docUpto++;
+        }
+            
+      } else
+        
+        docUpto += currentInfo.docCount;
+    }
+
+    if (deletes != null) {
+      merge.info.advanceDelGen();
+      deletes.write(directory, merge.info.getDelFileName());
+    }
+  }
+
+  
+  synchronized private boolean commitMerge(MergePolicy.OneMerge merge) throws IOException {
+
+    if (infoStream != null)
+      message("commitMerge: " + merge.segString(directory));
+
+    assert merge.registerDone;
+
+    
+    
+    
+    
+    
+    
+    if (merge.isAborted()) {
+      if (infoStream != null)
+        message("commitMerge: skipping merge " + merge.segString(directory) + ": it was aborted");
+
+      deleter.refresh(merge.info.name);
+      return false;
+    }
+
+    final int start = ensureContiguousMerge(merge);
+
+    commitMergedDeletes(merge);
+
+    
+    
+    
+    
+    final String mergeDocStoreSegment = merge.info.getDocStoreSegment(); 
+    if (mergeDocStoreSegment != null && !merge.info.getDocStoreIsCompoundFile()) {
+      final int size = segmentInfos.size();
+      for(int i=0;i<size;i++) {
+        final SegmentInfo info = segmentInfos.info(i);
+        final String docStoreSegment = info.getDocStoreSegment();
+        if (docStoreSegment != null &&
+            docStoreSegment.equals(mergeDocStoreSegment) && 
+            info.getDocStoreIsCompoundFile()) {
+          merge.info.setDocStoreIsCompoundFile(true);
+          break;
+        }
+      }
+    }
+
+    segmentInfos.subList(start, start + merge.segments.size()).clear();
+    segmentInfos.add(start, merge.info);
+    if (lastMergeInfo == null || segmentInfos.indexOf(lastMergeInfo) < start)
+      lastMergeInfo = merge.info;
+
+    if (merge.optimize)
+      segmentsToOptimize.add(merge.info);
+
+    
+    
+    
+    checkpoint();
+
+    decrefMergeSegments(merge);
+
+    return true;
+  }
+
+  private void decrefMergeSegments(MergePolicy.OneMerge merge) throws IOException {
+    final SegmentInfos sourceSegmentsClone = merge.segmentsClone;
+    final int numSegmentsToMerge = sourceSegmentsClone.size();
+    assert merge.increfDone;
+    merge.increfDone = false;
+    for(int i=0;i<numSegmentsToMerge;i++) {
+      final SegmentInfo previousInfo = sourceSegmentsClone.info(i);
+      
+      
+      if (previousInfo.dir == directory)
+        deleter.decRef(previousInfo.files());
+    }
+  }
+
+  
+
+
+
+
+  final void merge(MergePolicy.OneMerge merge)
+    throws CorruptIndexException, IOException {
+
+    boolean success = false;
+
+    try {
+
+      try {
+        mergeInit(merge);
+
+        if (infoStream != null)
+          message("now merge\n  merge=" + merge.segString(directory) + "\n  index=" + segString());
+
+        mergeMiddle(merge);
+        success = true;
+      } catch (MergePolicy.MergeAbortedException e) {
+        merge.setException(e);
+        addMergeException(merge);
+        
+        
+        
+        
+        
+        if (merge.isExternal)
+          throw e;
+      }
+    } finally {
+      synchronized(this) {
+        try {
+
+          mergeFinish(merge);
+
+          if (!success) {
+            if (infoStream != null)
+              message("hit exception during merge");
+            addMergeException(merge);
+            if (merge.info != null && !segmentInfos.contains(merge.info))
+              deleter.refresh(merge.info.name);
+          }
+
+          
+          
+          
+          if (success && !merge.isAborted() && !closed && !closing)
+            updatePendingMerges(merge.maxNumSegmentsOptimize, merge.optimize);
+        } finally {
+          runningMerges.remove(merge);
+          
+          
+          
+          notifyAll();
+        }
+      }
+    }
+  }
+
+  
+
+
+
+
+
+  final synchronized boolean registerMerge(MergePolicy.OneMerge merge) {
+
+    if (merge.registerDone)
+      return true;
+
+    final int count = merge.segments.size();
+    boolean isExternal = false;
+    for(int i=0;i<count;i++) {
+      final SegmentInfo info = merge.segments.info(i);
+      if (mergingSegments.contains(info))
+        return false;
+      if (segmentInfos.indexOf(info) == -1)
+        return false;
+      if (info.dir != directory)
+        isExternal = true;
+    }
+
+    pendingMerges.add(merge);
+
+    if (infoStream != null)
+      message("add merge to pendingMerges: " + merge.segString(directory) + " [total " + pendingMerges.size() + " pending]");
+
+    merge.mergeGen = mergeGen;
+    merge.isExternal = isExternal;
+
+    
+    
+    
+    
+    for(int i=0;i<count;i++)
+      mergingSegments.add(merge.segments.info(i));
+
+    
+    merge.registerDone = true;
+    return true;
+  }
+
+  
+
+  final synchronized void mergeInit(MergePolicy.OneMerge merge) throws IOException {
+
+    assert merge.registerDone;
+    assert !merge.optimize || merge.maxNumSegmentsOptimize > 0;
+
+    if (merge.info != null)
+      
+      return;
+
+    if (merge.isAborted())
+      return;
+
+    final SegmentInfos sourceSegments = merge.segments;
+    final int end = sourceSegments.size();
+
+    ensureContiguousMerge(merge);
+
+    
+    
+    
+    
+    
+
+    Directory lastDir = directory;
+    String lastDocStoreSegment = null;
+    int next = -1;
+
+    boolean mergeDocStores = false;
+    boolean doFlushDocStore = false;
+    final String currentDocStoreSegment = docWriter.getDocStoreSegment();
+
+    
+    
+    for (int i = 0; i < end; i++) {
+      SegmentInfo si = sourceSegments.info(i);
+
+      
+      if (si.hasDeletions())
+        mergeDocStores = true;
+
+      
+      
+      if (-1 == si.getDocStoreOffset())
+        mergeDocStores = true;
+
+      
+      
+      String docStoreSegment = si.getDocStoreSegment();
+      if (docStoreSegment == null)
+        mergeDocStores = true;
+      else if (lastDocStoreSegment == null)
+        lastDocStoreSegment = docStoreSegment;
+      else if (!lastDocStoreSegment.equals(docStoreSegment))
+        mergeDocStores = true;
+
+      
+      
+      
+      
+      if (-1 == next)
+        next = si.getDocStoreOffset() + si.docCount;
+      else if (next != si.getDocStoreOffset())
+        mergeDocStores = true;
+      else
+        next = si.getDocStoreOffset() + si.docCount;
+      
+      
+      
+      if (lastDir != si.dir)
+        mergeDocStores = true;
+
+      
+      
+      if (si.getDocStoreOffset() != -1 && currentDocStoreSegment != null && si.getDocStoreSegment().equals(currentDocStoreSegment))
+        doFlushDocStore = true;
+    }
+
+    final int docStoreOffset;
+    final String docStoreSegment;
+    final boolean docStoreIsCompoundFile;
+
+    if (mergeDocStores) {
+      docStoreOffset = -1;
+      docStoreSegment = null;
+      docStoreIsCompoundFile = false;
+    } else {
+      SegmentInfo si = sourceSegments.info(0);        
+      docStoreOffset = si.getDocStoreOffset();
+      docStoreSegment = si.getDocStoreSegment();
+      docStoreIsCompoundFile = si.getDocStoreIsCompoundFile();
+    }
+
+    if (mergeDocStores && doFlushDocStore) {
+      
+      
+      
+      
+
+      
+      
+      
+      if (infoStream != null)
+        message("flush at merge");
+      flush(false, true);
+    }
+
+    
+    
+    merge.segmentsClone = (SegmentInfos) merge.segments.clone();
+
+    for (int i = 0; i < end; i++) {
+      SegmentInfo si = merge.segmentsClone.info(i);
+
+      
+      
+      if (si.dir == directory)
+        deleter.incRef(si.files());
+    }
+
+    merge.increfDone = true;
+
+    merge.mergeDocStores = mergeDocStores;
+
+    
+    
+    
+    merge.info = new SegmentInfo(newSegmentName(), 0,
+                                 directory, false, true,
+                                 docStoreOffset,
+                                 docStoreSegment,
+                                 docStoreIsCompoundFile);
+
+    
+    
+    
+    
+    mergingSegments.add(merge.info);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  private synchronized boolean doCommitBeforeMergeCFS(MergePolicy.OneMerge merge) throws IOException {
+    long freeableBytes = 0;
+    final int size = merge.segments.size();
+    for(int i=0;i<size;i++) {
+      final SegmentInfo info = merge.segments.info(i);
+      
+      
+      
+      
+      Integer loc = (Integer) rollbackSegments.get(info);
+      if (loc != null) {
+        final SegmentInfo oldInfo = rollbackSegmentInfos.info(loc.intValue());
+        if (oldInfo.getUseCompoundFile() != info.getUseCompoundFile())
+          freeableBytes += info.sizeInBytes();
+      }
+    }
+    
+    
+    long totalBytes = 0;
+    final int numSegments = segmentInfos.size();
+    for(int i=0;i<numSegments;i++)
+      totalBytes += segmentInfos.info(i).sizeInBytes();
+    if (3*freeableBytes > totalBytes)
+      return true;
+    else
+      return false;
+  }
+
+  
+
+  final synchronized void mergeFinish(MergePolicy.OneMerge merge) throws IOException {
+
+    if (merge.increfDone)
+      decrefMergeSegments(merge);
+
+    assert merge.registerDone;
+
+    final SegmentInfos sourceSegments = merge.segments;
+    final int end = sourceSegments.size();
+    for(int i=0;i<end;i++)
+      mergingSegments.remove(sourceSegments.info(i));
+    mergingSegments.remove(merge.info);
+    merge.registerDone = false;
+  }
+
+  
+
+
+  final private int mergeMiddle(MergePolicy.OneMerge merge) 
+    throws CorruptIndexException, IOException {
+    
+    merge.checkAborted(directory);
+
+    final String mergedName = merge.info.name;
+    
+    SegmentMerger merger = null;
+
+    int mergedDocCount = 0;
+
+    SegmentInfos sourceSegments = merge.segments;
+    SegmentInfos sourceSegmentsClone = merge.segmentsClone;
+    final int numSegments = sourceSegments.size();
+
+    if (infoStream != null)
+      message("merging " + merge.segString(directory));
+
+    merger = new SegmentMerger(this, mergedName, merge);
+    
+    boolean success = false;
+
+    
+    
+    try {
+      int totDocCount = 0;
+
+      for (int i = 0; i < numSegments; i++) {
+        SegmentInfo si = sourceSegmentsClone.info(i);
+        IndexReader reader = SegmentReader.get(si, MERGE_READ_BUFFER_SIZE, merge.mergeDocStores); 
+        merger.add(reader);
+        totDocCount += reader.numDocs();
+      }
+      if (infoStream != null) {
+        message("merge: total "+totDocCount+" docs");
+      }
+
+      merge.checkAborted(directory);
+
+      
+      mergedDocCount = merge.info.docCount = merger.merge(merge.mergeDocStores);
+
+      assert mergedDocCount == totDocCount;
+
+      success = true;
+
+    } finally {
+      
+      
+      if (merger != null) {
+        merger.closeReaders();
+      }
+    }
+
+    if (!commitMerge(merge))
+      
+      return 0;
+
+    if (merge.useCompoundFile) {
+
+      
+      
+      if (autoCommit && doCommitBeforeMergeCFS(merge))
+        sync(false, merge.info.sizeInBytes());
+      
+      success = false;
+      final String compoundFileName = mergedName + "." + IndexFileNames.COMPOUND_FILE_EXTENSION;
+
+      try {
+        merger.createCompoundFile(compoundFileName);
+        success = true;
+      } finally {
+        if (!success) {
+          if (infoStream != null)
+            message("hit exception creating compound file during merge");
+          synchronized(this) {
+            addMergeException(merge);
+            deleter.deleteFile(compoundFileName);
+          }
+        }
+      }
+
+      if (merge.isAborted()) {
+        if (infoStream != null)
+          message("abort merge after building CFS");
+        deleter.deleteFile(compoundFileName);
+        return 0;
+      }
+
+      synchronized(this) {
+        if (segmentInfos.indexOf(merge.info) == -1 || merge.isAborted()) {
+          
+          
+          
+          deleter.deleteFile(compoundFileName);
+        } else {
+          merge.info.setUseCompoundFile(true);
+          checkpoint();
+        }
+      }
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    if (autoCommit)
+      sync(false, merge.info.sizeInBytes());
+
+    return mergedDocCount;
+  }
+
+  synchronized void addMergeException(MergePolicy.OneMerge merge) {
+    if (!mergeExceptions.contains(merge) && mergeGen == merge.mergeGen)
+      mergeExceptions.add(merge);
+  }
+
+  
+  
+  
+  
+  private final void applyDeletes(SegmentInfo newSegment) throws CorruptIndexException, IOException {
+
+    final HashMap bufferedDeleteTerms = docWriter.getBufferedDeleteTerms();
+    final List bufferedDeleteDocIDs = docWriter.getBufferedDeleteDocIDs();
+
+    if (infoStream != null)
+      message("flush " + docWriter.getNumBufferedDeleteTerms() + " buffered deleted terms and " +
+              bufferedDeleteDocIDs.size() + " deleted docIDs on "
+              + segmentInfos.size() + " segments.");
+
+    if (newSegment != null) {
+      IndexReader reader = null;
+      try {
+        
+        
+        
+        reader = SegmentReader.get(newSegment, false);
+
+        
+        
+        
+        applyDeletesSelectively(bufferedDeleteTerms, bufferedDeleteDocIDs, reader);
+      } finally {
+        if (reader != null) {
+          try {
+            reader.doCommit();
+          } finally {
+            reader.doClose();
+          }
+        }
+      }
+    }
+
+    final int infosEnd = segmentInfos.size();
+
+    for (int i = 0; i < infosEnd; i++) {
+      IndexReader reader = null;
+      try {
+        reader = SegmentReader.get(segmentInfos.info(i), false);
+
+        
+        
+        applyDeletes(bufferedDeleteTerms, reader);
+      } finally {
+        if (reader != null) {
+          try {
+            reader.doCommit();
+          } finally {
+            reader.doClose();
+          }
+        }
+      }
+    }
+  }
+
+  
+  final synchronized int getBufferedDeleteTermsSize() {
+    return docWriter.getBufferedDeleteTerms().size();
+  }
+
+  
+  final synchronized int getNumBufferedDeleteTerms() {
+    return docWriter.getNumBufferedDeleteTerms();
+  }
+
+  
+  
+  
+  private final void applyDeletesSelectively(HashMap deleteTerms, List deleteIds,
+                                             IndexReader reader)
+    throws CorruptIndexException, IOException {
+    Iterator iter = deleteTerms.entrySet().iterator();
+    while (iter.hasNext()) {
+      Entry entry = (Entry) iter.next();
+      Term term = (Term) entry.getKey();
+
+      TermDocs docs = reader.termDocs(term);
+      if (docs != null) {
+        int num = ((DocumentsWriter.Num) entry.getValue()).getNum();
+        try {
+          while (docs.next()) {
+            int doc = docs.doc();
+            if (doc >= num) {
+              break;
+            }
+            reader.deleteDocument(doc);
+          }
+        } finally {
+          docs.close();
+        }
+      }
+    }
+
+    if (deleteIds.size() > 0) {
+      iter = deleteIds.iterator();
+      while(iter.hasNext())
+        reader.deleteDocument(((Integer) iter.next()).intValue());
+    }
+  }
+
+  
+  private final void applyDeletes(HashMap deleteTerms, IndexReader reader)
+      throws CorruptIndexException, IOException {
+    Iterator iter = deleteTerms.entrySet().iterator();
+    while (iter.hasNext()) {
+      Entry entry = (Entry) iter.next();
+      reader.deleteDocuments((Term) entry.getKey());
+    }
+  }
+
+  
+  SegmentInfo newestSegment() {
+    return segmentInfos.info(segmentInfos.size()-1);
+  }
+
+  public synchronized String segString() {
+    StringBuffer buffer = new StringBuffer();
+    for(int i = 0; i < segmentInfos.size(); i++) {
+      if (i > 0) {
+        buffer.append(' ');
+      }
+      buffer.append(segmentInfos.info(i).segString(directory));
+    }
+
+    return buffer.toString();
+  }
+
+  
+  private HashSet synced = new HashSet();
+
+  
+  private HashSet syncing = new HashSet();
+
+  private boolean startSync(String fileName, Collection pending) {
+    synchronized(synced) {
+      if (!synced.contains(fileName)) {
+        if (!syncing.contains(fileName)) {
+          syncing.add(fileName);
+          return true;
+        } else {
+          pending.add(fileName);
+          return false;
+        }
+      } else
+        return false;
+    }
+  }
+
+  private void finishSync(String fileName, boolean success) {
+    synchronized(synced) {
+      assert syncing.contains(fileName);
+      syncing.remove(fileName);
+      if (success)
+        synced.add(fileName);
+      synced.notifyAll();
+    }
+  }
+
+  
+  private boolean waitForAllSynced(Collection syncing) throws IOException {
+    synchronized(synced) {
+      Iterator it = syncing.iterator();
+      while(it.hasNext()) {
+        final String fileName = (String) it.next();
+        while(!synced.contains(fileName)) {
+          if (!syncing.contains(fileName))
+            
+            
+            return false;
+          else
+            try {
+              synced.wait();
+            } catch (InterruptedException ie) {
+              continue;
+            }
+        }
+      }
+      return true;
+    }
+  }
+
+  
+
+
+
+
+
+  private void syncPause(long sizeInBytes) {
+    if (mergeScheduler instanceof ConcurrentMergeScheduler && maxSyncPauseSeconds > 0) {
+      
+      
+      long pauseTime = (long) (1000*sizeInBytes/10/1024/1024);
+      final long maxPauseTime = (long) (maxSyncPauseSeconds*1000);
+      if (pauseTime > maxPauseTime)
+        pauseTime = maxPauseTime;
+      final int sleepCount = (int) (pauseTime / 100);
+      for(int i=0;i<sleepCount;i++) {
+        synchronized(this) {
+          if (stopMerges || closing)
+            break;
+        }
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+        }
+      }
+    }
+  }
+
+  
+
+
+
+
+  private void sync(boolean includeFlushes, long sizeInBytes) throws IOException {
+
+    message("start sync() includeFlushes=" + includeFlushes);
+
+    if (!includeFlushes)
+      syncPause(sizeInBytes);
+
+    
+    
+    
+    
+    
+
+    SegmentInfos toSync = null;
+    final int mySyncCount;
+    synchronized(this) {
+
+      if (!commitPending) {
+        message("  skip sync(): no commit pending");
+        return;
+      }
+
+      
+      
+      
+      toSync = (SegmentInfos) segmentInfos.clone();
+      final int numSegmentsToSync = toSync.size();
+
+      boolean newCommitPending = false;
+
+      if (!includeFlushes) {
+        
+        assert lastMergeInfo != null;
+        assert toSync.contains(lastMergeInfo);
+        int downTo = numSegmentsToSync-1;
+        while(!toSync.info(downTo).equals(lastMergeInfo)) {
+          message("  skip segment " + toSync.info(downTo).name);
+          toSync.remove(downTo);
+          downTo--;
+          newCommitPending = true;
+        }
+
+      } else if (numSegmentsToSync > 0)
+        
+        
+        
+        
+        
+        lastMergeInfo = toSync.info(numSegmentsToSync-1);
+
+      mySyncCount = syncCount++;
+      deleter.incRef(toSync, false);
+
+      commitPending = newCommitPending;
+    }
+
+    boolean success0 = false;
+
+    try {
+
+      
+      while(true) {
+
+        final Collection pending = new ArrayList();
+
+        for(int i=0;i<toSync.size();i++) {
+          final SegmentInfo info = toSync.info(i);
+          final List files = info.files();
+          for(int j=0;j<files.size();j++) {
+            final String fileName = (String) files.get(j);
+            if (startSync(fileName, pending)) {
+              boolean success = false;
+              try {
+                
+                
+                assert directory.fileExists(fileName);
+                message("now sync " + fileName);
+                directory.sync(fileName);
+                success = true;
+              } finally {
+                finishSync(fileName, success);
+              }
+            }
+          }
+        }
+
+        
+        
+        
+        
+        
+        
+        if (waitForAllSynced(pending))
+          break;
+      }
+
+      synchronized(this) {
+        
+        
+        
+        
+        if (mySyncCount > syncCountSaved) {
+          
+          if (segmentInfos.getGeneration() > toSync.getGeneration())
+            toSync.updateGeneration(segmentInfos);
+
+          boolean success = false;
+          try {
+            toSync.commit(directory);
+            success = true;
+          } finally {
+            
+            
+            segmentInfos.updateGeneration(toSync);
+            if (!success) {
+              commitPending = true;
+              message("hit exception committing segments file");
+            }
+          }
+          message("commit complete");
+
+          syncCountSaved = mySyncCount;
+
+          deleter.checkpoint(toSync, true);
+          setRollbackSegmentInfos();
+        } else
+          message("sync superseded by newer infos");
+      }
+
+      message("done all syncs");
+
+      success0 = true;
+
+    } finally {
+      synchronized(this) {
+        deleter.decRef(toSync);
+        if (!success0)
+          commitPending = true;
+      }
+    }
+  }
+
+  
+
+
+
+
+  public static final class MaxFieldLength {
+
+    private int limit;
+    private String name;
+
+    
+
+
+
+
+
+    private MaxFieldLength(String name, int limit) {
+      this.name = name;
+      this.limit = limit;
+    }
+
+    
+
+
+
+
+    public MaxFieldLength(int limit) {
+      this("User-specified", limit);
+    }
+    
+    public int getLimit() {
+      return limit;
+    }
+    
+    public String toString()
+    {
+      return name + ":" + limit;
+    }
+
+    
+    public static final MaxFieldLength UNLIMITED
+        = new MaxFieldLength("UNLIMITED", Integer.MAX_VALUE);
+
+    
+
+
+
+    public static final MaxFieldLength LIMITED
+        = new MaxFieldLength("LIMITED", DEFAULT_MAX_FIELD_LENGTH);
+  }
+}

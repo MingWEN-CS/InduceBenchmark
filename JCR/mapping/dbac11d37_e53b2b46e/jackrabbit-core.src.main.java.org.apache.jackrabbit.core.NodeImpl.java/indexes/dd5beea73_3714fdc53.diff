@@ -1,0 +1,231 @@
+30a31,32
+> import java.util.Map;
+> import java.util.HashMap;
+86a89
+> import org.apache.jackrabbit.core.state.NoSuchItemStateException;
+1019,1020d1021
+< 
+<         
+1022d1022
+<         thisState.setMixinTypeNames(remainingMixins);
+1025,1026d1024
+<         setMixinTypesProperty(remainingMixins);
+< 
+1028,1034d1025
+<         if (mixin.getChildNodeDefinitions().length == 0
+<                 && mixin.getPropertyDefinitions().length == 0) {
+<             
+<             
+<             return;
+<         }
+< 
+1037c1028,1030
+<         boolean success = false;
+---
+>         
+>         Map<PropertyId, PropertyDefinition> affectedProps = new HashMap<PropertyId, PropertyDefinition>();
+>         Map<ChildNodeEntry, NodeDefinition> affectedNodes = new HashMap<ChildNodeEntry, NodeDefinition>();
+1039,1042c1032,1036
+<             
+<             HashSet<Name> set = new HashSet<Name>(thisState.getPropertyNames());
+<             for (Name propName : set) {
+<                 PropertyState propState = (PropertyState) stateMgr.getItemState(new PropertyId(thisState.getNodeId(), propName));
+---
+>             Set<Name> names = thisState.getPropertyNames();
+>             for (Name propName : names) {
+>                 PropertyId propId = new PropertyId(thisState.getNodeId(), propName);
+>                 PropertyState propState = (PropertyState) stateMgr.getItemState(propId);
+>                 PropertyDefinition oldDef = itemMgr.getDefinition(propState);
+1044,1045c1038
+<                 PropertyDefinition def = itemMgr.getDefinition(propState);
+<                 NodeTypeImpl declaringNT = (NodeTypeImpl) def.getDeclaringNodeType();
+---
+>                 NodeTypeImpl declaringNT = (NodeTypeImpl) oldDef.getDeclaringNodeType();
+1048a1042,1044
+>                     affectedProps.put(propId, oldDef);
+>                 }
+>             }
+1049a1046,1052
+>             List<ChildNodeEntry> entries = thisState.getChildNodeEntries();
+>             for (ChildNodeEntry entry : entries) {
+>                 NodeState nodeState = (NodeState) stateMgr.getItemState(entry.getId());
+>                 NodeDefinition oldDef = itemMgr.getDefinition(nodeState);
+>                 
+>                 NodeTypeImpl declaringNT = (NodeTypeImpl) oldDef.getDeclaringNodeType();
+>                 if (!entResulting.includesNodeType(declaringNT.getQName())) {
+1052,1054c1055,1091
+<                     try {
+<                         PropertyImpl prop = (PropertyImpl) itemMgr.getItem(propState.getId());
+<                         if (prop.getDefinition().isProtected()) {
+---
+>                     affectedNodes.put(entry, oldDef);
+>                 }
+>             }
+>         } catch (ItemStateException e) {
+>             throw new RepositoryException("Internal Error: Failed to determine effect of removing mixin " + session.getJCRName(mixinName), e);
+>         }
+> 
+>         
+>         thisState.setMixinTypeNames(remainingMixins);
+>         
+>         setMixinTypesProperty(remainingMixins);
+> 
+>         
+>         
+>         
+>         
+>         boolean success = false;
+>         try {
+>             for (PropertyId id : affectedProps.keySet()) {
+>                 PropertyImpl prop = (PropertyImpl) itemMgr.getItem(id);
+>                 PropertyDefinition oldDef = affectedProps.get(id);
+> 
+>                 if (prop.getDefinition().isProtected()) {
+>                     
+>                     removeChildProperty(id.getName());
+>                     continue;
+>                 }
+>                 
+>                 
+>                 try {
+>                     PropertyDefinitionImpl newDef = getApplicablePropertyDefinition(
+>                             id.getName(), prop.getType(),
+>                             oldDef.isMultiple(), false);
+>                     if (newDef.getRequiredType() != PropertyType.UNDEFINED
+>                             && newDef.getRequiredType() != prop.getType()) {
+>                         
+>                         if (oldDef.isMultiple()) {
+1056,1063c1093,1097
+<                             removeChildProperty(propName);
+<                             continue;
+<                         }
+<                         PropertyDefinitionImpl pdi = getApplicablePropertyDefinition(
+<                                 propName, propState.getType(),
+<                                 propState.isMultiValued(), false);
+<                         if (pdi.getRequiredType() != PropertyType.UNDEFINED
+<                                 && pdi.getRequiredType() != propState.getType()) {
+---
+>                             Value[] values =
+>                                     ValueHelper.convert(
+>                                             prop.getValues(),
+>                                             newDef.getRequiredType(),
+>                                             session.getValueFactory());
+1065,1087c1099,1101
+<                             if (propState.isMultiValued()) {
+<                                 
+<                                 Value[] values =
+<                                         ValueHelper.convert(
+<                                                 prop.getValues(),
+<                                                 pdi.getRequiredType(),
+<                                                 session.getValueFactory());
+<                                 
+<                                 prop.onRedefine(pdi.unwrap());
+<                                 
+<                                 prop.setValue(values);
+<                             } else {
+<                                 
+<                                 Value value =
+<                                         ValueHelper.convert(
+<                                                 prop.getValue(),
+<                                                 pdi.getRequiredType(),
+<                                                 session.getValueFactory());
+<                                 
+<                                 prop.onRedefine(pdi.unwrap());
+<                                 
+<                                 prop.setValue(value);
+<                             }
+---
+>                             prop.onRedefine(newDef.unwrap());
+>                             
+>                             prop.setValue(values);
+1090c1104,1112
+<                             prop.onRedefine(pdi.unwrap());
+---
+>                             Value value =
+>                                     ValueHelper.convert(
+>                                             prop.getValue(),
+>                                             newDef.getRequiredType(),
+>                                             session.getValueFactory());
+>                             
+>                             prop.onRedefine(newDef.unwrap());
+>                             
+>                             prop.setValue(value);
+1092,1096c1114
+<                     } catch (ValueFormatException vfe) {
+<                         
+<                         removeChildProperty(propName);
+<                     } catch (ConstraintViolationException cve) {
+<                         
+---
+>                     } else {
+1098c1116
+<                         removeChildProperty(propName);
+---
+>                         prop.onRedefine(newDef.unwrap());
+1099a1118,1124
+>                 } catch (ValueFormatException vfe) {
+>                     
+>                     removeChildProperty(id.getName());
+>                 } catch (ConstraintViolationException cve) {
+>                     
+>                     
+>                     removeChildProperty(id.getName());
+1102,1106c1127,1128
+<             
+<             ArrayList<ChildNodeEntry> list = new ArrayList<ChildNodeEntry>(thisState.getChildNodeEntries());
+<             
+<             for (int i = list.size() - 1; i >= 0; i--) {
+<                 ChildNodeEntry entry = list.get(i);
+---
+> 
+>             for (ChildNodeEntry entry : affectedNodes.keySet()) {
+1108c1130,1138
+<                 NodeDefinition def = itemMgr.getDefinition(nodeState);
+---
+>                 NodeImpl node = (NodeImpl) itemMgr.getItem(entry.getId());
+>                 NodeDefinition oldDef = affectedNodes.get(entry);
+> 
+>                 if (oldDef.isProtected()) {
+>                     
+>                     removeChildNode(entry.getName(), entry.getIndex());
+>                     continue;
+>                 }
+> 
+1110,1111c1140,1144
+<                 NodeTypeImpl declaringNT = (NodeTypeImpl) def.getDeclaringNodeType();
+<                 if (!entResulting.includesNodeType(declaringNT.getQName())) {
+---
+>                 
+>                 try {
+>                     NodeDefinitionImpl newDef = getApplicableChildNodeDefinition(
+>                             entry.getName(),
+>                             nodeState.getNodeTypeName());
+1112a1146,1147
+>                     node.onRedefine(newDef.unwrap());
+>                 } catch (ConstraintViolationException cve) {
+1114,1131c1149,1150
+< 
+<                     try {
+<                         NodeImpl node = (NodeImpl) itemMgr.getItem(nodeState.getId());
+<                         if (node.getDefinition().isProtected()) {
+<                             
+<                             removeChildNode(entry.getName(), entry.getIndex());
+<                             continue;
+<                         }
+<                         NodeDefinitionImpl ndi = getApplicableChildNodeDefinition(
+<                                 entry.getName(),
+<                                 nodeState.getNodeTypeName());
+<                         
+<                         node.onRedefine(ndi.unwrap());
+<                     } catch (ConstraintViolationException cve) {
+<                         
+<                         
+<                         removeChildNode(entry.getName(), entry.getIndex());
+<                     }
+---
+>                     
+>                     removeChildNode(entry.getName(), entry.getIndex());
+1136c1155
+<             throw new RepositoryException("Failed to clean up child items defined by removed mixin " + session.getJCRName(mixinName));
+---
+>             throw new RepositoryException("Failed to clean up child items defined by removed mixin " + session.getJCRName(mixinName), e);

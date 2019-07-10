@@ -1,0 +1,37 @@
+88a89,90
+> import com.google.common.annotations.VisibleForTesting;
+> 
+102a105,122
+>     public XDataTestCase() {
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+>     @VisibleForTesting
+>     public void setUpPub() throws Exception {
+>         setUp();
+>     }
+> 
+>     @VisibleForTesting
+>     public void tearDownPub() throws Exception {
+>         tearDown();
+>     }
+> 
+766c786
+<     protected BundleJobBean addRecordToBundleJobTable(Job.Status jobStatus, boolean pending) throws Exception {
+---
+>     public BundleJobBean addRecordToBundleJobTable(Job.Status jobStatus, boolean pending) throws Exception {
+1141a1162,1163
+>         assertNotNull(bundleAppXml);
+>         assertTrue(bundleAppXml.length() > 0);
+1144c1166
+<                 .replaceAll("#app_path1", coordPath1.toString() + File.separator + "coordinator.xml");
+---
+>                 .replaceAll("#app_path1", Matcher.quoteReplacement(coordPath1.toString() + File.separator + "coordinator.xml"));
+1146c1168
+<                 .replaceAll("#app_path2", coordPath2.toString() + File.separator + "coordinator.xml");
+---
+>                 .replaceAll("#app_path2", Matcher.quoteReplacement(coordPath2.toString() + File.separator + "coordinator.xml"));

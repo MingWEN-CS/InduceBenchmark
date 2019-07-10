@@ -1,0 +1,124 @@
+248,249c248,251
+<   private boolean successfulInstall = false;
+< 
+---
+>   boolean fetchLatestIndex(final SolrCore core, boolean forceReplication) throws IOException, InterruptedException {
+>     return fetchLatestIndex(core, forceReplication, false);
+>   }
+>   
+259,260c261,264
+<   boolean fetchLatestIndex(final SolrCore core, boolean forceReplication) throws IOException, InterruptedException {
+<     successfulInstall = false;
+---
+> 
+>    boolean fetchLatestIndex(final SolrCore core, boolean forceReplication, boolean forceCoreReload) throws IOException, InterruptedException {
+>     boolean cleanupDone = false;
+>     boolean successfulInstall = false;
+266a271,278
+>     
+>     if (!core.getSolrCoreState().getLastReplicateIndexSuccess()) {
+>       
+>       
+>       
+>       forceReplication = true;
+>     }
+>     
+406a419
+>             reloadCore = true;
+429d441
+<               reloadCore = true;
+451c463,464
+<         if (reloadCore) {
+---
+>        if (successfulInstall && (reloadCore || forceCoreReload)) {
+>           LOG.info("Reloading SolrCore {}", core.getName());
+471a485,494
+>         if (!isFullCopyNeeded && !forceReplication && !successfulInstall) {
+>           cleanup(core, tmpIndexDir, indexDir, deleteTmpIdxDir, successfulInstall);
+>           cleanupDone = true;
+>           
+>           LOG.warn(
+>               "Replication attempt was not successful - trying a full index replication reloadCore={}",
+>               reloadCore);
+>           successfulInstall = fetchLatestIndex(core, true, reloadCore);
+>         }
+>         
+485,510c508,512
+<       try {
+<         if (!successfulInstall) {
+<           try {
+<             logReplicationTimeAndConfFiles(null, successfulInstall);
+<           } catch(Exception e) {
+<             LOG.error("caught", e);
+<           }
+<         }
+<         filesToDownload = filesDownloaded = confFilesDownloaded = confFilesToDownload = null;
+<         replicationStartTime = 0;
+<         dirFileFetcher = null;
+<         localFileFetcher = null;
+<         if (fsyncService != null && !fsyncService.isShutdown()) fsyncService
+<             .shutdownNow();
+<         fsyncService = null;
+<         stop = false;
+<         fsyncException = null;
+<       } finally {
+<         if (deleteTmpIdxDir && tmpIndexDir != null) {
+<           try {
+<             core.getDirectoryFactory().doneWithDirectory(tmpIndexDir);
+<             core.getDirectoryFactory().remove(tmpIndexDir);
+<           } catch (IOException e) {
+<             SolrException.log(LOG, "Error removing directory " + tmpIndexDir, e);
+<           }
+<         }
+---
+>       if (!cleanupDone) {
+>         cleanup(core, tmpIndexDir, indexDir, deleteTmpIdxDir, successfulInstall);
+>       }
+>     }
+>   }
+512,513c514,521
+<         if (tmpIndexDir != null) {
+<           core.getDirectoryFactory().release(tmpIndexDir);
+---
+>   private void cleanup(final SolrCore core, Directory tmpIndexDir,
+>       Directory indexDir, boolean deleteTmpIdxDir, boolean successfulInstall) throws IOException {
+>     try {
+>       if (!successfulInstall) {
+>         try {
+>           logReplicationTimeAndConfFiles(null, successfulInstall);
+>         } catch (Exception e) {
+>           LOG.error("caught", e);
+515,517c523,542
+<         
+<         if (indexDir != null) {
+<           core.getDirectoryFactory().release(indexDir);
+---
+>       }
+>       
+>       core.getUpdateHandler().getSolrCoreState().setLastReplicateIndexSuccess(successfulInstall);
+>       
+>       filesToDownload = filesDownloaded = confFilesDownloaded = confFilesToDownload = null;
+>       replicationStartTime = 0;
+>       dirFileFetcher = null;
+>       localFileFetcher = null;
+>       if (fsyncService != null && !fsyncService.isShutdown()) fsyncService
+>           .shutdownNow();
+>       fsyncService = null;
+>       stop = false;
+>       fsyncException = null;
+>     } finally {
+>       if (deleteTmpIdxDir && tmpIndexDir != null) {
+>         try {
+>           core.getDirectoryFactory().doneWithDirectory(tmpIndexDir);
+>           core.getDirectoryFactory().remove(tmpIndexDir);
+>         } catch (IOException e) {
+>           SolrException.log(LOG, "Error removing directory " + tmpIndexDir, e);
+519a545,552
+>       
+>       if (tmpIndexDir != null) {
+>         core.getDirectoryFactory().release(tmpIndexDir);
+>       }
+>       
+>       if (indexDir != null) {
+>         core.getDirectoryFactory().release(indexDir);
+>       }

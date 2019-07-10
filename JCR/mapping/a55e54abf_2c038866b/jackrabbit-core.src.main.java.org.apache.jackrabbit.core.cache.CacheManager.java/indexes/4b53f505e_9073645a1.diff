@@ -1,0 +1,9 @@
+164c164,169
+<             for (Cache cache : caches.keySet()) {
+---
+>             
+>             List<Cache> list = new ArrayList<Cache>();
+>             synchronized (caches) {
+>                 list.addAll(caches.keySet());
+>             }
+>             for (Cache cache : list) {

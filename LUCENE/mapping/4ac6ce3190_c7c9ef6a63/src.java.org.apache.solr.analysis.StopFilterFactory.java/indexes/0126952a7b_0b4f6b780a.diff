@@ -1,0 +1,32 @@
+25a26
+> import org.apache.lucene.analysis.CharArraySet;
+45,46d45
+<       if (stopWords == null)
+<         stopWords = new HashSet<String>();
+48,53c47,51
+<         java.io.File keepWordsFile = new File(stopWordFiles);
+<         if (keepWordsFile.exists()) {
+<           List<String> wlist = loader.getLines(stopWordFiles);
+<           stopWords = StopFilter.makeStopSet((String[])wlist.toArray(new String[0]), ignoreCase);
+<         } else  {
+<           List<String> files = StrUtils.splitFileNames(stopWordFiles);
+---
+>         List<String> files = StrUtils.splitFileNames(stopWordFiles);
+>           if (stopWords == null && files.size() > 0){
+>             
+>             stopWords = new CharArraySet(files.size() * 10, ignoreCase);
+>           }
+55a54
+>             
+58d56
+<         }
+63c61
+<       stopWords = StopFilter.makeStopSet(StopAnalyzer.ENGLISH_STOP_WORDS, ignoreCase);
+---
+>       stopWords = (CharArraySet) StopFilter.makeStopSet(StopAnalyzer.ENGLISH_STOP_WORDS, ignoreCase);
+66,67c64,65
+< 
+<   private Set stopWords;
+---
+>   
+>   private CharArraySet stopWords;

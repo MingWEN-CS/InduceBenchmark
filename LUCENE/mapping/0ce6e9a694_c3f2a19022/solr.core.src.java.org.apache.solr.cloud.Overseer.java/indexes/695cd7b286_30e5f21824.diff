@@ -1,0 +1,46 @@
+62c62
+<   
+---
+> 
+331a332,345
+> 
+>         Integer numShards = message.getInt(ZkStateReader.NUM_SHARDS_PROP, null);
+>         log.info("Update state numShards={} message={}", numShards, message);
+> 
+>         List<String> shardNames  = new ArrayList<String>();
+> 
+>         
+>         boolean collectionExists = state.hasCollection(collection);
+>         if (!collectionExists && numShards!=null) {
+>           getShardNames(numShards, shardNames);
+>           state = createCollection(state, collection, shardNames, message);
+>         }
+>         String sliceName = message.getStr(ZkStateReader.SHARD_ID_PROP);
+> 
+342,346c356,364
+<         }
+<         Integer numShards = message.getInt(ZkStateReader.NUM_SHARDS_PROP, null);
+<         log.info("Update state numShards={} message={}", numShards, message);
+< 
+<         List<String> shardNames  = new ArrayList<String>();
+---
+>         } else {
+>           
+>           if (sliceName !=null && collectionExists &&  !"true".equals(state.getCollection(collection).getStr("autoCreated"))) {
+>             Slice slice = state.getSlice(collection, sliceName);
+>             if (slice.getReplica(coreNodeName) == null) {
+>               log.info("core_deleted . Just return");
+>               return state;
+>             }
+>           }
+348,352d365
+<         
+<         boolean collectionExists = state.getCollections().contains(collection);
+<         if (!collectionExists && numShards!=null) {
+<           getShardNames(numShards, shardNames);
+<           state = createCollection(state, collection, shardNames, message);
+355,356d367
+<         
+<         String sliceName = message.getStr(ZkStateReader.SHARD_ID_PROP);
+543a555
+>         if(message.getStr("fromApi") == null) collectionProps.put("autoCreated","true");

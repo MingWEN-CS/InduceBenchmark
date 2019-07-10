@@ -1,0 +1,47 @@
+353a354
+>     ServiceComponent clientComponent = createNiceMock(ServiceComponent.class);
+354a356
+>     ServiceComponentHost clientComponentHost = createNiceMock(ServiceComponentHost.class);
+368a371,372
+>     nameResponse.add(new ServiceComponentHostResponse(
+>         "Cluster102", "Service100", "some-client", "Host100", "INIT", "", "INIT", "", null));
+371a376,377
+>     nameResponse2.add(new ServiceComponentHostResponse(
+>         "Cluster102", "Service100", "some-client", "Host100", "INIT", "", "INSTALLED", "", null));
+376a383
+>     expect(managementController.findServiceName(cluster, "some-client")).andReturn("Service100").anyTimes();
+379a387
+>     expect(service.getServiceComponent("some-client")).andReturn(clientComponent).anyTimes();
+381a390,392
+>     expect(clientComponent.getServiceComponentHost("Host100")).andReturn(clientComponentHost).anyTimes();
+>     expect(clientComponent.getName()).andReturn("some-client").anyTimes();
+>     expect(clientComponent.isClientComponent()).andReturn(true).anyTimes();
+385a397,399
+>     expect(clientComponentHost.getState()).andReturn(State.INIT).anyTimes();
+>     expect(clientComponentHost.getHostName()).andReturn("Host100").anyTimes();
+>     expect(clientComponentHost.getServiceComponentName()).andReturn("some-client").anyTimes();
+388d401
+< 
+390a404
+>     expect(maintenanceStateHelper.isOperationAllowed(Resource.Type.Cluster, clientComponentHost)).andReturn(true).anyTimes();
+400,401c414,416
+<     List<ServiceComponentHost> changedComponentHosts = Collections.singletonList(componentHost);
+<     changedHosts.put("Component100", Collections.singletonMap(State.INSTALLED, changedComponentHosts));
+---
+> 
+>     changedHosts.put("Component100", Collections.singletonMap(State.INSTALLED, Collections.singletonList(componentHost)));
+>     changedHosts.put("some-client", Collections.singletonMap(State.INSTALLED, Collections.singletonList(clientComponentHost)));
+428c443
+<     expect(kerberosHelper.isClusterKerberosEnabled(cluster)).andReturn(false).once();
+---
+>     expect(kerberosHelper.isClusterKerberosEnabled(cluster)).andReturn(false).times(2);
+432c447,448
+<         component, componentHost, stageContainer, maintenanceStateHelper, kerberosHelper);
+---
+>         component, componentHost, stageContainer, maintenanceStateHelper, kerberosHelper, clientComponent,
+>         clientComponentHost);
+441c457,458
+<     verify(managementController, response, resourceProviderFactory, stageContainer, kerberosHelper);
+---
+>     verify(managementController, response, resourceProviderFactory, stageContainer, kerberosHelper,
+>            clientComponent, clientComponentHost);

@@ -1,0 +1,45 @@
+25d24
+< import java.util.Comparator;
+49c48
+< import org.apache.lucene.util.StringHelper;
+---
+> import org.apache.lucene.util.Version;
+412c411,412
+<     String oldest = Integer.toString(Integer.MAX_VALUE), newest = Integer.toString(Integer.MIN_VALUE);
+---
+>     Version oldest = null;
+>     Version newest = null;
+414,415d413
+<     boolean foundNonNullVersion = false;
+<     Comparator<String> versionComparator = StringHelper.getVersionComparator();
+417c415
+<       String version = si.info.getVersion();
+---
+>       Version version = si.info.getVersion();
+422,423c420
+<         foundNonNullVersion = true;
+<         if (versionComparator.compare(version, oldest) < 0) {
+---
+>         if (oldest == null || version.onOrAfter(oldest) == false) {
+426c423
+<         if (versionComparator.compare(version, newest) > 0) {
+---
+>         if (newest == null || version.onOrAfter(newest)) {
+478c475
+<     String versionString = null;
+---
+>     String versionString = "";
+480c477
+<       if (foundNonNullVersion) {
+---
+>       if (newest != null) {
+485c482
+<     } else {
+---
+>     } else if (newest != null) { 
+530,531c527,528
+<       final String version = info.info.getVersion();
+<       if (info.info.getDocCount() <= 0 && version != null && versionComparator.compare(version, "4.5") >= 0) {
+---
+>       final Version version = info.info.getVersion();
+>       if (info.info.getDocCount() <= 0 && version != null && version.onOrAfter(Version.LUCENE_4_5_0)) {

@@ -1,0 +1,73 @@
+22a23
+> import java.util.HashSet;
+24a26
+> import java.util.Set;
+35a38
+> import org.apache.solr.common.util.StrUtils;
+73a77
+>   private SolrCore core;
+108a113,144
+>     this.core = core;
+>     Set<String> missing = new HashSet<>();
+>     List<String> c = (List<String>) initArgs.get(INIT_COMPONENTS);
+>     missing.addAll(core.getSearchComponents().checkContains(c));
+>     List<String> first = (List<String>) initArgs.get(INIT_FIRST_COMPONENTS);
+>     missing.addAll(core.getSearchComponents().checkContains(first));
+>     List<String> last = (List<String>) initArgs.get(INIT_LAST_COMPONENTS);
+>     missing.addAll(core.getSearchComponents().checkContains(last));
+>     if (!missing.isEmpty()) throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,
+>         "Missing SearchComponents named : " + missing);
+>     if (c != null && (first != null || last != null)) throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,
+>         "First/Last components only valid if you do not declare 'components'");
+> 
+>     if (shfInfo == null) {
+>       shardHandlerFactory = core.getCoreDescriptor().getCoreContainer().getShardHandlerFactory();
+>     } else {
+>       shardHandlerFactory = core.createInitInstance(shfInfo, ShardHandlerFactory.class, null, null);
+>       core.addCloseHook(new CloseHook() {
+>         @Override
+>         public void preClose(SolrCore core) {
+>           shardHandlerFactory.close();
+>         }
+> 
+>         @Override
+>         public void postClose(SolrCore core) {
+>         }
+>       });
+>     }
+> 
+>   }
+> 
+>   private void initComponents() {
+139c175
+<     components = new ArrayList<>( list.size() );
+---
+>     List<SearchComponent> components = new ArrayList<>(list.size());
+154,168c190
+<     if(shfInfo ==null) {
+<       shardHandlerFactory = core.getCoreDescriptor().getCoreContainer().getShardHandlerFactory();
+<     } else {
+<       shardHandlerFactory = core.createInitInstance(shfInfo, ShardHandlerFactory.class, null, null);
+<       core.addCloseHook(new CloseHook() {
+<         @Override
+<         public void preClose(SolrCore core) {
+<           shardHandlerFactory.close();
+<         }
+<         @Override
+<         public void postClose(SolrCore core) {
+<         }
+<       });
+<     }
+< 
+---
+>     this.components = components;
+171a194,200
+>     if (components == null) {
+>       synchronized (this) {
+>         if (components == null) {
+>           initComponents();
+>         }
+>       }
+>     }
+177a207
+>     if (components == null) getComponents();

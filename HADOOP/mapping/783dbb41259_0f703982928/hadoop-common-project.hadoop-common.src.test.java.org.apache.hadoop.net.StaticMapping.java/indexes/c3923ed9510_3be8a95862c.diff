@@ -1,0 +1,108 @@
+20,21d19
+< import java.util.*;
+< 
+23d20
+< import org.apache.hadoop.conf.Configured;
+24a22,25
+> import java.util.ArrayList;
+> import java.util.HashMap;
+> import java.util.List;
+> import java.util.Map;
+30,38c31,64
+< public class StaticMapping extends Configured implements DNSToSwitchMapping {
+<   public void setconf(Configuration conf) {
+<     String[] mappings = conf.getStrings("hadoop.configured.node.mapping");
+<     if (mappings != null) {
+<       for (int i = 0; i < mappings.length; i++) {
+<         String str = mappings[i];
+<         String host = str.substring(0, str.indexOf('='));
+<         String rack = str.substring(str.indexOf('=') + 1);
+<         addNodeToRack(host, rack);
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> public class StaticMapping extends AbstractDNSToSwitchMapping  {
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   public static final String KEY_HADOOP_CONFIGURED_NODE_MAPPING =
+>       "hadoop.configured.node.mapping";
+> 
+>   
+> 
+> 
+> 
+> 
+>   @Override
+>   public void setConf(Configuration conf) {
+>     super.setConf(conf);
+>     if (conf != null) {
+>       String[] mappings = conf.getStrings(KEY_HADOOP_CONFIGURED_NODE_MAPPING);
+>       if (mappings != null) {
+>         for (String str : mappings) {
+>           String host = str.substring(0, str.indexOf('='));
+>           String rack = str.substring(str.indexOf('=') + 1);
+>           addNodeToRack(host, rack);
+>         }
+41a68,77
+> 
+>   
+> 
+> 
+> 
+> 
+>   public void setconf(Configuration conf) {
+>     setConf(conf);
+>   }
+> 
+43c79,80
+<   private static Map<String, String> nameToRackMap = new HashMap<String, String>();
+---
+>   private static final Map<String, String> nameToRackMap = new HashMap<String, String>();
+> 
+45,46c82,90
+<   static synchronized public void addNodeToRack(String name, String rackId) {
+<     nameToRackMap.put(name, rackId);
+---
+> 
+> 
+> 
+> 
+> 
+>   public static void addNodeToRack(String name, String rackId) {
+>     synchronized (nameToRackMap) {
+>       nameToRackMap.put(name, rackId);
+>     }
+47a92,93
+> 
+>   @Override
+61a108,127
+> 
+>   
+> 
+> 
+> 
+>   @Override
+>   public boolean isSingleSwitch() {
+>     synchronized (nameToRackMap) {
+>       return nameToRackMap.isEmpty();
+>     }
+>   }
+> 
+>   
+> 
+> 
+>   public static void resetMap() {
+>     synchronized (nameToRackMap) {
+>       nameToRackMap.clear();
+>     }
+>   }

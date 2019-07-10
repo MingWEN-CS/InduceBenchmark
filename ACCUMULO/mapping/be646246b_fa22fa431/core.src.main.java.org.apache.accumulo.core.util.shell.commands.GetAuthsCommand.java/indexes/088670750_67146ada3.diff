@@ -1,0 +1,17 @@
+19a20,21
+> import java.util.SortedSet;
+> import java.util.TreeSet;
+22a25
+> import org.apache.accumulo.core.security.Authorizations;
+27a31
+> import org.apache.commons.lang.StringUtils;
+35c39,45
+<     shellState.getReader().printString(shellState.getConnector().securityOperations().getUserAuthorizations(user) + "\n");
+---
+>     
+>     Authorizations auths = shellState.getConnector().securityOperations().getUserAuthorizations(user);
+>     SortedSet<String> set = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+>     for (byte[] auth : auths) {
+>       set.add(new String(auth));
+>     }
+>     shellState.getReader().printString(StringUtils.join(set, ',') + "\n");

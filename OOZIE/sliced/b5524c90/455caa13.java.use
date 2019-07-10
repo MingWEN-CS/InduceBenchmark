@@ -1,0 +1,13 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+10	request	HttpServletRequest	param	38	define	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+11	response	HttpServletResponse	param	38	define	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+10	request	HttpServletRequest	param	39	use	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+11	response	HttpServletResponse	param	40	use	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+11	response	HttpServletResponse	param	41	use	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+12	writer	Writer	variable	41	define	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+13	DummyLogStreamingServlet.lastQueryString	String	variable	39	set	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+12	writer	Writer	variable	41	set	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+9	SC_OK		variable	40	use	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+12	writer	Writer	variable	42	use	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+14	DummyLogStreamingServlet.logs	String	variable	42	use	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44
+12	writer	Writer	variable	43	use	org.apache.oozie.service.DummyLogStreamingServlet.doGet	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/b5524c90/455caa13.java	38	44

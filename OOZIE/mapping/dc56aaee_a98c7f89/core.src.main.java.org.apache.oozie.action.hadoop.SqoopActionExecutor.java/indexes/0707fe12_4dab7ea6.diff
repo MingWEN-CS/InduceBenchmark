@@ -1,0 +1,7 @@
+60a61,66
+>         try {
+>             classes.add(Class.forName(SQOOP_MAIN_CLASS_NAME));
+>         }
+>         catch (ClassNotFoundException e) {
+>             throw new RuntimeException(e);
+>         }

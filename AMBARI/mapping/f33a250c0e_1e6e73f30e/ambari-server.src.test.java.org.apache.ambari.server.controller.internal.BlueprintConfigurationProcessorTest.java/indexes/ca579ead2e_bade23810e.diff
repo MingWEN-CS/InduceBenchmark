@@ -1,0 +1,66 @@
+48a49
+> import org.apache.ambari.server.state.ConfigHelper;
+51a53
+> import org.apache.ambari.server.state.StackId;
+68a71
+> import org.easymock.EasyMock;
+97a101,104
+>   private final Map<String, Map<String, String>> stackProperties = new HashMap<>();
+> 
+>   private final String STACK_NAME = "testStack";
+>   private final String STACK_VERSION = "1";
+131a139,141
+>   @Mock(type = MockType.NICE)
+>   private ConfigHelper configHelper;
+> 
+137,138c147,148
+<     expect(stack.getName()).andReturn("testStack").anyTimes();
+<     expect(stack.getVersion()).andReturn("1").anyTimes();
+---
+>     expect(stack.getName()).andReturn(STACK_NAME).atLeastOnce();
+>     expect(stack.getVersion()).andReturn(STACK_VERSION).atLeastOnce();
+227a238,242
+> 
+>     expect(ambariContext.getConfigHelper()).andReturn(configHelper).anyTimes();
+>     expect(configHelper.getDefaultStackProperties(
+>         EasyMock.eq(new StackId(STACK_NAME, STACK_VERSION)))).andReturn(stackProperties).anyTimes();
+> 
+237c252
+<     Set<String> properties = new HashSet<String>();
+---
+>     Set<String> properties = new HashSet<>();
+244c259
+<     reset(bp, serviceInfo, stack, ambariContext);
+---
+>     reset(bp, serviceInfo, stack, ambariContext, configHelper);
+6324a6340
+> 
+6325a6342,6343
+>     expect(stack.getName()).andReturn(STACK_NAME).anyTimes();
+>     expect(stack.getVersion()).andReturn(STACK_VERSION).anyTimes();
+6330d6347
+< 
+6331a6349
+> 
+6381a6400
+> 
+6382a6402,6403
+>     expect(stack.getName()).andReturn(STACK_NAME).anyTimes();
+>     expect(stack.getVersion()).andReturn(STACK_VERSION).anyTimes();
+6388a6410
+> 
+8052a8075,8078
+> 
+>     expect(stack.getName()).andReturn(STACK_NAME).anyTimes();
+>     expect(stack.getVersion()).andReturn(STACK_VERSION).anyTimes();
+> 
+8075a8102
+> 
+8147c8174
+<     replay(stack, serviceInfo, ambariContext, controller, kerberosHelper, kerberosDescriptor, clusters, cluster);
+---
+>     replay(stack, serviceInfo, ambariContext, configHelper, controller, kerberosHelper, kerberosDescriptor, clusters, cluster);
+8210c8237
+<       this.configuration = new Configuration(Collections.<String, Map<String, String>>emptyMap(),
+---
+>       configuration = new Configuration(Collections.<String, Map<String, String>>emptyMap(),

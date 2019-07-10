@@ -1,0 +1,12 @@
+176c176
+<         throw new IOException(key + " doesn't exist");
+---
+>         return null;
+244c244,248
+<       in = get(blockToKey(block), byteRangeStart);
+---
+>       String blockId = blockToKey(block);
+>       in = get(blockId, byteRangeStart);
+>       if (in == null) {
+>         throw new IOException("Block missing from S3 store: " + blockId);
+>       }

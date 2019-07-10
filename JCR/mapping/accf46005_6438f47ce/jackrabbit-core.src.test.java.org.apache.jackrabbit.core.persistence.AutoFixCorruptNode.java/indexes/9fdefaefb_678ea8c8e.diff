@@ -1,0 +1,84 @@
+79c79
+<             ConsistencyReport r = TestHelper.checkConsistency(s, false);
+---
+>             ConsistencyReport r = TestHelper.checkConsistency(s, false, null);
+91a92,138
+>     public void testOrphan() throws Exception {
+> 
+>         
+>         TransientRepository rep = new TransientRepository(new File(TEST_DIR));
+>         Session s = openSession(rep, false);
+> 
+>         try {
+>             Node root = s.getRootNode();
+> 
+>             Node parent = root.addNode("parent");
+>             Node test = parent.addNode("test");
+>             test.addMixin("mix:referenceable");
+> 
+>             String lost = test.getIdentifier();
+>             
+>             Node lnf = root.addNode("lost+found");
+>             lnf.addMixin("mix:referenceable");
+>             String lnfid = lnf.getIdentifier();
+>             
+>             s.save();
+> 
+>             Node brokenNode = parent;
+>             UUID destroy = UUID.fromString(brokenNode.getIdentifier());
+>             s.logout();
+>             
+>             destroyBundle(destroy, "workspaces/default");
+> 
+>             s = openSession(rep, false);
+>             ConsistencyReport report = TestHelper.checkConsistency(s, false, null);
+>             assertTrue("Report should have reported broken nodes", !report.getItems().isEmpty());
+> 
+>             
+>             ConsistencyReport report2 = TestHelper.checkConsistency(s, true, lnfid);
+>             assertTrue("Report should have reported broken nodes", !report2.getItems().isEmpty());
+>             
+>             s.logout();
+>             
+>             s = openSession(rep, false);
+>             Node q = s.getNodeByIdentifier(lost);
+>             
+>             
+>             assertEquals(lnfid, q.getParent().getIdentifier());
+>         } finally {
+>             s.logout();
+>         }
+>     }
+> 
+123c170
+<             ConsistencyReport report = TestHelper.checkVersionStoreConsistency(s, false);
+---
+>             ConsistencyReport report = TestHelper.checkVersionStoreConsistency(s, false, null);
+161c208
+<             report = TestHelper.checkVersionStoreConsistency(s, true);
+---
+>             report = TestHelper.checkVersionStoreConsistency(s, true, null);
+166c213
+<             report = TestHelper.checkVersionStoreConsistency(s, false);
+---
+>             report = TestHelper.checkVersionStoreConsistency(s, false, null);
+238c285
+<             ConsistencyReport report = TestHelper.checkVersionStoreConsistency(s, false);
+---
+>             ConsistencyReport report = TestHelper.checkVersionStoreConsistency(s, false, null);
+276c323
+<             report = TestHelper.checkVersionStoreConsistency(s, true);
+---
+>             report = TestHelper.checkVersionStoreConsistency(s, true, null);
+281c328
+<             report = TestHelper.checkVersionStoreConsistency(s, false);
+---
+>             report = TestHelper.checkVersionStoreConsistency(s, false, null);
+354c401
+<             ConsistencyReport report = TestHelper.checkVersionStoreConsistency(s, false);
+---
+>             ConsistencyReport report = TestHelper.checkVersionStoreConsistency(s, false, null);
+429c476
+<             ConsistencyReport report = TestHelper.checkVersionStoreConsistency(s, true);
+---
+>             ConsistencyReport report = TestHelper.checkVersionStoreConsistency(s, true, null);

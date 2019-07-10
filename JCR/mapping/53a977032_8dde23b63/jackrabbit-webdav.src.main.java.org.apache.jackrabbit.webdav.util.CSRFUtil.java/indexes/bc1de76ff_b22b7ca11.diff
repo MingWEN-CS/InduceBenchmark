@@ -1,0 +1,82 @@
+19,25c19,20
+< import org.apache.jackrabbit.webdav.DavMethods;
+< import org.slf4j.Logger;
+< import org.slf4j.LoggerFactory;
+< 
+< import javax.servlet.http.HttpServletRequest;
+< import java.net.MalformedURLException;
+< import java.net.URL;
+---
+> import java.net.URI;
+> import java.net.URISyntaxException;
+27a23
+> import java.util.Enumeration;
+28a25
+> import java.util.Locale;
+30a28,32
+> import javax.servlet.http.HttpServletRequest;
+> 
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+> 
+94a97
+>             log.debug("CSRF protection disabled");
+106a110
+>             log.debug("CSRF protection enabled, allowed referrers: " + allowedReferrerHosts);
+110,112c114,119
+<     public boolean isValidRequest(HttpServletRequest request) throws MalformedURLException {
+<         int methodCode = DavMethods.getMethodCode(request.getMethod());
+<         if (disabled || DavMethods.DAV_POST != methodCode || !CONTENT_TYPES.contains(request.getContentType())) {
+---
+>     public boolean isValidRequest(HttpServletRequest request) {
+> 
+>         if (disabled) {
+>             return true;
+>         } else if (!"POST".equals(request.getMethod())) {
+>             
+114a122,141
+>             Enumeration<String> cts = (Enumeration<String>) request.getHeaders("Content-Type");
+>             String ct = null;
+>             if (cts != null && cts.hasMoreElements()) {
+>                 String t = cts.nextElement();
+>                 
+>                 int semicolon = t.indexOf(';');
+>                 if (semicolon >= 0) {
+>                     t = t.substring(0, semicolon);
+>                 }
+>                 ct = t.trim().toLowerCase(Locale.ENGLISH);
+>             }
+>             if (cts != null && cts.hasMoreElements()) {
+>                 
+>                 log.debug("request blocked because there were multiple content-type header fields");
+>                 return false;
+>             }
+>             if (ct != null && !CONTENT_TYPES.contains(ct)) {
+>                 
+>                 return true;
+>             }
+117a145
+>             
+118a147
+>                 log.debug("POST with content type" + ct + " blocked due to missing referer header field");
+122,125c151,165
+<             String host = new URL(refHeader).getHost();
+<             
+<             
+<             return host.equals(request.getServerName()) || allowedReferrerHosts.contains(host);
+---
+>             try {
+>                 String host = new URI(refHeader).getHost();
+>                 
+>                 
+>                 
+>                 boolean ok = host == null || host.equals(request.getServerName()) || allowedReferrerHosts.contains(host);
+>                 if (!ok) {
+>                     log.debug("POST with content type" + ct + " blocked due to referer header field being: " + refHeader);
+>                 }
+>                 return ok;
+>             } catch (URISyntaxException ex) {
+>                 
+>                 log.debug("POST with content type" + ct + " blocked due to malformed referer header field: " + refHeader);
+>                 return false;
+>             }

@@ -1,0 +1,12 @@
+26d25
+< import org.apache.ambari.server.configuration.Configuration;
+28a28
+> import org.apache.commons.collections.CollectionUtils;
+67,69d66
+<   private Configuration configuration;
+< 
+<   @Inject
+291c288
+<           if (logFileNamesResult != null) {
+---
+>           if (CollectionUtils.isNotEmpty(logFileNamesResult)) {

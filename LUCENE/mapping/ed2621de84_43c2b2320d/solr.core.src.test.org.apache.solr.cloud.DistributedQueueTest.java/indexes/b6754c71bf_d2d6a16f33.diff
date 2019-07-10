@@ -1,0 +1,55 @@
+116c116,117
+<     assertTrue(dq.hasWatcher());
+---
+>     assertFalse(dq.isDirty());
+>     assertEquals(1, dq.watcherCount());
+122c123,124
+<     assertFalse(dq.hasWatcher());
+---
+>     assertTrue(dq.isDirty());
+>     assertEquals(0, dq.watcherCount());
+140a143,186
+>   public void testLeakChildWatcher() throws Exception {
+>     String dqZNode = "/distqueue/test";
+>     DistributedQueue dq = makeDistributedQueue(dqZNode);
+>     assertTrue(dq.peekElements(1, 1, s1 -> true).isEmpty());
+>     assertEquals(1, dq.watcherCount());
+>     assertFalse(dq.isDirty());
+>     assertTrue(dq.peekElements(1, 1, s1 -> true).isEmpty());
+>     assertEquals(1, dq.watcherCount());
+>     assertFalse(dq.isDirty());
+>     assertNull(dq.peek());
+>     assertEquals(1, dq.watcherCount());
+>     assertFalse(dq.isDirty());
+>     assertNull(dq.peek(10));
+>     assertEquals(1, dq.watcherCount());
+>     assertFalse(dq.isDirty());
+> 
+>     dq.offer("hello world".getBytes(UTF8));
+>     assertNotNull(dq.peek()); 
+>     
+>     Thread.sleep(100); 
+>     assertNotNull(dq.peek());
+>     assertEquals(1, dq.watcherCount());
+>     assertFalse(dq.isDirty());
+>     assertFalse(dq.peekElements(1, 1, s -> true).isEmpty());
+>     assertEquals(1, dq.watcherCount());
+>     assertFalse(dq.isDirty());
+>   }
+> 
+>   @Test
+>   public void testLocallyOffer() throws Exception {
+>     String dqZNode = "/distqueue/test";
+>     DistributedQueue dq = makeDistributedQueue(dqZNode);
+>     dq.peekElements(1, 1, s -> true);
+>     for (int i = 0; i < 100; i++) {
+>       byte[] data = String.valueOf(i).getBytes(UTF8);
+>       dq.offer(data);
+>       assertNotNull(dq.peek());
+>       dq.poll();
+>       dq.peekElements(1, 1, s -> true);
+>     }
+>   }
+> 
+> 
+>   @Test

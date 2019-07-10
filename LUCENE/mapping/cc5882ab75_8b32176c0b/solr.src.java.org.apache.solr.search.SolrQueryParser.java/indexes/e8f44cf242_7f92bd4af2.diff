@@ -1,0 +1,47 @@
+27a28
+> import org.apache.lucene.util.ToStringUtils;
+28a30,32
+> import org.apache.lucene.util.automaton.Automaton;
+> import org.apache.lucene.util.automaton.BasicAutomata;
+> import org.apache.lucene.util.automaton.BasicOperations;
+199,205c203,234
+<     if (factory != null && factory.shouldReverse(termStr)) {
+<       int len = termStr.length();
+<       char[] chars = new char[len+1];
+<       chars[0] = factory.getMarkerChar();      
+<       termStr.getChars(0, len, chars, 1);
+<       ReversedWildcardFilter.reverse(chars, 1, len);
+<       termStr = new String(chars);
+---
+>     if (factory != null) {
+>       if (factory.shouldReverse(termStr)) {
+>         int len = termStr.length();
+>         char[] chars = new char[len+1];
+>         chars[0] = factory.getMarkerChar();      
+>         termStr.getChars(0, len, chars, 1);
+>         ReversedWildcardFilter.reverse(chars, 1, len);
+>         termStr = new String(chars);
+>       } else { 
+>         
+>         Term term = new Term(field, termStr);
+>         
+>         Automaton a = WildcardQuery.toAutomaton(term);
+>         
+>         Automaton falsePositives = BasicOperations.concatenate(
+>             BasicAutomata.makeChar(factory.getMarkerChar()), 
+>             BasicAutomata.makeAnyString());
+>         return new AutomatonQuery(term, BasicOperations.minus(a, falsePositives)) {
+>           
+>           @Override
+>           public String toString(String field) {
+>             StringBuilder buffer = new StringBuilder();
+>             if (!getField().equals(field)) {
+>               buffer.append(getField());
+>               buffer.append(":");
+>             }
+>             buffer.append(term.text());
+>             buffer.append(ToStringUtils.boost(getBoost()));
+>             return buffer.toString();
+>           }
+>         };
+>       }

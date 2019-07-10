@@ -1,0 +1,19 @@
+35a36,37
+> import org.apache.lucene.store.MockRAMDirectory;
+> 
+73c75
+<     RAMDirectory ramDir = new RAMDirectory(dir);
+---
+>     MockRAMDirectory ramDir = new MockRAMDirectory(dir);
+101c103
+<     RAMDirectory ramDir = new RAMDirectory(indexDir);
+---
+>     MockRAMDirectory ramDir = new MockRAMDirectory(indexDir);
+126c128
+<     RAMDirectory ramDir = new RAMDirectory(indexDir.getCanonicalPath());
+---
+>     MockRAMDirectory ramDir = new MockRAMDirectory(indexDir.getCanonicalPath());
+154c156
+<     final RAMDirectory ramDir = new RAMDirectory(indexDir.getCanonicalPath());
+---
+>     final MockRAMDirectory ramDir = new MockRAMDirectory(indexDir.getCanonicalPath());

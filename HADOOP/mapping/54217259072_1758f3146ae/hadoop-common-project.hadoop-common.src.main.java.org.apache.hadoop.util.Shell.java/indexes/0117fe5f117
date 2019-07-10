@@ -1,0 +1,817 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.util;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+
+
+
+
+
+
+
+
+@InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
+@InterfaceStability.Unstable
+abstract public class Shell {
+  
+  public static final Log LOG = LogFactory.getLog(Shell.class);
+  
+  private static boolean IS_JAVA7_OR_ABOVE =
+      System.getProperty("java.version").substring(0, 3).compareTo("1.7") >= 0;
+
+  public static boolean isJava7OrAbove() {
+    return IS_JAVA7_OR_ABOVE;
+  }
+
+  
+
+
+
+  public static final int WINDOWS_MAX_SHELL_LENGHT = 8191;
+
+  
+
+
+
+
+
+
+  public static void checkWindowsCommandLineLength(String...commands)
+      throws IOException {
+    int len = 0;
+    for (String s: commands) {
+      len += s.length();
+    }
+    if (len > WINDOWS_MAX_SHELL_LENGHT) {
+      throw new IOException(String.format(
+          "The command line has a length of %d exceeds maximum allowed length of %d. " +
+          "Command starts with: %s",
+          len, WINDOWS_MAX_SHELL_LENGHT,
+          StringUtils.join("", commands).substring(0, 100)));
+    }
+  }
+
+  
+  public final static String USER_NAME_COMMAND = "whoami";
+
+  
+  public static final Object WindowsProcessLaunchLock = new Object();
+
+  
+
+  public enum OSType {
+    OS_TYPE_LINUX,
+    OS_TYPE_WIN,
+    OS_TYPE_SOLARIS,
+    OS_TYPE_MAC,
+    OS_TYPE_FREEBSD,
+    OS_TYPE_OTHER
+  }
+
+  public static final OSType osType = getOSType();
+
+  static private OSType getOSType() {
+    String osName = System.getProperty("os.name");
+    if (osName.startsWith("Windows")) {
+      return OSType.OS_TYPE_WIN;
+    } else if (osName.contains("SunOS") || osName.contains("Solaris")) {
+      return OSType.OS_TYPE_SOLARIS;
+    } else if (osName.contains("Mac")) {
+      return OSType.OS_TYPE_MAC;
+    } else if (osName.contains("FreeBSD")) {
+      return OSType.OS_TYPE_FREEBSD;
+    } else if (osName.startsWith("Linux")) {
+      return OSType.OS_TYPE_LINUX;
+    } else {
+      
+      return OSType.OS_TYPE_OTHER;
+    }
+  }
+
+  
+  public static final boolean WINDOWS = (osType == OSType.OS_TYPE_WIN);
+  public static final boolean SOLARIS = (osType == OSType.OS_TYPE_SOLARIS);
+  public static final boolean MAC     = (osType == OSType.OS_TYPE_MAC);
+  public static final boolean FREEBSD = (osType == OSType.OS_TYPE_FREEBSD);
+  public static final boolean LINUX   = (osType == OSType.OS_TYPE_LINUX);
+  public static final boolean OTHER   = (osType == OSType.OS_TYPE_OTHER);
+
+  
+  public static String[] getGroupsCommand() {
+    return (WINDOWS)? new String[]{"cmd", "/c", "groups"}
+                    : new String[]{"bash", "-c", "groups"};
+  }
+
+  
+
+
+
+
+
+  public static String[] getGroupsForUserCommand(final String user) {
+    
+    return (WINDOWS)? new String[] { WINUTILS, "groups", "-F", "\"" + user + "\""}
+                    : new String [] {"bash", "-c", "id -gn " + user
+                                     + "&& id -Gn " + user};
+  }
+
+  
+  public static String[] getUsersForNetgroupCommand(final String netgroup) {
+    
+    return (WINDOWS)? new String [] {"cmd", "/c", "getent netgroup " + netgroup}
+                    : new String [] {"bash", "-c", "getent netgroup " + netgroup};
+  }
+
+  
+  public static String[] getGetPermissionCommand() {
+    return (WINDOWS) ? new String[] { WINUTILS, "ls", "-F" }
+                     : new String[] { "/bin/ls", "-ld" };
+  }
+
+  
+  public static String[] getSetPermissionCommand(String perm, boolean recursive) {
+    if (recursive) {
+      return (WINDOWS) ? new String[] { WINUTILS, "chmod", "-R", perm }
+                         : new String[] { "chmod", "-R", perm };
+    } else {
+      return (WINDOWS) ? new String[] { WINUTILS, "chmod", perm }
+                       : new String[] { "chmod", perm };
+    }
+  }
+
+  
+
+
+
+
+
+
+
+  public static String[] getSetPermissionCommand(String perm, boolean recursive,
+                                                 String file) {
+    String[] baseCmd = getSetPermissionCommand(perm, recursive);
+    String[] cmdWithFile = Arrays.copyOf(baseCmd, baseCmd.length + 1);
+    cmdWithFile[cmdWithFile.length - 1] = file;
+    return cmdWithFile;
+  }
+
+  
+  public static String[] getSetOwnerCommand(String owner) {
+    return (WINDOWS) ? new String[] { WINUTILS, "chown", "\"" + owner + "\"" }
+                     : new String[] { "chown", owner };
+  }
+  
+  
+  public static String[] getSymlinkCommand(String target, String link) {
+    return WINDOWS ? new String[] { WINUTILS, "symlink", link, target }
+                   : new String[] { "ln", "-s", target, link };
+  }
+
+  
+  public static String[] getReadlinkCommand(String link) {
+    return WINDOWS ? new String[] { WINUTILS, "readlink", link }
+        : new String[] { "readlink", link };
+  }
+
+  
+  public static String[] getCheckProcessIsAliveCommand(String pid) {
+    return Shell.WINDOWS ?
+      new String[] { Shell.WINUTILS, "task", "isAlive", pid } :
+      new String[] { "kill", "-0", isSetsidAvailable ? "-" + pid : pid };
+  }
+
+  
+  public static String[] getSignalKillCommand(int code, String pid) {
+    return Shell.WINDOWS ? new String[] { Shell.WINUTILS, "task", "kill", pid } :
+      new String[] { "kill", "-" + code, isSetsidAvailable ? "-" + pid : pid };
+  }
+
+  
+  public static String getEnvironmentVariableRegex() {
+    return (WINDOWS) ? "%([A-Za-z_][A-Za-z0-9_]*?)%" :
+      "\\$([A-Za-z_][A-Za-z0-9_]*)";
+  }
+  
+  
+
+
+
+
+
+
+
+
+  public static File appendScriptExtension(File parent, String basename) {
+    return new File(parent, appendScriptExtension(basename));
+  }
+
+  
+
+
+
+
+
+
+  public static String appendScriptExtension(String basename) {
+    return basename + (WINDOWS ? ".cmd" : ".sh");
+  }
+
+  
+
+
+
+
+
+
+  public static String[] getRunScriptCommand(File script) {
+    String absolutePath = script.getAbsolutePath();
+    return WINDOWS ? new String[] { "cmd", "/c", absolutePath } :
+      new String[] { "/bin/bash", absolutePath };
+  }
+
+  
+  public static final String SET_PERMISSION_COMMAND = "chmod";
+  
+  public static final String SET_OWNER_COMMAND = "chown";
+
+  
+  public static final String SET_GROUP_COMMAND = "chgrp";
+  
+  public static final String LINK_COMMAND = "ln";
+  
+  public static final String READ_LINK_COMMAND = "readlink";
+
+  
+  protected long timeOutInterval = 0L;
+  
+  private AtomicBoolean timedOut;
+
+
+  
+
+
+
+
+
+  private static String checkHadoopHome() {
+
+    
+    String home = System.getProperty("hadoop.home.dir");
+
+    
+    if (home == null) {
+      home = System.getenv("HADOOP_HOME");
+    }
+
+    try {
+       
+       if (home == null) {
+         throw new IOException("HADOOP_HOME or hadoop.home.dir are not set.");
+       }
+
+       if (home.startsWith("\"") && home.endsWith("\"")) {
+         home = home.substring(1, home.length()-1);
+       }
+
+       
+       File homedir = new File(home);
+       if (!homedir.isAbsolute() || !homedir.exists() || !homedir.isDirectory()) {
+         throw new IOException("Hadoop home directory " + homedir
+           + " does not exist, is not a directory, or is not an absolute path.");
+       }
+
+       home = homedir.getCanonicalPath();
+
+    } catch (IOException ioe) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Failed to detect a valid hadoop home directory", ioe);
+      }
+      home = null;
+    }
+    
+    return home;
+  }
+  private static String HADOOP_HOME_DIR = checkHadoopHome();
+
+  
+  
+  public static final String getHadoopHome() throws IOException {
+    if (HADOOP_HOME_DIR == null) {
+      throw new IOException("Misconfigured HADOOP_HOME cannot be referenced.");
+    }
+
+    return HADOOP_HOME_DIR;
+  }
+
+  
+
+
+
+
+
+
+
+  public static final String getQualifiedBinPath(String executable) 
+  throws IOException {
+    
+    String fullExeName = HADOOP_HOME_DIR + File.separator + "bin" 
+      + File.separator + executable;
+
+    File exeFile = new File(fullExeName);
+    if (!exeFile.exists()) {
+      throw new IOException("Could not locate executable " + fullExeName
+        + " in the Hadoop binaries.");
+    }
+
+    return exeFile.getCanonicalPath();
+  }
+
+  
+  public static final String WINUTILS = getWinUtilsPath();
+
+  public static final String getWinUtilsPath() {
+    String winUtilsPath = null;
+
+    try {
+      if (WINDOWS) {
+        winUtilsPath = getQualifiedBinPath("winutils.exe");
+      }
+    } catch (IOException ioe) {
+       LOG.error("Failed to locate the winutils binary in the hadoop binary path",
+         ioe);
+    }
+
+    return winUtilsPath;
+  }
+
+  public static final boolean isSetsidAvailable = isSetsidSupported();
+  private static boolean isSetsidSupported() {
+    if (Shell.WINDOWS) {
+      return false;
+    }
+    ShellCommandExecutor shexec = null;
+    boolean setsidSupported = true;
+    try {
+      String[] args = {"setsid", "bash", "-c", "echo $$"};
+      shexec = new ShellCommandExecutor(args);
+      shexec.execute();
+    } catch (IOException ioe) {
+      LOG.debug("setsid is not available on this machine. So not using it.");
+      setsidSupported = false;
+    } finally { 
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("setsid exited with exit code "
+                 + (shexec != null ? shexec.getExitCode() : "(null executor)"));
+      }
+    }
+    return setsidSupported;
+  }
+
+  
+  public static final String TOKEN_SEPARATOR_REGEX
+                = WINDOWS ? "[|\n\r]" : "[ \t\n\r\f]";
+
+  private long    interval;   
+  private long    lastTime;   
+  final private boolean redirectErrorStream; 
+  private Map<String, String> environment; 
+  private File dir;
+  private Process process; 
+  private int exitCode;
+
+  
+  private volatile AtomicBoolean completed;
+  
+  public Shell() {
+    this(0L);
+  }
+  
+  public Shell(long interval) {
+    this(interval, false);
+  }
+
+  
+
+
+
+  public Shell(long interval, boolean redirectErrorStream) {
+    this.interval = interval;
+    this.lastTime = (interval<0) ? 0 : -interval;
+    this.redirectErrorStream = redirectErrorStream;
+  }
+  
+  
+
+
+  protected void setEnvironment(Map<String, String> env) {
+    this.environment = env;
+  }
+
+  
+
+
+  protected void setWorkingDirectory(File dir) {
+    this.dir = dir;
+  }
+
+  
+  protected void run() throws IOException {
+    if (lastTime + interval > Time.now())
+      return;
+    exitCode = 0; 
+    runCommand();
+  }
+
+  
+  private void runCommand() throws IOException { 
+    ProcessBuilder builder = new ProcessBuilder(getExecString());
+    Timer timeOutTimer = null;
+    ShellTimeoutTimerTask timeoutTimerTask = null;
+    timedOut = new AtomicBoolean(false);
+    completed = new AtomicBoolean(false);
+    
+    if (environment != null) {
+      builder.environment().putAll(this.environment);
+    }
+    if (dir != null) {
+      builder.directory(this.dir);
+    }
+
+    builder.redirectErrorStream(redirectErrorStream);
+    
+    if (Shell.WINDOWS) {
+      synchronized (WindowsProcessLaunchLock) {
+        
+        
+        
+        
+        
+        process = builder.start();
+      }
+    } else {
+      process = builder.start();
+    }
+
+    if (timeOutInterval > 0) {
+      timeOutTimer = new Timer("Shell command timeout");
+      timeoutTimerTask = new ShellTimeoutTimerTask(
+          this);
+      
+      timeOutTimer.schedule(timeoutTimerTask, timeOutInterval);
+    }
+    final BufferedReader errReader = 
+            new BufferedReader(new InputStreamReader(process
+                                                     .getErrorStream()));
+    BufferedReader inReader = 
+            new BufferedReader(new InputStreamReader(process
+                                                     .getInputStream()));
+    final StringBuffer errMsg = new StringBuffer();
+    
+    
+    
+    Thread errThread = new Thread() {
+      @Override
+      public void run() {
+        try {
+          String line = errReader.readLine();
+          while((line != null) && !isInterrupted()) {
+            errMsg.append(line);
+            errMsg.append(System.getProperty("line.separator"));
+            line = errReader.readLine();
+          }
+        } catch(IOException ioe) {
+          LOG.warn("Error reading the error stream", ioe);
+        }
+      }
+    };
+    try {
+      errThread.start();
+    } catch (IllegalStateException ise) { }
+    try {
+      parseExecResult(inReader); 
+      
+      String line = inReader.readLine();
+      while(line != null) { 
+        line = inReader.readLine();
+      }
+      
+      exitCode  = process.waitFor();
+      try {
+        
+        errThread.join();
+      } catch (InterruptedException ie) {
+        LOG.warn("Interrupted while reading the error stream", ie);
+      }
+      completed.set(true);
+      
+      
+      if (exitCode != 0) {
+        throw new ExitCodeException(exitCode, errMsg.toString());
+      }
+    } catch (InterruptedException ie) {
+      throw new IOException(ie.toString());
+    } finally {
+      if (timeOutTimer != null) {
+        timeOutTimer.cancel();
+      }
+      
+      try {
+        
+        
+        
+        
+        
+        
+        
+        InputStream stdout = process.getInputStream();
+        synchronized (stdout) {
+          inReader.close();
+        }
+      } catch (IOException ioe) {
+        LOG.warn("Error while closing the input stream", ioe);
+      }
+      try {
+        if (!completed.get()) {
+          errThread.interrupt();
+          errThread.join();
+        }
+      } catch (InterruptedException ie) {
+        LOG.warn("Interrupted while joining errThread");
+      }
+      try {
+        InputStream stderr = process.getErrorStream();
+        synchronized (stderr) {
+          errReader.close();
+        }
+      } catch (IOException ioe) {
+        LOG.warn("Error while closing the error stream", ioe);
+      }
+      process.destroy();
+      lastTime = Time.now();
+    }
+  }
+
+   
+  protected abstract String[] getExecString();
+  
+  
+  protected abstract void parseExecResult(BufferedReader lines)
+  throws IOException;
+
+  
+
+
+  public String getEnvironment(String env) {
+    return environment.get(env);
+  }
+  
+  
+
+
+  public Process getProcess() {
+    return process;
+  }
+
+  
+
+
+  public int getExitCode() {
+    return exitCode;
+  }
+
+  
+
+
+  public static class ExitCodeException extends IOException {
+    int exitCode;
+    
+    public ExitCodeException(int exitCode, String message) {
+      super(message);
+      this.exitCode = exitCode;
+    }
+    
+    public int getExitCode() {
+      return exitCode;
+    }
+  }
+  
+  
+
+
+
+
+
+
+
+  public static class ShellCommandExecutor extends Shell {
+    
+    private String[] command;
+    private StringBuffer output;
+    
+    
+    public ShellCommandExecutor(String[] execString) {
+      this(execString, null);
+    }
+    
+    public ShellCommandExecutor(String[] execString, File dir) {
+      this(execString, dir, null);
+    }
+   
+    public ShellCommandExecutor(String[] execString, File dir, 
+                                 Map<String, String> env) {
+      this(execString, dir, env , 0L);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public ShellCommandExecutor(String[] execString, File dir, 
+        Map<String, String> env, long timeout) {
+      command = execString.clone();
+      if (dir != null) {
+        setWorkingDirectory(dir);
+      }
+      if (env != null) {
+        setEnvironment(env);
+      }
+      timeOutInterval = timeout;
+    }
+        
+
+    
+    public void execute() throws IOException {
+      this.run();    
+    }
+
+    @Override
+    public String[] getExecString() {
+      return command;
+    }
+
+    @Override
+    protected void parseExecResult(BufferedReader lines) throws IOException {
+      output = new StringBuffer();
+      char[] buf = new char[512];
+      int nRead;
+      while ( (nRead = lines.read(buf, 0, buf.length)) > 0 ) {
+        output.append(buf, 0, nRead);
+      }
+    }
+    
+    
+    public String getOutput() {
+      return (output == null) ? "" : output.toString();
+    }
+
+    
+
+
+
+
+
+
+    @Override
+    public String toString() {
+      StringBuilder builder = new StringBuilder();
+      String[] args = getExecString();
+      for (String s : args) {
+        if (s.indexOf(' ') >= 0) {
+          builder.append('"').append(s).append('"');
+        } else {
+          builder.append(s);
+        }
+        builder.append(' ');
+      }
+      return builder.toString();
+    }
+  }
+  
+  
+
+
+
+
+
+  public boolean isTimedOut() {
+    return timedOut.get();
+  }
+  
+  
+
+
+
+  private void setTimedOut() {
+    this.timedOut.set(true);
+  }
+  
+  
+
+
+
+
+
+
+  public static String execCommand(String ... cmd) throws IOException {
+    return execCommand(null, cmd, 0L);
+  }
+  
+  
+
+
+
+
+
+
+
+
+  
+  public static String execCommand(Map<String, String> env, String[] cmd,
+      long timeout) throws IOException {
+    ShellCommandExecutor exec = new ShellCommandExecutor(cmd, null, env, 
+                                                          timeout);
+    exec.execute();
+    return exec.getOutput();
+  }
+
+  
+
+
+
+
+
+
+
+  public static String execCommand(Map<String,String> env, String ... cmd) 
+  throws IOException {
+    return execCommand(env, cmd, 0L);
+  }
+  
+  
+
+
+  private static class ShellTimeoutTimerTask extends TimerTask {
+
+    private Shell shell;
+
+    public ShellTimeoutTimerTask(Shell shell) {
+      this.shell = shell;
+    }
+
+    @Override
+    public void run() {
+      Process p = shell.getProcess();
+      try {
+        p.exitValue();
+      } catch (Exception e) {
+        
+        
+        
+        if (p != null && !shell.completed.get()) {
+          shell.setTimedOut();
+          p.destroy();
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+1213c1213,1214
+<   private void addReplicaTest()throws Exception{
+---
+> 
+>   private void addReplicaTest() throws Exception {
+1217,1218c1218,1219
+<       createCollection(collectionName, client,2,2);
+<       String newReplicaName = Assign.assignNode(collectionName , client.getZkStateReader().getClusterState() );
+---
+>       createCollection(collectionName, client, 2, 2);
+>       String newReplicaName = Assign.assignNode(collectionName, client.getZkStateReader().getClusterState());
+1221,1229c1222,1226
+<       Map m = makeMap(
+<           "action", CollectionAction.ADDREPLICA.toString(),
+<           ZkStateReader.COLLECTION_PROP, collectionName,
+<           ZkStateReader.SHARD_ID_PROP, "shard1",
+<           "node", nodeList.get(0));
+< 
+<       SolrRequest request = new QueryRequest(new MapSolrParams(m));
+<       request.setPath("/admin/collections");
+<       client.request(request);
+---
+>       CollectionAdminRequest.AddReplica addReplica = new CollectionAdminRequest.AddReplica();
+>       addReplica.setCollectionName(collectionName);
+>       addReplica.setShardName("shard1");
+>       addReplica.setNode(nodeList.get(0));
+>       client.request(addReplica);
+1234c1231
+<       for(; System.currentTimeMillis()<timeout;){
+---
+>       for (; System.currentTimeMillis() < timeout; ) {
+1241c1238
+<       log.info("newReplica {},\n{} ", newReplica,client.getZkStateReader().getBaseUrlForNodeName(nodeList.get(0)));
+---
+>       log.info("newReplica {},\n{} ", newReplica, client.getZkStateReader().getBaseUrlForNodeName(nodeList.get(0)));
+1246,1254c1243,1247
+<       newReplicaName = Assign.assignNode(collectionName , client.getZkStateReader().getClusterState() );
+<       m = makeMap(
+<           "action", CollectionAction.ADDREPLICA.toString(),
+<           ZkStateReader.COLLECTION_PROP, collectionName,
+<           ZkStateReader.SHARD_ID_PROP, "shard2");
+< 
+<       request = new QueryRequest(new MapSolrParams(m));
+<       request.setPath("/admin/collections");
+<       client.request(request);
+---
+>       newReplicaName = Assign.assignNode(collectionName, client.getZkStateReader().getClusterState());
+>       addReplica = new CollectionAdminRequest.AddReplica();
+>       addReplica.setCollectionName(collectionName);
+>       addReplica.setShardName("shard2");
+>       client.request(addReplica);
+1259c1252
+<       for(; System.currentTimeMillis()<timeout;){
+---
+>       for (; System.currentTimeMillis() < timeout; ) {

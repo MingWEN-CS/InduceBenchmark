@@ -1,0 +1,105 @@
+29a30,31
+> import org.apache.accumulo.core.client.Instance;
+> import org.apache.accumulo.core.conf.AccumuloConfiguration;
+37d38
+< import org.apache.accumulo.fate.ReadOnlyTStore;
+38a40
+> import org.apache.accumulo.fate.ReadOnlyTStore;
+43a46
+> import org.apache.accumulo.server.watcher.Log4jConfiguration;
+55c58
+<   
+---
+> 
+57c60
+<   
+---
+> 
+76c79
+<   
+---
+> 
+91c94
+<   
+---
+> 
+112c115
+<   
+---
+> 
+142,143c145
+<   public static void init(VolumeManager fs, ServerConfiguration config, String application) throws UnknownHostException {
+<     
+---
+>   public static void setupLogging(String application) throws UnknownHostException {
+145c147
+<     
+---
+> 
+150c152
+<     
+---
+> 
+152a155
+> 
+154,158c157
+<     int logPort = config.getConfiguration().getPort(Property.MONITOR_LOG4J_PORT);
+<     System.setProperty("org.apache.accumulo.core.host.log.port", Integer.toString(logPort));
+<     
+<     
+<     String logConfig = locateLogConfig(System.getenv("ACCUMULO_CONF_DIR"), application);
+---
+>     String logConfigFile = locateLogConfig(System.getenv("ACCUMULO_CONF_DIR"), application);
+168c167,179
+<     MonitorLog4jWatcher logConfigWatcher = new MonitorLog4jWatcher(config.getInstance().getInstanceID(), logConfig);
+---
+>     Log4jConfiguration logConf = new Log4jConfiguration(logConfigFile);
+>     logConf.resetLogger();
+>   }
+> 
+>   public static void init(VolumeManager fs, ServerConfiguration serverConfig, String application) throws IOException {
+>     final AccumuloConfiguration conf = serverConfig.getConfiguration();
+>     final Instance instance = serverConfig.getInstance();
+> 
+>     
+>     final String logConfigFile = locateLogConfig(System.getenv("ACCUMULO_CONF_DIR"), application);
+> 
+>     
+>     MonitorLog4jWatcher logConfigWatcher = new MonitorLog4jWatcher(instance.getInstanceID(), logConfigFile);
+171a183,186
+>     
+>     int logPort = conf.getPort(Property.MONITOR_LOG4J_PORT);
+>     System.setProperty("org.apache.accumulo.core.host.log.port", Integer.toString(logPort));
+> 
+173c188
+<     log.info("Instance " + config.getInstance().getInstanceID());
+---
+>     log.info("Instance " + serverConfig.getInstance().getInstanceID());
+177c192
+<     
+---
+> 
+182c197
+<     
+---
+> 
+184c199
+<     for (Entry<String,String> entry : config.getConfiguration())
+---
+>     for (Entry<String,String> entry : conf)
+186c201
+<     
+---
+> 
+191c206
+<     
+---
+> 
+209c224
+<   
+---
+> 
+241c256
+<   
+---
+> 

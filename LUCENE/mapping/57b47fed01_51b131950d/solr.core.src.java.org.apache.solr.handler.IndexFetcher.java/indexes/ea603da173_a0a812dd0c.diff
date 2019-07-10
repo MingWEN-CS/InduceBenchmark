@@ -1,0 +1,6 @@
+82a83
+> import org.apache.solr.update.CdcrUpdateLog;
+810a812
+>       ((CdcrUpdateLog) ulog).reset(); 
+811a814
+>       ulog.init(solrCore.getUpdateHandler(), solrCore); 

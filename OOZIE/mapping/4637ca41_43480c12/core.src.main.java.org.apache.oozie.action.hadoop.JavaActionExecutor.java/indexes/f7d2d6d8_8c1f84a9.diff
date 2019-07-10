@@ -1,0 +1,36 @@
+392c392
+<     protected void addShareLib(Path appPath, Configuration conf, String actionShareLibName)
+---
+>     protected void addShareLib(Configuration conf, String actionShareLibName)
+401c401
+<                         Services.get().get(HadoopAccessorService.class).createFileSystem(user, appPath.toUri(), conf);
+---
+>                         Services.get().get(HadoopAccessorService.class).createFileSystem(user, actionLibPath.toUri(), conf);
+405c405
+<                             addToCache(conf, appPath, file.getPath().toUri().getPath(), false);
+---
+>                             addToCache(conf, actionLibPath, file.getPath().toUri().getPath(), false);
+485c485
+<         addAllShareLibs(appPath, conf, context, actionXml);
+---
+>         addAllShareLibs(conf, context, actionXml);
+489c489
+<     private void addAllShareLibs(Path appPath, Configuration conf, Context context, Element actionXml)
+---
+>     private void addAllShareLibs(Configuration conf, Context context, Element actionXml)
+492c492
+<         addActionShareLib(appPath, conf, context, actionXml);
+---
+>         addActionShareLib(conf, context, actionXml);
+494c494
+<         addShareLib(appPath, conf, JavaActionExecutor.OOZIE_COMMON_LIBDIR);
+---
+>         addShareLib(conf, JavaActionExecutor.OOZIE_COMMON_LIBDIR);
+497c497
+<     private void addActionShareLib(Path appPath, Configuration conf, Context context, Element actionXml) throws ActionExecutorException {
+---
+>     private void addActionShareLib(Configuration conf, Context context, Element actionXml) throws ActionExecutorException {
+509c509
+<             addShareLib(appPath, conf, getShareLibName(context, actionXml, conf));
+---
+>             addShareLib(conf, getShareLibName(context, actionXml, conf));

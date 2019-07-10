@@ -1,0 +1,12 @@
+212c212
+<   private static synchronized void ensureInitialized() {
+---
+>   private static void ensureInitialized() {
+214c214,218
+<       initialize(new Configuration(), false);
+---
+>       synchronized(UserGroupInformation.class) {
+>         if (conf == null) { 
+>           initialize(new Configuration(), false);
+>         }
+>       }

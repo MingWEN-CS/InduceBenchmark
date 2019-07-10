@@ -1,0 +1,138 @@
+21,22c21,28
+< import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.*;
+< import static org.junit.Assert.*;
+---
+> import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.KERBEROS;
+> import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.SIMPLE;
+> import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.TOKEN;
+> import static org.junit.Assert.assertEquals;
+> import static org.junit.Assert.assertFalse;
+> import static org.junit.Assert.assertNotNull;
+> import static org.junit.Assert.assertNull;
+> import static org.junit.Assert.assertTrue;
+35,36c41,51
+< import javax.security.auth.callback.*;
+< import javax.security.sasl.*;
+---
+> import javax.security.auth.callback.Callback;
+> import javax.security.auth.callback.CallbackHandler;
+> import javax.security.auth.callback.NameCallback;
+> import javax.security.auth.callback.PasswordCallback;
+> import javax.security.auth.callback.UnsupportedCallbackException;
+> import javax.security.sasl.AuthorizeCallback;
+> import javax.security.sasl.Sasl;
+> import javax.security.sasl.SaslClient;
+> import javax.security.sasl.SaslException;
+> import javax.security.sasl.SaslServer;
+> 
+48c63,67
+< import org.apache.hadoop.security.*;
+---
+> import org.apache.hadoop.security.KerberosInfo;
+> import org.apache.hadoop.security.SaslInputStream;
+> import org.apache.hadoop.security.SaslPlainServer;
+> import org.apache.hadoop.security.SaslRpcClient;
+> import org.apache.hadoop.security.SaslRpcServer;
+49a69,72
+> import org.apache.hadoop.security.SecurityInfo;
+> import org.apache.hadoop.security.SecurityUtil;
+> import org.apache.hadoop.security.TestUserGroupInformation;
+> import org.apache.hadoop.security.UserGroupInformation;
+51a75
+> import org.apache.hadoop.security.token.SecretManager.InvalidToken;
+56,57d79
+< import org.apache.hadoop.security.token.SecretManager.InvalidToken;
+< 
+75a98,102
+>   
+>   
+>   static Boolean enableSecretManager = null;
+>   
+>   
+76a104
+>   static Boolean clientFallBackToSimpleAllowed = true;
+90c118
+<     forceSecretManager = null;
+---
+>     enableSecretManager = null;
+592a621,648
+>   public void testSimpleServerWithTokensWithNoClientFallbackToSimple()
+>       throws Exception {
+> 
+>     clientFallBackToSimpleAllowed = false;
+> 
+>     try{
+>       
+>       
+>       
+>       getAuthMethod(SIMPLE,   SIMPLE, true);
+>     } catch (IOException ioe) {
+>       Assert
+>         .assertTrue(ioe.getMessage().contains("Failed on local exception: " +
+>         		"java.io.IOException: java.io.IOException: " +
+>         		"Server asks us to fall back to SIMPLE auth, " +
+>         		"but this client is configured to only allow secure connections"
+>           ));
+>     }
+> 
+>     
+>     
+>     forceSecretManager = true;
+>     assertAuthEquals(TOKEN, getAuthMethod(SIMPLE,   SIMPLE, true));
+>     forceSecretManager = false;
+>     clientFallBackToSimpleAllowed = true;
+>   }
+> 
+>   @Test
+595c651,655
+<     assertAuthEquals(SIMPLE, getAuthMethod(SIMPLE,   SIMPLE, true));
+---
+>     assertAuthEquals(SIMPLE, getAuthMethod(SIMPLE,   SIMPLE));
+>     
+>     assertAuthEquals(KrbFailed, getAuthMethod(KERBEROS, SIMPLE));
+> 
+>     
+597c657,658
+<     forceSecretManager = true;
+---
+> 
+>     enableSecretManager = true;
+601c662
+<     
+---
+> 
+607c668
+<     forceSecretManager = true;
+---
+>     enableSecretManager = true;
+625c686
+<     forceSecretManager = false;
+---
+>     enableSecretManager = false;
+634c695
+<     forceSecretManager = false;
+---
+>     enableSecretManager = false;
+654c715
+<     forceSecretManager = false;
+---
+>     enableSecretManager = false;
+663c724
+<     forceSecretManager = false;
+---
+>     enableSecretManager = false;
+711a773,775
+>     if (enableSecretManager != null) {
+>       useSecretManager &= enableSecretManager.booleanValue();
+>     }
+713c777
+<       useSecretManager &= forceSecretManager.booleanValue();
+---
+>       useSecretManager |= forceSecretManager.booleanValue();
+733d796
+<     UserGroupInformation.setConfiguration(clientConf);
+736c799,800
+<         true);
+---
+>         clientFallBackToSimpleAllowed);
+>     UserGroupInformation.setConfiguration(clientConf);

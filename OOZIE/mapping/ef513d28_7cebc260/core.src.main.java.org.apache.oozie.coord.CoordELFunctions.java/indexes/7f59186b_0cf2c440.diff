@@ -1,0 +1,27 @@
+199a200,220
+>     public static String ph2_coord_dateTzOffset(String strBaseDate, String timezone) throws Exception {
+>         Calendar baseCalDate = DateUtils.getCalendar(strBaseDate);
+>         StringBuilder buffer = new StringBuilder();
+>         baseCalDate.setTimeZone(DateUtils.getTimeZone(timezone));
+>         buffer.append(DateUtils.formatDate(baseCalDate));
+>         return buffer.toString();
+>     }
+> 
+>     public static String ph3_coord_dateTzOffset(String strBaseDate, String timezone) throws Exception{
+>         return ph2_coord_dateTzOffset(strBaseDate, timezone);
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+772a794,797
+>     public static String ph1_coord_dateTzOffset_echo(String n, String timezone) {
+>         return echoUnResolved("dateTzOffset", n + " , " + timezone);
+>     }
+> 

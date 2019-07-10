@@ -1,0 +1,120 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.oozie.lock;
+
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.Lock;
+import org.apache.oozie.service.MemoryLocksService.Type;
+
+import com.google.common.collect.MapMaker;
+
+
+
+
+public class MemoryLocks {
+
+    final private ConcurrentMap<String, ReentrantReadWriteLock> locks = new MapMaker().weakValues().makeMap();
+
+    
+
+
+    class MemoryLockToken implements LockToken {
+        private final ReentrantReadWriteLock lockEntry;
+        private final Type type;
+
+        public MemoryLockToken(ReentrantReadWriteLock lockEntry, Type type) {
+            this.lockEntry = lockEntry;
+            this.type = type;
+
+        }
+
+        
+
+
+        @Override
+        public void release() {
+            switch (type) {
+                case WRITE:
+                    lockEntry.writeLock().unlock();
+                    break;
+                case READ:
+                    lockEntry.readLock().unlock();
+                    break;
+            }
+        }
+    }
+
+    
+
+
+
+
+    public int size() {
+        return locks.size();
+    }
+
+    
+
+
+
+
+
+
+
+
+    public MemoryLockToken getLock(final String resource, Type type, long wait) throws InterruptedException {
+        ReentrantReadWriteLock lockEntry = locks.get(resource);
+        if (lockEntry == null) {
+            ReentrantReadWriteLock newLock = new ReentrantReadWriteLock(true);
+            lockEntry = locks.putIfAbsent(resource, newLock);
+            if (lockEntry == null) {
+                lockEntry = newLock;
+            }
+        }
+        Lock lock = (type.equals(Type.READ)) ? lockEntry.readLock() : lockEntry.writeLock();
+
+        if (wait == -1) {
+            lock.lock();
+        }
+        else {
+            if (wait > 0) {
+                if (!lock.tryLock(wait, TimeUnit.MILLISECONDS)) {
+                    return null;
+                }
+            }
+            else {
+                if (!lock.tryLock()) {
+                    return null;
+                }
+            }
+        }
+        synchronized (locks) {
+            if (!locks.containsKey(resource)) {
+                locks.put(resource, lockEntry);
+            }
+        }
+        return new MemoryLockToken(lockEntry, type);
+    }
+
+    public ConcurrentMap<String, ReentrantReadWriteLock> getLockMap(){
+        return locks;
+    }
+}

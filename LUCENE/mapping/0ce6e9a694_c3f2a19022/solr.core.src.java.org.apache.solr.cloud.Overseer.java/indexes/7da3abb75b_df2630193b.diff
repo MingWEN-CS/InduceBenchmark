@@ -1,0 +1,13 @@
+938c938
+<   private OverseerThread ccThread;
+---
+>   private volatile OverseerThread ccThread;
+940c940
+<   private OverseerThread updaterThread;
+---
+>   private volatile OverseerThread updaterThread;
+972a973,976
+>   public OverseerThread getUpdaterThread() {
+>     return updaterThread;
+>   }
+>   

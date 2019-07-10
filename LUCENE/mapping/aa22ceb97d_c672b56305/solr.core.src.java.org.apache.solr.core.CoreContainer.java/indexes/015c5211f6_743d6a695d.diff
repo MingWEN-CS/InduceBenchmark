@@ -1,0 +1,21 @@
+1456a1457,1460
+>         } finally {
+>           synchronized (locker) {
+>             cores.remove(coreName);
+>           }
+1460d1463
+<     cores.clear();
+1468a1472,1475
+>         } finally {
+>           synchronized (locker) {
+>             transientCores.remove(coreName);
+>           }
+1472d1478
+<     transientCores.clear();
+1479a1486,1489
+>       } finally {
+>         synchronized (locker) {
+>           pendingCloses.remove(core);
+>         }
+1482d1491
+< 

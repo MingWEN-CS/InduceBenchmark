@@ -1,0 +1,74 @@
+51c51
+<         throw new SolrException (SolrException.ErrorCode.BAD_REQUEST, "No value for :"+shardFieldName + ". Unable to identify shard");
+---
+>         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "No value for :" + shardFieldName + ". Unable to identify shard");
+66a67
+> 
+115c116
+<     } else if (range.includes(keyRange.max))  {
+---
+>     } else if (range.includes(keyRange.max)) {
+118c119
+<     } else  {
+---
+>     } else {
+132c133
+<     long rangeSize = (long)max - (long)min;
+---
+>     long rangeSize = (long) max - (long) min;
+148c149
+<     boolean round = rangeStep >= (1<<bits)*16;
+---
+>     boolean round = rangeStep >= (1 << bits) * 16;
+157c158
+<         long roundDown = (end | mask) - increment ;
+---
+>         long roundDown = (end | mask) - increment;
+170c171
+<       ranges.add(new Range((int)start, (int)end));
+---
+>       ranges.add(new Range((int) start, (int) end));
+195c196
+<       if(key.endsWith("!"))
+---
+>       if (key.endsWith("!"))
+197c198
+<       if(pieces == 3) {
+---
+>       if (pieces == 3) {
+207c208
+<       for(int i=0;i<parts.length;i++) {
+---
+>       for (int i = 0; i < parts.length; i++) {
+210c211
+<         if(commaIdx > 0) {
+---
+>         if (commaIdx > 0) {
+223c224
+<       if(triLevel) {
+---
+>       if (triLevel) {
+248c249
+<       if(triLevel)
+---
+>       if (triLevel)
+259,260c260,261
+<       masks[0] = firstBits==0 ? 0 : (-1 << (32-firstBits));
+<       masks[1] = (firstBits + secondBits)==0 ? 0 : (-1 << (32 - firstBits - secondBits));
+---
+>       masks[0] = firstBits == 0 ? 0 : (-1 << (32 - firstBits));
+>       masks[1] = (firstBits + secondBits) == 0 ? 0 : (-1 << (32 - firstBits - secondBits));
+268c269
+<       for (int idx = commaIdx + 1; idx<firstPart.length(); idx++) {
+---
+>       for (int idx = commaIdx + 1; idx < firstPart.length(); idx++) {
+280,281c281,282
+<       masks[0] = firstBits==0 ? 0 : (-1 << (32-firstBits));
+<       masks[1] = firstBits==32 ? 0 : (-1 >>> firstBits);
+---
+>       masks[0] = firstBits == 0 ? 0 : (-1 << (32 - firstBits));
+>       masks[1] = firstBits == 32 ? 0 : (-1 >>> firstBits);
+288c289
+<       for(int i=1;i<pieces;i++)
+---
+>       for (int i = 1; i < pieces; i++)

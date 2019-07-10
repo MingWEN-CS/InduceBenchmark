@@ -1,0 +1,9 @@
+22d21
+< import org.apache.lucene.index.DocValues;
+103c102,103
+<         final NumericDocValues singleton = DocValues.unwrapSingleton(values);
+---
+>         final NumericDocValues singleton = null; 
+>         
+105a106
+>           assert false : "imposible code -- or: someone re-enabled singleton optinization w/o reading the whole method";

@@ -1,0 +1,136 @@
+190c190
+<   
+---
+> 
+848,850d847
+<   
+<   private static final Pattern VAR_PATTERN =
+<       Pattern.compile("\\$\\{[^\\}\\$\u0020]+\\}");
+853a851,934
+>   private static final int SUB_START_IDX = 0;
+>   private static final int SUB_END_IDX = SUB_START_IDX + 1;
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private static int[] findSubVariable(String eval) {
+>     int[] result = {-1, -1};
+> 
+>     int matchStart;
+>     int leftBrace;
+> 
+>     
+>     
+>     
+>     match_loop:
+>     for (matchStart = 1, leftBrace = eval.indexOf('{', matchStart);
+>          
+>          leftBrace > 0
+>          
+>          && leftBrace + "{c".length() < eval.length();
+>          leftBrace = eval.indexOf('{', matchStart)) {
+>       int matchedLen = 0;
+>       if (eval.charAt(leftBrace - 1) == '$') {
+>         int subStart = leftBrace + 1; 
+>         for (int i = subStart; i < eval.length(); i++) {
+>           switch (eval.charAt(i)) {
+>             case '}':
+>               if (matchedLen > 0) { 
+>                 result[SUB_START_IDX] = subStart;
+>                 result[SUB_END_IDX] = subStart + matchedLen;
+>                 break match_loop;
+>               }
+>               
+>             case ' ':
+>             case '$':
+>               matchStart = i + 1;
+>               continue match_loop;
+>             default:
+>               matchedLen++;
+>           }
+>         }
+>         
+>         
+>         break match_loop;
+>       } else {
+>         
+>         
+>         matchStart = leftBrace + 1;
+>       }
+>     }
+>     return result;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+858d938
+<     Matcher match = VAR_PATTERN.matcher("");
+860,863c940,943
+<     Set<String> evalSet = new HashSet<String>();
+<     for(int s=0; s<MAX_SUBST; s++) {
+<       if (evalSet.contains(eval)) {
+<         
+---
+>     Set<String> evalSet = null;
+>     for(int s = 0; s < MAX_SUBST; s++) {
+>       final int[] varBounds = findSubVariable(eval);
+>       if (varBounds[SUB_START_IDX] == -1) {
+866,872c946,947
+<       evalSet.add(eval);
+<       match.reset(eval);
+<       if (!match.find()) {
+<         return eval;
+<       }
+<       String var = match.group();
+<       var = var.substring(2, var.length()-1); 
+---
+>       final String var = eval.substring(varBounds[SUB_START_IDX],
+>           varBounds[SUB_END_IDX]);
+884a960,972
+> 
+>       
+>       
+>       final int dollar = varBounds[SUB_START_IDX] - "${".length();
+>       final int afterRightBrace = varBounds[SUB_END_IDX] + "}".length();
+>       final String refVar = eval.substring(dollar, afterRightBrace);
+>       if (evalSet == null) {
+>         evalSet = new HashSet<String>();
+>       }
+>       if (!evalSet.add(refVar)) {
+>         return expr; 
+>       }
+> 
+886c974,976
+<       eval = eval.substring(0, match.start())+val+eval.substring(match.end());
+---
+>       eval = eval.substring(0, dollar)
+>              + val
+>              + eval.substring(afterRightBrace);

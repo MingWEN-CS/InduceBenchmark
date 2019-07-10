@@ -1,0 +1,4 @@
+45c45
+<     shellState.getReader().printString(StringUtils.join(set, ',') + "\n");
+---
+>     shellState.getReader().println(StringUtils.join(set, ','));

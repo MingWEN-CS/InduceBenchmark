@@ -1,0 +1,32 @@
+345a346
+>   private final int maxDataLength;
+1383c1384,1399
+<     
+---
+> 
+>     private void checkDataLength(int dataLength) throws IOException {
+>       if (dataLength < 0) {
+>         String error = "Unexpected data length " + dataLength +
+>                        "!! from " + getHostAddress();
+>         LOG.warn(error);
+>         throw new IOException(error);
+>       } else if (dataLength > maxDataLength) {
+>         String error = "Requested data length " + dataLength +
+>               " is longer than maximum configured RPC length " + 
+>             maxDataLength + ".  RPC came from " + getHostAddress();
+>         LOG.warn(error);
+>         throw new IOException(error);
+>       }
+>     }
+> 
+1445,1449c1461
+<           
+<           if (dataLength < 0) {
+<             LOG.warn("Unexpected data length " + dataLength + "!! from " + 
+<                 getHostAddress());
+<           }
+---
+>           checkDataLength(dataLength);
+1983a1996,1997
+>     this.maxDataLength = conf.getInt(CommonConfigurationKeys.IPC_MAXIMUM_DATA_LENGTH,
+>         CommonConfigurationKeys.IPC_MAXIMUM_DATA_LENGTH_DEFAULT);

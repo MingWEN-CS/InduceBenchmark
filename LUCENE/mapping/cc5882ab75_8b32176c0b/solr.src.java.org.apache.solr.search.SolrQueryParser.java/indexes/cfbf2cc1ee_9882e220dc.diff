@@ -1,0 +1,12 @@
+90c90
+<     super(Version.LUCENE_24, defaultField, analyzer);
+---
+>     super(parser.getReq().getSchema().getSolrConfig().getLuceneVersion("luceneMatchVersion", Version.LUCENE_24), defaultField, analyzer);
+129c129
+<   protected Query getFieldQuery(String field, String queryText) throws ParseException {
+---
+>   protected Query getFieldQuery(String field, String queryText, boolean quoted) throws ParseException {
+153c153
+<     return super.getFieldQuery(field, queryText);
+---
+>     return super.getFieldQuery(field, queryText, quoted);

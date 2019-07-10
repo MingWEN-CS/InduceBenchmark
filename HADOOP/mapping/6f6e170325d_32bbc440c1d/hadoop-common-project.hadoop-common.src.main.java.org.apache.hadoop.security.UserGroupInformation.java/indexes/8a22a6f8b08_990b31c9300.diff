@@ -1,0 +1,28 @@
+66a67
+> import static org.apache.hadoop.util.PlatformName.IBM_JAVA;
+309d309
+<   private static final boolean ibmJava = System.getProperty("java.vendor").contains("IBM");
+314c314
+<     if (ibmJava) {
+---
+>     if (IBM_JAVA) {
+336c336
+<       if (ibmJava) {
+---
+>       if (IBM_JAVA) {
+433c433
+<       if (ibmJava) {
+---
+>       if (IBM_JAVA) {
+442c442
+<         if (ibmJava) {
+---
+>         if (IBM_JAVA) {
+458c458
+<       if (ibmJava) {
+---
+>       if (IBM_JAVA) {
+490c490
+<         if (ibmJava) {
+---
+>         if (IBM_JAVA) {

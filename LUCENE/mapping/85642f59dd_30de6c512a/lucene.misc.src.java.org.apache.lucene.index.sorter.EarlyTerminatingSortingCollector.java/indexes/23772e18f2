@@ -1,0 +1,125 @@
+package org.apache.lucene.index.sorter;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+
+import org.apache.lucene.index.AtomicReaderContext;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.CollectionTerminatedException;
+import org.apache.lucene.search.Collector;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.TopDocsCollector;
+import org.apache.lucene.search.TotalHitCountCollector;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class EarlyTerminatingSortingCollector extends Collector {
+  
+  protected final Collector in;
+  
+  protected final Sort sort;
+  
+  protected final int numDocsToCollect;
+  
+  protected int segmentTotalCollect;
+  
+  protected boolean segmentSorted;
+
+  private int numCollected;
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public EarlyTerminatingSortingCollector(Collector in, Sort sort, int numDocsToCollect) {
+    if (numDocsToCollect <= 0) {
+      throw new IllegalStateException("numDocsToCollect must always be > 0, got " + segmentTotalCollect);
+    }
+    this.in = in;
+    this.sort = sort;
+    this.numDocsToCollect = numDocsToCollect;
+  }
+
+  @Override
+  public void setScorer(Scorer scorer) throws IOException {
+    in.setScorer(scorer);
+  }
+
+  @Override
+  public void collect(int doc) throws IOException {
+    in.collect(doc);
+    if (++numCollected >= segmentTotalCollect) {
+      throw new CollectionTerminatedException();
+    }
+  }
+
+  @Override
+  public void setNextReader(AtomicReaderContext context) throws IOException {
+    in.setNextReader(context);
+    segmentSorted = SortingMergePolicy.isSorted(context.reader(), sort);
+    segmentTotalCollect = segmentSorted ? numDocsToCollect : Integer.MAX_VALUE;
+    numCollected = 0;
+  }
+
+  @Override
+  public boolean acceptsDocsOutOfOrder() {
+    return !segmentSorted && in.acceptsDocsOutOfOrder();
+  }
+
+}

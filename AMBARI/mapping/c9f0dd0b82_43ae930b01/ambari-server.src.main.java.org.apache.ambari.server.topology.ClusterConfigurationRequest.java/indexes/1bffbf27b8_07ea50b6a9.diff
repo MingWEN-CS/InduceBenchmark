@@ -1,0 +1,9 @@
+71c71,76
+<     configurationProcessor.doUpdateForClusterCreate();
+---
+>     try {
+>       configurationProcessor.doUpdateForClusterCreate();
+>     } catch (ConfigurationTopologyException e) {
+>       
+>       LOG.error("An exception occurred while doing configuration topology update: " + e, e);
+>     }

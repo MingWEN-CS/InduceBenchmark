@@ -1,0 +1,24 @@
+51c51
+<       DataConfig.Entity ent = cfg.documents.get(0).entities.get(0);
+---
+>       DataConfig.Entity ent = cfg.document.entities.get(0);
+58c58
+<       di.runCmd(rp, swi, Collections.EMPTY_MAP);
+---
+>       di.runCmd(rp, swi);
+79c79
+<       DataConfig.Entity ent = cfg.documents.get(0).entities.get(0);
+---
+>       DataConfig.Entity ent = cfg.document.entities.get(0);
+88c88
+<       di.runCmd(rp, swi, Collections.EMPTY_MAP);
+---
+>       di.runCmd(rp, swi);
+118c118
+<       DataConfig.Entity ent = cfg.documents.get(0).entities.get(0);
+---
+>       DataConfig.Entity ent = cfg.document.entities.get(0);
+130c130
+<       di.runCmd(rp, swi, Collections.EMPTY_MAP);
+---
+>       di.runCmd(rp, swi);

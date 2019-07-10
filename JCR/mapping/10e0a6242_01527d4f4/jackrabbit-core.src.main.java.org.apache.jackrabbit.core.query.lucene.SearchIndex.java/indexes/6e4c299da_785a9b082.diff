@@ -1,0 +1,19 @@
+58a59
+> import org.apache.jackrabbit.core.state.NoSuchItemStateException;
+1527a1529,1533
+>             } catch (NoSuchItemStateException e) {
+>                 
+>                 log.info(
+>                         "Exception while building indexing aggregate for {}. Node is not available {}.",
+>                         state.getNodeId(), e.getMessage());
+1530,1531c1536,1537
+<                 log.warn("Exception while building indexing aggregate for"
+<                         + " node with id: " + state.getNodeId(), e);
+---
+>                 log.warn("Exception while building indexing aggregate for "
+>                         + state.getNodeId(), e);
+1696a1703,1706
+>         } catch (NoSuchItemStateException e) {
+>             log.info(
+>                     "Exception while retrieving aggregate roots. Node is not available {}.",
+>                     e.getMessage());

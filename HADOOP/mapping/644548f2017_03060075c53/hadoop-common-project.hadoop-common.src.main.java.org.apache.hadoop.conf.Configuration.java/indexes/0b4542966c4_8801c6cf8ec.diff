@@ -1,0 +1,15 @@
+36a37
+> import java.net.JarURLConnection;
+37a39
+> import java.net.URLConnection;
+2534c2536,2543
+<     return parse(builder, url.openStream(), url.toString());
+---
+> 
+>     URLConnection connection = url.openConnection();
+>     if (connection instanceof JarURLConnection) {
+>       
+>       
+>       connection.setUseCaches(false);
+>     }
+>     return parse(builder, connection.getInputStream(), url.toString());

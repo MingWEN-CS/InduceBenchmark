@@ -1,0 +1,265 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.fs;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+
+@InterfaceAudience.Private
+@InterfaceStability.Unstable
+class Globber {
+  public static final Log LOG = LogFactory.getLog(Globber.class.getName());
+
+  private final FileSystem fs;
+  private final FileContext fc;
+  private final Path pathPattern;
+  private final PathFilter filter;
+  
+  public Globber(FileSystem fs, Path pathPattern, PathFilter filter) {
+    this.fs = fs;
+    this.fc = null;
+    this.pathPattern = pathPattern;
+    this.filter = filter;
+  }
+
+  public Globber(FileContext fc, Path pathPattern, PathFilter filter) {
+    this.fs = null;
+    this.fc = fc;
+    this.pathPattern = pathPattern;
+    this.filter = filter;
+  }
+
+  private FileStatus getFileStatus(Path path) {
+    try {
+      if (fs != null) {
+        return fs.getFileStatus(path);
+      } else {
+        return fc.getFileStatus(path);
+      }
+    } catch (IOException e) {
+      return null;
+    }
+  }
+
+  private FileStatus getFileLinkStatus(Path path) {
+    try {
+      if (fs != null) {
+        return fs.getFileLinkStatus(path);
+      } else {
+        return fc.getFileLinkStatus(path);
+      }
+    } catch (IOException e) {
+      return null;
+    }
+  }
+
+  private FileStatus[] listStatus(Path path) {
+    try {
+      if (fs != null) {
+        return fs.listStatus(path);
+      } else {
+        return fc.util().listStatus(path);
+      }
+    } catch (IOException e) {
+      return new FileStatus[0];
+    }
+  }
+
+  private Path fixRelativePart(Path path) {
+    if (fs != null) {
+      return fs.fixRelativePart(path);
+    } else {
+      return fc.fixRelativePart(path);
+    }
+  }
+
+  
+
+
+
+
+  private static List<String> getPathComponents(String path)
+      throws IOException {
+    ArrayList<String> ret = new ArrayList<String>();
+    for (String component : path.split(Path.SEPARATOR)) {
+      if (!component.isEmpty()) {
+        ret.add(component);
+      }
+    }
+    return ret;
+  }
+
+  private String schemeFromPath(Path path) throws IOException {
+    String scheme = path.toUri().getScheme();
+    if (scheme == null) {
+      if (fs != null) {
+        scheme = fs.getUri().getScheme();
+      } else {
+        scheme = fc.getDefaultFileSystem().getUri().getScheme();
+      }
+    }
+    return scheme;
+  }
+
+  private String authorityFromPath(Path path) throws IOException {
+    String authority = path.toUri().getAuthority();
+    if (authority == null) {
+      if (fs != null) {
+        authority = fs.getUri().getAuthority();
+      } else {
+        authority = fc.getDefaultFileSystem().getUri().getAuthority();
+      }
+    }
+    return authority ;
+  }
+
+  
+
+
+
+
+
+
+
+  private static String unquotePathComponent(String name) {
+    return name.replaceAll("\\\\(.)", "$1");
+  }
+
+  public FileStatus[] glob() throws IOException {
+    
+    
+    String scheme = schemeFromPath(pathPattern);
+    String authority = authorityFromPath(pathPattern);
+
+    
+    
+    
+    String pathPatternString = pathPattern.toUri().getPath();
+    List<String> flattenedPatterns = GlobExpander.expand(pathPatternString);
+
+    
+    
+    ArrayList<FileStatus> results = 
+        new ArrayList<FileStatus>(flattenedPatterns.size());
+    boolean sawWildcard = false;
+    for (String flatPattern : flattenedPatterns) {
+      
+      
+      
+      Path absPattern = fixRelativePart(new Path(
+          flatPattern.isEmpty() ? Path.CUR_DIR : flatPattern));
+      
+      
+      List<String> components =
+          getPathComponents(absPattern.toUri().getPath());
+      
+      
+      ArrayList<FileStatus> candidates = new ArrayList<FileStatus>(1);
+      if (Path.WINDOWS && !components.isEmpty()
+          && Path.isWindowsAbsolutePath(absPattern.toUri().getPath(), true)) {
+        
+        
+        
+        String driveLetter = components.remove(0);
+        candidates.add(new FileStatus(0, true, 0, 0, 0, new Path(scheme,
+            authority, Path.SEPARATOR + driveLetter + Path.SEPARATOR)));
+      } else {
+        candidates.add(new FileStatus(0, true, 0, 0, 0,
+            new Path(scheme, authority, Path.SEPARATOR)));
+      }
+      
+      for (String component : components) {
+        ArrayList<FileStatus> newCandidates =
+            new ArrayList<FileStatus>(candidates.size());
+        GlobFilter globFilter = new GlobFilter(component);
+        if (globFilter.hasPattern()) {
+          sawWildcard = true;
+        }
+        if (candidates.isEmpty() && sawWildcard) {
+          break;
+        }
+        for (FileStatus candidate : candidates) {
+          FileStatus resolvedCandidate = candidate;
+          if (candidate.isSymlink()) {
+            
+            
+            resolvedCandidate = getFileStatus(candidate.getPath());
+          }
+          if (resolvedCandidate == null ||
+              resolvedCandidate.isDirectory() == false) {
+            continue;
+          }
+          
+          
+          
+          
+          
+          
+          
+          if (globFilter.hasPattern()) {
+            FileStatus[] children = listStatus(candidate.getPath());
+            for (FileStatus child : children) {
+              
+              
+              child.setPath(new Path(candidate.getPath(),
+                      child.getPath().getName()));
+              if (globFilter.accept(child.getPath())) {
+                newCandidates.add(child);
+              }
+            }
+          } else {
+            Path p = new Path(candidate.getPath(), unquotePathComponent(component));
+            FileStatus s = getFileLinkStatus(p);
+            if (s != null) {
+              s.setPath(p);
+              newCandidates.add(s);
+            }
+          }
+        }
+        candidates = newCandidates;
+      }
+      for (FileStatus status : candidates) {
+        
+        
+        if (filter.accept(status.getPath())) {
+          results.add(status);
+        }
+      }
+    }
+    
+
+
+
+
+
+
+
+
+    if ((!sawWildcard) && results.isEmpty() &&
+        (flattenedPatterns.size() <= 1)) {
+      return null;
+    }
+    return results.toArray(new FileStatus[0]);
+  }
+}

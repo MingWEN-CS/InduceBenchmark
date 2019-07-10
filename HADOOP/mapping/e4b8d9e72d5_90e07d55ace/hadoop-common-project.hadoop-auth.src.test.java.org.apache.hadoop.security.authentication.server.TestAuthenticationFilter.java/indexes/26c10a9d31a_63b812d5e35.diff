@@ -1,0 +1,33 @@
+20a21
+> import java.util.ArrayList;
+21a23
+> import java.util.Enumeration;
+154,155c156
+<   public void testInit() throws Exception {
+< 
+---
+>   public void testFallbackToRandomSecretProvider() throws Exception {
+165,166c166,167
+<           new Vector<String>(Arrays.asList(AuthenticationFilter.AUTH_TYPE,
+<                                            AuthenticationFilter.AUTH_TOKEN_VALIDITY)).elements());
+---
+>           new Vector<>(Arrays.asList(AuthenticationFilter.AUTH_TYPE,
+>                                      AuthenticationFilter.AUTH_TOKEN_VALIDITY)).elements());
+181c182,184
+< 
+---
+>   }
+>   @Test
+>   public void testInit() throws Exception {
+183c186
+<     filter = new AuthenticationFilter();
+---
+>     AuthenticationFilter filter = new AuthenticationFilter();
+187d189
+<       Mockito.when(config.getInitParameter(AuthenticationFilter.SIGNATURE_SECRET)).thenReturn("secret");
+189,190c191,192
+<         new Vector<String>(Arrays.asList(AuthenticationFilter.AUTH_TYPE,
+<                                  AuthenticationFilter.SIGNATURE_SECRET)).elements());
+---
+>           new Vector<>(Arrays.asList(AuthenticationFilter.AUTH_TYPE))
+>               .elements());

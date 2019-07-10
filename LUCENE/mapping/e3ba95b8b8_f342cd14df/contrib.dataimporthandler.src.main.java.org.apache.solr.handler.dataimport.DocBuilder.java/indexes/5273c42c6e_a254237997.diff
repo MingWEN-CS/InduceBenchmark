@@ -1,0 +1,60 @@
+62,63d61
+<   private Map<String, String> defaultVariables;
+< 
+68,69c66
+<   public DocBuilder(DataImporter context, SolrWriter writer,
+<                     DataImporter.RequestParams reqParams, Map<String, String> variables) {
+---
+>   public DocBuilder(DataImporter context, SolrWriter writer, DataImporter.RequestParams reqParams) {
+76d72
+<     defaultVariables = Collections.unmodifiableMap(variables);
+79c75
+<   public VariableResolverImpl getVariableResolver(DataImporter context) {
+---
+>   public VariableResolverImpl getVariableResolver() {
+82c78
+<     if (context.getLastIndexTime() != null)
+---
+>     if (dataImporter.getLastIndexTime() != null)
+84,85c80,81
+<               .format(context.getLastIndexTime()));
+<     indexerNamespace.put(INDEX_START_TIME, context.getIndexStartTime());
+---
+>               .format(dataImporter.getLastIndexTime()));
+>     indexerNamespace.put(INDEX_START_TIME, dataImporter.getIndexStartTime());
+87d82
+<     indexerNamespace.put("defaults", defaultVariables);
+90c85
+<     if (context.getConfig().script != null) {
+---
+>     if (dataImporter.getConfig().script != null) {
+92c87
+<               .put(DataConfig.SCRIPT, context.getConfig().script.script);
+---
+>               .put(DataConfig.SCRIPT, dataImporter.getConfig().script.script);
+94c89
+<               context.getConfig().script.language);
+---
+>               dataImporter.getConfig().script.language);
+101c96
+<   public void execute(String docName) {
+---
+>   public void execute() {
+103,105c98
+<     document = dataImporter.getConfig().getDocumentByName(docName);
+<     if (document == null)
+<       return;
+---
+>     document = dataImporter.getConfig().document;
+183c176
+<     buildDocument(getVariableResolver(dataImporter), null, null, root, true,
+---
+>     buildDocument(getVariableResolver(), null, null, root, true,
+190c183
+<     VariableResolverImpl resolver = getVariableResolver(dataImporter);
+---
+>     VariableResolverImpl resolver = getVariableResolver();
+214c207
+<     VariableResolverImpl vri = getVariableResolver(dataImporter);
+---
+>     VariableResolverImpl vri = getVariableResolver();

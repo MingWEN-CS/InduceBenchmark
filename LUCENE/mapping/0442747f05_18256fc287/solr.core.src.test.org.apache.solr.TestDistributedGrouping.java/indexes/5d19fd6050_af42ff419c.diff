@@ -1,0 +1,39 @@
+25a26
+> import org.apache.solr.common.SolrDocumentList;
+28a30
+> import java.util.List;
+47c49
+<   String oddField="oddField_s";
+---
+>   String oddField="oddField_s1";
+268a271,300
+>     query("q", "{!func}id", "rows", 100, "fl", tlong + ",id," + i1, "group", "true",
+>           "group.field", i1, "group.limit", 10,
+>           "sort", tlong+" asc, id desc");
+>     query("q", "{!func}id", "rows", 100, "fl", tlong + ",id," + i1, "group", "true",
+>           "group.field", i1, "group.limit", 10,
+>           "sort", "id asc",
+>           "group.sort", tlong+" asc, id desc");
+>     query("q", "{!func}id", "rows", 100, "fl", tlong + ",id," + i1, "group", "true",
+>           "group.field", i1, "group.limit", 10,
+>           "sort", tlong+" asc, id desc",
+>           "group.sort", "id asc");
+>     rsp = query("q", "{!func}id", "fq", oddField+":[* TO *]",
+>                 "rows", 100, "fl", tlong + ",id," + i1, "group", "true",
+>                 "group.field", i1, "group.limit", 10,
+>                 "sort", tlong+" asc",
+>                 "group.sort", oddField+" asc");
+>     nl = (NamedList<?>) rsp.getResponse().get("grouped");
+>     nl = (NamedList<?>) nl.get(i1);
+>     assertEquals(rsp.toString(), 6, nl.get("matches"));
+>     assertEquals(rsp.toString(), 2, ((List<NamedList<?>>)nl.get("groups")).size());
+>     nl = ((List<NamedList<?>>)nl.get("groups")).get(0);
+>     assertEquals(rsp.toString(), 232, nl.get("groupValue"));
+>     SolrDocumentList docs = (SolrDocumentList) nl.get("doclist");
+>     assertEquals(docs.toString(), 5, docs.getNumFound());
+>     assertEquals(docs.toString(), 22, docs.get(0).getFirstValue("id"));
+>     assertEquals(docs.toString(), 21, docs.get(4).getFirstValue("id"));
+> 
+>     
+> 
+>     

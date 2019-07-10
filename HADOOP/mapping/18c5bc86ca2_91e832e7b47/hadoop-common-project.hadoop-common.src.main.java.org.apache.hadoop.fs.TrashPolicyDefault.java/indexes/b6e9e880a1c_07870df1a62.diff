@@ -1,0 +1,57 @@
+37d36
+< import org.apache.hadoop.conf.Configured;
+68a68
+>   private long emptierInterval;
+82,83c82,102
+<     this.deletionInterval = (long) (conf.getFloat(FS_TRASH_INTERVAL_KEY,
+<                                     FS_TRASH_INTERVAL_DEFAULT) *  MSECS_PER_MINUTE);
+---
+>     long trashInterval = 0;
+>     try {
+>       trashInterval = fs.getServerDefaults(home).getTrashInterval();
+>     } catch (IOException ioe) {
+>       LOG.warn("Unable to get server defaults", ioe);
+>     }
+>     
+>     
+>     if (0 == trashInterval) {
+>       this.deletionInterval = (long)(conf.getFloat(
+>           FS_TRASH_INTERVAL_KEY, FS_TRASH_INTERVAL_DEFAULT)
+>           * MSECS_PER_MINUTE);
+>     } else {
+>       this.deletionInterval = trashInterval * MSECS_PER_MINUTE;
+>     }
+>     
+>     
+>     
+>     this.emptierInterval = (long)(conf.getFloat(
+>         FS_TRASH_CHECKPOINT_INTERVAL_KEY, FS_TRASH_CHECKPOINT_INTERVAL_DEFAULT)
+>         * MSECS_PER_MINUTE);
+92c111
+<     return (deletionInterval != 0);
+---
+>     return deletionInterval != 0;
+226c245
+<     return new Emptier(getConf());
+---
+>     return new Emptier(getConf(), emptierInterval);
+234c253
+<     Emptier(Configuration conf) throws IOException {
+---
+>     Emptier(Configuration conf, long emptierInterval) throws IOException {
+236,243c255,260
+<       this.emptierInterval = (long) (conf.getFloat(FS_TRASH_CHECKPOINT_INTERVAL_KEY,
+<                                      FS_TRASH_CHECKPOINT_INTERVAL_DEFAULT) *
+<                                      MSECS_PER_MINUTE);
+<       if (this.emptierInterval > deletionInterval ||
+<           this.emptierInterval == 0) {
+<         LOG.warn("The configured interval for checkpoint is " +
+<                  this.emptierInterval + " minutes." +
+<                  " Using interval of " + deletionInterval +
+---
+>       this.emptierInterval = emptierInterval;
+>       if (emptierInterval > deletionInterval || emptierInterval == 0) {
+>         LOG.info("The configured checkpoint interval is " +
+>                  (emptierInterval / MSECS_PER_MINUTE) + " minutes." +
+>                  " Using an interval of " +
+>                  (deletionInterval / MSECS_PER_MINUTE) +

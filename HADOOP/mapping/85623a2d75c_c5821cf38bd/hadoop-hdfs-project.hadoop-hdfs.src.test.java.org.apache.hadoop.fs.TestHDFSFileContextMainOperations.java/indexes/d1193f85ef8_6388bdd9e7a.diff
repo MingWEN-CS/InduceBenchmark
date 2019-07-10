@@ -1,0 +1,8 @@
+44d43
+<   private static FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+48a48,52
+>   @Override
+>   protected FileContextTestHelper createFileContextHelper() {
+>     return new FileContextTestHelper("/tmp/TestHDFSFileContextMainOperations");
+>   }
+> 

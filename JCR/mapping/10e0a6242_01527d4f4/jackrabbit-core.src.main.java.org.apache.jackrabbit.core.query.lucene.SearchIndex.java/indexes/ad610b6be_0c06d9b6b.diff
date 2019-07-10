@@ -1,0 +1,100 @@
+19,39d18
+< import java.io.File;
+< import java.io.IOException;
+< import java.io.InputStream;
+< import java.util.ArrayList;
+< import java.util.Arrays;
+< import java.util.Collection;
+< import java.util.Collections;
+< import java.util.Comparator;
+< import java.util.HashMap;
+< import java.util.HashSet;
+< import java.util.Iterator;
+< import java.util.List;
+< import java.util.Map;
+< import java.util.Set;
+< 
+< import javax.jcr.RepositoryException;
+< import javax.jcr.query.InvalidQueryException;
+< import javax.xml.parsers.DocumentBuilder;
+< import javax.xml.parsers.DocumentBuilderFactory;
+< import javax.xml.parsers.ParserConfigurationException;
+< 
+52a32
+> import org.apache.jackrabbit.core.query.lucene.hits.AbstractHitCollector;
+66c46,48
+< import org.apache.lucene.analysis.Token;
+---
+> import org.apache.lucene.analysis.TokenStream;
+> import org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
+> import org.apache.lucene.analysis.tokenattributes.TermAttribute;
+71a54
+> import org.apache.lucene.index.Payload;
+74d56
+< import org.apache.lucene.search.HitCollector;
+79d60
+< import org.apache.lucene.search.SortComparatorSource;
+87a69,88
+> import javax.jcr.RepositoryException;
+> import javax.jcr.query.InvalidQueryException;
+> import javax.xml.parsers.DocumentBuilder;
+> import javax.xml.parsers.DocumentBuilderFactory;
+> import javax.xml.parsers.ParserConfigurationException;
+> import java.io.File;
+> import java.io.IOException;
+> import java.io.InputStream;
+> import java.util.ArrayList;
+> import java.util.Arrays;
+> import java.util.Collection;
+> import java.util.Collections;
+> import java.util.Comparator;
+> import java.util.HashMap;
+> import java.util.HashSet;
+> import java.util.Iterator;
+> import java.util.List;
+> import java.util.Map;
+> import java.util.Set;
+> 
+445c446
+<     private SortComparatorSource scs;
+---
+>     private SharedFieldComparatorSource scs;
+510c511
+<         scs = new SharedFieldSortComparator(
+---
+>         scs = new SharedFieldComparatorSource(
+694c695,696
+<                 searcher.search(q, new HitCollector() {
+---
+>                 searcher.search(q, new AbstractHitCollector() {
+>                     @Override
+1101c1103
+<     protected SortComparatorSource getSortComparatorSource() {
+---
+>     protected SharedFieldComparatorSource getSortComparatorSource() {
+1379d1380
+<                                 Token t = new Token();
+1380a1382
+> 
+1382,1383c1384,1391
+<                                     t = field.tokenStreamValue().next(t);
+<                                     String value = new String(t.termBuffer(), 0, t.termLength());
+---
+>                                     TokenStream tokenStream = field.tokenStreamValue();
+>                                     TermAttribute termAttribute = tokenStream.addAttribute(TermAttribute.class);
+>                                     PayloadAttribute payloadAttribute = tokenStream.addAttribute(PayloadAttribute.class);
+>                                     tokenStream.incrementToken();
+>                                     tokenStream.end();
+>                                     tokenStream.close();
+> 
+>                                     String value = new String(termAttribute.termBuffer(), 0, termAttribute.termLength());
+1391,1393c1399,1403
+<                                         t.setTermBuffer(value);
+<                                         doc.add(new Field(field.name(), new SingletonTokenStream(t)));
+<                                         doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, parent.getNodeId().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+---
+>                                         termAttribute.setTermBuffer(value);
+>                                         doc.add(new Field(field.name(),
+>                                                 new SingletonTokenStream(value, (Payload) payloadAttribute.getPayload().clone())));
+>                                         doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID,
+>                                                 parent.getNodeId().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));

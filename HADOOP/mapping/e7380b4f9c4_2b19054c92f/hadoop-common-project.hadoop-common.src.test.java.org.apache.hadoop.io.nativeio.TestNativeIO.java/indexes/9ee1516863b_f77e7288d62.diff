@@ -1,0 +1,42 @@
+27a28,29
+> 
+> import org.junit.Assert;
+32a35
+> import org.apache.commons.io.FileUtils;
+295a299,334
+>   @Test
+>   public void testRenameTo() throws Exception {
+>     final File TEST_DIR = new File(new File(
+>         System.getProperty("test.build.data","build/test/data")), "renameTest");
+>     assumeTrue(TEST_DIR.mkdirs());
+>     File nonExistentFile = new File(TEST_DIR, "nonexistent");
+>     File targetFile = new File(TEST_DIR, "target");
+>     
+>     try {
+>       NativeIO.renameTo(nonExistentFile, targetFile);
+>       Assert.fail();
+>     } catch (NativeIOException e) {
+>       Assert.assertEquals(e.getErrno(), Errno.ENOENT);
+>     }
+>     
+>     
+>     File sourceFile = new File(TEST_DIR, "source");
+>     Assert.assertTrue(sourceFile.createNewFile());
+>     NativeIO.renameTo(sourceFile, sourceFile);
+> 
+>     
+>     NativeIO.renameTo(sourceFile, targetFile);
+> 
+>     
+>     sourceFile = new File(TEST_DIR, "source");
+>     Assert.assertTrue(sourceFile.createNewFile());
+>     File badTarget = new File(targetFile, "subdir");
+>     try {
+>       NativeIO.renameTo(sourceFile, badTarget);
+>       Assert.fail();
+>     } catch (NativeIOException e) {
+>       Assert.assertEquals(e.getErrno(), Errno.ENOTDIR);
+>     }
+> 
+>     FileUtils.deleteQuietly(TEST_DIR);
+>   }

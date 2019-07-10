@@ -1,0 +1,350 @@
+20a21
+> import static org.apache.solr.cloud.OverseerCollectionProcessor.SLICE_UNIQUE;
+21a23,25
+> import static org.apache.solr.cloud.OverseerCollectionProcessor.ONLY_ACTIVE_NODES;
+> import static org.apache.solr.cloud.OverseerCollectionProcessor.COLL_PROP_PREFIX;
+> import static org.apache.solr.common.params.CollectionParams.CollectionAction.BALANCESLICEUNIQUE;
+28a33
+> import java.util.HashSet;
+31a37
+> import java.util.ListIterator;
+34a41
+> import java.util.Random;
+450a458,464
+>           case BALANCESLICEUNIQUE:
+>             ExclusiveSliceProperty dProp = new ExclusiveSliceProperty(this, clusterState, message);
+>             if (dProp.balanceProperty()) {
+>               String collName = message.getStr(ZkStateReader.COLLECTION_PROP);
+>               clusterState = newState(clusterState, singletonMap(collName, dProp.getDocCollection()));
+>             }
+>             break;
+535c549
+<       if (property.startsWith(OverseerCollectionProcessor.COLL_PROP_PREFIX) == false) {
+---
+>       if (StringUtils.startsWith(property, COLL_PROP_PREFIX) == false) {
+537a552
+>       property = property.toLowerCase(Locale.ROOT);
+596c611
+<       if (property.startsWith(OverseerCollectionProcessor.COLL_PROP_PREFIX) == false) {
+---
+>       if (StringUtils.startsWith(property, COLL_PROP_PREFIX) == false) {
+937,938c952,961
+<           if (oldReplica != null && oldReplica.containsKey(ZkStateReader.LEADER_PROP)) {
+<             replicaProps.put(ZkStateReader.LEADER_PROP, oldReplica.get(ZkStateReader.LEADER_PROP));
+---
+>           if (oldReplica != null) {
+>             if (oldReplica.containsKey(ZkStateReader.LEADER_PROP)) {
+>               replicaProps.put(ZkStateReader.LEADER_PROP, oldReplica.get(ZkStateReader.LEADER_PROP));
+>             }
+>             
+>             for (Map.Entry<String, Object> ent : oldReplica.getProperties().entrySet()) {
+>               if (ent.getKey().startsWith(COLL_PROP_PREFIX)) {
+>                 replicaProps.put(ent.getKey(), ent.getValue());
+>               }
+>             }
+1149c1172
+<       private ClusterState updateSlice(ClusterState state, String collectionName, Slice slice) {
+---
+>     ClusterState updateSlice(ClusterState state, String collectionName, Slice slice) {
+1376a1400,1700
+>   
+>   private class ExclusiveSliceProperty {
+>     private ClusterStateUpdater updater;
+>     private ClusterState clusterState;
+>     private final boolean onlyActiveNodes;
+>     private final String property;
+>     private final DocCollection collection;
+>     private final String collectionName;
+> 
+>     
+>     private final Map<String, List<SliceReplica>> nodesHostingReplicas = new HashMap<>();
+>     
+>     private final Map<String, List<SliceReplica>> nodesHostingProp = new HashMap<>();
+>     Set<String> shardsNeedingHosts = new HashSet<String>();
+>     Map<String, Slice> changedSlices = new HashMap<>(); 
+> 
+>     private int origMaxPropPerNode = 0;
+>     private int origModulo = 0;
+>     private int tmpMaxPropPerNode = 0;
+>     private int tmpModulo = 0;
+>     Random rand = new Random();
+> 
+>     private int assigned = 0;
+> 
+>     ExclusiveSliceProperty(ClusterStateUpdater updater, ClusterState clusterState, ZkNodeProps message) {
+>       this.updater = updater;
+>       this.clusterState = clusterState;
+>       String tmp = message.getStr(ZkStateReader.PROPERTY_PROP);
+>       if (StringUtils.startsWith(tmp, OverseerCollectionProcessor.COLL_PROP_PREFIX) == false) {
+>         tmp = OverseerCollectionProcessor.COLL_PROP_PREFIX + tmp;
+>       }
+>       this.property = tmp.toLowerCase(Locale.ROOT);
+>       collectionName = message.getStr(ZkStateReader.COLLECTION_PROP);
+> 
+>       if (StringUtils.isBlank(collectionName) || StringUtils.isBlank(property)) {
+>         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+>             "Overseer '" + message.getStr(QUEUE_OPERATION) + "'  requires both the '" + ZkStateReader.COLLECTION_PROP + "' and '" +
+>                 ZkStateReader.PROPERTY_PROP + "' parameters. No action taken ");
+>       }
+> 
+>       Boolean sliceUnique = Boolean.parseBoolean(message.getStr(SLICE_UNIQUE));
+>       if (sliceUnique == false &&
+>           Overseer.sliceUniqueBooleanProperties.contains(this.property) == false) {
+>         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Balancing properties amongst replicas in a slice requires that"
+>             + " the property be a pre-defined property (e.g. 'preferredLeader') or that 'sliceUnique' be set to 'true' " +
+>             " Property: " + this.property + " sliceUnique: " + Boolean.toString(sliceUnique));
+>       }
+> 
+>       collection = clusterState.getCollection(collectionName);
+>       if (collection == null) {
+>         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+>             "Could not find collection ' " + collectionName + "' for overseer operation '" +
+>                 message.getStr(QUEUE_OPERATION) + "'. No action taken.");
+>       }
+>       onlyActiveNodes = Boolean.parseBoolean(message.getStr(ONLY_ACTIVE_NODES, "true"));
+>     }
+> 
+> 
+>     private DocCollection getDocCollection() {
+>       return collection;
+>     }
+> 
+>     private boolean isActive(Replica replica) {
+>       return ZkStateReader.ACTIVE.equals(replica.getStr(ZkStateReader.STATE_PROP));
+>     }
+> 
+>     
+>     
+>     
+>     
+>     
+>     
+> 
+>     private boolean collectCurrentPropStats() {
+>       int maxAssigned = 0;
+>       
+>       
+>       Set<String> allHosts = new HashSet<>();
+>       for (Slice slice : collection.getSlices()) {
+>         boolean sliceHasProp = false;
+>         for (Replica replica : slice.getReplicas()) {
+>           if (onlyActiveNodes && isActive(replica) == false) {
+>             if (StringUtils.isNotBlank(replica.getStr(property))) {
+>               removeProp(slice, replica.getName()); 
+>             }
+>             continue;
+>           }
+>           allHosts.add(replica.getNodeName());
+>           String nodeName = replica.getNodeName();
+>           if (StringUtils.isNotBlank(replica.getStr(property))) {
+>             if (sliceHasProp) {
+>               throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+>                   "'" + BALANCESLICEUNIQUE + "' should only be called for properties that have at most one member " +
+>                       "in any slice with the property set. No action taken.");
+>             }
+>             if (nodesHostingProp.containsKey(nodeName) == false) {
+>               nodesHostingProp.put(nodeName, new ArrayList<SliceReplica>());
+>             }
+>             nodesHostingProp.get(nodeName).add(new SliceReplica(slice, replica));
+>             ++assigned;
+>             maxAssigned = Math.max(maxAssigned, nodesHostingProp.get(nodeName).size());
+>             sliceHasProp = true;
+>           }
+>           if (nodesHostingReplicas.containsKey(nodeName) == false) {
+>             nodesHostingReplicas.put(nodeName, new ArrayList<SliceReplica>());
+>           }
+>           nodesHostingReplicas.get(nodeName).add(new SliceReplica(slice, replica));
+>         }
+>       }
+> 
+>       
+>       
+>       
+>       origMaxPropPerNode = collection.getSlices().size() / allHosts.size();
+> 
+>       
+>       origModulo = collection.getSlices().size() % allHosts.size();
+>       if (origModulo > 0) {
+>         origMaxPropPerNode++;  
+>       }
+> 
+>       
+>       if (assigned != collection.getSlices().size()) {
+>         return true;
+>       }
+> 
+>       
+>       
+>       
+>       int counter = origModulo;
+>       for (List<SliceReplica> list : nodesHostingProp.values()) {
+>         if (list.size() == origMaxPropPerNode) --counter;
+>       }
+>       if (counter == 0) return false; 
+> 
+>       return true;
+>     }
+> 
+>     private void removeSliceAlreadyHostedFromPossibles(String sliceName) {
+>       for (Map.Entry<String, List<SliceReplica>> entReplica : nodesHostingReplicas.entrySet()) {
+> 
+>         ListIterator<SliceReplica> iter = entReplica.getValue().listIterator();
+>         while (iter.hasNext()) {
+>           SliceReplica sr = iter.next();
+>           if (sr.slice.getName().equals(sliceName))
+>             iter.remove();
+>         }
+>       }
+>     }
+> 
+>     private void balanceUnassignedReplicas() {
+>       tmpMaxPropPerNode = origMaxPropPerNode; 
+>       tmpModulo = origModulo;
+> 
+>       
+> 
+>       while (shardsNeedingHosts.size() > 0) {
+>         String nodeName = "";
+>         int minSize = Integer.MAX_VALUE;
+>         SliceReplica srToChange = null;
+>         for (String slice : shardsNeedingHosts) {
+>           for (Map.Entry<String, List<SliceReplica>> ent : nodesHostingReplicas.entrySet()) {
+>             
+>             
+>             if (srToChange == null && ent.getValue().size() > 0) {
+>               srToChange = ent.getValue().get(0);
+>             }
+>             ListIterator<SliceReplica> iter = ent.getValue().listIterator();
+>             while (iter.hasNext()) {
+>               SliceReplica sr = iter.next();
+>               if (StringUtils.equals(slice, sr.slice.getName()) == false) {
+>                 continue;
+>               }
+>               if (nodesHostingProp.containsKey(ent.getKey()) == false) {
+>                 nodesHostingProp.put(ent.getKey(), new ArrayList<SliceReplica>());
+>               }
+>               if (minSize > nodesHostingReplicas.get(ent.getKey()).size() && nodesHostingProp.get(ent.getKey()).size() < tmpMaxPropPerNode) {
+>                 minSize = nodesHostingReplicas.get(ent.getKey()).size();
+>                 srToChange = sr;
+>                 nodeName = ent.getKey();
+>               }
+>             }
+>           }
+>         }
+>         
+>         shardsNeedingHosts.remove(srToChange.slice.getName());
+>         if (nodesHostingProp.containsKey(nodeName) == false) {
+>           nodesHostingProp.put(nodeName, new ArrayList<SliceReplica>());
+>         }
+>         nodesHostingProp.get(nodeName).add(srToChange);
+>         adjustLimits(nodesHostingProp.get(nodeName));
+>         removeSliceAlreadyHostedFromPossibles(srToChange.slice.getName());
+>         addProp(srToChange.slice, srToChange.replica.getName());
+>       }
+>     }
+> 
+>     
+>     
+>     private void adjustLimits(List<SliceReplica> changeList) {
+>       if (changeList.size() == tmpMaxPropPerNode) {
+>         if (tmpModulo < 0) return;
+> 
+>         --tmpModulo;
+>         if (tmpModulo == 0) {
+>           --tmpMaxPropPerNode;
+>           --tmpModulo;  
+>         }
+>       }
+>     }
+> 
+>     
+>     private void removeOverallocatedReplicas() {
+>       tmpMaxPropPerNode = origMaxPropPerNode; 
+>       tmpModulo = origModulo;
+> 
+>       for (Map.Entry<String, List<SliceReplica>> ent : nodesHostingProp.entrySet()) {
+>         while (ent.getValue().size() > tmpMaxPropPerNode) { 
+>           ent.getValue().remove(rand.nextInt(ent.getValue().size()));
+>         }
+>         adjustLimits(ent.getValue());
+>       }
+>     }
+> 
+>     private void removeProp(Slice origSlice, String replicaName) {
+>       getReplicaFromChanged(origSlice, replicaName).getProperties().remove(property);
+>     }
+> 
+>     private void addProp(Slice origSlice, String replicaName) {
+>       getReplicaFromChanged(origSlice, replicaName).getProperties().put(property, "true");
+>     }
+> 
+>     
+>     
+>     private Replica getReplicaFromChanged(Slice origSlice, String replicaName) {
+>       Slice newSlice = changedSlices.get(origSlice.getName());
+>       Replica replica;
+>       if (newSlice != null) {
+>         replica = newSlice.getReplica(replicaName);
+>       } else {
+>         newSlice = new Slice(origSlice.getName(), origSlice.getReplicasCopy(), origSlice.shallowCopy());
+>         changedSlices.put(origSlice.getName(), newSlice);
+>         replica = newSlice.getReplica(replicaName);
+>       }
+>       if (replica == null) {
+>         throw new SolrException(SolrException.ErrorCode.INVALID_STATE, "Should have been able to find replica '" +
+>             replicaName + "' in slice '" + origSlice.getName() + "'. No action taken");
+>       }
+>       return replica;
+> 
+>     }
+>     
+> 
+>     private boolean balanceProperty() {
+>       if (collectCurrentPropStats() == false) {
+>         return false;
+>       }
+> 
+>       
+>       
+>       
+> 
+>       
+>       removeOverallocatedReplicas();
+> 
+>       
+>       
+>       for (Map.Entry<String, List<SliceReplica>> entProp : nodesHostingProp.entrySet()) {
+>         for (SliceReplica srHosting : entProp.getValue()) {
+>           removeSliceAlreadyHostedFromPossibles(srHosting.slice.getName());
+>         }
+>       }
+> 
+>       
+>       for (Map.Entry<String, List<SliceReplica>> ent : nodesHostingReplicas.entrySet()) {
+>         ListIterator<SliceReplica> iter = ent.getValue().listIterator();
+>         while (iter.hasNext()) {
+>           SliceReplica sr = iter.next();
+>           shardsNeedingHosts.add(sr.slice.getName());
+>         }
+>       }
+> 
+>       
+>       
+> 
+>       balanceUnassignedReplicas();
+>       for (Slice newSlice : changedSlices.values()) {
+>         clusterState = updater.updateSlice(clusterState, collectionName, newSlice);
+>       }
+>       return true;
+>     }
+>   }
+> 
+>   private class SliceReplica {
+>     private Slice slice;
+>     private Replica replica;
+> 
+>     SliceReplica(Slice slice, Replica replica) {
+>       this.slice = slice;
+>       this.replica = replica;
+>     }
+>   }

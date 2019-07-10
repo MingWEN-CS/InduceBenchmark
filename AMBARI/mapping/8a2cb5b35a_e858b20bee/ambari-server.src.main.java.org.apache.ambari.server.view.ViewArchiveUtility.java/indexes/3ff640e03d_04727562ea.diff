@@ -1,0 +1,43 @@
+67c67,70
+<       throws MalformedURLException, JAXBException {
+---
+>       throws MalformedURLException, JAXBException, IOException {
+>     ViewConfig res = null;
+>     InputStream configStream = null;
+>     try {
+70c73
+<     InputStream configStream = cl.getResourceAsStream(VIEW_XML);
+---
+>     configStream = cl.getResourceAsStream(VIEW_XML);
+77,78c80,86
+< 
+<     return (ViewConfig) jaxbUnmarshaller.unmarshal(configStream);
+---
+>     res = (ViewConfig) jaxbUnmarshaller.unmarshal(configStream);
+>     } finally {
+>       if (configStream != null) {
+>         configStream.close();
+>       }
+>     }
+>     return res;
+95c103,105
+< 
+---
+>     ViewConfig res = null;
+>     InputStream  configStream = null;
+>     try {
+106c116
+<     InputStream  configStream     = new FileInputStream(configFile);
+---
+>     configStream     = new FileInputStream(configFile);
+108a119,124
+>     res = (ViewConfig) jaxbUnmarshaller.unmarshal(configStream);
+>     } finally {
+>       if (configStream != null) {
+>         configStream.close();
+>       }
+>     }
+110c126
+<     return (ViewConfig) jaxbUnmarshaller.unmarshal(configStream);
+---
+>     return res;

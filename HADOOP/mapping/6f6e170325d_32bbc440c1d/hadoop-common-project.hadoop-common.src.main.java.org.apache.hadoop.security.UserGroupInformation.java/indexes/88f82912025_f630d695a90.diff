@@ -1,0 +1,33 @@
+241,248c241,251
+<     if (auth == AuthenticationMethod.SIMPLE) {
+<       useKerberos = false;
+<     } else if (auth == AuthenticationMethod.KERBEROS) {
+<       useKerberos = true;
+<     } else {
+<       throw new IllegalArgumentException("Invalid attribute value for " +
+<                                          HADOOP_SECURITY_AUTHENTICATION + 
+<                                          " of " + auth);
+---
+>     switch (auth) {
+>       case SIMPLE:
+>         useKerberos = false;
+>         break;
+>       case KERBEROS:
+>         useKerberos = true;
+>         break;
+>       default:
+>         throw new IllegalArgumentException("Invalid attribute value for " +
+>                                            HADOOP_SECURITY_AUTHENTICATION + 
+>                                            " of " + auth);
+639a643
+>         AuthenticationMethod authenticationMethod;
+640a645
+>           authenticationMethod = AuthenticationMethod.KERBEROS;
+643a649
+>           authenticationMethod = AuthenticationMethod.SIMPLE;
+650,652c656
+<         loginUser.setAuthenticationMethod(isSecurityEnabled() ?
+<                                           AuthenticationMethod.KERBEROS :
+<                                           AuthenticationMethod.SIMPLE);
+---
+>         loginUser.setAuthenticationMethod(authenticationMethod);

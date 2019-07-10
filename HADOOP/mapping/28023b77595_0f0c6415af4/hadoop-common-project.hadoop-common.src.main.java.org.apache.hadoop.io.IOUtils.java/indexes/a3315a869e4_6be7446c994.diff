@@ -1,0 +1,10 @@
+27a28
+> import org.apache.commons.logging.LogFactory;
+38a40
+>   public static final Log LOG = LogFactory.getLog(IOUtils.class);
+238c240
+<         } catch(IOException e) {
+---
+>         } catch(Throwable e) {
+266a269
+>         LOG.debug("Ignoring exception while closing socket", ignored);

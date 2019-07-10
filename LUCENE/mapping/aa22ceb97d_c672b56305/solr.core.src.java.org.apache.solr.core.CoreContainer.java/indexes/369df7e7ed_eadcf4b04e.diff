@@ -1,0 +1,11 @@
+51a52
+> import org.apache.commons.io.IOUtils;
+342c343,348
+<     this.load(dir, new FileInputStream(configFile), configFile.getName().endsWith(".xml"),  configFile.getName());
+---
+>     InputStream in = new FileInputStream(configFile);
+>     try {
+>       this.load(dir, in, configFile.getName().endsWith(".xml"),  configFile.getName());
+>     } finally {
+>       IOUtils.closeQuietly(in);
+>     }

@@ -1,0 +1,8 @@
+80a81
+> import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
+2056c2057,2059
+<     if (getBoolean(CredentialProvider.CLEAR_TEXT_FALLBACK, true)) {
+---
+>     if (getBoolean(CredentialProvider.CLEAR_TEXT_FALLBACK,
+>         CommonConfigurationKeysPublic.
+>             HADOOP_SECURITY_CREDENTIAL_CLEAR_TEXT_FALLBACK_DEFAULT)) {

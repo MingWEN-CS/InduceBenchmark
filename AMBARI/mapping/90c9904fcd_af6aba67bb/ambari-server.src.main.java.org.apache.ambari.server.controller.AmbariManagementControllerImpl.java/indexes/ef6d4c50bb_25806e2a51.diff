@@ -1,0 +1,52 @@
+3779a3780,3787
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+3782,3783c3790,3792
+<   public String getHealthyHost(Set<String> hostList) throws AmbariException {
+<     String hostName = null;
+---
+>   public List<String> selectHealthyHosts(Set<String> hostList) throws AmbariException {
+>     List<String> healthyHosts = new ArrayList();
+> 
+3785,3786c3794
+<       hostName = candidateHostName;
+<       Host candidateHost = clusters.getHost(hostName);
+---
+>       Host candidateHost = clusters.getHost(candidateHostName);
+3788c3796
+<         break;
+---
+>         healthyHosts.add(candidateHostName);
+3791c3799,3822
+<     return hostName;
+---
+> 
+>     return healthyHosts;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   @Override
+>   public String getHealthyHost(Set<String> hostList) throws AmbariException {
+>     List<String> healthyHosts = selectHealthyHosts(hostList);
+> 
+>     if (!healthyHosts.isEmpty()) {
+>       Collections.shuffle(healthyHosts);
+>       return healthyHosts.get(0);
+>     }
+> 
+>     return null;

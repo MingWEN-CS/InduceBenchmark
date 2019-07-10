@@ -1,0 +1,14 @@
+31a32,36
+> 
+>     public static enum Type {
+>         READ, WRITE
+>     }
+> 
+86c91
+<         return locks.getReadLock(resource, wait);
+---
+>         return locks.getLock(resource, Type.READ, wait);
+98c103
+<         return locks.getWriteLock(resource, wait);
+---
+>         return locks.getLock(resource, Type.WRITE, wait);

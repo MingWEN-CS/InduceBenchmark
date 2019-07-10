@@ -1,0 +1,54 @@
+50a51,62
+> 
+> 
+> 
+> 
+> 
+>   public void initialize(Configuration conf, FileSystem fs) throws IOException{
+>     throw new UnsupportedOperationException();
+>   }
+> 
+>   
+> 
+> 
+72c84,103
+<   public abstract Path getCurrentTrashDir();
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public abstract Path getCurrentTrashDir() throws IOException;
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   public Path getCurrentTrashDir(Path path) throws IOException {
+>     throw new UnsupportedOperationException();
+>   }
+95a127,143
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static TrashPolicy getInstance(Configuration conf, FileSystem fs)
+>       throws IOException {
+>     Class<? extends TrashPolicy> trashClass = conf.getClass(
+>         "fs.trash.classname", TrashPolicyDefault.class, TrashPolicy.class);
+>     TrashPolicy trash = ReflectionUtils.newInstance(trashClass, conf);
+>     trash.initialize(conf, fs); 
+>     return trash;
+>   }

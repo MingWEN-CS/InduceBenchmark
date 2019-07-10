@@ -1,0 +1,5 @@
+1354a1355,1358
+>     if (isClosed()) { 
+>       throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "openNewSearcher called on closed core");
+>     }
+> 

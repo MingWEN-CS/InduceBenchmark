@@ -1,0 +1,19 @@
+31a32
+> import org.apache.oozie.WorkflowActionBean;
+318a320,335
+>     @Override
+>     protected RunningJob getRunningJob(Context context, WorkflowAction action, JobClient jobClient) throws Exception{
+> 
+>         RunningJob runningJob;
+>         String launcherJobId = action.getExternalId();
+>         String childJobId = action.getExternalChildIDs();
+> 
+>         if (childJobId != null && childJobId.length() > 0) {
+>             runningJob = jobClient.getJob(JobID.forName(childJobId));
+>         }
+>         else {
+>             runningJob = jobClient.getJob(JobID.forName(launcherJobId));
+>         }
+> 
+>         return runningJob;
+>     }

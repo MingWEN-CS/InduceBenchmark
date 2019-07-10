@@ -1,0 +1,20 @@
+956a957,961
+> 
+> 
+> 
+> 
+> 
+962d966
+<     Set<String> evalSet = null;
+1007,1008d1010
+<       
+<       
+1012,1015c1014,1016
+<       if (evalSet == null) {
+<         evalSet = new HashSet<String>();
+<       }
+<       if (!evalSet.add(refVar)) {
+---
+> 
+>       
+>       if (val.contains(refVar)) {

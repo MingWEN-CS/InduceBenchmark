@@ -1,0 +1,73 @@
+105a106,109
+> 
+> 
+> 
+> 
+145a150
+>     doAddDoc("f1!f2!doc5");
+150a156
+>     doRTG("f1!f2!doc5");
+156,158c162,164
+<     doQuery("b!doc1,c!doc2,d!doc3,e!doc4", "q","*:*");
+<     doQuery("b!doc1,c!doc2,d!doc3,e!doc4", "q","*:*", "shards","shard1,shard2,shard3,shard4");
+<     doQuery("b!doc1,c!doc2,d!doc3,e!doc4", "q","*:*", shardKeys,"b!,c!,d!,e!");
+---
+>     doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*");
+>     doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*", "shards","shard1,shard2,shard3,shard4");
+>     doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*", shardKeys,"b!,c!,d!,e!,f1!f2!");
+161c167
+<     doQuery("d!doc3", "q","*:*", shardKeys,"d!");
+---
+>     doQuery("d!doc3,f1!f2!doc5", "q","*:*", shardKeys,"d!");
+162a169
+>     doQuery("f1!f2!doc5,d!doc3", "q","*:*", shardKeys,"f1/8!");
+167c174
+<     doQuery("d!doc3", "q","*:*", "shards",bucket3);
+---
+>     doQuery("d!doc3,f1!f2!doc5", "q","*:*", "shards",bucket3);
+177c184
+<     doQuery("d!doc3,e!doc4", "q","*:*", shardKeys,"d/1!");   
+---
+>     doQuery("d!doc3,e!doc4,f1!f2!doc5", "q","*:*", shardKeys,"d/1!");   
+181c188
+<     doQuery("b!doc1,c!doc2,d!doc3,e!doc4", "q","*:*", shardKeys,"foo/0!");
+---
+>     doQuery("b!doc1,f1!f2!doc5,c!doc2,d!doc3,e!doc4", "q","*:*", shardKeys,"foo/0!");
+186c193
+<     doQuery("c!doc2,d!doc3,e!doc4", "q","*:*");
+---
+>     doQuery("c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*");
+189c196
+<     doDBQ("*:*", shardKeys,"c!");
+---
+>     doDBQ("*:*", shardKeys,"f1!");
+191,192c198,200
+<     doQuery("b!doc1,d!doc3,e!doc4", "q","*:*");
+<     doAddDoc("c!doc2");
+---
+>     doQuery("b!doc1,c!doc2,e!doc4", "q","*:*");
+>     doAddDoc("f1!f2!doc5");
+>     doAddDoc("d!doc3");
+196c204
+<     doQuery("b!doc1,d!doc3,e!doc4", "q","*:*");
+---
+>     doQuery("b!doc1,f1!f2!doc5,d!doc3,e!doc4", "q","*:*");
+203a212
+>     doAddDoc("f1!f2!doc5");
+209,212d217
+< 
+< 
+< 
+< 
+265a271,275
+> 
+>     nStart = getNumRequests();
+>     leader2.client.solrClient.query( params("q","*:*", "shard.keys","b!,f1!f2!") );
+>     nEnd = getNumRequests();
+>     assertEquals(5, nEnd - nStart);
+281a292
+> 
+284c295
+<     long getNumRequests() {
+---
+>   long getNumRequests() {

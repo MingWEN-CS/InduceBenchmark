@@ -1,0 +1,41 @@
+231c231,233
+<             ComparableArray[] retArray = new ComparableArray[maxDocs];
+---
+>             Comparable<?>[] retArray = new Comparable<?>[maxDocs];
+>             Map<Integer, Integer> positions = new HashMap<Integer, Integer>();
+>             boolean usingSimpleComparable = true;
+271c273
+<                             ComparableArray ca = retArray[doc];
+---
+>                             Comparable<?> ca = retArray[doc];
+273c275,282
+<                                 retArray[doc] = new ComparableArray(v, termPosition);
+---
+>                                 if (usingSimpleComparable) {
+>                                     
+>                                     positions.put(doc, termPosition);
+>                                     retArray[doc] = v;
+>                                 } else {
+>                                     retArray[doc] = new ComparableArray(v,
+>                                             termPosition);
+>                                 }
+275c284,300
+<                                 retArray[doc] = ca.insert(v, termPosition);
+---
+>                                 if (ca instanceof ComparableArray) {
+>                                     ((ComparableArray) ca).insert(v,
+>                                             termPosition);
+>                                 } else {
+>                                     
+>                                     
+>                                     for (int pos : positions.keySet()) {
+>                                         retArray[pos] = new ComparableArray(
+>                                                 retArray[pos],
+>                                                 positions.get(pos));
+>                                     }
+>                                     positions = null;
+>                                     usingSimpleComparable = false;
+>                                     ComparableArray caNew = (ComparableArray) retArray[doc];
+>                                     retArray[doc] = caNew.insert(v,
+>                                             termPosition);
+>                                 }

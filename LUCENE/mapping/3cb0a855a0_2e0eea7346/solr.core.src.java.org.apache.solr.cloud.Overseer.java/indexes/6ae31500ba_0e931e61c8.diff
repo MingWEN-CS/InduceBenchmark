@@ -1,0 +1,81 @@
+108,110c108
+<     private final Map<String, Object> updateNodes = new LinkedHashMap<String,Object>();
+<     private boolean isClusterStateModified = false;
+<     
+---
+> 
+122d119
+<       reader.ephemeralCollectionData = Collections.unmodifiableMap(updateNodes);
+263d259
+<                 if(!updateNodes.isEmpty()) break;
+300,315c296,297
+<       if(!updateNodes.isEmpty()) {
+<         for (Entry<String, Object> e : updateNodes.entrySet()) {
+<           if (e.getValue() == null) {
+<             if (zkClient.exists(e.getKey(), true)) zkClient.delete(e.getKey(), 0, true);
+<           } else {
+<             if (zkClient.exists(e.getKey(), true)) {
+<               log.info("going to update_collection", e.getKey());
+<               zkClient.setData(e.getKey(), ZkStateReader.toJSON(e.getValue()), true);
+<             } else {
+<               log.info("going to create_collection {}", e.getValue());
+<               zkClient.create(e.getKey(), ZkStateReader.toJSON(e.getValue()), CreateMode.PERSISTENT, true);
+<             }
+<           }
+<         }
+<         updateNodes.clear();
+<       }
+---
+>       lastUpdatedTime = System.nanoTime();
+>       zkClient.setData(ZkStateReader.CLUSTER_STATE, ZkStateReader.toJSON(clusterState), true);
+317,321d298
+<       if(isClusterStateModified) {
+<         lastUpdatedTime = System.nanoTime();
+<         zkClient.setData(ZkStateReader.CLUSTER_STATE, ZkStateReader.toJSON(clusterState), true);
+<         isClusterStateModified = false;
+<       }
+865,872d841
+<         isClusterStateModified = true;
+<         log.info("_extern {} {}", collectionName, newCollection.isExternal());
+<         if (newCollection.isExternal()) {
+<           updateNodes.put(ZkStateReader.getCollectionPath(collectionName),
+<               new ClusterState(-1, Collections.<String>emptySet(), singletonMap(newCollection.getName(), newCollection), state.getStateReader()));
+<           return state;
+<         }
+< 
+998,1014c967
+<         for (Entry<String, DocCollection> e : colls.entrySet()) {
+<           DocCollection c = e.getValue();
+<           if (c == null) {
+<             isClusterStateModified = true;
+<             state = state.copyWith(singletonMap(e.getKey(), (DocCollection) null));
+<             continue;
+<           }
+< 
+<           if (c.isExternal()) {
+<             state.getStateReader().updateExternCollection(c);
+<             updateNodes.put(ZkStateReader.getCollectionPath(c.getName()), new ClusterState(-1, Collections.<String>emptySet(), singletonMap(c.getName(), c), state.getStateReader()));
+<           } else {
+<             isClusterStateModified = true;
+<             state = state.copyWith(singletonMap(e.getKey(), c));
+<           }
+<         }
+<         return state;
+---
+>         return state.copyWith(colls);
+1025,1037c978
+<           isClusterStateModified = true;
+<           if(coll.isExternal()){
+<             try {
+<               log.info("Deleting state for collection : {}", collection);
+<               zkClient.delete(ZkStateReader.getCollectionPath(collection),-1,true);
+<             } catch (Exception e) {
+<               throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,"Unable to remove collection state :"+collection);
+< 
+<             }
+<             return clusterState;
+<           } else{
+<             return clusterState.copyWith(singletonMap(collection,(DocCollection)null));
+<           }
+---
+>           return clusterState.copyWith(singletonMap(collection,(DocCollection)null));

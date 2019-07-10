@@ -1,0 +1,22 @@
+3701,3702c3701,3707
+<       if (autoCommit && doCommitBeforeMergeCFS(merge))
+<         sync(false, merge.info.sizeInBytes());
+---
+>       if (autoCommit && doCommitBeforeMergeCFS(merge)) {
+>         final long size;
+>         synchronized(this) {
+>           size = merge.info.sizeInBytes();
+>         }
+>         sync(false, size);
+>       }
+3749,3750c3754,3760
+<     if (autoCommit)
+<       sync(false, merge.info.sizeInBytes());
+---
+>     if (autoCommit) {
+>       final long size;
+>       synchronized(this) {
+>         size = merge.info.sizeInBytes();
+>       }
+>       sync(false, size);
+>     }

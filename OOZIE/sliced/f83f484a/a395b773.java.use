@@ -1,0 +1,197 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+39	other	NodeDef	param	75	define	org.apache.oozie.workflow.lite.NodeDef.equals	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	75	77
+39	other	NodeDef	param	76	use	org.apache.oozie.workflow.lite.NodeDef.equals	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	75	77
+39	other	NodeDef	param	76	use	org.apache.oozie.workflow.lite.NodeDef.equals	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	75	77
+39	other	NodeDef	param	76	use	org.apache.oozie.workflow.lite.NodeDef.equals	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	75	77
+88	NodeDef.conf	String	variable	101	use	org.apache.oozie.workflow.lite.NodeDef.getConf	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	100	102
+89	NodeDef.cred	String	variable	89	use	org.apache.oozie.workflow.lite.NodeDef.getCred	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	88	90
+90	NodeDef.handlerClass	Class<? extends NodeHandler>	variable	93	use	org.apache.oozie.workflow.lite.NodeDef.getHandlerClass	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	92	94
+91	NodeDef.name	String	variable	85	use	org.apache.oozie.workflow.lite.NodeDef.getName	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	84	86
+47	e	WorkflowException	param	117	define	org.apache.oozie.workflow.lite.NodeDef.getNodeDefVersion	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	112	122
+92	NodeDef.nodeDefVersion	String	variable	115	set	org.apache.oozie.workflow.lite.NodeDef.getNodeDefVersion	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	112	122
+92	NodeDef.nodeDefVersion	String	variable	118	set	org.apache.oozie.workflow.lite.NodeDef.getNodeDefVersion	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	112	122
+92	NodeDef.nodeDefVersion	String	variable	113	use	org.apache.oozie.workflow.lite.NodeDef.getNodeDefVersion	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	112	122
+46	NODE_DEF_VERSION_1		variable	118	use	org.apache.oozie.workflow.lite.NodeDef.getNodeDefVersion	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	112	122
+92	NodeDef.nodeDefVersion	String	variable	121	use	org.apache.oozie.workflow.lite.NodeDef.getNodeDefVersion	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	112	122
+93	NodeDef.transitions	List<String>	variable	97	use	org.apache.oozie.workflow.lite.NodeDef.getTransitions	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	96	98
+94	NodeDef.userRetryInterval	String	variable	109	use	org.apache.oozie.workflow.lite.NodeDef.getUserRetryInterval	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	108	110
+95	NodeDef.userRetryMax	String	variable	105	use	org.apache.oozie.workflow.lite.NodeDef.getUserRetryMax	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	104	106
+91	NodeDef.name	String	variable	81	use	org.apache.oozie.workflow.lite.NodeDef.hashCode	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	80	82
+26	name	String	param	57	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+23	conf	String	param	57	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+25	handlerClass	Class<? extends NodeHandler>	param	57	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+27	transitions	List<String>	param	57	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+24	cred	String	param	57	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+26	name	String	param	58	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+23	conf	String	param	58	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+25	handlerClass	Class<? extends NodeHandler>	param	58	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+27	transitions	List<String>	param	58	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+24	cred	String	param	59	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+24	cred	String	param	60	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+89	NodeDef.cred	String	variable	60	set	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	57	62
+20	name	String	param	50	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+18	conf	String	param	50	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+19	handlerClass	Class<? extends NodeHandler>	param	50	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+21	transitions	List<String>	param	50	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+20	name	String	param	51	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+18	conf	String	param	52	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+19	handlerClass	Class<? extends NodeHandler>	param	53	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+21	transitions	List<String>	param	54	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+91	NodeDef.name	String	variable	51	set	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+88	NodeDef.conf	String	variable	52	set	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+90	NodeDef.handlerClass	Class<? extends NodeHandler>	variable	53	set	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+93	NodeDef.transitions	List<String>	variable	54	set	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	50	55
+32	name	String	param	64	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+29	conf	String	param	64	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+31	handlerClass	Class<? extends NodeHandler>	param	64	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+33	transitions	List<String>	param	64	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+30	cred	String	param	64	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+35	userRetryMax	String	param	65	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+34	userRetryInterval	String	param	65	define	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+32	name	String	param	66	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+29	conf	String	param	66	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+31	handlerClass	Class<? extends NodeHandler>	param	66	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+33	transitions	List<String>	param	66	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+30	cred	String	param	66	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+35	userRetryMax	String	param	67	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+35	userRetryMax	String	param	68	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+34	userRetryInterval	String	param	70	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+34	userRetryInterval	String	param	71	use	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+95	NodeDef.userRetryMax	String	variable	68	set	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+94	NodeDef.userRetryInterval	String	variable	71	set	org.apache.oozie.workflow.lite.NodeDef.NodeDef	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	64	73
+55	dataInput	DataInput	param	183	define	org.apache.oozie.workflow.lite.NodeDef.readFields	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	183	190
+55	dataInput	DataInput	param	184	use	org.apache.oozie.workflow.lite.NodeDef.readFields	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	183	190
+55	dataInput	DataInput	param	186	use	org.apache.oozie.workflow.lite.NodeDef.readFields	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	183	190
+55	dataInput	DataInput	param	189	use	org.apache.oozie.workflow.lite.NodeDef.readFields	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	183	190
+56	firstField	String	variable	184	define	org.apache.oozie.workflow.lite.NodeDef.readFields	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	183	190
+56	firstField	String	variable	184	set	org.apache.oozie.workflow.lite.NodeDef.readFields	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	183	190
+56	firstField	String	variable	185	use	org.apache.oozie.workflow.lite.NodeDef.readFields	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	183	190
+46	NODE_DEF_VERSION_1		variable	185	use	org.apache.oozie.workflow.lite.NodeDef.readFields	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	183	190
+56	firstField	String	variable	186	use	org.apache.oozie.workflow.lite.NodeDef.readFields	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	183	190
+56	firstField	String	variable	189	use	org.apache.oozie.workflow.lite.NodeDef.readFields	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	183	190
+64	dataInput	DataInput	param	153	define	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+65	firstField	String	param	153	define	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+61	ex	ClassNotFoundException	param	162	define	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+64	dataInput	DataInput	param	155	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+64	dataInput	DataInput	param	156	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+64	dataInput	DataInput	param	157	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+61	ex	ClassNotFoundException	param	163	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+64	dataInput	DataInput	param	166	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+64	dataInput	DataInput	param	170	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+64	dataInput	DataInput	param	173	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+64	dataInput	DataInput	param	175	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+64	dataInput	DataInput	param	176	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+66	handlerClassName	String	variable	157	define	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+67	numTrans	int	variable	170	define	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+63	i	int	variable	172	define	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+92	NodeDef.nodeDefVersion	String	variable	154	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+91	NodeDef.name	String	variable	155	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+89	NodeDef.cred	String	variable	156	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+66	handlerClassName	String	variable	157	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+90	NodeDef.handlerClass	Class<? extends NodeHandler>	variable	160	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+88	NodeDef.conf	String	variable	166	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+88	NodeDef.conf	String	variable	168	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+67	numTrans	int	variable	170	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+93	NodeDef.transitions	List<String>	variable	171	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+63	i	int	variable	172	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+95	NodeDef.userRetryMax	String	variable	175	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+94	NodeDef.userRetryInterval	String	variable	176	set	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+46	NODE_DEF_VERSION_1		variable	154	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+66	handlerClassName	String	variable	158	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+66	handlerClassName	String	variable	158	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+66	handlerClassName	String	variable	160	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+88	NodeDef.conf	String	variable	167	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+67	numTrans	int	variable	171	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+63	i	int	variable	172	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+67	numTrans	int	variable	172	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+93	NodeDef.transitions	List<String>	variable	173	use	org.apache.oozie.workflow.lite.NodeDef.readVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	153	177
+72	dataInput	DataInput	param	125	define	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+73	firstField	String	param	125	define	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+69	ex	ClassNotFoundException	param	138	define	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+73	firstField	String	param	126	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+72	dataInput	DataInput	param	127	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+73	firstField	String	param	129	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+72	dataInput	DataInput	param	132	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+72	dataInput	DataInput	param	133	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+69	ex	ClassNotFoundException	param	139	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+72	dataInput	DataInput	param	142	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+72	dataInput	DataInput	param	146	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+72	dataInput	DataInput	param	149	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+74	handlerClassName	String	variable	133	define	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+75	numTrans	int	variable	146	define	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+70	i	int	variable	148	define	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+91	NodeDef.name	String	variable	127	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+91	NodeDef.name	String	variable	129	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+92	NodeDef.nodeDefVersion	String	variable	131	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+89	NodeDef.cred	String	variable	132	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+74	handlerClassName	String	variable	133	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+90	NodeDef.handlerClass	Class<? extends NodeHandler>	variable	136	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+88	NodeDef.conf	String	variable	142	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+88	NodeDef.conf	String	variable	144	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+75	numTrans	int	variable	146	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+93	NodeDef.transitions	List<String>	variable	147	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+70	i	int	variable	148	set	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+71	NODE_DEF_VERSION_0		variable	126	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+71	NODE_DEF_VERSION_0		variable	131	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+74	handlerClassName	String	variable	134	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+74	handlerClassName	String	variable	134	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+74	handlerClassName	String	variable	136	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+88	NodeDef.conf	String	variable	143	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+75	numTrans	int	variable	147	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+70	i	int	variable	148	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+75	numTrans	int	variable	148	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+93	NodeDef.transitions	List<String>	variable	149	use	org.apache.oozie.workflow.lite.NodeDef.readVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	125	151
+77	dataOutput	DataOutput	param	259	define	org.apache.oozie.workflow.lite.NodeDef.write	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	259	265
+77	dataOutput	DataOutput	param	261	use	org.apache.oozie.workflow.lite.NodeDef.write	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	259	265
+77	dataOutput	DataOutput	param	264	use	org.apache.oozie.workflow.lite.NodeDef.write	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	259	265
+46	NODE_DEF_VERSION_1		variable	260	use	org.apache.oozie.workflow.lite.NodeDef.write	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	259	265
+84	dataOutput	DataOutput	param	221	define	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	222	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	223	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	225	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	228	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	230	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	232	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	235	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	237	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	239	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	242	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	245	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	248	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+84	dataOutput	DataOutput	param	251	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+83	transition	String	variable	238	define	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+92	NodeDef.nodeDefVersion	String	variable	222	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+91	NodeDef.name	String	variable	223	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+89	NodeDef.cred	String	variable	224	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+89	NodeDef.cred	String	variable	225	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+90	NodeDef.handlerClass	Class<? extends NodeHandler>	variable	230	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+88	NodeDef.conf	String	variable	231	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+88	NodeDef.conf	String	variable	232	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+93	NodeDef.transitions	List<String>	variable	237	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+93	NodeDef.transitions	List<String>	variable	238	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+83	transition	String	variable	239	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+95	NodeDef.userRetryMax	String	variable	241	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+95	NodeDef.userRetryMax	String	variable	242	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+94	NodeDef.userRetryInterval	String	variable	247	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+94	NodeDef.userRetryInterval	String	variable	248	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionOne	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	221	253
+87	dataOutput	DataOutput	param	193	define	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+87	dataOutput	DataOutput	param	194	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+87	dataOutput	DataOutput	param	195	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+87	dataOutput	DataOutput	param	197	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+87	dataOutput	DataOutput	param	200	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+87	dataOutput	DataOutput	param	202	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+87	dataOutput	DataOutput	param	204	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+87	dataOutput	DataOutput	param	207	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+87	dataOutput	DataOutput	param	209	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+87	dataOutput	DataOutput	param	211	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+86	transition	String	variable	210	define	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+92	NodeDef.nodeDefVersion	String	variable	194	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+91	NodeDef.name	String	variable	195	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+89	NodeDef.cred	String	variable	196	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+89	NodeDef.cred	String	variable	197	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+90	NodeDef.handlerClass	Class<? extends NodeHandler>	variable	202	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+88	NodeDef.conf	String	variable	203	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+88	NodeDef.conf	String	variable	204	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+93	NodeDef.transitions	List<String>	variable	209	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+93	NodeDef.transitions	List<String>	variable	210	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213
+86	transition	String	variable	211	use	org.apache.oozie.workflow.lite.NodeDef.writeVersionZero	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/f83f484a/a395b773.java	193	213

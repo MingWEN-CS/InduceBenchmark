@@ -1,0 +1,894 @@
+package org.apache.solr.schema;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import org.apache.commons.io.IOUtils;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.util.CharFilterFactory;
+import org.apache.lucene.analysis.util.ResourceLoaderAware;
+import org.apache.lucene.analysis.util.TokenFilterFactory;
+import org.apache.lucene.analysis.util.TokenizerFactory;
+import org.apache.solr.analysis.TokenizerChain;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrResponse;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.cloud.ZkController;
+import org.apache.solr.cloud.ZkSolrResourceLoader;
+import org.apache.solr.common.SolrException;
+import org.apache.solr.common.SolrException.ErrorCode;
+import org.apache.solr.common.cloud.ClusterState;
+import org.apache.solr.common.cloud.Replica;
+import org.apache.solr.common.cloud.Slice;
+import org.apache.solr.common.cloud.SolrZkClient;
+import org.apache.solr.common.cloud.ZkCoreNodeProps;
+import org.apache.solr.common.cloud.ZkStateReader;
+import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.SolrParams;
+import org.apache.solr.common.util.ContentStream;
+import org.apache.solr.common.util.NamedList;
+import org.apache.solr.core.Config;
+import org.apache.solr.core.SolrConfig;
+import org.apache.solr.core.SolrResourceLoader;
+import org.apache.solr.rest.schema.FieldTypeXmlAdapter;
+import org.apache.solr.util.DefaultSolrThreadFactory;
+import org.apache.solr.util.FileUtils;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.data.Stat;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+
+public final class ManagedIndexSchema extends IndexSchema {
+
+  private boolean isMutable = false;
+
+  @Override public boolean isMutable() { return isMutable; }
+
+  final String managedSchemaResourceName;
+  
+  int schemaZkVersion;
+  
+  final Object schemaUpdateLock;
+  
+  
+
+
+
+
+
+
+  ManagedIndexSchema(SolrConfig solrConfig, String name, InputSource is, boolean isMutable, 
+                     String managedSchemaResourceName, int schemaZkVersion, Object schemaUpdateLock) 
+      throws KeeperException, InterruptedException {
+    super(solrConfig, name, is);
+    this.isMutable = isMutable;
+    this.managedSchemaResourceName = managedSchemaResourceName;
+    this.schemaZkVersion = schemaZkVersion;
+    this.schemaUpdateLock = schemaUpdateLock;
+  }
+  
+  
+  
+  boolean persistManagedSchema(boolean createOnly) {
+    if (loader instanceof ZkSolrResourceLoader) {
+      return persistManagedSchemaToZooKeeper(createOnly);
+    }
+    
+    File managedSchemaFile = new File(loader.getConfigDir(), managedSchemaResourceName);
+    OutputStreamWriter writer = null;
+    try {
+      File parentDir = managedSchemaFile.getParentFile();
+      if ( ! parentDir.isDirectory()) {
+        if ( ! parentDir.mkdirs()) {
+          final String msg = "Can't create managed schema directory " + parentDir.getAbsolutePath();
+          log.error(msg);
+          throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+        }
+      }
+      final FileOutputStream out = new FileOutputStream(managedSchemaFile);
+      writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+      persist(writer);
+      log.info("Upgraded to managed schema at " + managedSchemaFile.getPath());
+    } catch (IOException e) {
+      final String msg = "Error persisting managed schema " + managedSchemaFile;
+      log.error(msg, e);
+      throw new SolrException(ErrorCode.SERVER_ERROR, msg, e);
+    } finally {
+      IOUtils.closeQuietly(writer);
+      try {
+        FileUtils.sync(managedSchemaFile);
+      } catch (IOException e) {
+        final String msg = "Error syncing the managed schema file " + managedSchemaFile;
+        log.error(msg, e);
+      }
+    }
+    return true;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  boolean persistManagedSchemaToZooKeeper(boolean createOnly) {
+    final ZkSolrResourceLoader zkLoader = (ZkSolrResourceLoader)loader;
+    final ZkController zkController = zkLoader.getZkController();
+    final SolrZkClient zkClient = zkController.getZkClient();
+    final String managedSchemaPath = zkLoader.getConfigSetZkPath() + "/" + managedSchemaResourceName;
+    boolean success = true;
+    boolean schemaChangedInZk = false;
+    try {
+      
+      StringWriter writer = new StringWriter();
+      persist(writer);
+
+      final byte[] data = writer.toString().getBytes(StandardCharsets.UTF_8);
+      if (createOnly) {
+        try {
+          zkClient.create(managedSchemaPath, data, CreateMode.PERSISTENT, true);
+          schemaZkVersion = 0;
+          log.info("Created and persisted managed schema znode at " + managedSchemaPath);
+        } catch (KeeperException.NodeExistsException e) {
+          
+          log.info("Managed schema znode at " + managedSchemaPath + " already exists - no need to create it");
+        }
+      } else {
+        try {
+          
+          Stat stat = zkClient.setData(managedSchemaPath, data, schemaZkVersion, true);
+          schemaZkVersion = stat.getVersion();
+          log.info("Persisted managed schema version "+schemaZkVersion+" at " + managedSchemaPath);
+        } catch (KeeperException.BadVersionException e) {
+
+          log.error("Bad version when trying to persist schema using "+schemaZkVersion+" due to: "+e);
+
+          success = false;
+          schemaChangedInZk = true;
+        }
+      }
+    } catch (Exception e) {
+      if (e instanceof InterruptedException) {
+        Thread.currentThread().interrupt(); 
+      }
+      final String msg = "Error persisting managed schema at " + managedSchemaPath;
+      log.error(msg, e);
+      throw new SolrException(ErrorCode.SERVER_ERROR, msg, e);
+    }
+    if (schemaChangedInZk) {
+      String msg = "Failed to persist managed schema at " + managedSchemaPath
+        + " - version mismatch";
+      log.info(msg);
+      throw new SchemaChangedInZkException(ErrorCode.CONFLICT, msg + ", retry.");
+    }
+    return success; 
+  }
+
+  
+
+
+
+  public static void waitForSchemaZkVersionAgreement(String collection, String localCoreNodeName,
+                                                     int schemaZkVersion, ZkController zkController, int maxWaitSecs)
+  {
+    long startMs = System.currentTimeMillis();
+
+    
+    List<GetZkSchemaVersionCallable> concurrentTasks = new ArrayList<>();
+    for (String coreUrl : getActiveReplicaCoreUrls(zkController, collection, localCoreNodeName))
+      concurrentTasks.add(new GetZkSchemaVersionCallable(coreUrl, schemaZkVersion));
+    if (concurrentTasks.isEmpty())
+      return; 
+
+
+    log.info("Waiting up to "+maxWaitSecs+" secs for "+concurrentTasks.size()+
+        " replicas to apply schema update version "+schemaZkVersion+" for collection "+collection);
+
+    
+    int poolSize = Math.min(concurrentTasks.size(), 10);
+    ExecutorService parallelExecutor =
+        Executors.newFixedThreadPool(poolSize, new DefaultSolrThreadFactory("managedSchemaExecutor"));
+    try {
+      List<Future<Integer>> results =
+          parallelExecutor.invokeAll(concurrentTasks, maxWaitSecs, TimeUnit.SECONDS);
+
+      
+      List<String> failedList = null; 
+      for (int f=0; f < results.size(); f++) {
+        int vers = -1;
+        Future<Integer> next = results.get(f);
+        if (next.isDone() && !next.isCancelled()) {
+          
+          try {
+            vers = next.get();
+          } catch (ExecutionException e) {
+            
+          }
+        }
+
+        if (vers == -1) {
+          String coreUrl = concurrentTasks.get(f).coreUrl;
+          log.warn("Core "+coreUrl+" version mismatch! Expected "+schemaZkVersion+" but got "+vers);
+          if (failedList == null) failedList = new ArrayList<>();
+          failedList.add(coreUrl);
+        }
+      }
+
+      
+      if (failedList != null)
+        throw new SolrException(ErrorCode.SERVER_ERROR, failedList.size()+" out of "+(concurrentTasks.size() + 1)+
+            " replicas failed to update their schema to version "+schemaZkVersion+" within "+
+            maxWaitSecs+" seconds! Failed cores: "+failedList);
+
+    } catch (InterruptedException ie) {
+      log.warn("Core "+localCoreNodeName+" was interrupted waiting for schema version "+schemaZkVersion+
+          " to propagate to "+concurrentTasks.size()+" replicas for collection "+collection);
+
+      Thread.currentThread().interrupt();
+    } finally {
+      if (!parallelExecutor.isShutdown())
+        parallelExecutor.shutdownNow();
+    }
+
+    long diffMs = (System.currentTimeMillis() - startMs);
+    log.info("Took "+Math.round(diffMs/1000d)+" secs for "+concurrentTasks.size()+
+        " replicas to apply schema update version "+schemaZkVersion+" for collection "+collection);
+  }
+
+  protected static List<String> getActiveReplicaCoreUrls(ZkController zkController, String collection, String localCoreNodeName) {
+    List<String> activeReplicaCoreUrls = new ArrayList<>();
+    ZkStateReader zkStateReader = zkController.getZkStateReader();
+    ClusterState clusterState = zkStateReader.getClusterState();
+    Set<String> liveNodes = clusterState.getLiveNodes();
+    Collection<Slice> activeSlices = clusterState.getActiveSlices(collection);
+    if (activeSlices != null && activeSlices.size() > 0) {
+      for (Slice next : activeSlices) {
+        Map<String, Replica> replicasMap = next.getReplicasMap();
+        if (replicasMap != null) {
+          for (Map.Entry<String, Replica> entry : replicasMap.entrySet()) {
+            Replica replica = entry.getValue();
+            if (!localCoreNodeName.equals(replica.getName()) &&
+                ZkStateReader.ACTIVE.equals(replica.getStr(ZkStateReader.STATE_PROP)) &&
+                liveNodes.contains(replica.getNodeName())) {
+              ZkCoreNodeProps replicaCoreProps = new ZkCoreNodeProps(replica);
+              activeReplicaCoreUrls.add(replicaCoreProps.getCoreUrl());
+            }
+          }
+        }
+      }
+    }
+    return activeReplicaCoreUrls;
+  }
+
+  private static class GetZkSchemaVersionCallable extends SolrRequest implements Callable<Integer> {
+
+    private String coreUrl;
+    private int expectedZkVersion;
+
+    GetZkSchemaVersionCallable(String coreUrl, int expectedZkVersion) {
+      super(METHOD.GET, "/schema/zkversion");
+
+      this.coreUrl = coreUrl;
+      this.expectedZkVersion = expectedZkVersion;
+    }
+
+    @Override
+    public SolrParams getParams() {
+      ModifiableSolrParams wparams = new ModifiableSolrParams();
+      wparams.set("refreshIfBelowVersion", expectedZkVersion);
+      return wparams;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+      int remoteVersion = -1;
+      try (HttpSolrClient solr = new HttpSolrClient(coreUrl)) {
+        
+        while (remoteVersion == -1 || remoteVersion < expectedZkVersion) {
+          try {
+            HttpSolrClient.HttpUriRequestResponse mrr = solr.httpUriRequest(this);
+            NamedList<Object> zkversionResp = mrr.future.get();
+            if (zkversionResp != null)
+              remoteVersion = (Integer)zkversionResp.get("zkversion");
+
+            if (remoteVersion < expectedZkVersion) {
+              
+              
+              
+              log.error("Replica "+coreUrl+" returned schema version "+
+                  remoteVersion+" and has not applied schema version "+expectedZkVersion);
+            }
+
+          } catch (Exception e) {
+            if (e instanceof InterruptedException) {
+              break; 
+            } else {
+              log.warn("Failed to get /schema/zkversion from " + coreUrl + " due to: " + e);
+            }
+          }
+        }
+      }
+      return remoteVersion;
+    }
+
+    @Override
+    public Collection<ContentStream> getContentStreams() throws IOException {
+      return null;
+    }
+
+    @Override
+    protected SolrResponse createResponse(SolrClient client) {
+      return null;
+    }
+
+  }
+
+
+  public class FieldExistsException extends SolrException {
+    public FieldExistsException(ErrorCode code, String msg) {
+      super(code, msg);
+    }
+  }
+
+  public class SchemaChangedInZkException extends SolrException {
+    public SchemaChangedInZkException(ErrorCode code, String msg) {
+      super(code, msg);
+    }
+  }
+  
+
+  @Override
+  public ManagedIndexSchema addFields(Collection<SchemaField> newFields,
+                                      Map<String, Collection<String>> copyFieldNames,
+                                      boolean persist) {
+    ManagedIndexSchema newSchema = null;
+    if (isMutable) {
+      boolean success = false;
+      if (copyFieldNames == null){
+        copyFieldNames = Collections.emptyMap();
+      }
+      newSchema = shallowCopy(true);
+
+      for (SchemaField newField : newFields) {
+        if (null != newSchema.getFieldOrNull(newField.getName())) {
+          String msg = "Field '" + newField.getName() + "' already exists.";
+          throw new FieldExistsException(ErrorCode.BAD_REQUEST, msg);
+        }
+        newSchema.fields.put(newField.getName(), newField);
+
+        if (null != newField.getDefaultValue()) {
+          log.debug(newField.getName() + " contains default value: " + newField.getDefaultValue());
+          newSchema.fieldsWithDefaultValue.add(newField);
+        }
+        if (newField.isRequired()) {
+          log.debug("{} is required in this schema", newField.getName());
+          newSchema.requiredFields.add(newField);
+        }
+        Collection<String> copyFields = copyFieldNames.get(newField.getName());
+        if (copyFields != null) {
+          for (String copyField : copyFields) {
+            newSchema.registerCopyField(newField.getName(), copyField);
+          }
+        }
+      }
+
+      
+      for (SchemaAware aware : newSchema.schemaAware) {
+        aware.inform(newSchema);
+      }
+      newSchema.refreshAnalyzers();
+
+      if(persist) {
+        success = newSchema.persistManagedSchema(false); 
+        if (success) {
+          log.debug("Added field(s): {}", newFields);
+        } else {
+          log.error("Failed to add field(s): {}", newFields);
+          newSchema = null;
+        }
+      }
+    } else {
+      String msg = "This ManagedIndexSchema is not mutable.";
+      log.error(msg);
+      throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+    }
+    return newSchema;
+  }
+
+
+  @Override
+  public ManagedIndexSchema addDynamicFields(Collection<SchemaField> newDynamicFields, 
+                                             Map<String,Collection<String>> copyFieldNames, boolean persist) {
+    ManagedIndexSchema newSchema = null;
+    if (isMutable) {
+      boolean success = false;
+      if (copyFieldNames == null){
+        copyFieldNames = Collections.emptyMap();
+      }
+      newSchema = shallowCopy(true);
+
+      for (SchemaField newDynamicField : newDynamicFields) {
+        List<DynamicField> dFields = new ArrayList<>(Arrays.asList(newSchema.dynamicFields));
+        if (isDuplicateDynField(dFields, newDynamicField)) {
+          String msg = "Dynamic field '" + newDynamicField.getName() + "' already exists.";
+          throw new FieldExistsException(ErrorCode.BAD_REQUEST, msg);
+        }
+        dFields.add(new DynamicField(newDynamicField));
+        newSchema.dynamicFields = dynamicFieldListToSortedArray(dFields);
+
+        Collection<String> copyFields = copyFieldNames.get(newDynamicField.getName());
+        if (copyFields != null) {
+          for (String copyField : copyFields) {
+            newSchema.registerCopyField(newDynamicField.getName(), copyField);
+          }
+        }
+      }
+
+      
+      for (SchemaAware aware : newSchema.schemaAware) {
+        aware.inform(newSchema);
+      }
+      newSchema.refreshAnalyzers();
+      if(persist) {
+        success = newSchema.persistManagedSchema(false); 
+        if (success) {
+          log.debug("Added dynamic field(s): {}", newDynamicFields);
+        } else {
+          log.error("Failed to add dynamic field(s): {}", newDynamicFields);
+        }
+      }
+    } else {
+      String msg = "This ManagedIndexSchema is not mutable.";
+      log.error(msg);
+      throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+    }
+    return newSchema;
+  }
+
+  @Override
+  public ManagedIndexSchema addCopyFields(Map<String, Collection<String>> copyFields, boolean persist) {
+    ManagedIndexSchema newSchema = null;
+    if (isMutable) {
+      boolean success = false;
+      newSchema = shallowCopy(true);
+      for (Map.Entry<String, Collection<String>> entry : copyFields.entrySet()) {
+        
+
+        for (String destination : entry.getValue()) {
+          newSchema.registerCopyField(entry.getKey(), destination);
+        }
+      }
+      
+      
+      for (SchemaAware aware : newSchema.schemaAware) {
+        aware.inform(newSchema);
+      }
+      newSchema.refreshAnalyzers();
+      if(persist) {
+        success = newSchema.persistManagedSchema(false); 
+        if (success) {
+          log.debug("Added copy fields for {} sources", copyFields.size());
+        } else {
+          log.error("Failed to add copy fields for {} sources", copyFields.size());
+        }
+      }
+    }
+    return newSchema;
+  }
+
+  public ManagedIndexSchema addFieldTypes(List<FieldType> fieldTypeList, boolean persist) {
+    if (!isMutable) {
+      String msg = "This ManagedIndexSchema is not mutable.";
+      log.error(msg);
+      throw new SolrException(ErrorCode.SERVER_ERROR, msg);    
+    }
+
+    ManagedIndexSchema newSchema = shallowCopy(true);
+
+    
+    
+    HashMap<String,FieldType> clone =
+        (HashMap<String,FieldType>)((HashMap<String,FieldType>)newSchema.fieldTypes).clone();
+    newSchema.fieldTypes = clone;
+
+    
+    for (FieldType fieldType : fieldTypeList) {    
+      String typeName = fieldType.getTypeName();
+      if (newSchema.getFieldTypeByName(typeName) != null) {
+        throw new FieldExistsException(ErrorCode.BAD_REQUEST,
+            "Field type '" + typeName + "' already exists!");
+      }
+      
+      newSchema.fieldTypes.put(typeName, fieldType);
+    }
+
+    
+    for (SchemaAware aware : newSchema.schemaAware)
+      aware.inform(newSchema);
+    
+    
+    for (FieldType fieldType : fieldTypeList)
+      informResourceLoaderAwareObjectsForFieldType(fieldType);
+
+    newSchema.refreshAnalyzers();
+
+    if (persist) {
+      boolean success = newSchema.persistManagedSchema(false);
+      if (success) {
+        if (log.isDebugEnabled()) {
+          StringBuilder fieldTypeNames = new StringBuilder();
+          for (int i=0; i < fieldTypeList.size(); i++) {
+            if (i > 0) fieldTypeNames.append(", ");
+            fieldTypeNames.append(fieldTypeList.get(i).typeName);
+          }
+          log.debug("Added field types: {}", fieldTypeNames.toString());
+        }
+      } else {
+        
+        log.error("Failed to add field types: {}", fieldTypeList);
+        throw new SolrException(ErrorCode.SERVER_ERROR,
+            "Failed to persist updated schema due to underlying storage issue; check log for more details!");
+      }
+    }
+
+    return newSchema;
+  }
+
+  
+
+
+  protected void informResourceLoaderAwareObjectsForFieldType(FieldType fieldType) {
+    
+    
+    if (!fieldType.supportsAnalyzers())
+      return;
+
+    Analyzer indexAnalyzer = fieldType.getIndexAnalyzer();
+    if (indexAnalyzer != null && indexAnalyzer instanceof TokenizerChain)
+      informResourceLoaderAwareObjectsInChain((TokenizerChain)indexAnalyzer);
+
+    Analyzer queryAnalyzer = fieldType.getQueryAnalyzer();
+    
+    
+    
+    if (queryAnalyzer != null &&
+        queryAnalyzer != indexAnalyzer &&
+        queryAnalyzer instanceof TokenizerChain)
+      informResourceLoaderAwareObjectsInChain((TokenizerChain)queryAnalyzer);
+
+    
+    if (fieldType instanceof TextField) {
+      TextField textFieldType = (TextField)fieldType;
+      Analyzer multiTermAnalyzer = textFieldType.getMultiTermAnalyzer();
+      if (multiTermAnalyzer != null && multiTermAnalyzer != indexAnalyzer &&
+          multiTermAnalyzer != queryAnalyzer && multiTermAnalyzer instanceof TokenizerChain)
+        informResourceLoaderAwareObjectsInChain((TokenizerChain)multiTermAnalyzer);
+    }
+  }
+  
+  @Override
+  public SchemaField newField(String fieldName, String fieldType, Map<String,?> options) {
+    SchemaField sf; 
+    if (isMutable) {
+      try {
+        if (-1 != fieldName.indexOf('*')) {
+          String msg = "Can't add dynamic field '" + fieldName + "'.";
+          throw new SolrException(ErrorCode.BAD_REQUEST, msg);
+        }
+        SchemaField existingFieldWithTheSameName = getFieldOrNull(fieldName);
+        if (null != existingFieldWithTheSameName) {
+          String msg = "Field '" + fieldName + "' already exists.";
+          throw new SolrException(ErrorCode.BAD_REQUEST, msg);
+        }
+        FieldType type = getFieldTypeByName(fieldType);
+        if (null == type) {
+          String msg = "Field '" + fieldName + "': Field type '" + fieldType + "' not found.";
+          log.error(msg);
+          throw new SolrException(ErrorCode.BAD_REQUEST, msg);
+        }
+        sf = SchemaField.create(fieldName, type, options);
+      } catch (SolrException e) {
+        throw e;
+      } catch (Exception e) {
+        throw new SolrException(ErrorCode.BAD_REQUEST, e);
+      }
+    } else {
+      String msg = "This ManagedIndexSchema is not mutable.";
+      log.error(msg);
+      throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+    }
+    return sf;
+  }
+  
+  public int getSchemaZkVersion() {
+    return schemaZkVersion;
+  }
+
+  @Override
+  public SchemaField newDynamicField(String fieldNamePattern, String fieldType, Map<String,?> options) {
+    SchemaField sf;
+    if (isMutable) {
+      try {
+        FieldType type = getFieldTypeByName(fieldType);
+        if (null == type) {
+          String msg = "Dynamic field '" + fieldNamePattern + "': Field type '" + fieldType + "' not found.";
+          log.error(msg);
+          throw new SolrException(ErrorCode.BAD_REQUEST, msg);
+        }
+        sf = SchemaField.create(fieldNamePattern, type, options);
+        if ( ! isValidDynamicField(Arrays.asList(dynamicFields), sf)) {
+          String msg =  "Invalid dynamic field '" + fieldNamePattern + "'";
+          log.error(msg);
+          throw new SolrException(ErrorCode.BAD_REQUEST, msg);
+        }
+      } catch (SolrException e) {
+        throw e;
+      } catch (Exception e) {
+        throw new SolrException(ErrorCode.BAD_REQUEST, e);
+      }
+    } else {
+      String msg = "This ManagedIndexSchema is not mutable.";
+      log.error(msg);
+      throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+    }
+    return sf;
+  }
+
+  @Override
+  public FieldType newFieldType(String typeName, String className, Map<String, ?> options) {
+    if (!isMutable) {
+      String msg = "This ManagedIndexSchema is not mutable.";
+      log.error(msg);
+      throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+    }
+
+    if (getFieldTypeByName(typeName) != null) {
+      String msg = "Field type '" + typeName + "' already exists.";
+      log.error(msg);
+      throw new SolrException(ErrorCode.BAD_REQUEST, msg);
+    }
+
+    
+    
+    
+    Map<String, FieldType> newFieldTypes = new HashMap<String, FieldType>();
+    List<SchemaAware> schemaAwareList = new ArrayList<SchemaAware>();
+    FieldTypePluginLoader typeLoader = new FieldTypePluginLoader(this, newFieldTypes, schemaAwareList);
+    typeLoader.loadSingle(loader, FieldTypeXmlAdapter.toNode(options));
+    FieldType ft = newFieldTypes.get(typeName);
+    if (!schemaAwareList.isEmpty())
+      schemaAware.addAll(schemaAwareList);
+
+    return ft;
+  }
+
+  
+
+
+
+
+  protected void informResourceLoaderAwareObjectsInChain(TokenizerChain chain) {
+    CharFilterFactory[] charFilters = chain.getCharFilterFactories();
+    if (charFilters != null) {
+      for (CharFilterFactory next : charFilters) {
+        if (next instanceof ResourceLoaderAware) {
+          try {
+            ((ResourceLoaderAware) next).inform(loader);
+          } catch (IOException e) {
+            throw new SolrException(ErrorCode.SERVER_ERROR, e);
+          }
+        }
+      }
+    }
+
+    TokenizerFactory tokenizerFactory = chain.getTokenizerFactory();
+    if (tokenizerFactory != null && tokenizerFactory instanceof ResourceLoaderAware) {
+      try {
+        ((ResourceLoaderAware) tokenizerFactory).inform(loader);
+      } catch (IOException e) {
+        throw new SolrException(ErrorCode.SERVER_ERROR, e);
+      }
+    }
+
+    TokenFilterFactory[] filters = chain.getTokenFilterFactories();
+    if (filters != null) {
+      for (TokenFilterFactory next : filters) {
+        if (next instanceof ResourceLoaderAware) {
+          try {
+            ((ResourceLoaderAware) next).inform(loader);
+          } catch (IOException e) {
+            throw new SolrException(ErrorCode.SERVER_ERROR, e);
+          }
+        }
+      }
+    }
+  }
+  
+
+  
+
+
+
+
+
+
+
+  ManagedIndexSchema reloadFields(InputSource inputSource, int schemaZkVersion) {
+    ManagedIndexSchema newSchema;
+    try {
+      newSchema = shallowCopy(false);
+      Config schemaConf = new Config(loader, SCHEMA, inputSource, SLASH+SCHEMA+SLASH);
+      Document document = schemaConf.getDocument();
+      final XPath xpath = schemaConf.getXPath();
+
+      
+      newSchema.mergeFieldTypesFromZk(document, xpath);
+
+      newSchema.loadFields(document, xpath);
+      
+      
+      
+      newSchema.copyFieldsMap = new HashMap<>();
+      newSchema.dynamicCopyFields = new DynamicCopy[] {};
+      newSchema.copyFieldTargetCounts = new HashMap<>();
+      newSchema.loadCopyFields(document, xpath);
+      if (null != uniqueKeyField) {
+        newSchema.requiredFields.add(uniqueKeyField);
+      }
+      
+      for (SchemaAware aware : newSchema.schemaAware) {
+        aware.inform(newSchema);
+      }
+
+      
+      for (FieldType fieldType : newSchema.fieldTypes.values())
+        informResourceLoaderAwareObjectsForFieldType(fieldType);
+
+      newSchema.refreshAnalyzers();
+      newSchema.schemaZkVersion = schemaZkVersion;
+    } catch (SolrException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new SolrException(ErrorCode.SERVER_ERROR, "Schema Parsing Failed: " + e.getMessage(), e);
+    }
+    return newSchema;
+  }
+  
+  private ManagedIndexSchema(final SolrConfig solrConfig, final SolrResourceLoader loader, boolean isMutable,
+                             String managedSchemaResourceName, int schemaZkVersion, Object schemaUpdateLock) 
+      throws KeeperException, InterruptedException {
+    super(solrConfig, loader);
+    this.isMutable = isMutable;
+    this.managedSchemaResourceName = managedSchemaResourceName;
+    this.schemaZkVersion = schemaZkVersion;
+    this.schemaUpdateLock = schemaUpdateLock;
+  }
+
+  
+
+
+
+
+
+
+
+
+   ManagedIndexSchema shallowCopy(boolean includeFieldDataStructures) {
+    ManagedIndexSchema newSchema = null;
+    try {
+      newSchema = new ManagedIndexSchema
+          (solrConfig, loader, isMutable, managedSchemaResourceName, schemaZkVersion, getSchemaUpdateLock());
+    } catch (KeeperException e) {
+      final String msg = "Error instantiating ManagedIndexSchema";
+      log.error(msg, e);
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, msg, e);
+    } catch (InterruptedException e) {
+      
+      Thread.currentThread().interrupt();
+      log.warn("", e);
+    }
+
+    assert newSchema != null;
+    
+    newSchema.name = name;
+    newSchema.version = version;
+    newSchema.defaultSearchFieldName = defaultSearchFieldName;
+    newSchema.queryParserDefaultOperator = queryParserDefaultOperator;
+    newSchema.isExplicitQueryParserDefaultOperator = isExplicitQueryParserDefaultOperator;
+    newSchema.similarity = similarity;
+    newSchema.similarityFactory = similarityFactory;
+    newSchema.isExplicitSimilarity = isExplicitSimilarity;
+    newSchema.uniqueKeyField = uniqueKeyField;
+    newSchema.uniqueKeyFieldName = uniqueKeyFieldName;
+    newSchema.uniqueKeyFieldType = uniqueKeyFieldType;
+    
+    
+    newSchema.resourceName = managedSchemaResourceName;
+
+    if (includeFieldDataStructures) {
+      
+      newSchema.fields.putAll(fields);
+      newSchema.fieldsWithDefaultValue.addAll(fieldsWithDefaultValue);
+      newSchema.requiredFields.addAll(requiredFields);
+    }
+
+    
+    newSchema.fieldTypes = fieldTypes;
+    newSchema.dynamicFields = dynamicFields;
+    newSchema.dynamicCopyFields = dynamicCopyFields;
+    newSchema.copyFieldsMap = copyFieldsMap;
+    newSchema.copyFieldTargetCounts = copyFieldTargetCounts;
+    newSchema.schemaAware = schemaAware;
+
+    return newSchema;
+  }
+
+  @Override
+  public Object getSchemaUpdateLock() {
+    return schemaUpdateLock;
+  }
+
+  
+
+
+
+
+
+
+  protected synchronized void mergeFieldTypesFromZk(Document document, XPath xpath)
+      throws XPathExpressionException
+  {
+    Map<String, FieldType> newFieldTypes = new HashMap<String, FieldType>();
+    FieldTypePluginLoader typeLoader = new FieldTypePluginLoader(this, newFieldTypes, schemaAware);
+    String expression = getFieldTypeXPathExpressions();
+    NodeList nodes = (NodeList) xpath.evaluate(expression, document, XPathConstants.NODESET);
+    typeLoader.load(loader, nodes);
+    for (String newTypeName : newFieldTypes.keySet())
+      fieldTypes.put(newTypeName, newFieldTypes.get(newTypeName));
+  }
+}

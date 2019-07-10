@@ -1,0 +1,2217 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.query.lucene;
+
+import org.apache.jackrabbit.core.ItemManager;
+import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.NodeIdIterator;
+import org.apache.jackrabbit.core.HierarchyManager;
+import org.apache.jackrabbit.core.fs.FileSystem;
+import org.apache.jackrabbit.core.fs.FileSystemResource;
+import org.apache.jackrabbit.core.fs.FileSystemException;
+import org.apache.jackrabbit.core.fs.local.LocalFileSystem;
+import org.apache.jackrabbit.core.query.AbstractQueryHandler;
+import org.apache.jackrabbit.core.query.ExecutableQuery;
+import org.apache.jackrabbit.core.query.QueryHandler;
+import org.apache.jackrabbit.core.query.QueryHandlerContext;
+import org.apache.jackrabbit.core.query.lucene.directory.DirectoryManager;
+import org.apache.jackrabbit.core.query.lucene.directory.FSDirectoryManager;
+import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.core.state.NodeStateIterator;
+import org.apache.jackrabbit.core.state.ItemStateManager;
+import org.apache.jackrabbit.core.state.PropertyState;
+import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.extractor.DefaultTextExtractor;
+import org.apache.jackrabbit.extractor.TextExtractor;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.PathFactory;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
+import org.apache.jackrabbit.spi.commons.query.DefaultQueryNodeFactory;
+import org.apache.jackrabbit.spi.commons.query.qom.QueryObjectModelTree;
+import org.apache.jackrabbit.spi.commons.query.qom.OrderingImpl;
+import org.apache.jackrabbit.spi.commons.query.qom.QOMTreeVisitor;
+import org.apache.jackrabbit.spi.commons.query.qom.DefaultTraversingQOMTreeVisitor;
+import org.apache.jackrabbit.spi.commons.query.qom.LengthImpl;
+import org.apache.jackrabbit.spi.commons.query.qom.LowerCaseImpl;
+import org.apache.jackrabbit.spi.commons.query.qom.UpperCaseImpl;
+import org.apache.jackrabbit.spi.commons.query.qom.FullTextSearchScoreImpl;
+import org.apache.jackrabbit.spi.commons.query.qom.NodeLocalNameImpl;
+import org.apache.jackrabbit.spi.commons.query.qom.NodeNameImpl;
+import org.apache.jackrabbit.spi.commons.query.qom.PropertyValueImpl;
+import org.apache.jackrabbit.spi.commons.query.qom.DynamicOperandImpl;
+import org.apache.jackrabbit.uuid.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.Token;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.Similarity;
+import org.apache.lucene.search.SortComparatorSource;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
+import org.xml.sax.SAXException;
+import org.w3c.dom.Element;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.query.InvalidQueryException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Collection;
+
+
+
+
+
+public class SearchIndex extends AbstractQueryHandler {
+
+    
+
+
+
+    public static final Collection<Name> VALID_SYSTEM_INDEX_NODE_TYPE_NAMES =
+        Collections.unmodifiableCollection(Arrays.asList(
+                NameConstants.NT_CHILDNODEDEFINITION,
+                NameConstants.NT_FROZENNODE,
+                NameConstants.NT_NODETYPE,
+                NameConstants.NT_PROPERTYDEFINITION,
+                NameConstants.NT_VERSION,
+                NameConstants.NT_VERSIONEDCHILD,
+                NameConstants.NT_VERSIONHISTORY,
+                NameConstants.NT_VERSIONLABELS,
+                NameConstants.REP_NODETYPES,
+                NameConstants.REP_SYSTEM,
+                NameConstants.REP_VERSIONSTORAGE,
+                
+                NameConstants.NT_BASE,
+                NameConstants.MIX_REFERENCEABLE));
+        
+    
+
+
+    private static final DefaultQueryNodeFactory DEFAULT_QUERY_NODE_FACTORY =
+        new DefaultQueryNodeFactory(VALID_SYSTEM_INDEX_NODE_TYPE_NAMES);
+
+    
+    private static final Logger log = LoggerFactory.getLogger(SearchIndex.class);
+
+    
+
+
+    private static final String NS_MAPPING_FILE = "ns_mappings.properties";
+
+    
+
+
+    public static final int DEFAULT_MIN_MERGE_DOCS = 100;
+
+    
+
+
+    public static final int DEFAULT_MAX_MERGE_DOCS = Integer.MAX_VALUE;
+
+    
+
+
+    public static final int DEFAULT_MERGE_FACTOR = 10;
+
+    
+
+
+    public static final int DEFAULT_MAX_FIELD_LENGTH = 10000;
+
+    
+
+
+
+
+    public static final int DEFAULT_EXTRACTOR_POOL_SIZE = 0;
+
+    
+
+
+    public static final int DEFAULT_EXTRACTOR_BACK_LOG = Integer.MAX_VALUE;
+
+    
+
+
+
+
+    public static final long DEFAULT_EXTRACTOR_TIMEOUT = 100;
+
+    
+
+
+    public static final int DEFAULT_TERM_INFOS_INDEX_DIVISOR = 1;
+
+    
+
+
+    protected static final PathFactory PATH_FACTORY = PathFactoryImpl.getInstance();
+
+    
+
+
+    private static final Path ROOT_PATH;
+
+    
+
+
+    private static final Path JCR_SYSTEM_PATH;
+
+    static {
+        ROOT_PATH = PATH_FACTORY.create(NameConstants.ROOT);
+        try {
+            JCR_SYSTEM_PATH = PATH_FACTORY.create(ROOT_PATH, NameConstants.JCR_SYSTEM, false);
+        } catch (RepositoryException e) {
+            
+            throw new InternalError(e.getMessage());
+        }
+    }
+
+    
+
+
+    private MultiIndex index;
+
+    
+
+
+    private JackrabbitAnalyzer analyzer;
+
+    
+
+
+
+
+    private String textFilterClasses =
+        DefaultTextExtractor.class.getName();
+
+    
+
+
+    private TextExtractor extractor;
+
+    
+
+
+    private NamespaceMappings nsMappings;
+
+    
+
+
+
+
+    private String path;
+
+    
+
+
+    private int minMergeDocs = DEFAULT_MIN_MERGE_DOCS;
+
+    
+
+
+
+    private long maxVolatileIndexSize = 1024 * 1024;
+
+    
+
+
+    private int volatileIdleTime = 3;
+
+    
+
+
+    private int maxMergeDocs = DEFAULT_MAX_MERGE_DOCS;
+
+    
+
+
+    private int mergeFactor = DEFAULT_MERGE_FACTOR;
+
+    
+
+
+    private int maxFieldLength = DEFAULT_MAX_FIELD_LENGTH;
+
+    
+
+
+    private int extractorPoolSize = 2 * Runtime.getRuntime().availableProcessors();
+
+    
+
+
+    private int extractorBackLog = DEFAULT_EXTRACTOR_BACK_LOG;
+
+    
+
+
+    private long extractorTimeout = DEFAULT_EXTRACTOR_TIMEOUT;
+
+    
+
+
+    private int bufferSize = 10;
+
+    
+
+
+    private boolean useCompoundFile = true;
+
+    
+
+
+
+
+
+    private boolean documentOrder = false;
+
+    
+
+
+
+
+
+
+    private boolean forceConsistencyCheck = false;
+
+    
+
+
+
+
+
+
+
+    private boolean consistencyCheckEnabled = false;
+
+    
+
+
+
+
+
+    private boolean autoRepair = true;
+
+    
+
+
+
+
+    private int cacheSize = 1000;
+
+    
+
+
+
+
+    private int resultFetchSize = Integer.MAX_VALUE;
+
+    
+
+
+
+
+
+    private boolean supportHighlighting = false;
+
+    
+
+
+    private Class<?> excerptProviderClass = DefaultHTMLExcerpt.class;
+
+    
+
+
+    private String indexingConfigPath;
+
+    
+
+
+
+    private Element indexingConfiguration;
+
+    
+
+
+    private IndexingConfiguration indexingConfig;
+
+    
+
+
+
+    private Class<?> indexingConfigurationClass = IndexingConfigurationImpl.class;
+
+    
+
+
+    private Class<?> synonymProviderClass;
+
+    
+
+
+    private SynonymProvider synProvider;
+
+    
+
+
+    private String synonymProviderConfigPath;
+
+    
+
+
+
+    private FileSystem synonymProviderConfigFs;
+
+    
+
+
+
+
+
+
+
+    private IndexFormatVersion indexFormatVersion;
+
+    
+
+
+    private Class<?> spellCheckerClass;
+
+    
+
+
+
+    private SpellChecker spellChecker;
+
+    
+
+
+    private Similarity similarity = Similarity.getDefault();
+
+    
+
+
+    private String directoryManagerClass = FSDirectoryManager.class.getName();
+
+    
+
+
+    private DirectoryManager directoryManager;
+
+    
+
+
+    private int termInfosIndexDivisor = DEFAULT_TERM_INFOS_INDEX_DIVISOR;
+
+    
+
+
+    private SortComparatorSource scs;
+
+    
+
+
+
+    private boolean initializeHierarchyCache = true;
+
+    
+
+
+
+    private boolean closed = false;
+
+    
+
+
+    public SearchIndex() {
+        this.analyzer = new JackrabbitAnalyzer();
+    }
+
+    
+
+
+
+
+
+
+    protected void doInit() throws IOException {
+        QueryHandlerContext context = getContext();
+        if (path == null) {
+            throw new IOException("SearchIndex requires 'path' parameter in configuration!");
+        }
+
+        Set<NodeId> excludedIDs = new HashSet<NodeId>();
+        if (context.getExcludedNodeId() != null) {
+            excludedIDs.add(context.getExcludedNodeId());
+        }
+
+        extractor = createTextExtractor();
+        synProvider = createSynonymProvider();
+        directoryManager = createDirectoryManager();
+
+        if (context.getParentHandler() instanceof SearchIndex) {
+            
+            SearchIndex sysIndex = (SearchIndex) context.getParentHandler();
+            nsMappings = sysIndex.getNamespaceMappings();
+        } else {
+            
+            File mapFile = new File(new File(path), NS_MAPPING_FILE);
+            if (mapFile.exists()) {
+                
+                
+                nsMappings = new FileBasedNamespaceMappings(mapFile);
+            } else {
+                
+                
+                nsMappings = new NSRegistryBasedNamespaceMappings(
+                        context.getNamespaceRegistry());
+            }
+        }
+
+        scs = new SharedFieldSortComparator(
+                FieldNames.PROPERTIES, context.getItemStateManager(),
+                context.getHierarchyManager(), nsMappings);
+        indexingConfig = createIndexingConfiguration(nsMappings);
+        analyzer.setIndexingConfig(indexingConfig);
+
+        index = new MultiIndex(this, excludedIDs);
+        if (index.numDocs() == 0) {
+            Path rootPath;
+            if (excludedIDs.isEmpty()) {
+                
+                rootPath = JCR_SYSTEM_PATH;
+            } else {
+                rootPath = ROOT_PATH;
+            }
+            index.createInitialIndex(context.getItemStateManager(),
+                    context.getRootId(), rootPath);
+        }
+        if (consistencyCheckEnabled
+                && (index.getRedoLogApplied() || forceConsistencyCheck)) {
+            log.info("Running consistency check...");
+            try {
+                ConsistencyCheck check = ConsistencyCheck.run(index,
+                        context.getItemStateManager());
+                if (autoRepair) {
+                    check.repair(true);
+                } else {
+                    List<ConsistencyCheckError> errors = check.getErrors();
+                    if (errors.size() == 0) {
+                        log.info("No errors detected.");
+                    }
+                    for (ConsistencyCheckError err : errors) {
+                        log.info(err.toString());
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Failed to run consistency check on index: " + e);
+            }
+        }
+
+        
+        spellChecker = createSpellChecker();
+
+        log.info("Index initialized: {} Version: {}",
+                new Object[]{path, index.getIndexFormatVersion()});
+        if (!index.getIndexFormatVersion().equals(getIndexFormatVersion())) {
+            log.warn("Using Version {} for reading. Please re-index version " +
+                    "storage for optimal performance.",
+                    getIndexFormatVersion().getVersion());
+        }
+    }
+
+    
+
+
+
+
+
+    public void addNode(NodeState node) throws RepositoryException, IOException {
+        throw new UnsupportedOperationException("addNode");
+    }
+
+    
+
+
+
+
+
+    public void deleteNode(NodeId id) throws IOException {
+        throw new UnsupportedOperationException("deleteNode");
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    public void updateNodes(NodeIdIterator remove, NodeStateIterator add)
+            throws RepositoryException, IOException {
+        checkOpen();
+
+        Map<UUID, NodeState> aggregateRoots = new HashMap<UUID, NodeState>();
+        Set<UUID> removedUUIDs = new HashSet<UUID>();
+        Set<UUID> addedUUIDs = new HashSet<UUID>();
+
+        Collection<UUID> removeCollection = new ArrayList<UUID>();
+        while (remove.hasNext()) {
+            UUID uuid = remove.nextNodeId().getUUID();
+            removeCollection.add(uuid);
+            removedUUIDs.add(uuid);
+        }
+
+        Collection<Document> addCollection = new ArrayList<Document>();
+        while (add.hasNext()) {
+            NodeState state = add.nextNodeState();
+            if (state != null) {
+                UUID uuid = state.getNodeId().getUUID();
+                addedUUIDs.add(uuid);
+                removedUUIDs.remove(uuid);
+                retrieveAggregateRoot(state, aggregateRoots);
+
+                try {
+                    addCollection.add(createDocument(
+                            state, getNamespaceMappings(),
+                            index.getIndexFormatVersion()));
+                } catch (RepositoryException e) {
+                    log.warn("Exception while creating document for node: "
+                            + state.getNodeId() + ": " + e.toString());
+                }
+            }
+        }
+
+        index.update(removeCollection, addCollection);
+
+        
+        
+        aggregateRoots.keySet().removeAll(addedUUIDs);
+
+        
+        retrieveAggregateRoot(removedUUIDs, aggregateRoots);
+
+        
+        if (!aggregateRoots.isEmpty()) {
+            Collection<Document> modified =
+                new ArrayList<Document>(aggregateRoots.size());
+
+            for (NodeState state : aggregateRoots.values()) {
+                try {
+                    modified.add(createDocument(
+                            state, getNamespaceMappings(),
+                            index.getIndexFormatVersion()));
+                } catch (RepositoryException e) {
+                    log.warn("Exception while creating document for node: "
+                            + state.getNodeId(), e);
+                }
+            }
+
+            index.update(aggregateRoots.keySet(), modified);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public ExecutableQuery createExecutableQuery(SessionImpl session,
+                                             ItemManager itemMgr,
+                                             String statement,
+                                             String language)
+            throws InvalidQueryException {
+        QueryImpl query = new QueryImpl(session, itemMgr, this,
+                getContext().getPropertyTypeRegistry(), statement, language, getQueryNodeFactory());
+        query.setRespectDocumentOrder(documentOrder);
+        return query;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public ExecutableQuery createExecutableQuery(
+            SessionImpl session,
+            ItemManager itemMgr,
+            QueryObjectModelTree qomTree) throws InvalidQueryException {
+        QueryObjectModelImpl query = new QueryObjectModelImpl(session, itemMgr, this,
+                getContext().getPropertyTypeRegistry(), qomTree);
+        query.setRespectDocumentOrder(documentOrder);
+        return query;
+    }
+
+    
+
+
+
+    protected DefaultQueryNodeFactory getQueryNodeFactory() {
+        return DEFAULT_QUERY_NODE_FACTORY;
+    }
+
+    
+
+
+
+    public void close() {
+        if (synonymProviderConfigFs != null) {
+            try {
+                synonymProviderConfigFs.close();
+            } catch (FileSystemException e) {
+                log.warn("Exception while closing FileSystem", e);
+            }
+        }
+        
+        if (extractor instanceof PooledTextExtractor) {
+            ((PooledTextExtractor) extractor).shutdown();
+        }
+        if (spellChecker != null) {
+            spellChecker.close();
+        }
+        index.close();
+        getContext().destroy();
+        closed = true;
+        log.info("Index closed: " + path);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public MultiColumnQueryHits executeQuery(SessionImpl session,
+                                             AbstractQueryImpl queryImpl,
+                                             Query query,
+                                             Path[] orderProps,
+                                             boolean[] orderSpecs,
+                                             long resultFetchHint)
+            throws IOException {
+        checkOpen();
+
+        Sort sort = new Sort(createSortFields(orderProps, orderSpecs));
+
+        final IndexReader reader = getIndexReader(queryImpl.needsSystemTree());
+        JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher(
+                session, reader, getContext().getItemStateManager());
+        searcher.setSimilarity(getSimilarity());
+        return new FilterMultiColumnQueryHits(
+                searcher.execute(query, sort, resultFetchHint,
+                        QueryImpl.DEFAULT_SELECTOR_NAME)) {
+            public void close() throws IOException {
+                try {
+                    super.close();
+                } finally {
+                    PerQueryCache.getInstance().dispose();
+                    Util.closeOrRelease(reader);
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public MultiColumnQueryHits executeQuery(SessionImpl session,
+                                             MultiColumnQuery query,
+                                             OrderingImpl[] orderings,
+                                             long resultFetchHint)
+            throws IOException {
+        checkOpen();
+
+        Sort sort = new Sort(createSortFields(orderings));
+
+        final IndexReader reader = getIndexReader();
+        JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher(
+                session, reader, getContext().getItemStateManager());
+        searcher.setSimilarity(getSimilarity());
+        return new FilterMultiColumnQueryHits(
+                query.execute(searcher, sort, resultFetchHint)) {
+            public void close() throws IOException {
+                try {
+                    super.close();
+                } finally {
+                    PerQueryCache.getInstance().dispose();
+                    Util.closeOrRelease(reader);
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+    public ExcerptProvider createExcerptProvider(Query query)
+            throws IOException {
+        ExcerptProvider ep;
+        try {
+            ep = (ExcerptProvider) excerptProviderClass.newInstance();
+        } catch (Exception e) {
+            throw Util.createIOException(e);
+        }
+        ep.init(query, this);
+        return ep;
+    }
+
+    
+
+
+
+    public Analyzer getTextAnalyzer() {
+        return analyzer;
+    }
+
+    
+
+
+
+
+    public TextExtractor getTextExtractor() {
+        return extractor;
+    }
+
+    
+
+
+
+    public NamespaceMappings getNamespaceMappings() {
+        return nsMappings;
+    }
+
+    
+
+
+
+    public IndexingConfiguration getIndexingConfig() {
+        return indexingConfig;
+    }
+
+    
+
+
+
+
+    public SynonymProvider getSynonymProvider() {
+        if (synProvider != null) {
+            return synProvider;
+        } else {
+            QueryHandler handler = getContext().getParentHandler();
+            if (handler instanceof SearchIndex) {
+                return ((SearchIndex) handler).getSynonymProvider();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    
+
+
+
+    public SpellChecker getSpellChecker() {
+        return spellChecker;
+    }
+
+    
+
+
+    public Similarity getSimilarity() {
+        return similarity;
+    }
+
+    
+
+
+
+
+
+
+
+    public IndexReader getIndexReader() throws IOException {
+        return getIndexReader(true);
+    }
+
+    
+
+
+
+
+
+    public IndexFormatVersion getIndexFormatVersion() {
+        if (indexFormatVersion == null) {
+            if (getContext().getParentHandler() instanceof SearchIndex) {
+                SearchIndex parent = (SearchIndex) getContext().getParentHandler();
+                if (parent.getIndexFormatVersion().getVersion()
+                        < index.getIndexFormatVersion().getVersion()) {
+                    indexFormatVersion = parent.getIndexFormatVersion();
+                } else {
+                    indexFormatVersion = index.getIndexFormatVersion();
+                }
+            } else {
+                indexFormatVersion = index.getIndexFormatVersion();
+            }
+        }
+        return indexFormatVersion;
+    }
+
+    
+
+
+    public DirectoryManager getDirectoryManager() {
+        return directoryManager;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    protected IndexReader getIndexReader(boolean includeSystemIndex)
+            throws IOException {
+        QueryHandler parentHandler = getContext().getParentHandler();
+        CachingMultiIndexReader parentReader = null;
+        if (parentHandler instanceof SearchIndex && includeSystemIndex) {
+            parentReader = ((SearchIndex) parentHandler).index.getIndexReader();
+        }
+
+        IndexReader reader;
+        if (parentReader != null) {
+            CachingMultiIndexReader[] readers = {index.getIndexReader(), parentReader};
+            reader = new CombinedIndexReader(readers);
+        } else {
+            reader = index.getIndexReader();
+        }
+        return new JackrabbitIndexReader(reader);
+    }
+
+    
+
+
+
+
+
+
+    protected SortField[] createSortFields(Path[] orderProps,
+                                           boolean[] orderSpecs) {
+        List<SortField> sortFields = new ArrayList<SortField>();
+        for (int i = 0; i < orderProps.length; i++) {
+            if (orderProps[i].getLength() == 1
+                    && NameConstants.JCR_SCORE.equals(orderProps[i].getNameElement().getName())) {
+                
+                
+                
+                
+                sortFields.add(new SortField(null, SortField.SCORE, orderSpecs[i]));
+            } else {
+                sortFields.add(new SortField(orderProps[i].getString(), scs, !orderSpecs[i]));
+            }
+        }
+        return sortFields.toArray(new SortField[sortFields.size()]);
+    }
+
+    
+
+
+
+
+
+    protected SortField[] createSortFields(OrderingImpl[] orderings) {
+        List<SortField> sortFields = new ArrayList<SortField>();
+        for (final OrderingImpl ordering : orderings) {
+            QOMTreeVisitor visitor = new DefaultTraversingQOMTreeVisitor() {
+
+                public Object visit(LengthImpl node, Object data) throws Exception {
+                    PropertyValueImpl propValue = (PropertyValueImpl) node.getPropertyValue();
+                    return new SortField(propValue.getPropertyQName().toString(),
+                            new LengthSortComparator(nsMappings),
+                            !ordering.isAscending());
+                }
+
+                public Object visit(LowerCaseImpl node, Object data)
+                        throws Exception {
+                    SortField sf = (SortField) ((DynamicOperandImpl) node.getOperand()).accept(this, data);
+                    return new SortField(sf.getField(),
+                            new LowerCaseSortComparator(sf.getFactory()),
+                            !ordering.isAscending());
+                }
+
+                public Object visit(UpperCaseImpl node, Object data)
+                        throws Exception {
+                    SortField sf = (SortField) ((DynamicOperandImpl) node.getOperand()).accept(this, data);
+                    return new SortField(sf.getField(),
+                            new UpperCaseSortComparator(sf.getFactory()),
+                            !ordering.isAscending());
+                }
+
+                public Object visit(FullTextSearchScoreImpl node, Object data)
+                        throws Exception {
+                    
+                    return new SortField(null, SortField.SCORE,
+                            ordering.isAscending());
+                }
+
+                public Object visit(NodeLocalNameImpl node, Object data) throws Exception {
+                    return new SortField(FieldNames.LOCAL_NAME,
+                           SortField.STRING, !ordering.isAscending());
+                }
+
+                public Object visit(NodeNameImpl node, Object data) throws Exception {
+                    return new SortField(FieldNames.LABEL,
+                           SortField.STRING, !ordering.isAscending());
+                }
+
+                public Object visit(PropertyValueImpl node, Object data)
+                        throws Exception {
+                    return new SortField(node.getPropertyQName().toString(),
+                            scs, !ordering.isAscending());
+                }
+
+                public Object visit(OrderingImpl node, Object data)
+                        throws Exception {
+                    return ((DynamicOperandImpl) node.getOperand()).accept(this, data);
+                }
+            };
+            try {
+                sortFields.add((SortField) ordering.accept(visitor, null));
+            } catch (Exception e) {
+                
+            }
+        }
+        return sortFields.toArray(new SortField[sortFields.size()]);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    protected Document createDocument(NodeState node,
+                                      NamespaceMappings nsMappings,
+                                      IndexFormatVersion indexFormatVersion)
+            throws RepositoryException {
+        NodeIndexer indexer = new NodeIndexer(node,
+                getContext().getItemStateManager(), nsMappings, extractor);
+        indexer.setSupportHighlighting(supportHighlighting);
+        indexer.setIndexingConfiguration(indexingConfig);
+        indexer.setIndexFormatVersion(indexFormatVersion);
+        Document doc = indexer.createDoc();
+        mergeAggregatedNodeIndexes(node, doc);
+        return doc;
+    }
+
+    
+
+
+
+
+    protected MultiIndex getIndex() {
+        return index;
+    }
+
+    
+
+
+    protected SortComparatorSource getSortComparatorSource() {
+        return scs;
+    }
+
+    
+
+
+
+
+    protected TextExtractor createTextExtractor() {
+        TextExtractor txtExtr = new JackrabbitTextExtractor(textFilterClasses);
+        if (extractorPoolSize > 0) {
+            
+            txtExtr = new PooledTextExtractor(txtExtr, extractorPoolSize,
+                    extractorBackLog, extractorTimeout);
+        }
+        return txtExtr;
+    }
+
+    
+
+
+
+
+    protected IndexingConfiguration createIndexingConfiguration(NamespaceMappings namespaceMappings) {
+        Element docElement = getIndexingConfigurationDOM();
+        if (docElement == null) {
+            return null;
+        }
+        try {
+            IndexingConfiguration idxCfg = (IndexingConfiguration)
+                    indexingConfigurationClass.newInstance();
+            idxCfg.init(docElement, getContext(), namespaceMappings);
+            return idxCfg;
+        } catch (Exception e) {
+            log.warn("Exception initializing indexing configuration from: "
+                    + indexingConfigPath, e);
+        }
+        log.warn(indexingConfigPath + " ignored.");
+        return null;
+    }
+
+    
+
+
+
+    protected SynonymProvider createSynonymProvider() {
+        SynonymProvider sp = null;
+        if (synonymProviderClass != null) {
+            try {
+                sp = (SynonymProvider) synonymProviderClass.newInstance();
+                sp.initialize(createSynonymProviderConfigResource());
+            } catch (Exception e) {
+                log.warn("Exception initializing synonym provider: "
+                        + synonymProviderClass, e);
+                sp = null;
+            }
+        }
+        return sp;
+    }
+
+    
+
+
+
+
+    protected DirectoryManager createDirectoryManager()
+            throws IOException {
+        try {
+            Class<?> clazz = Class.forName(directoryManagerClass);
+            if (!DirectoryManager.class.isAssignableFrom(clazz)) {
+                throw new IOException(directoryManagerClass +
+                        " is not a DirectoryManager implementation");
+            }
+            DirectoryManager df = (DirectoryManager) clazz.newInstance();
+            df.init(this);
+            return df;
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            IOException ex = new IOException();
+            ex.initCause(e);
+            throw ex;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    protected FileSystemResource createSynonymProviderConfigResource()
+            throws FileSystemException, IOException {
+        if (synonymProviderConfigPath != null) {
+            FileSystemResource fsr;
+            
+            if (synonymProviderConfigPath.endsWith(FileSystem.SEPARATOR)) {
+                throw new FileSystemException(
+                        "Invalid synonymProviderConfigPath: "
+                        + synonymProviderConfigPath);
+            }
+            FileSystem fs = getContext().getFileSystem();
+            if (fs == null) {
+                fs = new LocalFileSystem();
+                int lastSeparator = synonymProviderConfigPath.lastIndexOf(
+                        FileSystem.SEPARATOR_CHAR);
+                if (lastSeparator != -1) {
+                    File root = new File(path,
+                            synonymProviderConfigPath.substring(0, lastSeparator));
+                    ((LocalFileSystem) fs).setRoot(root.getCanonicalFile());
+                    fs.init();
+                    fsr = new FileSystemResource(fs,
+                            synonymProviderConfigPath.substring(lastSeparator + 1));
+                } else {
+                    ((LocalFileSystem) fs).setPath(path);
+                    fs.init();
+                    fsr = new FileSystemResource(fs, synonymProviderConfigPath);
+                }
+                synonymProviderConfigFs = fs;
+            } else {
+                fsr = new FileSystemResource(fs, synonymProviderConfigPath);
+            }
+            return fsr;
+        } else {
+            
+            return null;
+        }
+    }
+
+    
+
+
+
+
+
+    protected SpellChecker createSpellChecker() {
+        SpellChecker spCheck = null;
+        if (spellCheckerClass != null) {
+            try {
+                spCheck = (SpellChecker) spellCheckerClass.newInstance();
+                spCheck.init(this);
+            } catch (Exception e) {
+                log.warn("Exception initializing spell checker: "
+                        + spellCheckerClass, e);
+            }
+        }
+        return spCheck;
+    }
+
+    
+
+
+
+
+
+
+    protected Element getIndexingConfigurationDOM() {
+        if (indexingConfiguration != null) {
+            return indexingConfiguration;
+        }
+        if (indexingConfigPath == null) {
+            return null;
+        }
+        File config = new File(indexingConfigPath);
+        if (!config.exists()) {
+            log.warn("File does not exist: " + indexingConfigPath);
+            return null;
+        } else if (!config.canRead()) {
+            log.warn("Cannot read file: " + indexingConfigPath);
+            return null;
+        }
+        try {
+            DocumentBuilderFactory factory =
+                    DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            builder.setEntityResolver(new IndexingConfigurationEntityResolver());
+            indexingConfiguration = builder.parse(config).getDocumentElement();
+        } catch (ParserConfigurationException e) {
+            log.warn("Unable to create XML parser", e);
+        } catch (IOException e) {
+            log.warn("Exception parsing " + indexingConfigPath, e);
+        } catch (SAXException e) {
+            log.warn("Exception parsing " + indexingConfigPath, e);
+        }
+        return indexingConfiguration;
+    }
+
+    
+
+
+
+
+
+
+    protected void mergeAggregatedNodeIndexes(NodeState state, Document doc) {
+        if (indexingConfig != null) {
+            AggregateRule[] aggregateRules = indexingConfig.getAggregateRules();
+            if (aggregateRules == null) {
+                return;
+            }
+            try {
+                ItemStateManager ism = getContext().getItemStateManager();
+                for (AggregateRule aggregateRule : aggregateRules) {
+                    boolean ruleMatched = false;
+                    
+                    NodeState[] aggregates = aggregateRule.getAggregatedNodeStates(state);
+                    if (aggregates != null) {
+                        ruleMatched = true;
+                        for (NodeState aggregate : aggregates) {
+                            Document aDoc = createDocument(aggregate, getNamespaceMappings(), index.getIndexFormatVersion());
+                            
+                            Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
+                            if (fulltextFields != null) {
+                                for (Fieldable fulltextField : fulltextFields) {
+                                    doc.add(fulltextField);
+                                }
+                                doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, aggregate.getNodeId().getUUID().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+                            }
+                        }
+                    }
+                    
+                    PropertyState[] propStates = aggregateRule.getAggregatedPropertyStates(state);
+                    if (propStates != null) {
+                        ruleMatched = true;
+                        for (PropertyState propState : propStates) {
+                            String namePrefix = FieldNames.createNamedValue(getNamespaceMappings().translateName(propState.getName()), "");
+                            NodeState parent = (NodeState) ism.getItemState(propState.getParentId());
+                            Document aDoc = createDocument(parent, getNamespaceMappings(), getIndex().getIndexFormatVersion());
+                            
+                            Fieldable[] fields = aDoc.getFieldables(FieldNames.PROPERTIES);
+                            Token t = new Token();
+                            for (Fieldable field : fields) {
+                                
+                                t = field.tokenStreamValue().next(t);
+                                String value = new String(t.termBuffer(), 0, t.termLength());
+                                if (value.startsWith(namePrefix)) {
+                                    
+                                    value = value.substring(namePrefix.length());
+                                    
+                                    Path p = getRelativePath(state, propState);
+                                    String path = getNamespaceMappings().translatePath(p);
+                                    value = FieldNames.createNamedValue(path, value);
+                                    t.setTermBuffer(value);
+                                    doc.add(new Field(field.name(), new SingletonTokenStream(t)));
+                                    doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, parent.getNodeId().getUUID().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+                                }
+                            }
+                        }
+                    }
+
+                    
+                    if (ruleMatched) {
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                
+                log.warn("Exception while building indexing aggregate for"
+                        + " node with UUID: " + state.getNodeId().getUUID(), e);
+            }
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    protected Path getRelativePath(NodeState nodeState, PropertyState propState)
+            throws RepositoryException, ItemStateException {
+        HierarchyManager hmgr = getContext().getHierarchyManager();
+        Path nodePath = hmgr.getPath(nodeState.getId());
+        Path propPath = hmgr.getPath(propState.getId());
+        Path p = nodePath.computeRelativePath(propPath);
+        
+        boolean clean = true;
+        Path.Element[] elements = p.getElements();
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i].getIndex() != 0) {
+                elements[i] = PATH_FACTORY.createElement(elements[i].getName());
+                clean = false;
+            }
+        }
+        if (!clean) {
+            p = PATH_FACTORY.create(elements);
+        }
+        return p;
+    }
+
+    
+
+
+
+
+
+
+
+
+    protected void retrieveAggregateRoot(
+            NodeState state, Map<UUID, NodeState> map) {
+        if (indexingConfig != null) {
+            AggregateRule[] aggregateRules = indexingConfig.getAggregateRules();
+            if (aggregateRules == null) {
+                return;
+            }
+            try {
+                for (AggregateRule aggregateRule : aggregateRules) {
+                    NodeState root = aggregateRule.getAggregateRoot(state);
+                    if (root != null) {
+                        map.put(root.getNodeId().getUUID(), root);
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Unable to get aggregate root for "
+                        + state.getNodeId().getUUID(), e);
+            }
+        }
+    }
+
+    
+
+
+
+
+
+
+    protected void retrieveAggregateRoot(
+            Set<UUID> removedUUIDs, Map<UUID, NodeState> map) {
+        if (indexingConfig != null) {
+            AggregateRule[] aggregateRules = indexingConfig.getAggregateRules();
+            if (aggregateRules == null) {
+                return;
+            }
+            int found = 0;
+            long time = System.currentTimeMillis();
+            try {
+                CachingMultiIndexReader reader = index.getIndexReader();
+                try {
+                    Term aggregateUUIDs =
+                        new Term(FieldNames.AGGREGATED_NODE_UUID, "");
+                    TermDocs tDocs = reader.termDocs();
+                    try {
+                        ItemStateManager ism = getContext().getItemStateManager();
+                        for (UUID uuid : removedUUIDs) {
+                            aggregateUUIDs =
+                                aggregateUUIDs.createTerm(uuid.toString());
+                            tDocs.seek(aggregateUUIDs);
+                            while (tDocs.next()) {
+                                Document doc = reader.document(
+                                        tDocs.doc(), FieldSelectors.UUID);
+                                NodeId nId = new NodeId(
+                                        UUID.fromString(doc.get(FieldNames.UUID)));
+                                map.put(nId.getUUID(), (NodeState) ism.getItemState(nId));
+                                found++;
+                            }
+                        }
+                    } finally {
+                        tDocs.close();
+                    }
+                } finally {
+                    reader.release();
+                }
+            } catch (Exception e) {
+                log.warn("Exception while retrieving aggregate roots", e);
+            }
+            time = System.currentTimeMillis() - time;
+            log.debug("Retrieved {} aggregate roots in {} ms.", found, time);
+        }
+    }
+
+    
+
+    
+
+
+
+    protected static final class CombinedIndexReader
+            extends MultiReader
+            implements HierarchyResolver, MultiIndexReader {
+
+        
+
+
+        private final CachingMultiIndexReader[] subReaders;
+
+        
+
+
+        private int[] starts;
+
+        public CombinedIndexReader(CachingMultiIndexReader[] indexReaders) {
+            super(indexReaders);
+            this.subReaders = indexReaders;
+            this.starts = new int[subReaders.length + 1];
+
+            int maxDoc = 0;
+            for (int i = 0; i < subReaders.length; i++) {
+                starts[i] = maxDoc;
+                maxDoc += subReaders[i].maxDoc();
+            }
+            starts[subReaders.length] = maxDoc;
+        }
+
+        
+
+
+        public int[] getParents(int n, int[] docNumbers) throws IOException {
+            int i = readerIndex(n);
+            DocId id = subReaders[i].getParentDocId(n - starts[i]);
+            id = id.applyOffset(starts[i]);
+            return id.getDocumentNumbers(this, docNumbers);
+        }
+
+        
+
+        
+
+
+        public IndexReader[] getIndexReaders() {
+            IndexReader[] readers = new IndexReader[subReaders.length];
+            System.arraycopy(subReaders, 0, readers, 0, subReaders.length);
+            return readers;
+        }
+
+        
+
+
+        public void release() throws IOException {
+            for (CachingMultiIndexReader subReader : subReaders) {
+                subReader.release();
+            }
+        }
+
+        
+
+        
+
+
+
+
+
+
+        private int readerIndex(int n) {
+            int lo = 0;                                      
+            int hi = subReaders.length - 1;                  
+
+            while (hi >= lo) {
+                int mid = (lo + hi) >> 1;
+                int midValue = starts[mid];
+                if (n < midValue) {
+                    hi = mid - 1;
+                } else if (n > midValue) {
+                    lo = mid + 1;
+                } else {                                      
+                    while (mid + 1 < subReaders.length && starts[mid + 1] == midValue) {
+                        mid++;                                  
+                    }
+                    return mid;
+                }
+            }
+            return hi;
+        }
+
+        public boolean equals(Object obj) {
+            if (obj instanceof CombinedIndexReader) {
+                CombinedIndexReader other = (CombinedIndexReader) obj;
+                return Arrays.equals(subReaders, other.subReaders);
+            }
+            return false;
+        }
+
+        public int hashCode() {
+            int hash = 0;
+            for (CachingMultiIndexReader subReader : subReaders) {
+                hash = 31 * hash + subReader.hashCode();
+            }
+            return hash;
+        }
+
+        
+
+
+        public ForeignSegmentDocId createDocId(UUID uuid) throws IOException {
+            for (CachingMultiIndexReader subReader : subReaders) {
+                ForeignSegmentDocId doc = subReader.createDocId(uuid);
+                if (doc != null) {
+                    return doc;
+                }
+            }
+            return null;
+        }
+
+        
+
+
+        public int getDocumentNumber(ForeignSegmentDocId docId) {
+            for (int i = 0; i < subReaders.length; i++) {
+                CachingMultiIndexReader subReader = subReaders[i];
+                int realDoc = subReader.getDocumentNumber(docId);
+                if (realDoc >= 0) {
+                    return realDoc + starts[i];
+                }
+            }
+            return -1;
+        }
+    }
+
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void setAnalyzer(String analyzerClassName) {
+        try {
+            Class<?> analyzerClass = Class.forName(analyzerClassName);
+            analyzer.setDefaultAnalyzer((Analyzer) analyzerClass.newInstance());
+        } catch (Exception e) {
+            log.warn("Invalid Analyzer class: " + analyzerClassName, e);
+        }
+    }
+
+    
+
+
+
+
+    public String getAnalyzer() {
+        return analyzer.getClass().getName();
+    }
+
+    
+
+
+
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    
+
+
+
+
+
+    public String getPath() {
+        return path;
+    }
+
+    
+
+
+    public void setUseCompoundFile(boolean b) {
+        useCompoundFile = b;
+    }
+
+    
+
+
+
+
+    public boolean getUseCompoundFile() {
+        return useCompoundFile;
+    }
+
+    
+
+
+    public void setMinMergeDocs(int minMergeDocs) {
+        this.minMergeDocs = minMergeDocs;
+    }
+
+    
+
+
+
+
+    public int getMinMergeDocs() {
+        return minMergeDocs;
+    }
+
+    
+
+
+
+
+    public void setVolatileIdleTime(int volatileIdleTime) {
+        this.volatileIdleTime = volatileIdleTime;
+    }
+
+    
+
+
+
+
+    public int getVolatileIdleTime() {
+        return volatileIdleTime;
+    }
+
+    
+
+
+    public void setMaxMergeDocs(int maxMergeDocs) {
+        this.maxMergeDocs = maxMergeDocs;
+    }
+
+    
+
+
+
+
+    public int getMaxMergeDocs() {
+        return maxMergeDocs;
+    }
+
+    
+
+
+    public void setMergeFactor(int mergeFactor) {
+        this.mergeFactor = mergeFactor;
+    }
+
+    
+
+
+
+
+    public int getMergeFactor() {
+        return mergeFactor;
+    }
+
+    
+
+
+    public void setBufferSize(int size) {
+        bufferSize = size;
+    }
+
+    
+
+
+
+
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
+    public void setRespectDocumentOrder(boolean docOrder) {
+        documentOrder = docOrder;
+    }
+
+    public boolean getRespectDocumentOrder() {
+        return documentOrder;
+    }
+
+    public void setForceConsistencyCheck(boolean b) {
+        forceConsistencyCheck = b;
+    }
+
+    public boolean getForceConsistencyCheck() {
+        return forceConsistencyCheck;
+    }
+
+    public void setAutoRepair(boolean b) {
+        autoRepair = b;
+    }
+
+    public boolean getAutoRepair() {
+        return autoRepair;
+    }
+
+    public void setCacheSize(int size) {
+        cacheSize = size;
+    }
+
+    public int getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setMaxFieldLength(int length) {
+        maxFieldLength = length;
+    }
+
+    public int getMaxFieldLength() {
+        return maxFieldLength;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public void setTextFilterClasses(String filterClasses) {
+        this.textFilterClasses = filterClasses;
+    }
+
+    
+
+
+
+
+
+    public String getTextFilterClasses() {
+        return textFilterClasses;
+    }
+
+    
+
+
+
+
+
+    public void setResultFetchSize(int size) {
+        resultFetchSize = size;
+    }
+
+    
+
+
+
+    public int getResultFetchSize() {
+        return resultFetchSize;
+    }
+
+    
+
+
+
+
+    public void setExtractorPoolSize(int numThreads) {
+        if (numThreads < 0) {
+            numThreads = 0;
+        }
+        extractorPoolSize = numThreads;
+    }
+
+    
+
+
+
+    public int getExtractorPoolSize() {
+        return extractorPoolSize;
+    }
+
+    
+
+
+
+
+
+    public void setExtractorBackLogSize(int backLog) {
+        extractorBackLog = backLog;
+    }
+
+    
+
+
+    public int getExtractorBackLogSize() {
+        return extractorBackLog;
+    }
+
+    
+
+
+
+
+
+    public void setExtractorTimeout(long timeout) {
+        extractorTimeout = timeout;
+    }
+
+    
+
+
+    public long getExtractorTimeout() {
+        return extractorTimeout;
+    }
+
+    
+
+
+
+
+
+    public void setSupportHighlighting(boolean b) {
+        supportHighlighting = b;
+    }
+
+    
+
+
+    public boolean getSupportHighlighting() {
+        return supportHighlighting;
+    }
+
+    
+
+
+
+
+
+
+    public void setExcerptProviderClass(String className) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            if (ExcerptProvider.class.isAssignableFrom(clazz)) {
+                excerptProviderClass = clazz;
+            } else {
+                log.warn("Invalid value for excerptProviderClass, {} does "
+                        + "not implement ExcerptProvider interface.", className);
+            }
+        } catch (ClassNotFoundException e) {
+            log.warn("Invalid value for excerptProviderClass, class {} not found.",
+                    className);
+        }
+    }
+
+    
+
+
+    public String getExcerptProviderClass() {
+        return excerptProviderClass.getName();
+    }
+
+    
+
+
+
+
+    public void setIndexingConfiguration(String path) {
+        indexingConfigPath = path;
+    }
+
+    
+
+
+    public String getIndexingConfiguration() {
+        return indexingConfigPath;
+    }
+
+    
+
+
+
+
+
+
+    public void setIndexingConfigurationClass(String className) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            if (IndexingConfiguration.class.isAssignableFrom(clazz)) {
+                indexingConfigurationClass = clazz;
+            } else {
+                log.warn("Invalid value for indexingConfigurationClass, {} "
+                        + "does not implement IndexingConfiguration interface.",
+                        className);
+            }
+        } catch (ClassNotFoundException e) {
+            log.warn("Invalid value for indexingConfigurationClass, class {} not found.",
+                    className);
+        }
+    }
+
+    
+
+
+    public String getIndexingConfigurationClass() {
+        return indexingConfigurationClass.getName();
+    }
+
+    
+
+
+
+
+
+
+    public void setSynonymProviderClass(String className) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            if (SynonymProvider.class.isAssignableFrom(clazz)) {
+                synonymProviderClass = clazz;
+            } else {
+                log.warn("Invalid value for synonymProviderClass, {} "
+                        + "does not implement SynonymProvider interface.",
+                        className);
+            }
+        } catch (ClassNotFoundException e) {
+            log.warn("Invalid value for synonymProviderClass, class {} not found.",
+                    className);
+        }
+    }
+
+    
+
+
+
+    public String getSynonymProviderClass() {
+        if (synonymProviderClass != null) {
+            return synonymProviderClass.getName();
+        } else {
+            return null;
+        }
+    }
+
+    
+
+
+
+
+
+    public void setSpellCheckerClass(String className) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            if (SpellChecker.class.isAssignableFrom(clazz)) {
+                spellCheckerClass = clazz;
+            } else {
+                log.warn("Invalid value for spellCheckerClass, {} "
+                        + "does not implement SpellChecker interface.",
+                        className);
+            }
+        } catch (ClassNotFoundException e) {
+            log.warn("Invalid value for spellCheckerClass,"
+                    + " class {} not found.", className);
+        }
+    }
+
+    
+
+
+
+    public String getSpellCheckerClass() {
+        if (spellCheckerClass != null) {
+            return spellCheckerClass.getName();
+        } else {
+            return null;
+        }
+    }
+
+    
+
+
+
+
+
+
+    public void setEnableConsistencyCheck(boolean b) {
+        this.consistencyCheckEnabled = b;
+    }
+
+    
+
+
+    public boolean getEnableConsistencyCheck() {
+        return consistencyCheckEnabled;
+    }
+
+    
+
+
+
+
+    public void setSynonymProviderConfigPath(String path) {
+        synonymProviderConfigPath = path;
+    }
+
+    
+
+
+
+    public String getSynonymProviderConfigPath() {
+        return synonymProviderConfigPath;
+    }
+
+    
+
+
+
+
+
+    public void setSimilarityClass(String className) {
+        try {
+            Class<?> similarityClass = Class.forName(className);
+            similarity = (Similarity) similarityClass.newInstance();
+        } catch (Exception e) {
+            log.warn("Invalid Similarity class: " + className, e);
+        }
+    }
+
+    
+
+
+    public String getSimilarityClass() {
+        return similarity.getClass().getName();
+    }
+
+    
+
+
+
+
+    public void setMaxVolatileIndexSize(long maxVolatileIndexSize) {
+        this.maxVolatileIndexSize = maxVolatileIndexSize;
+    }
+
+    
+
+
+    public long getMaxVolatileIndexSize() {
+        return maxVolatileIndexSize;
+    }
+
+    
+
+
+    public String getDirectoryManagerClass() {
+        return directoryManagerClass;
+    }
+
+    
+
+
+
+
+
+    public void setDirectoryManagerClass(String className) {
+        this.directoryManagerClass = className;
+    }
+
+    
+
+
+    public int getTermInfosIndexDivisor() {
+        return termInfosIndexDivisor;
+    }
+
+    
+
+
+
+
+    public void setTermInfosIndexDivisor(int termInfosIndexDivisor) {
+        this.termInfosIndexDivisor = termInfosIndexDivisor;
+    }
+
+    
+
+
+
+    public boolean isInitializeHierarchyCache() {
+        return initializeHierarchyCache;
+    }
+
+    
+
+
+
+
+
+
+    public void setInitializeHierarchyCache(boolean initializeHierarchyCache) {
+        this.initializeHierarchyCache = initializeHierarchyCache;
+    }
+
+    
+
+    
+
+
+
+
+
+    private void checkOpen() throws IOException {
+        if (closed) {
+            throw new IOException("query handler closed and cannot be used anymore.");
+        }
+    }
+}

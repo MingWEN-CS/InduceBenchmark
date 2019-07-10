@@ -1,0 +1,23 @@
+50a51,52
+>     private final int version;
+> 
+57c59,61
+<     public BundleReader(BundleBinding binding, InputStream stream) {
+---
+> 
+>     public BundleReader(BundleBinding binding, InputStream stream)
+>             throws IOException {
+59a64
+>         this.version = in.readUnsignedByte();
+73,78c78,81
+<         int index = in.readInt();
+< 
+<         
+<         int version = (index >> 24) & 0xff;
+<         index &= 0x00ffffff;
+<         String uri = binding.nsIndex.indexToString(index);
+---
+>         int a = in.readUnsignedByte();
+>         int b = in.readUnsignedByte();
+>         int c = in.readUnsignedByte();
+>         String uri = binding.nsIndex.indexToString(a << 16 | b << 8 | c);

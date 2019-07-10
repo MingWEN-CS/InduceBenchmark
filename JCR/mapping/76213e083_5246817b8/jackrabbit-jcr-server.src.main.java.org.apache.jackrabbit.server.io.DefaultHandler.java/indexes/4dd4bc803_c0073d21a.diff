@@ -1,0 +1,12 @@
+27,29d26
+< import org.apache.tika.config.TikaConfig;
+< import org.apache.tika.detect.Detector;
+< import org.apache.tika.exception.TikaException;
+668c665,669
+<             return ioManager.getDetector().detect(null, metadata).toString();
+---
+>             if (ioManager != null && ioManager.getDetector() != null) {
+>                 return ioManager.getDetector().detect(null, metadata).toString();
+>             } else {
+>                 return "application/octet-stream";
+>             }

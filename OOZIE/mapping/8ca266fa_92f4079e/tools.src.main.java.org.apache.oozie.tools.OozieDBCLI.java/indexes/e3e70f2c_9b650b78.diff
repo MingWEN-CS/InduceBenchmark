@@ -1,0 +1,518 @@
+23a24
+> import org.apache.commons.io.IOUtils;
+29a31
+> import java.io.ByteArrayInputStream;
+32a35,36
+> import java.sql.Blob;
+> import java.sql.CallableStatement;
+35d38
+< import java.sql.DatabaseMetaData;
+40a44
+> import java.util.Arrays;
+56c60,65
+<     private final static String DB_VERSION = "2";
+---
+>     private final static String DB_VERSION_PRE_4_0 = "1";
+>     private final static String DB_VERSION_FOR_4_0 = "2";
+>     final static String DB_VERSION_FOR_5_0 = "3";
+>     private final static String DISCRIMINATOR_COLUMN = "bean_type";
+>     private final static String TEMP_COLUMN_PREFIX = "temp_";
+>     private HashMap <String, List<String>> clobColumnMap;
+176,177c185
+<         createOozieSysTable(sqlFile, run);
+<         setSQLMediumTextFlag(sqlFile, run);
+---
+>         createOozieSysTable(sqlFile, run, DB_VERSION_FOR_5_0);
+189a198
+>         String version = BuildInfo.getBuildInfo().getProperty(BuildInfo.BUILD_VERSION);
+192c201,202
+<             upgradeDBTo40(sqlFile, run, false);
+---
+>                                                   
+>             createOozieSysTable(sqlFile, run, DB_VERSION_PRE_4_0);
+194,200c204,220
+<         else {
+<             String ver = getOozieDBVersion().trim();
+<             if (ver.equals("1")) { 
+<                 upgradeDBTo40(sqlFile, run, true);
+<             }
+<             else if (ver.equals(DB_VERSION)) { 
+<                 throw new Exception("Oozie DB has already been upgraded");
+---
+>         String ver = getOozieDBVersion().trim();
+>         if (ver.equals(DB_VERSION_FOR_5_0)) {
+>             System.out.println("Oozie DB already upgraded to Oozie version '" + version + "'");
+>             return;
+>         }
+>         createUpgradeDB(sqlFile, run, false);
+> 
+>         while (!ver.equals(DB_VERSION_FOR_5_0)) {
+>             if (ver.equals(DB_VERSION_PRE_4_0)) {
+>                 System.out.println("Upgrading to db schema for Oozie 4.0");
+>                 upgradeDBTo40(sqlFile, run);
+>                 ver = run ? getOozieDBVersion().trim() : DB_VERSION_FOR_4_0;
+>             }
+>             else if (ver.equals(DB_VERSION_FOR_4_0)) {
+>                 System.out.println("Upgrading to db schema for Oozie " + version);
+>                 upgradeDBto50(sqlFile, run);
+>                 ver = run ? getOozieDBVersion().trim() : DB_VERSION_FOR_5_0;
+206,207c226
+<             System.out.println("Oozie DB has been upgraded to Oozie version '"
+<                     + BuildInfo.getBuildInfo().getProperty(BuildInfo.BUILD_VERSION) + "'");
+---
+>             System.out.println("Oozie DB has been upgraded to Oozie version '" + version + "'");
+212,219c231,232
+<     private void upgradeDBTo40(String sqlFile, boolean run, boolean fromVerOne) throws Exception {
+<         createUpgradeDB(sqlFile, run, false);
+<         if (fromVerOne) {
+<             upgradeOozieDBVersion(sqlFile, run);
+<         }
+<         else {
+<             createOozieSysTable(sqlFile, run);
+<         }
+---
+>     private void upgradeDBTo40(String sqlFile, boolean run) throws Exception {
+>         upgradeOozieDBVersion(sqlFile, run, DB_VERSION_FOR_4_0);
+222,225d234
+<         if (!fromVerOne || verifySQLMediumText()) {
+<             doSQLMediumTextTweaks(sqlFile, run);
+<             setSQLMediumTextFlag(sqlFile, run);
+<         }
+228,229c237,241
+<     private final static String UPDATE_DB_VERSION =
+<             "update OOZIE_SYS set data='" + DB_VERSION + "' where name='db.version'";
+---
+>     private void upgradeDBto50(String sqlFile, boolean run) throws Exception {
+>         upgradeOozieDBVersion(sqlFile, run, DB_VERSION_FOR_5_0);
+>         ddlTweaksFor50(sqlFile, run);
+>     }
+> 
+234c246
+<     private void upgradeOozieDBVersion(String sqlFile, boolean run) throws Exception {
+---
+>     private void upgradeOozieDBVersion(String sqlFile, boolean run, String version) throws Exception {
+237d248
+<         writer.println(UPDATE_DB_VERSION);
+240c251
+<         System.out.println("Update db.version in OOZIE_SYS table to " + DB_VERSION);
+---
+>         System.out.println("Update db.version in OOZIE_SYS table to " + version);
+246c257
+<                 st.executeUpdate(UPDATE_DB_VERSION);
+---
+>                 st.executeUpdate("update OOZIE_SYS set data='" + version + "' where name='db.version'");
+261c272,278
+<         postUpgradeDBTo40(sqlFile, run);
+---
+>         String version = getOozieDBVersion();
+>         if (getOozieDBVersion().equals(DB_VERSION_FOR_4_0)) {
+>             postUpgradeDBTo40(sqlFile, run);
+>         }
+>         else {
+>             System.out.println("No Post ugprade updates available for " + version);
+>         }
+268d284
+<         verifyOozieDBVersion();
+407a424,672
+>     private void convertClobToBlobInOracle(boolean run, Connection conn) throws Exception {
+>         if (conn == null) {
+>             return ;
+>         }
+>         System.out.println("Converting clob columns to blob for all tables");
+>         Statement statement = conn.createStatement();
+>         CallableStatement tempBlobCall = conn.prepareCall("{call dbms_lob.CREATETEMPORARY(?, TRUE)}");
+>         tempBlobCall.registerOutParameter(1, java.sql.Types.BLOB);
+>         CallableStatement dbmsLobCallStmt = conn.prepareCall("{call dbms_lob.CONVERTTOBLOB(?, ?, ?, ?, ?, 0, ?, ?)}");
+>         dbmsLobCallStmt.registerOutParameter(1, java.sql.Types.BLOB);
+>         
+>         dbmsLobCallStmt.setInt(3, Integer.MAX_VALUE);
+>         dbmsLobCallStmt.registerOutParameter(4, java.sql.Types.INTEGER);
+>         
+>         dbmsLobCallStmt.setInt(4, 1);
+>         
+>         dbmsLobCallStmt.registerOutParameter(5, java.sql.Types.INTEGER);
+>         dbmsLobCallStmt.setInt(5, 1);
+>         
+>         dbmsLobCallStmt.registerOutParameter(6, java.sql.Types.INTEGER);
+>         
+>         dbmsLobCallStmt.setInt(6, 0);
+>         
+>         dbmsLobCallStmt.registerOutParameter(7, java.sql.Types.INTEGER);
+>         dbmsLobCallStmt.setInt(7, 1);
+>         for (Map.Entry<String, List<String>> tableClobColumnMap : getTableClobColumnMap().entrySet()) {
+>             String tableName = tableClobColumnMap.getKey();
+>             List<String> columnNames = tableClobColumnMap.getValue();
+>             for (String column : columnNames) {
+>                 statement.executeUpdate(getAddColumnQuery(tableName, TEMP_COLUMN_PREFIX + column, "blob"));
+>             }
+>             ResultSet rs = statement.executeQuery(getSelectQuery(tableName, columnNames));
+>             while (rs.next()) {
+>                 for (int i = 0; i < columnNames.size(); i++) {
+>                     Clob srcClob = rs.getClob(columnNames.get(i));
+>                     if (srcClob == null) {
+>                         continue;
+>                     }
+>                     tempBlobCall.execute();
+>                     Blob destLob = tempBlobCall.getBlob(1);
+>                     dbmsLobCallStmt.setBlob(1, destLob);
+>                     dbmsLobCallStmt.setClob(2, srcClob);
+>                     dbmsLobCallStmt.execute();
+>                     Blob blob = dbmsLobCallStmt.getBlob(1);
+>                     PreparedStatement ps = conn.prepareStatement("update " + tableName + " set " + TEMP_COLUMN_PREFIX
+>                             + columnNames.get(i) + "=? where id = ?");
+>                     ps.setBlob(1, blob);
+>                     ps.setString(2, rs.getString(1));
+>                     ps.executeUpdate();
+>                     ps.close();
+>                 }
+>             }
+>             rs.close();
+>             for (String column : columnNames) {
+>                 statement.executeUpdate(getDropColumnQuery(tableName, column));
+>                 statement.executeUpdate(getRenameColumnQuery(tableName, TEMP_COLUMN_PREFIX + column, column));
+>             }
+>         }
+>         dbmsLobCallStmt.close();
+>         tempBlobCall.close();
+>         System.out.println("Done");
+>     }
+> 
+>     private void convertClobToBlobInMysql(String sqlFile, boolean run, Connection conn) throws Exception {
+>         System.out.println("Converting mediumtext/text columns to mediumblob for all tables");
+>         PrintWriter writer = new PrintWriter(new FileWriter(sqlFile, true));
+>         writer.println();
+>         Statement statement = conn != null ? conn.createStatement() : null;
+>         for (Map.Entry<String, List<String>> tableClobColumnMap : getTableClobColumnMap().entrySet()) {
+>             String tableName = tableClobColumnMap.getKey();
+>             List<String> columnNames = tableClobColumnMap.getValue();
+>             StringBuilder modifyColumn = new StringBuilder();
+>             modifyColumn.append(" ALTER TABLE " + tableName);
+>             for (String column : columnNames) {
+>                 modifyColumn.append(" MODIFY " + column + " mediumblob,");
+>             }
+>             modifyColumn.replace(modifyColumn.length() - 1, modifyColumn.length(), "");
+>             writer.println(modifyColumn.toString() + ";");
+>             if (statement != null) {
+>                 statement.executeUpdate(modifyColumn.toString());
+>             }
+>         }
+>         writer.close();
+>         if (statement != null) {
+>             statement.close();
+>         }
+>         System.out.println("Done");
+>     }
+> 
+>     private void convertClobToBlobInPostgres(String sqlFile, boolean run, Connection conn) throws Exception {
+>         System.out.println("Converting text columns to bytea for all tables");
+>         PrintWriter writer = new PrintWriter(new FileWriter(sqlFile, true));
+>         writer.println();
+>         Statement statement = conn != null ? conn.createStatement() : null;
+>         for (Map.Entry<String, List<String>> tableClobColumnMap : getTableClobColumnMap().entrySet()) {
+>             String tableName = tableClobColumnMap.getKey();
+>             List<String> columnNames = tableClobColumnMap.getValue();
+>             for (String column : columnNames) {
+>                 String addQuery = getAddColumnQuery(tableName, TEMP_COLUMN_PREFIX + column, "bytea");
+>                 writer.println(addQuery + ";");
+>                 String updateQuery = "update " + tableName + " set " + TEMP_COLUMN_PREFIX + column + "=decode(replace("
+>                         + column + ", '\\', '\\\\'), 'escape')";
+>                 writer.println(updateQuery + ";");
+>                 String dropQuery = getDropColumnQuery(tableName, column);
+>                 writer.println(dropQuery + ";");
+>                 String renameQuery = getRenameColumnQuery(tableName, TEMP_COLUMN_PREFIX + column, column);
+>                 writer.println(renameQuery + ";");
+>                 if (statement != null) {
+>                     statement.executeUpdate(addQuery);
+>                     statement.executeUpdate(updateQuery);
+>                     statement.executeUpdate(dropQuery);
+>                     statement.executeUpdate(renameQuery);
+>                 }
+>             }
+>         }
+>         writer.close();
+>         if (statement != null) {
+>             statement.close();
+>         }
+>         System.out.println("DONE");
+>     }
+> 
+>     private void convertClobToBlobinDerby(boolean run, Connection conn) throws Exception {
+>         if (conn == null) {
+>             return;
+>         }
+>         System.out.println("Converting clob columns to blob for all tables");
+>         Statement statement = conn.createStatement();
+>         for (Map.Entry<String, List<String>> tableClobColumnMap : getTableClobColumnMap().entrySet()) {
+>             String tableName = tableClobColumnMap.getKey();
+>             List<String> columnNames = tableClobColumnMap.getValue();
+>             for (String column : columnNames) {
+>                 statement.executeUpdate(getAddColumnQuery(tableName, TEMP_COLUMN_PREFIX + column, "blob"));
+>             }
+>             ResultSet rs = statement.executeQuery(getSelectQuery(tableName, columnNames));
+>             while (rs.next()) {
+>                 for (int i = 0; i < columnNames.size(); i++) {
+>                     Clob confClob = rs.getClob(columnNames.get(i));
+>                     if (confClob == null) {
+>                         continue;
+>                     }
+>                     PreparedStatement ps = conn.prepareStatement("update " + tableName + " set " + TEMP_COLUMN_PREFIX
+>                             + columnNames.get(i) + "=? where id = ?");
+>                     byte[] data = IOUtils.toByteArray(confClob.getCharacterStream(), "UTF-8");
+>                     ps.setBinaryStream(1, new ByteArrayInputStream(data), data.length);
+>                     ps.setString(2, rs.getString(1));
+>                     ps.executeUpdate();
+>                     ps.close();
+>                 }
+>             }
+>             rs.close();
+>             for (String column : columnNames) {
+>                 statement.executeUpdate(getDropColumnQuery(tableName, column));
+>                 statement.executeUpdate("RENAME COLUMN " + tableName + "." + TEMP_COLUMN_PREFIX + column + " TO "
+>                         + column);
+>             }
+>         }
+>         statement.close();
+>         System.out.println("DONE");
+>     }
+> 
+>     private String getRenameColumnQuery(String tableName, String srcColumn, String destColumn) {
+>         return new String("ALTER TABLE " + tableName + " RENAME column " + srcColumn + " TO " + destColumn);
+>     }
+> 
+>     private String getDropColumnQuery(String tableName, String column) {
+>         return new String("ALTER TABLE " + tableName + " DROP column " + column);
+>     }
+> 
+>     private String getAddColumnQuery(String tableName, String tempColumn, String type) {
+>         return new String("ALTER TABLE " + tableName + " ADD " + tempColumn + " " + type);
+>     }
+> 
+>     private String getSelectQuery(String tableName, List<String> columnNames) {
+>         StringBuilder selectQuery = new StringBuilder();
+>         selectQuery.append("SELECT id,");
+>         for (String column : columnNames) {
+>             selectQuery.append(column);
+>             selectQuery.append(",");
+>         }
+>         selectQuery.replace(selectQuery.length() - 1, selectQuery.length(), "");
+>         selectQuery.append(" FROM ");
+>         selectQuery.append(tableName);
+>         return selectQuery.toString();
+>     }
+> 
+>     private void ddlTweaksFor50(String sqlFile, boolean run) throws Exception {
+>         String dbVendor = getDBVendor();
+>         Connection conn = (run) ? createConnection() : null;
+> 
+>         if (dbVendor.equals("oracle")) {
+>             convertClobToBlobInOracle(run, conn);
+>         }
+>         else if (dbVendor.equals("mysql")) {
+>             convertClobToBlobInMysql(sqlFile, run, conn);
+>         }
+>         else if (dbVendor.equals("postgresql")) {
+>             convertClobToBlobInPostgres(sqlFile, run, conn);
+>         }
+>         else if (dbVendor.equals("derby")) {
+>             convertClobToBlobinDerby(run, conn);
+>         }
+>         System.out.println("Dropping discriminator column");
+>         PrintWriter writer = new PrintWriter(new FileWriter(sqlFile, true));
+>         writer.println();
+>         ArrayList<String> ddlQueries = new ArrayList<String>();
+>         ddlQueries.add(getDropColumnQuery("WF_JOBS", DISCRIMINATOR_COLUMN));
+>         ddlQueries.add(getDropColumnQuery("WF_ACTIONS", DISCRIMINATOR_COLUMN));
+>         ddlQueries.add(getDropColumnQuery("COORD_JOBS", DISCRIMINATOR_COLUMN));
+>         ddlQueries.add(getDropColumnQuery("COORD_ACTIONS", DISCRIMINATOR_COLUMN));
+>         ddlQueries.add(getDropColumnQuery("BUNDLE_JOBS", DISCRIMINATOR_COLUMN));
+>         ddlQueries.add(getDropColumnQuery("BUNDLE_ACTIONS", DISCRIMINATOR_COLUMN));
+>         Statement stmt = conn != null ? conn.createStatement() : null;
+>         for (String query : ddlQueries) {
+>             writer.println(query + ";");
+>             if (run) {
+>                 stmt.executeUpdate(query);
+>             }
+>         }
+>         System.out.println("DONE");
+>         writer.close();
+>         if (run) {
+>             stmt.close();
+>             conn.close();
+>         }
+>     }
+> 
+>     private Map<String, List<String>> getTableClobColumnMap() {
+>         if (clobColumnMap != null) {
+>             return clobColumnMap;
+>         }
+>         else {
+>             clobColumnMap = new HashMap<String, List<String>>();
+>             clobColumnMap.put("WF_ACTIONS",
+>                     new ArrayList<String>(Arrays.asList("conf", "sla_xml", "data", "stats", "external_child_ids")));
+>             clobColumnMap.put("WF_JOBS", new ArrayList<String>(Arrays.asList("proto_action_conf", "sla_xml", "conf")));
+>             clobColumnMap.put(
+>                     "COORD_ACTIONS",
+>                     new ArrayList<String>(Arrays.asList("sla_xml", "created_conf", "run_conf", "action_xml",
+>                             "missing_dependencies", "push_missing_dependencies")));
+>             clobColumnMap.put("COORD_JOBS",
+>                     new ArrayList<String>(Arrays.asList("conf", "job_xml", "orig_job_xml", "sla_xml")));
+>             clobColumnMap.put("BUNDLE_JOBS", new ArrayList<String>(Arrays.asList("conf", "job_xml", "orig_job_xml")));
+> 
+>         }
+>         return clobColumnMap;
+>     }
+> 
+> 
+515,598d779
+<     private final static String SET_SQL_MEDIUMTEXT_TRUE = "insert into OOZIE_SYS (name, data) values ('mysql.mediumtext', 'true')";
+< 
+<     private void setSQLMediumTextFlag(String sqlFile, boolean run) throws Exception {
+<         if (getDBVendor().equals("mysql")) {
+<             PrintWriter writer = new PrintWriter(new FileWriter(sqlFile, true));
+<             writer.println();
+<             writer.println(SET_SQL_MEDIUMTEXT_TRUE);
+<             writer.close();
+<             System.out.println("Set MySQL MEDIUMTEXT flag");
+<             if (run) {
+<                 Connection conn = createConnection();
+<                 try {
+<                     conn.setAutoCommit(true);
+<                     Statement st = conn.createStatement();
+<                     st.executeUpdate(SET_SQL_MEDIUMTEXT_TRUE);
+<                     st.close();
+<                 }
+<                 catch (Exception ex) {
+<                     throw new Exception("Could not set MySQL MEDIUMTEXT flag: " + ex.toString(), ex);
+<                 }
+<                 finally {
+<                     conn.close();
+<                 }
+<             }
+<             System.out.println("DONE");
+<         }
+<     }
+< 
+<     private final static String[] SQL_MEDIUMTEXT_DDL_QUERIES = {"ALTER TABLE BUNDLE_JOBS MODIFY conf MEDIUMTEXT",
+<                                                                 "ALTER TABLE BUNDLE_JOBS MODIFY job_xml MEDIUMTEXT",
+<                                                                 "ALTER TABLE BUNDLE_JOBS MODIFY orig_job_xml MEDIUMTEXT",
+< 
+<                                                                 "ALTER TABLE COORD_ACTIONS MODIFY action_xml MEDIUMTEXT",
+<                                                                 "ALTER TABLE COORD_ACTIONS MODIFY created_conf MEDIUMTEXT",
+<                                                                 "ALTER TABLE COORD_ACTIONS MODIFY missing_dependencies MEDIUMTEXT",
+<                                                                 "ALTER TABLE COORD_ACTIONS MODIFY run_conf MEDIUMTEXT",
+<                                                                 "ALTER TABLE COORD_ACTIONS MODIFY sla_xml MEDIUMTEXT",
+< 
+<                                                                 "ALTER TABLE COORD_JOBS MODIFY conf MEDIUMTEXT",
+<                                                                 "ALTER TABLE COORD_JOBS MODIFY job_xml MEDIUMTEXT",
+<                                                                 "ALTER TABLE COORD_JOBS MODIFY orig_job_xml MEDIUMTEXT",
+<                                                                 "ALTER TABLE COORD_JOBS MODIFY sla_xml MEDIUMTEXT",
+< 
+<                                                                 "ALTER TABLE SLA_EVENTS MODIFY job_data MEDIUMTEXT",
+<                                                                 "ALTER TABLE SLA_EVENTS MODIFY notification_msg MEDIUMTEXT",
+<                                                                 "ALTER TABLE SLA_EVENTS MODIFY upstream_apps MEDIUMTEXT",
+< 
+<                                                                 "ALTER TABLE WF_ACTIONS MODIFY conf MEDIUMTEXT",
+<                                                                 "ALTER TABLE WF_ACTIONS MODIFY external_child_ids MEDIUMTEXT",
+<                                                                 "ALTER TABLE WF_ACTIONS MODIFY stats MEDIUMTEXT",
+<                                                                 "ALTER TABLE WF_ACTIONS MODIFY data MEDIUMTEXT",
+<                                                                 "ALTER TABLE WF_ACTIONS MODIFY sla_xml MEDIUMTEXT",
+< 
+<                                                                 "ALTER TABLE WF_JOBS MODIFY conf MEDIUMTEXT",
+<                                                                 "ALTER TABLE WF_JOBS MODIFY proto_action_conf MEDIUMTEXT",
+<                                                                 "ALTER TABLE WF_JOBS MODIFY sla_xml MEDIUMTEXT"};
+< 
+< 
+<     private void doSQLMediumTextTweaks(String sqlFile, boolean run) throws Exception {
+<         if (getDBVendor().equals("mysql")) {
+<             PrintWriter writer = new PrintWriter(new FileWriter(sqlFile, true));
+<             writer.println();
+<             Connection conn = (run) ? createConnection() : null;
+<             try {
+<                 System.out.println("All MySQL TEXT columns changed to MEDIUMTEXT");
+<                 for (String ddlQuery : SQL_MEDIUMTEXT_DDL_QUERIES) {
+<                     writer.println(ddlQuery + ";");
+<                     if (run) {
+<                         conn.setAutoCommit(true);
+<                         Statement st = conn.createStatement();
+<                         st.executeUpdate(ddlQuery);
+<                         st.close();
+<                     }
+<                 }
+<                 writer.close();
+<                 System.out.println("DONE");
+<             }
+<             finally {
+<                 if (run) {
+<                     conn.close();
+<                 }
+<             }
+<         }
+<     }
+677,685d857
+<     private void verifyOozieDBVersion() throws Exception {
+<         System.out.println("Verify Oozie DB version");
+<         String version = getOozieDBVersion();
+<         if (!DB_VERSION.equals(version.trim())) {
+<             throw new Exception("ERROR: Expected Oozie DB version '" + DB_VERSION + "', found '" + version.trim() + "'");
+<         }
+<         System.out.println("DONE");
+<     }
+< 
+712,741d883
+<     private final static String GET_USE_MYSQL_MEDIUMTEXT = "select data from OOZIE_SYS where name = 'mysql.mediumtext'";
+< 
+<     private boolean verifySQLMediumText() throws Exception {
+<         boolean ret = false;
+<         if (getDBVendor().equals("mysql")) {
+<             System.out.println("Check MySQL MEDIUMTEXT flag exists");
+<             String flag = null;
+<             Connection conn = createConnection();
+<             try {
+<                 Statement st = conn.createStatement();
+<                 ResultSet rs = st.executeQuery(GET_USE_MYSQL_MEDIUMTEXT);
+<                 rs.next();
+<                 flag = rs.getString(1).trim();
+<                 rs.close();
+<                 st.close();
+<             }
+<             catch (Exception ex) {
+<                 flag = null;
+<             }
+<             finally {
+<                 conn.close();
+<             }
+<             if (flag == null) {
+<                 ret = true;
+<             }
+<             System.out.println("DONE");
+<         }
+<         return ret;
+<     }
+< 
+745,746d886
+<     private final static String SET_DB_VERSION =
+<         "insert into OOZIE_SYS (name, data) values ('db.version', '" + DB_VERSION + "')";
+755c895,896
+<     private void createOozieSysTable(String sqlFile, boolean run) throws Exception {
+---
+>     private void createOozieSysTable(String sqlFile, boolean run, String version) throws Exception {
+>         String insertDbVerion = "insert into OOZIE_SYS (name, data) values ('db.version', '" + version + "')";
+766c907
+<         writer.println(SET_DB_VERSION);
+---
+>         writer.println(insertDbVerion);
+779c920
+<                 st.executeUpdate(SET_DB_VERSION);
+---
+>                 st.executeUpdate(insertDbVerion);
+858a1000,1001
+>         args.add("-indexes");
+>         args.add("true");
+877c1020,1024
+<         if (run) {
+---
+>         
+>         
+>         
+>         
+>         if (run && (create || !getDBVendor().equals("oracle"))) {

@@ -1,0 +1,24 @@
+1238a1239,1261
+> 
+>   
+> 
+> 
+> 
+>   public void setSocketAddr(String name, InetSocketAddress addr) {
+>     set(name, NetUtils.getHostPortString(addr));
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public InetSocketAddress updateConnectAddr(String name,
+>                                              InetSocketAddress addr) {
+>     final InetSocketAddress connectAddr = NetUtils.getConnectAddress(addr);
+>     setSocketAddr(name, connectAddr);
+>     return connectAddr;
+>   }

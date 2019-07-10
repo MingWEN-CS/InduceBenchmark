@@ -1,0 +1,19 @@
+153c153
+<       AUTH_TOKEN_MAX_INACTIVE_INTERVAL = "token.MaxInactiveInterval";
+---
+>       AUTH_TOKEN_MAX_INACTIVE_INTERVAL = "token.max-inactive-interval";
+237d236
+< 
+239c238,241
+<         AUTH_TOKEN_MAX_INACTIVE_INTERVAL, "1800")) * 1000; 
+---
+>         AUTH_TOKEN_MAX_INACTIVE_INTERVAL, "-1")); 
+>     if (maxInactiveInterval > 0) {
+>       maxInactiveInterval *= 1000;
+>     }
+562c564
+<             if (token.getMaxInactives() != 0) {
+---
+>             if (token.getMaxInactives() > 0) {
+605a608
+>             token.setExpires(token.getExpires());

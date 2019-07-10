@@ -1,0 +1,862 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+72	result	int	variable	369	define	org.apache.accumulo.master.TabletGroupWatcher.assignedOrHosted	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	368	374
+71	counts	TableCounts	variable	370	define	org.apache.accumulo.master.TabletGroupWatcher.assignedOrHosted	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	368	374
+72	result	int	variable	369	set	org.apache.accumulo.master.TabletGroupWatcher.assignedOrHosted	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	368	374
+346	TabletGroupWatcher.stats	TableStats	variable	370	use	org.apache.accumulo.master.TabletGroupWatcher.assignedOrHosted	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	368	374
+71	counts	TableCounts	variable	371	use	org.apache.accumulo.master.TabletGroupWatcher.assignedOrHosted	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	368	374
+71	counts	TableCounts	variable	371	use	org.apache.accumulo.master.TabletGroupWatcher.assignedOrHosted	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	368	374
+72	result	int	variable	373	use	org.apache.accumulo.master.TabletGroupWatcher.assignedOrHosted	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	368	374
+143	info	MergeInfo	param	654	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+148	scanRange	Range	param	654	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+140	bw	BatchWriter	param	654	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+141	conn	Connector	param	654	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+141	conn	Connector	param	661	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+143	info	MergeInfo	param	661	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+148	scanRange	Range	param	662	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+148	scanRange	Range	param	663	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+140	bw	BatchWriter	param	678	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+140	bw	BatchWriter	param	681	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+149	scanner	Scanner	variable	655	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+145	m	Mutation	variable	656	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+147	rowIter	RowIterator	variable	664	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+146	row	Iterator<Entry>	variable	666	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+142	entry	Entry<Key,Value>	variable	669	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+144	key	Key	variable	670	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+149	scanner	Scanner	variable	661	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+147	rowIter	RowIterator	variable	664	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+146	row	Iterator<Entry>	variable	666	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+145	m	Mutation	variable	667	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+142	entry	Entry<Key,Value>	variable	669	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+144	key	Key	variable	670	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+145	m	Mutation	variable	673	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+112	NAME		variable	661	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+112	NAME		variable	661	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+118	EMPTY		variable	661	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+149	scanner	Scanner	variable	663	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+149	scanner	Scanner	variable	664	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+147	rowIter	RowIterator	variable	665	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+147	rowIter	RowIterator	variable	666	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+146	row	Iterator<Entry>	variable	668	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+146	row	Iterator<Entry>	variable	669	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+142	entry	Entry<Key,Value>	variable	670	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+145	m	Mutation	variable	672	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+144	key	Key	variable	673	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+145	m	Mutation	variable	675	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+144	key	Key	variable	675	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+144	key	Key	variable	675	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+144	key	Key	variable	676	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+145	m	Mutation	variable	678	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	654	681
+126	info	MergeInfo	param	475	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+101	ex	Exception	param	549	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+126	info	MergeInfo	param	476	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+126	info	MergeInfo	param	525	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+101	ex	Exception	param	550	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	476	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+132	targetSystemTable	String	variable	477	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+134	timeType	char	variable	479	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+125	followingTablet	KeyExtent	variable	480	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+129	nextExtent	Key	variable	482	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+121	conn	Connector	variable	487	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+131	start	Text	variable	488	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+123	deleteRange	Range	variable	493	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+130	scanner	Scanner	variable	495	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	501	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+120	bw	BatchWriter	variable	523	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+127	m	Mutation	variable	534	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+133	tdir	String	variable	545	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+114	entry	Entry<Key,Value>	variable	502	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+116	key	Key	variable	503	define	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	476	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+132	targetSystemTable	String	variable	477	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+134	timeType	char	variable	479	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+125	followingTablet	KeyExtent	variable	480	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+129	nextExtent	Key	variable	482	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+125	followingTablet	KeyExtent	variable	483	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+121	conn	Connector	variable	487	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+131	start	Text	variable	488	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+131	start	Text	variable	490	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+123	deleteRange	Range	variable	493	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+130	scanner	Scanner	variable	495	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	501	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+116	key	Key	variable	503	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+134	timeType	char	variable	511	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+120	bw	BatchWriter	variable	523	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+120	bw	BatchWriter	variable	532	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+127	m	Mutation	variable	534	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+133	tdir	String	variable	545	set	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	477	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+112	NAME		variable	477	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+112	NAME		variable	477	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	478	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	481	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	482	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+119	ROW		variable	482	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	483	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+129	nextExtent	Key	variable	483	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	483	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+125	followingTablet	KeyExtent	variable	484	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+345	TabletGroupWatcher.master	Master	variable	487	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	488	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+131	start	Text	variable	489	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	492	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	493	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+131	start	Text	variable	493	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	493	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	494	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+121	conn	Connector	variable	495	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+132	targetSystemTable	String	variable	495	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+118	EMPTY		variable	495	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+130	scanner	Scanner	variable	496	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+123	deleteRange	Range	variable	496	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+130	scanner	Scanner	variable	497	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+130	scanner	Scanner	variable	498	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+130	scanner	Scanner	variable	499	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+112	NAME		variable	499	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+130	scanner	Scanner	variable	500	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+130	scanner	Scanner	variable	502	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+114	entry	Entry<Key,Value>	variable	503	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+116	key	Key	variable	504	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+112	NAME		variable	504	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	505	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+345	TabletGroupWatcher.master	Master	variable	505	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+115	fs		variable	505	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+116	key	Key	variable	505	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	506	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	507	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	507	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	508	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+116	key	Key	variable	510	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+114	entry	Entry<Key,Value>	variable	511	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+116	key	Key	variable	512	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+116	key	Key	variable	513	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+116	key	Key	variable	514	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	515	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+114	entry	Entry<Key,Value>	variable	515	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+345	TabletGroupWatcher.master	Master	variable	515	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+113	TABLE		variable	515	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+114	entry	Entry<Key,Value>	variable	515	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	516	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	517	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	517	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	518	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	522	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+122	datafiles	Set<FileRef>	variable	522	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+121	conn	Connector	variable	523	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+132	targetSystemTable	String	variable	523	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+123	deleteRange	Range	variable	525	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+120	bw	BatchWriter	variable	525	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+121	conn	Connector	variable	525	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+120	bw	BatchWriter	variable	527	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+125	followingTablet	KeyExtent	variable	530	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+125	followingTablet	KeyExtent	variable	531	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	531	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+121	conn	Connector	variable	532	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+132	targetSystemTable	String	variable	532	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+125	followingTablet	KeyExtent	variable	534	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+127	m	Mutation	variable	535	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	535	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+127	m	Mutation	variable	536	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+120	bw	BatchWriter	variable	537	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+127	m	Mutation	variable	537	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+120	bw	BatchWriter	variable	538	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+120	bw	BatchWriter	variable	540	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	544	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+345	TabletGroupWatcher.master	Master	variable	545	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	545	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+117	DEFAULT_TABLET_LOCATION		variable	545	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	546	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+124	extent	KeyExtent	variable	546	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+133	tdir	String	variable	546	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+134	timeType	char	variable	547	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+345	TabletGroupWatcher.master	Master	variable	547	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+128	masterLock		variable	547	use	org.apache.accumulo.master.TabletGroupWatcher.deleteTablets	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	475	550
+179	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	param	706	define	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+178	assignments	List<Assignment>	param	706	define	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+175	assigned	List<Assignment>	param	706	define	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+177	assignedToDeadServers	List<TabletLocationState>	param	707	define	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+181	unassigned	Map<KeyExtent,TServerInstance>	param	707	define	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+177	assignedToDeadServers	List<TabletLocationState>	param	708	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+177	assignedToDeadServers	List<TabletLocationState>	param	709	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+177	assignedToDeadServers	List<TabletLocationState>	param	710	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+177	assignedToDeadServers	List<TabletLocationState>	param	710	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+177	assignedToDeadServers	List<TabletLocationState>	param	711	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+177	assignedToDeadServers	List<TabletLocationState>	param	712	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+179	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	param	715	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+179	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	param	717	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+181	unassigned	Map<KeyExtent,TServerInstance>	param	717	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+181	unassigned	Map<KeyExtent,TServerInstance>	param	719	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+179	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	param	721	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+178	assignments	List<Assignment>	param	726	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+181	unassigned	Map<KeyExtent,TServerInstance>	param	732	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+178	assignments	List<Assignment>	param	736	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+178	assignments	List<Assignment>	param	737	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+178	assignments	List<Assignment>	param	738	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+178	assignments	List<Assignment>	param	740	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+175	assigned	List<Assignment>	param	740	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+178	assignments	List<Assignment>	param	741	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+180	maxServersToShow	int	variable	709	define	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+176	assignedOut	Map<KeyExtent,TServerInstance>	variable	716	define	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+167	assignment	Entry<KeyExtent,TServerInstance>	variable	718	define	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+171	a	Assignment	variable	741	define	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+172	conn	TServerConnection	variable	742	define	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+180	maxServersToShow	int	variable	709	set	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+176	assignedOut	Map<KeyExtent,TServerInstance>	variable	716	set	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+172	conn	TServerConnection	variable	742	set	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+180	maxServersToShow	int	variable	710	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+347	TabletGroupWatcher.store	TabletStateStore	variable	711	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+345	TabletGroupWatcher.master	Master	variable	712	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+345	TabletGroupWatcher.master	Master	variable	717	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+176	assignedOut	Map<KeyExtent,TServerInstance>	variable	717	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+176	assignedOut	Map<KeyExtent,TServerInstance>	variable	718	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+167	assignment	Entry<KeyExtent,TServerInstance>	variable	719	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+167	assignment	Entry<KeyExtent,TServerInstance>	variable	720	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+167	assignment	Entry<KeyExtent,TServerInstance>	variable	721	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+167	assignment	Entry<KeyExtent,TServerInstance>	variable	722	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+167	assignment	Entry<KeyExtent,TServerInstance>	variable	722	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+347	TabletGroupWatcher.store	TabletStateStore	variable	725	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+167	assignment	Entry<KeyExtent,TServerInstance>	variable	725	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+167	assignment	Entry<KeyExtent,TServerInstance>	variable	726	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+167	assignment	Entry<KeyExtent,TServerInstance>	variable	726	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+347	TabletGroupWatcher.store	TabletStateStore	variable	729	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+167	assignment	Entry<KeyExtent,TServerInstance>	variable	729	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+176	assignedOut	Map<KeyExtent,TServerInstance>	variable	732	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+347	TabletGroupWatcher.store	TabletStateStore	variable	738	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+345	TabletGroupWatcher.master	Master	variable	742	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+171	a	Assignment	variable	742	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+173	server		variable	742	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+172	conn	TServerConnection	variable	743	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+172	conn	TServerConnection	variable	744	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+345	TabletGroupWatcher.master	Master	variable	744	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+128	masterLock		variable	744	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+171	a	Assignment	variable	744	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+174	tablet		variable	744	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+171	a	Assignment	variable	746	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+173	server		variable	746	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+345	TabletGroupWatcher.master	Master	variable	748	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+171	a	Assignment	variable	748	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+174	tablet		variable	748	use	org.apache.accumulo.master.TabletGroupWatcher.flushChanges	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	706	748
+190	range	KeyExtent	param	684	define	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+185	ex	Exception	param	701	define	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+190	range	KeyExtent	param	687	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+190	range	KeyExtent	param	689	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+190	range	KeyExtent	param	689	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+190	range	KeyExtent	param	693	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+190	range	KeyExtent	param	697	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+190	range	KeyExtent	param	698	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+190	range	KeyExtent	param	702	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+185	ex	Exception	param	702	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+186	conn	Connector	variable	686	define	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+191	scanner	Scanner	variable	687	define	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+192	start	KeyExtent	variable	689	define	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+189	iterator	Iterator<Entry>	variable	691	define	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+187	entry	Entry<Key,Value>	variable	695	define	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+188	highTablet	KeyExtent	variable	696	define	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+186	conn	Connector	variable	686	set	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+191	scanner	Scanner	variable	687	set	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+192	start	KeyExtent	variable	689	set	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+189	iterator	Iterator<Entry>	variable	691	set	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+187	entry	Entry<Key,Value>	variable	695	set	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+188	highTablet	KeyExtent	variable	696	set	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+345	TabletGroupWatcher.master	Master	variable	686	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+186	conn	Connector	variable	687	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+112	NAME		variable	687	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+112	NAME		variable	687	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+118	EMPTY		variable	687	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+191	scanner	Scanner	variable	688	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+191	scanner	Scanner	variable	690	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+192	start	KeyExtent	variable	690	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+191	scanner	Scanner	variable	691	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+189	iterator	Iterator<Entry>	variable	692	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+189	iterator	Iterator<Entry>	variable	695	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+187	entry	Entry<Key,Value>	variable	696	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+187	entry	Entry<Key,Value>	variable	696	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+188	highTablet	KeyExtent	variable	697	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+188	highTablet	KeyExtent	variable	698	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+188	highTablet	KeyExtent	variable	700	use	org.apache.accumulo.master.TabletGroupWatcher.getHighTablet	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	684	704
+195	tableId	Text	param	106	define	org.apache.accumulo.master.TabletGroupWatcher.getStats	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	106	108
+195	tableId	Text	param	107	use	org.apache.accumulo.master.TabletGroupWatcher.getStats	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	106	108
+346	TabletGroupWatcher.stats	TableStats	variable	107	use	org.apache.accumulo.master.TabletGroupWatcher.getStats	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	106	108
+346	TabletGroupWatcher.stats	TableStats	variable	103	use	org.apache.accumulo.master.TabletGroupWatcher.getStats	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	102	104
+214	info	MergeInfo	param	554	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+201	ex	Exception	param	642	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+202	ex	Exception	param	648	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+214	info	MergeInfo	param	555	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+214	info	MergeInfo	param	634	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+201	ex	Exception	param	643	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+202	ex	Exception	param	649	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+217	range	KeyExtent	variable	555	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+221	stop	KeyExtent	variable	557	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+213	firstPrevRowValue	Value	variable	559	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+222	stopRow	Text	variable	560	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+220	start	Text	variable	561	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+218	scanRange	Range	variable	565	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+223	targetSystemTable	String	variable	566	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	571	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+212	fileCount	long	variable	573	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+211	conn	Connector	variable	574	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	577	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+215	m	Mutation	variable	583	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+216	maxLogicalTime	String	variable	584	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+224	updatePrevRow	Mutation	variable	629	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+204	entry	Entry<Key,Value>	variable	606	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+207	entry	Entry<Key,Value>	variable	585	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+208	key	Key	variable	586	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+209	value	Value	variable	587	define	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+217	range	KeyExtent	variable	555	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+221	stop	KeyExtent	variable	557	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+213	firstPrevRowValue	Value	variable	559	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+222	stopRow	Text	variable	560	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+220	start	Text	variable	561	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+220	start	Text	variable	563	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+218	scanRange	Range	variable	565	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+223	targetSystemTable	String	variable	566	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+223	targetSystemTable	String	variable	568	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	571	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+212	fileCount	long	variable	573	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+211	conn	Connector	variable	574	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	576	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	577	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+215	m	Mutation	variable	583	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+216	maxLogicalTime	String	variable	584	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+208	key	Key	variable	586	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+209	value	Value	variable	587	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+213	firstPrevRowValue	Value	variable	593	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+216	maxLogicalTime	String	variable	595	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	603	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+216	maxLogicalTime	String	variable	608	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+224	updatePrevRow	Mutation	variable	629	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+215	m	Mutation	variable	637	set	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+217	range	KeyExtent	variable	556	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+217	range	KeyExtent	variable	557	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+221	stop	KeyExtent	variable	558	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+221	stop	KeyExtent	variable	560	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+217	range	KeyExtent	variable	561	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+220	start	Text	variable	562	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+217	range	KeyExtent	variable	565	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+220	start	Text	variable	565	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+222	stopRow	Text	variable	565	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+112	NAME		variable	566	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+217	range	KeyExtent	variable	567	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+112	NAME		variable	568	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+345	TabletGroupWatcher.master	Master	variable	574	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+211	conn	Connector	variable	576	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+223	targetSystemTable	String	variable	576	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+211	conn	Connector	variable	577	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+223	targetSystemTable	String	variable	577	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+118	EMPTY		variable	577	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	578	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+218	scanRange	Range	variable	578	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	579	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	580	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	581	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	582	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+112	NAME		variable	582	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+222	stopRow	Text	variable	583	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	585	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+207	entry	Entry<Key,Value>	variable	586	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+207	entry	Entry<Key,Value>	variable	587	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+208	key	Key	variable	588	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+112	NAME		variable	588	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+215	m	Mutation	variable	589	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+208	key	Key	variable	589	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+208	key	Key	variable	589	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+209	value	Value	variable	589	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+208	key	Key	variable	591	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+213	firstPrevRowValue	Value	variable	591	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+209	value	Value	variable	592	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+209	value	Value	variable	593	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+208	key	Key	variable	594	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+216	maxLogicalTime	String	variable	595	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+209	value	Value	variable	595	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+208	key	Key	variable	596	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	597	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+217	range	KeyExtent	variable	597	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+207	entry	Entry<Key,Value>	variable	597	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+211	conn	Connector	variable	603	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+223	targetSystemTable	String	variable	603	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+118	EMPTY		variable	603	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	604	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+222	stopRow	Text	variable	604	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	605	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+219	scanner	Scanner	variable	606	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+204	entry	Entry<Key,Value>	variable	607	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+216	maxLogicalTime	String	variable	608	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+204	entry	Entry<Key,Value>	variable	608	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+216	maxLogicalTime	String	variable	612	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+215	m	Mutation	variable	613	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+216	maxLogicalTime	String	variable	613	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+215	m	Mutation	variable	615	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	616	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+215	m	Mutation	variable	616	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	619	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+212	fileCount	long	variable	621	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+221	stop	KeyExtent	variable	621	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+213	firstPrevRowValue	Value	variable	623	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+221	stop	KeyExtent	variable	628	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+213	firstPrevRowValue	Value	variable	628	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+221	stop	KeyExtent	variable	629	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+221	stop	KeyExtent	variable	630	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	631	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+224	updatePrevRow	Mutation	variable	631	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	632	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+218	scanRange	Range	variable	634	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	634	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+211	conn	Connector	variable	634	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+222	stopRow	Text	variable	637	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+215	m	Mutation	variable	638	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	639	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+215	m	Mutation	variable	639	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	640	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	645	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+210	bw	BatchWriter	variable	647	use	org.apache.accumulo.master.TabletGroupWatcher.mergeMetadataRecords	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	554	649
+239	row	Text	param	316	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+229	e	Throwable	param	363	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+239	row	Text	param	317	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+239	row	Text	param	323	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+239	row	Text	param	330	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+239	row	Text	param	362	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+239	row	Text	param	364	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+229	e	Throwable	param	364	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+229	e	Throwable	param	364	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+236	future	Map<Key,Value>	variable	321	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+232	assigned	Map<Key,Value>	variable	322	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+235	extent	KeyExtent	variable	323	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+241	table	String	variable	324	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+240	scanner	Scanner	variable	327	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+237	iter	Iterator<Entry>	variable	348	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+234	entry	Entry<Key,Value>	variable	350	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+231	alive	TServerInstance	variable	351	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+233	bw	BatchWriter	variable	354	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+238	m	Mutation	variable	355	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+230	entry	Entry<Key,Value>	variable	331	define	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+236	future	Map<Key,Value>	variable	321	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+232	assigned	Map<Key,Value>	variable	322	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+235	extent	KeyExtent	variable	323	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+241	table	String	variable	324	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+241	table	String	variable	326	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+240	scanner	Scanner	variable	327	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+237	iter	Iterator<Entry>	variable	348	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+234	entry	Entry<Key,Value>	variable	350	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+231	alive	TServerInstance	variable	351	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+233	bw	BatchWriter	variable	354	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+238	m	Mutation	variable	355	set	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+112	NAME		variable	324	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+235	extent	KeyExtent	variable	325	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+112	NAME		variable	326	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+345	TabletGroupWatcher.master	Master	variable	327	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+241	table	String	variable	327	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+118	EMPTY		variable	327	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+240	scanner	Scanner	variable	328	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+112	NAME		variable	328	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+240	scanner	Scanner	variable	329	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+112	NAME		variable	329	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+240	scanner	Scanner	variable	330	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+240	scanner	Scanner	variable	331	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+230	entry	Entry<Key,Value>	variable	332	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+112	NAME		variable	332	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+232	assigned	Map<Key,Value>	variable	333	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+230	entry	Entry<Key,Value>	variable	333	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+230	entry	Entry<Key,Value>	variable	333	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+230	entry	Entry<Key,Value>	variable	334	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+112	NAME		variable	334	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+236	future	Map<Key,Value>	variable	335	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+230	entry	Entry<Key,Value>	variable	335	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+230	entry	Entry<Key,Value>	variable	335	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+236	future	Map<Key,Value>	variable	338	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+232	assigned	Map<Key,Value>	variable	338	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+236	future	Map<Key,Value>	variable	340	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+232	assigned	Map<Key,Value>	variable	340	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+236	future	Map<Key,Value>	variable	342	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+232	assigned	Map<Key,Value>	variable	342	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+232	assigned	Map<Key,Value>	variable	345	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+236	future	Map<Key,Value>	variable	345	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+236	future	Map<Key,Value>	variable	348	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+232	assigned	Map<Key,Value>	variable	348	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+237	iter	Iterator<Entry>	variable	349	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+237	iter	Iterator<Entry>	variable	350	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+345	TabletGroupWatcher.master	Master	variable	351	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+234	entry	Entry<Key,Value>	variable	351	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+231	alive	TServerInstance	variable	352	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+234	entry	Entry<Key,Value>	variable	353	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+345	TabletGroupWatcher.master	Master	variable	354	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+241	table	String	variable	354	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+234	entry	Entry<Key,Value>	variable	355	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+238	m	Mutation	variable	356	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+234	entry	Entry<Key,Value>	variable	356	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+234	entry	Entry<Key,Value>	variable	356	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+233	bw	BatchWriter	variable	357	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+238	m	Mutation	variable	357	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+233	bw	BatchWriter	variable	358	use	org.apache.accumulo.master.TabletGroupWatcher.repairMetadata	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	316	364
+270	ex	Exception	param	297	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+271	ex	IOException	param	308	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+270	ex	Exception	param	298	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+270	ex	Exception	param	299	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+270	ex	Exception	param	299	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+270	ex	Exception	param	300	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+271	ex	IOException	param	309	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+271	ex	IOException	param	309	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+300	oldCounts	int[]	variable	114	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+293	eventListener	EventCoordinator.Listener	variable	115	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+306	totalUnloaded	int	variable	121	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+308	unloaded	int	variable	122	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+297	iter	ClosableIterator<TabletLocationState>	variable	123	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+299	mergeStatsCache	Map<Text,MergeStats>	variable	125	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+289	currentMerges	Map<Text,MergeStats>	variable	126	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+290	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	variable	134	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+292	destinations	SortedMap<TServerInstance,TabletServerStatus>	variable	145	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+285	assignments	List<Assignment>	variable	148	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+283	assigned	List<Assignment>	variable	149	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+284	assignedToDeadServers	List<TabletLocationState>	variable	150	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+307	unassigned	Map<KeyExtent,TServerInstance>	variable	151	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+288	counts	int[]	variable	153	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	159	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+304	tableId	Text	variable	180	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	181	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+296	goal	TabletGoalState	variable	189	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+301	server	TServerInstance	variable	190	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	191	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+291	dest	TServerInstance	variable	231	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+287	conn	TServerConnection	variable	259	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+273	merge	MergeInfo	variable	127	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+275	entry	TServerInstance	variable	135	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+277	state	TabletState	variable	281	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+276	i	int	variable	282	define	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+300	oldCounts	int[]	variable	114	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+293	eventListener	EventCoordinator.Listener	variable	115	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+306	totalUnloaded	int	variable	121	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+308	unloaded	int	variable	122	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+297	iter	ClosableIterator<TabletLocationState>	variable	123	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+299	mergeStatsCache	Map<Text,MergeStats>	variable	125	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+289	currentMerges	Map<Text,MergeStats>	variable	126	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+290	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	variable	134	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+292	destinations	SortedMap<TServerInstance,TabletServerStatus>	variable	145	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+285	assignments	List<Assignment>	variable	148	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+283	assigned	List<Assignment>	variable	149	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+284	assignedToDeadServers	List<TabletLocationState>	variable	150	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+307	unassigned	Map<KeyExtent,TServerInstance>	variable	151	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+288	counts	int[]	variable	153	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+297	iter	ClosableIterator<TabletLocationState>	variable	157	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	159	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+308	unloaded	int	variable	177	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+304	tableId	Text	variable	180	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	181	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	183	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	185	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+296	goal	TabletGoalState	variable	189	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+301	server	TServerInstance	variable	190	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	191	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+296	goal	TabletGoalState	variable	201	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+296	goal	TabletGoalState	variable	208	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+291	dest	TServerInstance	variable	231	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+287	conn	TServerConnection	variable	259	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+276	i	int	variable	282	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+300	oldCounts	int[]	variable	288	set	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+347	TabletGroupWatcher.store	TabletStateStore	variable	113	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	115	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	117	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	127	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+273	merge	MergeInfo	variable	128	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+289	currentMerges	Map<Text,MergeStats>	variable	129	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+273	merge	MergeInfo	variable	129	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+273	merge	MergeInfo	variable	129	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	135	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+290	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	variable	136	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+275	entry	TServerInstance	variable	136	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	136	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+275	entry	TServerInstance	variable	136	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+290	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	variable	139	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+293	eventListener	EventCoordinator.Listener	variable	140	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+290	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	variable	145	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+292	destinations	SortedMap<TServerInstance,TabletServerStatus>	variable	146	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	146	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+302	serversToShutdown		variable	146	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+346	TabletGroupWatcher.stats	TableStats	variable	154	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+347	TabletGroupWatcher.store	TabletStateStore	variable	157	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+297	iter	ClosableIterator<TabletLocationState>	variable	158	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+297	iter	ClosableIterator<TabletLocationState>	variable	159	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	160	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	164	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	168	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	168	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+307	unassigned	Map<KeyExtent,TServerInstance>	variable	171	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+308	unloaded	int	variable	171	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+290	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	variable	171	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+292	destinations	SortedMap<TServerInstance,TabletServerStatus>	variable	172	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+285	assignments	List<Assignment>	variable	172	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+283	assigned	List<Assignment>	variable	172	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+284	assignedToDeadServers	List<TabletLocationState>	variable	172	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+307	unassigned	Map<KeyExtent,TServerInstance>	variable	172	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+285	assignments	List<Assignment>	variable	173	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+283	assigned	List<Assignment>	variable	174	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+284	assignedToDeadServers	List<TabletLocationState>	variable	175	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+307	unassigned	Map<KeyExtent,TServerInstance>	variable	176	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+293	eventListener	EventCoordinator.Listener	variable	178	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	180	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+299	mergeStatsCache	Map<Text,MergeStats>	variable	181	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+304	tableId	Text	variable	181	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	182	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+289	currentMerges	Map<Text,MergeStats>	variable	183	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+304	tableId	Text	variable	183	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	184	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+299	mergeStatsCache	Map<Text,MergeStats>	variable	187	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+304	tableId	Text	variable	187	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	187	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	189	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	189	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	189	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	190	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	191	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+290	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	variable	191	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+296	goal	TabletGoalState	variable	193	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	193	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+346	TabletGroupWatcher.stats	TableStats	variable	194	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+304	tableId	Text	variable	194	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	194	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	195	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	195	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	195	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	195	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	195	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+286	chopped		variable	195	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	195	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	196	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	196	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	196	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+298	mergeStats	MergeStats	variable	197	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	197	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	197	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	200	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+278	ASSIGNED		variable	200	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+281	HOSTED		variable	201	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+296	goal	TabletGoalState	variable	205	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+282	UNASSIGNED		variable	205	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	205	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+281	HOSTED		variable	205	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	206	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+290	currentTServers	SortedMap<TServerInstance,TabletServerStatus>	variable	206	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+344	TabletGroupWatcher.dependentWatcher	TabletGroupWatcher	variable	207	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+344	TabletGroupWatcher.dependentWatcher	TabletGroupWatcher	variable	207	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+281	HOSTED		variable	208	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+296	goal	TabletGoalState	variable	213	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+281	HOSTED		variable	213	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	214	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+281	HOSTED		variable	214	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	214	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	215	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	215	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	215	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	215	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+309	walogs		variable	215	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	218	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+281	HOSTED		variable	219	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+301	server	TServerInstance	variable	220	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	220	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	220	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	220	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	221	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	221	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	221	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+279	ASSIGNED_TO_DEAD_SERVER		variable	223	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+284	assignedToDeadServers	List<TabletLocationState>	variable	224	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	224	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+301	server	TServerInstance	variable	225	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	225	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	225	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	225	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	226	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	226	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	226	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+282	UNASSIGNED		variable	229	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	231	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	231	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	231	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+291	dest	TServerInstance	variable	232	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+292	destinations	SortedMap<TServerInstance,TabletServerStatus>	variable	234	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+291	dest	TServerInstance	variable	234	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+285	assignments	List<Assignment>	variable	235	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	235	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	235	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+291	dest	TServerInstance	variable	235	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	238	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	238	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	238	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+307	unassigned	Map<KeyExtent,TServerInstance>	variable	239	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	239	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	239	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+301	server	TServerInstance	variable	239	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+307	unassigned	Map<KeyExtent,TServerInstance>	variable	242	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	242	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	242	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+301	server	TServerInstance	variable	242	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+278	ASSIGNED		variable	245	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+283	assigned	List<Assignment>	variable	247	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	247	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	247	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	247	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+295	future		variable	247	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	251	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+282	UNASSIGNED		variable	252	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+279	ASSIGNED_TO_DEAD_SERVER		variable	254	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+284	assignedToDeadServers	List<TabletLocationState>	variable	255	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	255	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+281	HOSTED		variable	258	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	259	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+301	server	TServerInstance	variable	259	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+287	conn	TServerConnection	variable	260	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+287	conn	TServerConnection	variable	261	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	261	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+128	masterLock		variable	261	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+305	tls	TabletLocationState	variable	261	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+294	extent		variable	261	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+296	goal	TabletGoalState	variable	261	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+280	DELETED		variable	261	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+301	server	TServerInstance	variable	265	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+278	ASSIGNED		variable	268	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+303	state	TabletState	variable	272	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+292	destinations	SortedMap<TServerInstance,TabletServerStatus>	variable	275	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+285	assignments	List<Assignment>	variable	275	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+283	assigned	List<Assignment>	variable	275	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+284	assignedToDeadServers	List<TabletLocationState>	variable	275	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+307	unassigned	Map<KeyExtent,TServerInstance>	variable	275	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+346	TabletGroupWatcher.stats	TableStats	variable	278	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+277	state	TabletState	variable	282	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+276	i	int	variable	283	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+288	counts	int[]	variable	283	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+276	i	int	variable	283	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+288	counts	int[]	variable	283	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+276	i	int	variable	283	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+300	oldCounts	int[]	variable	283	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	284	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+347	TabletGroupWatcher.store	TabletStateStore	variable	284	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+276	i	int	variable	284	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+288	counts	int[]	variable	284	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+277	state	TabletState	variable	284	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+347	TabletGroupWatcher.store	TabletStateStore	variable	287	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+346	TabletGroupWatcher.stats	TableStats	variable	287	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+288	counts	int[]	variable	288	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+306	totalUnloaded	int	variable	289	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+345	TabletGroupWatcher.master	Master	variable	290	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+347	TabletGroupWatcher.store	TabletStateStore	variable	290	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+306	totalUnloaded	int	variable	290	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+299	mergeStatsCache	Map<Text,MergeStats>	variable	293	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+347	TabletGroupWatcher.store	TabletStateStore	variable	295	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+293	eventListener	EventCoordinator.Listener	variable	296	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+347	TabletGroupWatcher.store	TabletStateStore	variable	298	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+297	iter	ClosableIterator<TabletLocationState>	variable	305	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+297	iter	ClosableIterator<TabletLocationState>	variable	307	use	org.apache.accumulo.master.TabletGroupWatcher.run	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	111	309
+317	info	MergeInfo	param	416	define	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+318	state	TabletState	param	416	define	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+319	tls	TabletLocationState	param	416	define	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+313	e	TException	param	437	define	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+317	info	MergeInfo	param	418	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+318	state	TabletState	param	421	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+319	tls	TabletLocationState	param	424	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+317	info	MergeInfo	param	427	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+319	tls	TabletLocationState	param	427	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+319	tls	TabletLocationState	param	430	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+319	tls	TabletLocationState	param	432	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+319	tls	TabletLocationState	param	432	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+319	tls	TabletLocationState	param	433	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+319	tls	TabletLocationState	param	435	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+315	conn	TServerConnection	variable	428	define	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+315	conn	TServerConnection	variable	430	set	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+314	WAITING_FOR_CHOPPED		variable	418	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+281	HOSTED		variable	421	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+286	chopped		variable	424	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+294	extent		variable	427	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+345	TabletGroupWatcher.master	Master	variable	430	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+316	current		variable	430	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+315	conn	TServerConnection	variable	431	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+316	current		variable	432	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+294	extent		variable	432	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+315	conn	TServerConnection	variable	433	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+345	TabletGroupWatcher.master	Master	variable	433	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+128	masterLock		variable	433	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+294	extent		variable	433	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+316	current		variable	435	use	org.apache.accumulo.master.TabletGroupWatcher.sendChopRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	416	438
+329	info	MergeInfo	param	376	define	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+331	state	TabletState	param	376	define	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+332	tls	TabletLocationState	param	376	define	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+324	e	NotServingTabletException	param	407	define	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+325	e	Exception	param	409	define	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+329	info	MergeInfo	param	378	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+329	info	MergeInfo	param	381	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+331	state	TabletState	param	384	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+329	info	MergeInfo	param	387	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+332	tls	TabletLocationState	param	388	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+332	tls	TabletLocationState	param	392	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+332	tls	TabletLocationState	param	394	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+332	tls	TabletLocationState	param	396	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+332	tls	TabletLocationState	param	400	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+332	tls	TabletLocationState	param	402	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+332	tls	TabletLocationState	param	402	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+332	tls	TabletLocationState	param	403	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+332	tls	TabletLocationState	param	405	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+324	e	NotServingTabletException	param	408	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+325	e	Exception	param	410	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+330	range	KeyExtent	variable	387	define	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+327	splitPoint	Text	variable	389	define	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+326	conn	TServerConnection	variable	399	define	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+330	range	KeyExtent	variable	387	set	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+326	conn	TServerConnection	variable	400	set	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+328	SPLITTING		variable	378	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+281	HOSTED		variable	384	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+330	range	KeyExtent	variable	388	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+330	range	KeyExtent	variable	389	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+330	range	KeyExtent	variable	389	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+327	splitPoint	Text	variable	390	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+327	splitPoint	Text	variable	392	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+327	splitPoint	Text	variable	394	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+327	splitPoint	Text	variable	396	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+345	TabletGroupWatcher.master	Master	variable	400	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+316	current		variable	400	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+326	conn	TServerConnection	variable	401	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+316	current		variable	402	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+294	extent		variable	402	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+327	splitPoint	Text	variable	402	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+326	conn	TServerConnection	variable	403	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+345	TabletGroupWatcher.master	Master	variable	403	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+128	masterLock		variable	403	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+294	extent		variable	403	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+327	splitPoint	Text	variable	403	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+316	current		variable	405	use	org.apache.accumulo.master.TabletGroupWatcher.sendSplitRequest	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	376	410
+64	master	Master	param	96	define	org.apache.accumulo.master.TabletGroupWatcher.TabletGroupWatcher	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	96	100
+65	store	TabletStateStore	param	96	define	org.apache.accumulo.master.TabletGroupWatcher.TabletGroupWatcher	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	96	100
+63	dependentWatcher	TabletGroupWatcher	param	96	define	org.apache.accumulo.master.TabletGroupWatcher.TabletGroupWatcher	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	96	100
+64	master	Master	param	97	use	org.apache.accumulo.master.TabletGroupWatcher.TabletGroupWatcher	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	96	100
+65	store	TabletStateStore	param	98	use	org.apache.accumulo.master.TabletGroupWatcher.TabletGroupWatcher	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	96	100
+63	dependentWatcher	TabletGroupWatcher	param	99	use	org.apache.accumulo.master.TabletGroupWatcher.TabletGroupWatcher	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	96	100
+345	TabletGroupWatcher.master	Master	variable	97	set	org.apache.accumulo.master.TabletGroupWatcher.TabletGroupWatcher	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	96	100
+347	TabletGroupWatcher.store	TabletStateStore	variable	98	set	org.apache.accumulo.master.TabletGroupWatcher.TabletGroupWatcher	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	96	100
+344	TabletGroupWatcher.dependentWatcher	TabletGroupWatcher	variable	99	set	org.apache.accumulo.master.TabletGroupWatcher.TabletGroupWatcher	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	96	100
+343	mergeStatsCache	Map<Text,MergeStats>	param	443	define	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+336	ex	Exception	param	465	define	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+337	ex	Exception	param	469	define	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+343	mergeStatsCache	Map<Text,MergeStats>	param	444	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+336	ex	Exception	param	466	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+337	ex	Exception	param	470	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+341	stats	MergeStats	variable	444	define	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+342	update	MergeState	variable	446	define	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+342	update	MergeState	variable	446	set	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+342	update	MergeState	variable	452	set	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+342	update	MergeState	variable	464	set	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+341	stats	MergeStats	variable	446	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+345	TabletGroupWatcher.master	Master	variable	446	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+345	TabletGroupWatcher.master	Master	variable	446	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+342	update	MergeState	variable	451	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+338	COMPLETE		variable	451	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+340	NONE		variable	452	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+342	update	MergeState	variable	453	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+341	stats	MergeStats	variable	453	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+345	TabletGroupWatcher.master	Master	variable	454	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+341	stats	MergeStats	variable	454	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+342	update	MergeState	variable	454	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+342	update	MergeState	variable	457	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+339	MERGING		variable	457	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+341	stats	MergeStats	variable	459	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+341	stats	MergeStats	variable	460	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+341	stats	MergeStats	variable	462	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+345	TabletGroupWatcher.master	Master	variable	464	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+341	stats	MergeStats	variable	464	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+338	COMPLETE		variable	464	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470
+341	stats	MergeStats	variable	470	use	org.apache.accumulo.master.TabletGroupWatcher.updateMergeState	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/5eceb10e2/d72abd29d.java	443	470

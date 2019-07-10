@@ -1,0 +1,180 @@
+110a111,112
+>     private final Map<String, Object> updateNodes = new LinkedHashMap<>();
+>     private boolean isClusterStateModified = false;
+263a266
+>                 if(!updateNodes.isEmpty()) break;
+303,304c306,329
+<         zkClient.setData(ZkStateReader.CLUSTER_STATE, ZkStateReader.toJSON(clusterState), true);
+<         lastUpdatedTime = System.nanoTime();
+---
+>         if (!updateNodes.isEmpty()) {
+>           for (Entry<String,Object> e : updateNodes.entrySet()) {
+>             if (e.getValue() == null) {
+>               if (zkClient.exists(e.getKey(), true)) zkClient.delete(e.getKey(), 0, true);
+>             } else {
+>               byte[] data = ZkStateReader.toJSON(e.getValue());
+>               if (zkClient.exists(e.getKey(), true)) {
+>                 log.info("going to update_collection {}", e.getKey());
+>                 zkClient.setData(e.getKey(), data, true);
+>               } else {
+>                 log.info("going to create_collection {}", e.getKey(), new String(data));
+>                 zkClient.create(e.getKey(), data, CreateMode.PERSISTENT, true);
+>               }
+>             }
+>           }
+>           updateNodes.clear();
+>         }
+>         
+>         if (isClusterStateModified) {
+>           lastUpdatedTime = System.nanoTime();
+>           zkClient.setData(ZkStateReader.CLUSTER_STATE,
+>               ZkStateReader.toJSON(clusterState), true);
+>           isClusterStateModified = false;
+>         }
+706c731
+<         
+---
+> 
+724c749
+<           
+---
+> 
+872,874c897,898
+<         if(message.getStr("fromApi") == null) collectionProps.put("autoCreated","true");
+<         DocCollection newCollection = new DocCollection(collectionName, newSlices, collectionProps, router);
+<         return newState(state, singletonMap(newCollection.getName(), newCollection));
+---
+>       if (message.getStr("fromApi") == null) {
+>         collectionProps.put("autoCreated", "true");
+875a900,912
+>       
+>       String znode = message.getInt(DocCollection.STATE_FORMAT, 1) == 1 ? null
+>           : ZkStateReader.getCollectionPath(collectionName);
+>       
+>       DocCollection newCollection = new DocCollection(collectionName,
+>           newSlices, collectionProps, router, -1, znode);
+>       
+>       isClusterStateModified = true;
+>       
+>       log.info("state version {} {}", collectionName, newCollection.getStateFormat());
+>       
+>       return newState(state, singletonMap(newCollection.getName(), newCollection));
+>     }
+912c949
+<       
+---
+> 
+916c953
+< 
+---
+>         DocCollection newCollection = null;
+919,921c956
+<         Map<String,Object> props;
+<         DocRouter router;
+< 
+---
+>         
+925,926c960,962
+<           slices = new HashMap<>(1);
+<           props = new HashMap<>(1);
+---
+>           slices = new LinkedHashMap<>(1);
+>           slices.put(slice.getName(), slice);
+>           Map<String,Object> props = new HashMap<>(1);
+928c964
+<           router = new ImplicitDocRouter();
+---
+>           newCollection = new DocCollection(collectionName, slices, props, new ImplicitDocRouter());
+930,931d965
+<           props = coll.getProperties();
+<           router = coll.getRouter();
+932a967,968
+>           slices.put(slice.getName(), slice);
+>           newCollection = coll.copyWithSlices(slices);
+934,935c970
+<         slices.put(slice.getName(), slice);
+<         DocCollection newCollection = new DocCollection(collectionName, slices, props, router);
+---
+> 
+994c1029
+<         DocCollection newCollection = new DocCollection(coll.getName(), slices, coll.getProperties(), coll.getRouter());
+---
+>         DocCollection newCollection = coll.copyWithSlices(slices);
+998,999c1033,1050
+<       private ClusterState newState(ClusterState state, Map<String, DocCollection> colls) {
+<         return state.copyWith(colls);
+---
+>     private ClusterState newState(ClusterState state, Map<String, DocCollection> colls) {
+>       for (Entry<String, DocCollection> e : colls.entrySet()) {
+>         DocCollection c = e.getValue();
+>         if (c == null) {
+>           isClusterStateModified = true;
+>           state = state.copyWith(singletonMap(e.getKey(), (DocCollection) null));
+>           updateNodes.put(ZkStateReader.getCollectionPath(e.getKey()) ,null);
+>           continue;
+>         }
+> 
+>         if (c.getStateFormat() > 1) {
+>           updateNodes.put(ZkStateReader.getCollectionPath(c.getName()),
+>               new ClusterState(-1, Collections.<String>emptySet(), singletonMap(c.getName(), c)));
+>         } else {
+>           isClusterStateModified = true;
+>         }
+>         state = state.copyWith(singletonMap(e.getKey(), c));
+> 
+1000a1052,1055
+>       return state;
+>     }
+> 
+>     
+1002d1056
+<       
+1003a1058,1062
+>     private ClusterState removeCollection(final ClusterState clusterState, ZkNodeProps message) {
+>       final String collection = message.getStr("name");
+>       if (!checkKeyExistence(message, "name")) return clusterState;
+>       DocCollection coll = clusterState.getCollectionOrNull(collection);
+>       if(coll == null) return  clusterState;
+1005,1010c1064,1070
+<       private ClusterState removeCollection(final ClusterState clusterState, ZkNodeProps message) {
+<         final String collection = message.getStr("name");
+<         if (!checkKeyExistence(message, "name")) return clusterState;
+<         DocCollection coll = clusterState.getCollectionOrNull(collection);
+<         if(coll !=null) {
+<           return clusterState.copyWith(singletonMap(collection,(DocCollection)null));
+---
+>       isClusterStateModified = true;
+>       if (coll.getStateFormat() > 1) {
+>         try {
+>           log.info("Deleting state for collection : {}", collection);
+>           zkClient.delete(ZkStateReader.getCollectionPath(collection), -1, true);
+>         } catch (Exception e) {
+>           throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "Unable to remove collection state :" + collection);
+1012d1071
+<         return clusterState;
+1014c1073,1074
+< 
+---
+>       return newState(clusterState, singletonMap(coll.getName(),(DocCollection) null));
+>     }
+1030c1090
+<       DocCollection newCollection = new DocCollection(coll.getName(), newSlices, coll.getProperties(), coll.getRouter());
+---
+>       DocCollection newCollection = coll.copyWithSlices(newSlices);
+1042,1043d1101
+< 
+< 
+1081c1139
+<         
+---
+> 
+1098c1156
+<             zkClient.clean("/collections/" + collection);
+---
+>             zkClient.delete("/collections/" + collection, -1, true);
+1108,1109c1166,1167
+<           DocCollection newCollection = new DocCollection(coll.getName(), newSlices, coll.getProperties(), coll.getRouter());
+<            return newState(clusterState,singletonMap(collection,newCollection));
+---
+>           DocCollection newCollection = coll.copyWithSlices(newSlices);
+>           return newState(clusterState,singletonMap(collection,newCollection));

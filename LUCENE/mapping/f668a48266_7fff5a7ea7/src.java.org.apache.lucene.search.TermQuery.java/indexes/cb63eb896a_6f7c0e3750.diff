@@ -1,0 +1,4 @@
+114c114
+<         fieldNorms!=null ? Similarity.decodeNorm(fieldNorms[doc]) : 0.0f;
+---
+>         fieldNorms!=null ? Similarity.decodeNorm(fieldNorms[doc]) : 1.0f;

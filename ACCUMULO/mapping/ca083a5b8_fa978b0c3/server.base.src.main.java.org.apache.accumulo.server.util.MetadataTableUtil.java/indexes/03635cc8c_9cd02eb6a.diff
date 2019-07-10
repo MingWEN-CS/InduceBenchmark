@@ -1,0 +1,61 @@
+18a19,20
+> import static com.google.common.base.Charsets.UTF_8;
+> 
+124c126
+<         .getBytes(Constants.UTF8)));
+---
+>         .getBytes(UTF_8)));
+161c163
+<       TabletsSection.ServerColumnFamily.FLUSH_COLUMN.put(m, new Value((flushID + "").getBytes(Constants.UTF8)));
+---
+>       TabletsSection.ServerColumnFamily.FLUSH_COLUMN.put(m, new Value((flushID + "").getBytes(UTF_8)));
+169c171
+<       TabletsSection.ServerColumnFamily.COMPACT_COLUMN.put(m, new Value((compactID + "").getBytes(Constants.UTF8)));
+---
+>       TabletsSection.ServerColumnFamily.COMPACT_COLUMN.put(m, new Value((compactID + "").getBytes(UTF_8)));
+176c178
+<     byte[] tidBytes = Long.toString(tid).getBytes(Constants.UTF8);
+---
+>     byte[] tidBytes = Long.toString(tid).getBytes(UTF_8);
+183c185
+<     TabletsSection.ServerColumnFamily.TIME_COLUMN.put(m, new Value(time.getBytes(Constants.UTF8)));
+---
+>     TabletsSection.ServerColumnFamily.TIME_COLUMN.put(m, new Value(time.getBytes(UTF_8)));
+189c191
+<     TabletsSection.ServerColumnFamily.DIRECTORY_COLUMN.put(m, new Value(newDir.getBytes(Constants.UTF8)));
+---
+>     TabletsSection.ServerColumnFamily.DIRECTORY_COLUMN.put(m, new Value(newDir.getBytes(UTF_8)));
+196,197c198,199
+<     TabletsSection.ServerColumnFamily.DIRECTORY_COLUMN.put(m, new Value(path.getBytes(Constants.UTF8)));
+<     TabletsSection.ServerColumnFamily.TIME_COLUMN.put(m, new Value((timeType + "0").getBytes(Constants.UTF8)));
+---
+>     TabletsSection.ServerColumnFamily.DIRECTORY_COLUMN.put(m, new Value(path.getBytes(UTF_8)));
+>     TabletsSection.ServerColumnFamily.TIME_COLUMN.put(m, new Value((timeType + "0").getBytes(UTF_8)));
+238c240
+<         ServerColumnFamily.DIRECTORY_COLUMN.put(m, new Value(newDir.getBytes(Constants.UTF8)));
+---
+>         ServerColumnFamily.DIRECTORY_COLUMN.put(m, new Value(newDir.getBytes(UTF_8)));
+278c280
+<     TabletsSection.TabletColumnFamily.SPLIT_RATIO_COLUMN.put(m, new Value(Double.toString(splitRatio).getBytes(Constants.UTF8)));
+---
+>     TabletsSection.TabletColumnFamily.SPLIT_RATIO_COLUMN.put(m, new Value(Double.toString(splitRatio).getBytes(UTF_8)));
+475c477
+<       zoo.putPersistentData(zpath, dir.getBytes(Constants.UTF8), -1, NodeExistsPolicy.OVERWRITE);
+---
+>       zoo.putPersistentData(zpath, dir.getBytes(UTF_8), -1, NodeExistsPolicy.OVERWRITE);
+488c490
+<       return new String(zoo.getData(zpath, null), Constants.UTF8);
+---
+>       return new String(zoo.getData(zpath, null), UTF_8);
+828c830
+<         m.put(ClonedColumnFamily.NAME, new Text(""), new Value("OK".getBytes(Constants.UTF8)));
+---
+>         m.put(ClonedColumnFamily.NAME, new Text(""), new Value("OK".getBytes(UTF_8)));
+885c887
+<       TabletsSection.ServerColumnFamily.DIRECTORY_COLUMN.put(m, new Value(dir.getBytes(Constants.UTF8)));
+---
+>       TabletsSection.ServerColumnFamily.DIRECTORY_COLUMN.put(m, new Value(dir.getBytes(UTF_8)));
+896c898
+<     ChoppedColumnFamily.CHOPPED_COLUMN.put(m, new Value("chopped".getBytes(Constants.UTF8)));
+---
+>     ChoppedColumnFamily.CHOPPED_COLUMN.put(m, new Value("chopped".getBytes(UTF_8)));

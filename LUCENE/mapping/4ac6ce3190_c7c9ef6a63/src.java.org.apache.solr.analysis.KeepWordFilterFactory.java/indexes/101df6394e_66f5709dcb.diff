@@ -1,0 +1,59 @@
+24a25
+> import org.apache.lucene.analysis.CharArraySet;
+39c40
+<   private Set<String> words;
+---
+>   private CharArraySet words;
+45,46c46
+<     ignoreCase = getBoolean("ignoreCase",false);
+< 
+---
+>     ignoreCase = getBoolean("ignoreCase", false);
+48,49d47
+<       if (words == null)
+<         words = new HashSet<String>();
+51,61c49,56
+<         java.io.File keepWordsFile = new File(wordFiles);
+<         if (keepWordsFile.exists()) {
+<           List<String> wlist = loader.getLines(wordFiles);
+<           words = StopFilter.makeStopSet(
+<               (String[])wlist.toArray(new String[0]), ignoreCase);
+<         } else  {
+<           List<String> files = StrUtils.splitFileNames(wordFiles);
+<           for (String file : files) {
+<             List<String> wlist = loader.getLines(file.trim());
+<             words.addAll(StopFilter.makeStopSet((String[])wlist.toArray(new String[0]), ignoreCase));
+<           }
+---
+>         List<String> files = StrUtils.splitFileNames(wordFiles);
+>         if (words == null && files.size() > 0){
+>           words = new CharArraySet(files.size() * 10, ignoreCase);
+>         }
+>         for (String file : files) {
+>           List<String> wlist = loader.getLines(file.trim());
+>           
+>           words.addAll(StopFilter.makeStopSet((String[]) wlist.toArray(new String[0]), ignoreCase));
+63c58
+<       } 
+---
+>       }
+75c70
+<     this.words = words;
+---
+>     this.words = new CharArraySet(words, ignoreCase);
+81c76
+<   
+---
+> 
+83c78,82
+<     return new KeepWordFilter(input,words,ignoreCase);
+---
+>     return new KeepWordFilter(input, words, ignoreCase);
+>   }
+> 
+>   public CharArraySet getWords() {
+>     return words;
+85a85,87
+>   public boolean isIgnoreCase() {
+>     return ignoreCase;
+>   }

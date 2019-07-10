@@ -1,0 +1,4 @@
+146c146
+<       AbstractZkTestCase.putConfig("conf2", zkClient, solrhome, "solrconfig.xml", "solrconfig.xml");
+---
+>       AbstractZkTestCase.putConfig("conf2", zkClient, solrhome, getCloudSolrConfig(), "solrconfig.xml");

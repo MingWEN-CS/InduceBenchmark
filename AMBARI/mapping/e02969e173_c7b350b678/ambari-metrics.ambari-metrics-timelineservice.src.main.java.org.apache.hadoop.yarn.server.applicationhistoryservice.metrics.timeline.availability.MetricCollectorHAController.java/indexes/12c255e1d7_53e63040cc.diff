@@ -1,0 +1,18 @@
+20a21,22
+> import org.I0Itec.zkclient.exception.ZkNoNodeException;
+> import org.apache.commons.collections.CollectionUtils;
+39a42
+> import java.util.Collections;
+126,127c129,137
+<     List<String> nodes = admin.getInstancesInCluster(clusterName);
+<     if (nodes == null || !nodes.contains(instanceConfig.getInstanceName())) {
+---
+>     List<String> nodes = Collections.EMPTY_LIST;
+>     try {
+>       nodes =  admin.getInstancesInCluster(clusterName);
+>     } catch (ZkNoNodeException ex) {
+>       LOG.warn("Child znode under /" + CLUSTER_NAME + " not found.Recreating the cluster.");
+>         admin.addCluster(clusterName, true);
+>     }
+> 
+>     if (CollectionUtils.isEmpty(nodes) || !nodes.contains(instanceConfig.getInstanceName())) {

@@ -1,0 +1,92 @@
+53a54
+>   private static final boolean useDeprecatedFileStatus = !Stat.isAvailable();
+387a389,391
+>       if (!useDeprecatedFileStatus) {
+>         return new FileStatus[] { getFileStatus(f) };
+>       }
+389c393
+<         new RawLocalFileStatus(localf, getDefaultBlockSize(f), this) };
+---
+>         new DeprecatedRawLocalFileStatus(localf, getDefaultBlockSize(f), this)};
+518a523,527
+>     return getFileLinkStatusInternal(f, true);
+>   }
+> 
+>   @Deprecated
+>   private FileStatus deprecatedGetFileStatus(Path f) throws IOException {
+521c530,531
+<       return new RawLocalFileStatus(pathToFile(f), getDefaultBlockSize(f), this);
+---
+>       return new DeprecatedRawLocalFileStatus(pathToFile(f),
+>           getDefaultBlockSize(f), this);
+527c537,538
+<   static class RawLocalFileStatus extends FileStatus {
+---
+>   @Deprecated
+>   static class DeprecatedRawLocalFileStatus extends FileStatus {
+536c547
+<     RawLocalFileStatus(File f, long defaultBlockSize, FileSystem fs) { 
+---
+>     DeprecatedRawLocalFileStatus(File f, long defaultBlockSize, FileSystem fs) {
+702c713
+<     FileStatus fi = getFileLinkStatusInternal(f);
+---
+>     FileStatus fi = getFileLinkStatusInternal(f, false);
+713c724,752
+<   private FileStatus getFileLinkStatusInternal(final Path f) throws IOException {
+---
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private FileStatus getFileLinkStatusInternal(final Path f,
+>       boolean dereference) throws IOException {
+>     if (!useDeprecatedFileStatus) {
+>       return getNativeFileLinkStatus(f, dereference);
+>     } else if (dereference) {
+>       return deprecatedGetFileStatus(f);
+>     } else {
+>       return deprecatedGetFileLinkStatusInternal(f);
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+>   @Deprecated
+>   private FileStatus deprecatedGetFileLinkStatusInternal(final Path f)
+>       throws IOException {
+748a788,808
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private FileStatus getNativeFileLinkStatus(final Path f,
+>       boolean dereference) throws IOException {
+>     checkPath(f);
+>     Stat stat = new Stat(f, getDefaultBlockSize(f), dereference, this);
+>     FileStatus status = stat.getFileStatus();
+>     return status;
+>   }
+752c812
+<     FileStatus fi = getFileLinkStatusInternal(f);
+---
+>     FileStatus fi = getFileLinkStatusInternal(f, false);

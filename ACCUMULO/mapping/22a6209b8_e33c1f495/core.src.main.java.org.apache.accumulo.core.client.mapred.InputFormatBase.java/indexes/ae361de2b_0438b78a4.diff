@@ -1,0 +1,39 @@
+539c539
+<     protected RangeInputSplit split;
+---
+>     protected org.apache.accumulo.core.client.mapred.RangeInputSplit split;
+558c558
+<       split = (RangeInputSplit) inSplit;
+---
+>       split = (org.apache.accumulo.core.client.mapred.RangeInputSplit) inSplit;
+852c852,853
+<     ArrayList<RangeInputSplit> splits = new ArrayList<RangeInputSplit>(ranges.size());
+---
+>     ArrayList<org.apache.accumulo.core.client.mapred.RangeInputSplit> splits = new ArrayList<org.apache.accumulo.core.client.mapred.RangeInputSplit>(
+>         ranges.size());
+874c875
+<             splits.add(new RangeInputSplit(ke.clip(r), new String[] {location}));
+---
+>             splits.add(new org.apache.accumulo.core.client.mapred.RangeInputSplit(ke.clip(r), new String[] {location}));
+889c890
+<         splits.add(new RangeInputSplit(entry.getKey(), entry.getValue().toArray(new String[0])));
+---
+>         splits.add(new org.apache.accumulo.core.client.mapred.RangeInputSplit(entry.getKey(), entry.getValue().toArray(new String[0])));
+891c892
+<     for (RangeInputSplit split : splits) {
+---
+>     for (org.apache.accumulo.core.client.mapred.RangeInputSplit split : splits) {
+909a911,923
+>   
+> 
+> 
+>   @Deprecated
+>   public static class RangeInputSplit extends org.apache.accumulo.core.client.mapred.RangeInputSplit {
+>     public RangeInputSplit() {
+>       super();
+>     }
+> 
+>     public RangeInputSplit(Range range, String[] locations) {
+>       super(range, locations);
+>     }
+>   }

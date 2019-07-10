@@ -1,0 +1,161 @@
+16a17,20
+> import java.util.HashMap;
+> import java.util.List;
+> import java.util.Map;
+> 
+22a27
+> import org.apache.ambari.server.orm.RequiresSession;
+23a29,30
+> import org.apache.ambari.server.orm.entities.AmbariConfigurationEntityPK;
+> import org.apache.commons.lang.StringUtils;
+35c42
+< public class AmbariConfigurationDAO extends CrudDAO<AmbariConfigurationEntity, Long> {
+---
+> public class AmbariConfigurationDAO extends CrudDAO<AmbariConfigurationEntity, AmbariConfigurationEntityPK> {
+43a51,78
+>   
+> 
+> 
+> 
+> 
+> 
+>   @RequiresSession
+>   public List<AmbariConfigurationEntity> findByCategory(String categoryName) {
+>     TypedQuery<AmbariConfigurationEntity> query = entityManagerProvider.get().createNamedQuery(
+>         "AmbariConfigurationEntity.findByCategory", AmbariConfigurationEntity.class);
+>     query.setParameter("categoryName", categoryName);
+>     return daoUtils.selectList(query);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   @Transactional
+>   public int removeByCategory(String categoryName) {
+>     TypedQuery<AmbariConfigurationEntity> query = entityManagerProvider.get().createNamedQuery(
+>         "AmbariConfigurationEntity.deleteByCategory", AmbariConfigurationEntity.class);
+>     query.setParameter("categoryName", categoryName);
+>     return query.executeUpdate();
+>   }
+> 
+47,52c82,86
+<     if ("ldap-configuration".equals(entity.getConfigurationBaseEntity().getType())) {
+<       AmbariConfigurationEntity ldapConfigEntity = getLdapConfiguration();
+<       if (ldapConfigEntity != null) {
+<         LOGGER.error("Only one LDAP configuration entry can exist!");
+<         throw new EntityExistsException("LDAP configuration entity already exists!");
+<       }
+---
+>     AmbariConfigurationEntity foundEntity = findByPK(new AmbariConfigurationEntityPK(entity.getCategoryName(), entity.getPropertyName()));
+>     if (foundEntity != null) {
+>       String message = String.format("Only one configuration entry can exist for the category %s and name %s", entity.getCategoryName(), entity.getPropertyName());
+>       LOGGER.error(message);
+>       throw new EntityExistsException(message);
+53a88
+> 
+56a92,99
+>   @Override
+>   public AmbariConfigurationEntity merge(AmbariConfigurationEntity entity) {
+>     AmbariConfigurationEntity foundEntity = findByPK(new AmbariConfigurationEntityPK(entity.getCategoryName(), entity.getPropertyName()));
+>     if (foundEntity == null) {
+>       String message = String.format("The configuration entry for the category %s and name %s does not exist", entity.getCategoryName(), entity.getPropertyName());
+>       LOGGER.debug(message);
+>       throw new EntityNotFoundException(message);
+>     }
+58,63c101,106
+<   @Transactional
+<   public void update(AmbariConfigurationEntity entity) {
+<     if (entity.getId() == null || findByPK(entity.getId()) == null) {
+<       String msg = String.format("The entity with id [ %s ] is not found", entity.getId());
+<       LOGGER.debug(msg);
+<       throw new EntityNotFoundException(msg);
+---
+>     AmbariConfigurationEntity updatedEntity = entity;
+> 
+>     if (!StringUtils.equals(foundEntity.getPropertyValue(), entity.getPropertyValue())) {
+>       
+>       updatedEntity = super.merge(entity);
+>       entityManagerProvider.get().flush();
+66,68c109
+<     
+<     super.merge(entity);
+<     entityManagerProvider.get().flush();
+---
+>     return updatedEntity;
+75a117,126
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+77,79c128,131
+<   public AmbariConfigurationEntity getLdapConfiguration() {
+<     LOGGER.info("Looking up the LDAP configuration ....");
+<     AmbariConfigurationEntity ldapConfigEntity = null;
+---
+>   public boolean reconcileCategory(String categoryName, Map<String, String> properties, boolean removeIfNotProvided) {
+>     boolean changesDetected = false;
+>     List<AmbariConfigurationEntity> existingEntities = findByCategory(categoryName);
+>     Map<String, String> propertiesToProcess = new HashMap<>();
+81,83c133,175
+<     TypedQuery<AmbariConfigurationEntity> query = entityManagerProvider.get().createNamedQuery(
+<       "AmbariConfigurationEntity.findByType", AmbariConfigurationEntity.class);
+<     query.setParameter("typeName", "ldap-configuration");
+---
+>     if (properties != null) {
+>       propertiesToProcess.putAll(properties);
+>     }
+> 
+>     if (existingEntities != null) {
+>       for (AmbariConfigurationEntity entity : existingEntities) {
+>         String propertyName = entity.getPropertyName();
+> 
+>         if (propertiesToProcess.containsKey(propertyName)) {
+>           String newPropertyValue = propertiesToProcess.get(propertyName);
+>           if (!StringUtils.equals(newPropertyValue, entity.getPropertyValue())) {
+>             
+>             entity.setPropertyValue(newPropertyValue);
+>             merge(entity);
+>             changesDetected = true;
+>           }
+>         } else if (removeIfNotProvided) {
+>           
+>           remove(entity);
+>           changesDetected = true;
+>         }
+> 
+>         
+>         propertiesToProcess.remove(propertyName);
+>       }
+>     }
+> 
+>     
+>     if (!propertiesToProcess.isEmpty()) {
+>       for (Map.Entry<String, String> property : propertiesToProcess.entrySet()) {
+>         AmbariConfigurationEntity entity = new AmbariConfigurationEntity();
+>         entity.setCategoryName(categoryName);
+>         entity.setPropertyName(property.getKey());
+>         entity.setPropertyValue(property.getValue());
+>         create(entity);
+>       }
+> 
+>       changesDetected = true;
+>     }
+> 
+>     if (changesDetected) {
+>       entityManagerProvider.get().flush();
+>     }
+85,87c177
+<     ldapConfigEntity = daoUtils.selectSingle(query);
+<     LOGGER.info("Returned entity: {} ", ldapConfigEntity);
+<     return ldapConfigEntity;
+---
+>     return changesDetected;

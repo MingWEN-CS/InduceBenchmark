@@ -1,0 +1,126 @@
+
+package org.apache.solr.parser;
+
+
+
+
+
+
+public interface QueryParserConstants {
+
+  
+  int EOF = 0;
+  
+  int _NUM_CHAR = 1;
+  
+  int _ESCAPED_CHAR = 2;
+  
+  int _TERM_START_CHAR = 3;
+  
+  int _TERM_CHAR = 4;
+  
+  int _WHITESPACE = 5;
+  
+  int _QUOTED_CHAR = 6;
+  
+  int _SQUOTED_CHAR = 7;
+  
+  int AND = 9;
+  
+  int OR = 10;
+  
+  int NOT = 11;
+  
+  int PLUS = 12;
+  
+  int MINUS = 13;
+  
+  int BAREOPER = 14;
+  
+  int LPAREN = 15;
+  
+  int RPAREN = 16;
+  
+  int COLON = 17;
+  
+  int STAR = 18;
+  
+  int CARAT = 19;
+  
+  int QUOTED = 20;
+  
+  int TERM = 21;
+  
+  int FUZZY_SLOP = 22;
+  
+  int PREFIXTERM = 23;
+  
+  int WILDTERM = 24;
+  
+  int REGEXPTERM = 25;
+  
+  int RANGEIN_START = 26;
+  
+  int RANGEEX_START = 27;
+  
+  int LPARAMS = 28;
+  
+  int NUMBER = 29;
+  
+  int RANGE_TO = 30;
+  
+  int RANGEIN_END = 31;
+  
+  int RANGEEX_END = 32;
+  
+  int RANGE_QUOTED = 33;
+  
+  int RANGE_GOOP = 34;
+
+  
+  int Boost = 0;
+  
+  int Range = 1;
+  
+  int DEFAULT = 2;
+
+  
+  String[] tokenImage = {
+    "<EOF>",
+    "<_NUM_CHAR>",
+    "<_ESCAPED_CHAR>",
+    "<_TERM_START_CHAR>",
+    "<_TERM_CHAR>",
+    "<_WHITESPACE>",
+    "<_QUOTED_CHAR>",
+    "<_SQUOTED_CHAR>",
+    "<token of kind 8>",
+    "<AND>",
+    "<OR>",
+    "<NOT>",
+    "\"+\"",
+    "\"-\"",
+    "<BAREOPER>",
+    "\"(\"",
+    "\")\"",
+    "\":\"",
+    "\"*\"",
+    "\"^\"",
+    "<QUOTED>",
+    "<TERM>",
+    "<FUZZY_SLOP>",
+    "<PREFIXTERM>",
+    "<WILDTERM>",
+    "<REGEXPTERM>",
+    "\"[\"",
+    "\"{\"",
+    "<LPARAMS>",
+    "<NUMBER>",
+    "\"TO\"",
+    "\"]\"",
+    "\"}\"",
+    "<RANGE_QUOTED>",
+    "<RANGE_GOOP>",
+  };
+
+}

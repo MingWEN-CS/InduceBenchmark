@@ -1,0 +1,5 @@
+60c60,61
+<     handlers =  new PluginBag<>(SolrRequestHandler.class, core);
+---
+>     
+>     handlers =  new PluginBag<>(SolrRequestHandler.class, core, true);

@@ -1,0 +1,55 @@
+309c309,328
+<  
+---
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   private String getAlternateName(String name) {
+>     String altName;
+>     DeprecatedKeyInfo keyInfo = deprecatedKeyMap.get(name);
+>     if (keyInfo != null) {
+>       altName = (keyInfo.newKeys.length > 0) ? keyInfo.newKeys[0] : null;
+>     }
+>     else {
+>       altName = reverseDeprecatedKeyMap.get(name);
+>     }
+>     return altName;
+>   }
+> 
+632,635c651,657
+<     if (!isDeprecated(name)) {
+<       getOverlay().setProperty(name, value);
+<       getProps().setProperty(name, value);
+<       updatingResource.put(name, UNKNOWN_RESOURCE);
+---
+>     getOverlay().setProperty(name, value);
+>     getProps().setProperty(name, value);
+>     updatingResource.put(name, UNKNOWN_RESOURCE);
+>     String altName = getAlternateName(name);
+>     if (altName != null) {
+>       getOverlay().setProperty(altName, value);
+>       getProps().setProperty(altName, value);
+637c659
+<     else {
+---
+>     if (isDeprecated(name)) {
+640,643d661
+<       for (String newKey : keyInfo.newKeys) {
+<         getOverlay().setProperty(newKey, value);
+<         getProps().setProperty(newKey, value);
+<       }
+651,652c669
+<     name = handleDeprecation(name);
+< 
+---
+>     String altName = getAlternateName(name);
+654a672,675
+>     if (altName !=null) {
+>       getOverlay().remove(altName);
+>        getProps().remove(altName);
+>     }

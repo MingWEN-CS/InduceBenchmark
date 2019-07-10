@@ -1,0 +1,4 @@
+324c324
+<     Query qobj = QParser.getParser(parsed.facetValue, null, req).getQuery();
+---
+>     Query qobj = QParser.getParser(parsed.facetValue, req).getQuery();

@@ -1,0 +1,24 @@
+195c195
+<     if (masterUrl.endsWith("/replication")) {
+---
+>     if (masterUrl.endsWith(ReplicationHandler.PATH)) {
+197c197
+<       LOG.warn("'masterUrl' must be specified without the /replication suffix");
+---
+>       LOG.warn("'masterUrl' must be specified without the "+ReplicationHandler.PATH+" suffix");
+231c231
+<     params.set(CommonParams.QT, "/replication");
+---
+>     params.set(CommonParams.QT, ReplicationHandler.PATH);
+253c253
+<     params.set(CommonParams.QT, "/replication");
+---
+>     params.set(CommonParams.QT, ReplicationHandler.PATH);
+1600c1600
+<       params.set(CommonParams.QT, "/replication");
+---
+>       params.set(CommonParams.QT, ReplicationHandler.PATH);
+1732c1732
+<     params.set(CommonParams.QT, "/replication");
+---
+>     params.set(CommonParams.QT, ReplicationHandler.PATH);

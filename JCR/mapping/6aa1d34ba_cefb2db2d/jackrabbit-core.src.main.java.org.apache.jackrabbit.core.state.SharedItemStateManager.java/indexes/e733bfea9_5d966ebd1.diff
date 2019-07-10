@@ -1,0 +1,11 @@
+775,776c775
+<                 readLock = writeLock.downgrade();
+<                 writeLock = null;
+---
+>                 shared.persisted();
+779,780c778,779
+<                 
+<                 shared.persisted();
+---
+>                 readLock = writeLock.downgrade();
+>                 writeLock = null;

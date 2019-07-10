@@ -1,0 +1,106 @@
+396c396
+<     this(zkHosts, chroot, httpClient, lbSolrClient, null, updatesToLeaders, false, null);
+---
+>     this(zkHosts, chroot, null, httpClient, lbSolrClient, null, updatesToLeaders, false, null);
+424a425,429
+> 
+> 
+> 
+> 
+> 
+426a432
+>                           List<String> solrUrls,
+436c442,456
+<       this.stateProvider = new ZkClientClusterStateProvider(zkHosts, chroot);
+---
+>       if (zkHosts != null && solrUrls != null) {
+>         throw new IllegalArgumentException("Both zkHost(s) & solrUrl(s) have been specified. Only specify one.");
+>       }
+>       if (zkHosts != null) {
+>         this.stateProvider = new ZkClientClusterStateProvider(zkHosts, chroot);
+>       } else if (solrUrls != null && !solrUrls.isEmpty()) {
+>         try {
+>           this.stateProvider = new HttpClusterStateProvider(solrUrls, httpClient);
+>         } catch (Exception e) {
+>           throw new RuntimeException("Couldn't initialize a HttpClusterStateProvider (is/are the "
+>               + "Solr server(s), "  + solrUrls + ", down?)", e);
+>         }
+>       } else {
+>         throw new IllegalArgumentException("Both zkHosts and solrUrl cannot be null.");
+>       }
+1262c1282
+<             (String) stateProvider.getClusterProperties().getOrDefault(ZkStateReader.URL_SCHEME,"http")));
+---
+>             (String) stateProvider.getClusterProperty(ZkStateReader.URL_SCHEME,"http")));
+1368c1388
+<   Set<String> getCollectionNames(String collection) {
+---
+>   private Set<String> getCollectionNames(String collection) {
+1604a1625
+>     private List<String> solrUrls;
+1615a1637
+>       this.solrUrls = new ArrayList();
+1631a1654
+> 
+1632a1656,1675
+> 
+> 
+> 
+> 
+> 
+>     public Builder withSolrUrl(String solrUrl) {
+>       this.solrUrls.add(solrUrl);
+>       return this;
+>     }
+>     
+>     
+> 
+> 
+> 
+> 
+>     public Builder withSolrUrl(Collection<String> solrUrls) {
+>       this.solrUrls.addAll(solrUrls);
+>       return this;
+>     }
+> 
+1725c1768,1780
+<         stateProvider = new ZkClientClusterStateProvider(zkHosts, zkChroot);
+---
+>         if (!zkHosts.isEmpty()) {
+>           stateProvider = new ZkClientClusterStateProvider(zkHosts, zkChroot);
+>         }
+>         else if (!this.solrUrls.isEmpty()) {
+>           try {
+>             stateProvider = new HttpClusterStateProvider(solrUrls, httpClient);
+>           } catch (Exception e) {
+>             throw new RuntimeException("Couldn't initialize a HttpClusterStateProvider (is/are the "
+>                 + "Solr server(s), "  + solrUrls + ", down?)", e);
+>           }
+>         } else {
+>           throw new IllegalArgumentException("Both zkHosts and solrUrl cannot be null.");
+>         }
+1727c1782
+<       return new CloudSolrClient(zkHosts, zkChroot, httpClient, loadBalancedSolrClient, lbClientBuilder,
+---
+>       return new CloudSolrClient(zkHosts, zkChroot, solrUrls, httpClient, loadBalancedSolrClient, lbClientBuilder,
+1733a1789,1792
+>     
+> 
+> 
+> 
+1735a1795,1797
+>     
+> 
+> 
+1742c1804,1812
+<     Map<String, Object> getClusterProperties();
+---
+>     
+> 
+> 
+>     Object getClusterProperty(String propertyName);
+> 
+>     
+> 
+> 
+>     Object getClusterProperty(String propertyName, String def);

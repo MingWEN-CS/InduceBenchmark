@@ -1,0 +1,31 @@
+110,116d109
+<       
+<       
+<       CompressionCodecFactory cf = new CompressionCodecFactory(getConf());
+<       CompressionCodec codec = cf.getCodec(item.path);
+<       if (codec != null) {
+<         return codec.createInputStream(i);
+<       }
+117a111
+>       
+119a114
+>           
+123a119
+>           
+127a124,132
+>         }
+>         default: {
+>           
+>           
+>           CompressionCodecFactory cf = new CompressionCodecFactory(getConf());
+>           CompressionCodec codec = cf.getCodec(item.path);
+>           if (codec != null) {
+>             return codec.createInputStream(i);
+>           }
+130a136,137
+> 
+>       
+133c140
+<     }    
+---
+>     }

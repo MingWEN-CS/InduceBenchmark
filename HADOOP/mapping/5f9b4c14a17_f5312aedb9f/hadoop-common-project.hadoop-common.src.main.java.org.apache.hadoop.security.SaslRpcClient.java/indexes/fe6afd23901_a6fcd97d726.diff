@@ -1,0 +1,9 @@
+69a70
+> import com.google.common.annotations.VisibleForTesting;
+108a110,115
+>   @VisibleForTesting
+>   @InterfaceAudience.Private
+>   public Object getNegotiatedProperty(String key) {
+>     return (saslClient != null) ? saslClient.getNegotiatedProperty(key) : null;
+>   }
+>   

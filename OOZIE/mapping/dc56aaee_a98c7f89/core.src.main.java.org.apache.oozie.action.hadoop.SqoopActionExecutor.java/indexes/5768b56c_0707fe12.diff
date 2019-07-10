@@ -1,0 +1,19 @@
+48a49,50
+>   private static final String SQOOP_MAIN_CLASS_NAME = "org.apache.oozie.action.hadoop.SqoopMain";
+>   static final String SQOOP_ARGS = "oozie.sqoop.args";
+59,60d60
+<         classes.add(HiveMain.class);
+<         classes.add(SqoopMain.class);
+66c66
+<         return launcherConf.get(LauncherMapper.CONF_OOZIE_ACTION_MAIN_CLASS, SqoopMain.class.getName());
+---
+>         return launcherConf.get(LauncherMapper.CONF_OOZIE_ACTION_MAIN_CLASS, SQOOP_MAIN_CLASS_NAME);
+106c106
+<         SqoopMain.setSqoopCommand(actionConf, args);
+---
+>         setSqoopCommand(actionConf, args);
+109a110,113
+>     private void setSqoopCommand(Configuration conf, String[] args) {
+>         MapReduceMain.setStrings(conf, SQOOP_ARGS, args);
+>     }
+> 

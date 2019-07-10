@@ -1,0 +1,14 @@
+505c505
+<                 ".*appcache/application_" + jobID.replaceFirst("job_", "") + "/filecache/.*/uber.jar/lib/lib1.jar");
+---
+>                 ".*appcache/application_" + jobID.replaceFirst("job_", "") + "/filecache/.*/uber.jar/lib/lib1.jar.*");
+509c509
+<                 ".*appcache/application_" + jobID.replaceFirst("job_", "") + "/filecache/.*/uber.jar/lib/lib2.jar");
+---
+>                 ".*appcache/application_" + jobID.replaceFirst("job_", "") + "/filecache/.*/uber.jar/lib/lib2.jar.*");
+519,520c519,520
+<                     containsLib1Jar = (containsLib1Jar || line.endsWith(lib1JarStr) || lib1JarPatYarn.matcher(line).matches());
+<                     containsLib2Jar = (containsLib2Jar || line.endsWith(lib2JarStr) || lib2JarPatYarn.matcher(line).matches());
+---
+>                     containsLib1Jar = (containsLib1Jar || line.contains(lib1JarStr) || lib1JarPatYarn.matcher(line).matches());
+>                     containsLib2Jar = (containsLib2Jar || line.contains(lib2JarStr) || lib2JarPatYarn.matcher(line).matches());

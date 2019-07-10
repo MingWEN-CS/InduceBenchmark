@@ -1,0 +1,45 @@
+33,34c33
+< 
+< import junit.framework.TestCase;
+---
+> import javax.jcr.nodetype.ConstraintViolationException;
+40a40,41
+> import junit.framework.TestCase;
+> 
+126d126
+< 
+268d267
+< 
+270a270,272
+>             s.getWorkspace().getVersionManager().checkout(test.getPath());
+>             s.getWorkspace().getVersionManager().checkin(test.getPath());
+>             
+356a359
+>             validateDisconnectedVHR(oldVHR);            
+437a441,442
+> 
+>             validateDisconnectedVHR(oldVHR);            
+577a583,605
+>     
+>     
+>     private void validateDisconnectedVHR(Node oldVHR) throws RepositoryException {
+>         Session s = oldVHR.getSession();
+>         Node old = s.getNode(oldVHR.getPath());
+>         assertNotNull("disconnected VHR should be accessible", old);
+> 
+>         assertEquals("nt:versionHistory", old.getPrimaryNodeType().getName());
+>         NodeIterator ni = old.getNodes();
+>         while (ni.hasNext()) {
+>             Node n = ni.nextNode();
+>             String type = n.getPrimaryNodeType().getName();
+>             assertTrue("node type of VHR child nodes should be nt:version or nt:versionLabels",
+>                     "nt:version".equals(type) || "nt:versionLabels".equals(type));
+>         }
+> 
+>         try {
+>             old.remove();
+>             s.save();
+>             fail("removal of node using remove() should throw because it's in the versioning workspace");
+>         } catch (ConstraintViolationException expected) {
+>         }
+>     }

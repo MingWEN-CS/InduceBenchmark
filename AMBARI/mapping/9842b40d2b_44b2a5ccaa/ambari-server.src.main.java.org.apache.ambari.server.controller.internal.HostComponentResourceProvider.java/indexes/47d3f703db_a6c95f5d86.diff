@@ -1,0 +1,28 @@
+194a195,196
+>     
+>     requestedIds.add(HOST_COMPONENT_HOST_NAME_PROPERTY_ID);
+601,602c603
+<       if (predicate.evaluate(queryResource)) {
+<         Map<String, Object> updateRequestProperties = new HashMap<String, Object>();
+---
+>       Map<String, Object> updateRequestProperties = new HashMap<String, Object>();
+604,605c605,606
+<         
+<         updateRequestProperties.putAll(PropertyHelper.getProperties(queryResource));
+---
+>       
+>       updateRequestProperties.putAll(PropertyHelper.getProperties(queryResource));
+607,612c608,611
+<         
+<         
+<         if (request.getProperties() != null && request.getProperties().size() != 0) {
+<           updateRequestProperties.putAll(request.getProperties().iterator().next());
+<         }
+<         requests.add(getRequest(updateRequestProperties));
+---
+>       
+>       
+>       if (request.getProperties() != null && request.getProperties().size() != 0) {
+>         updateRequestProperties.putAll(request.getProperties().iterator().next());
+613a613
+>       requests.add(getRequest(updateRequestProperties));

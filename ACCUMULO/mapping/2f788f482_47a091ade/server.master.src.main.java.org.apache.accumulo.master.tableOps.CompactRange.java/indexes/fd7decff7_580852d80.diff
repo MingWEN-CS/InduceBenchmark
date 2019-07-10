@@ -1,0 +1,19 @@
+33a34
+> import org.apache.accumulo.core.client.impl.CompactionStrategyConfigUtil;
+63a65,66
+> import com.google.common.base.Preconditions;
+> 
+209a213,217
+> 
+>     Preconditions.checkNotNull(tableId, "Invalid argument: null tableId");
+>     Preconditions.checkNotNull(iterators, "Invalid argument: null iterator list");
+>     Preconditions.checkNotNull(compactionStrategy, "Invalid argument: null compactionStrategy");
+> 
+214c222
+<     if (iterators.size() > 0 || compactionStrategy != null) {
+---
+>     if (iterators.size() > 0 || !compactionStrategy.equals(CompactionStrategyConfigUtil.DEFAULT_STRATEGY)) {
+252c260
+<                 "Another compaction with iterators is running");
+---
+>                 "Another compaction with iterators and/or a compaction strategy is running");

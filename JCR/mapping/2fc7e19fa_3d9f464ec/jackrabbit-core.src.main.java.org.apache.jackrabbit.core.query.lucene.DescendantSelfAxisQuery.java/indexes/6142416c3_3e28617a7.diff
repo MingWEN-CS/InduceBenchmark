@@ -1,0 +1,4 @@
+220c220
+<             QueryHits result = searcher.execute(getContextQuery(), sort);
+---
+>             QueryHits result = searcher.evaluate(getContextQuery(), sort);

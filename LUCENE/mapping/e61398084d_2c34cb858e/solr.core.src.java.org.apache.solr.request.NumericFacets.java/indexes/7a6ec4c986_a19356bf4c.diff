@@ -1,0 +1,65 @@
+42a43
+> import org.apache.lucene.util.StringHelper;
+46a48
+> import org.apache.solr.schema.TrieField;
+268a271,277
+>           final String prefixStr = TrieField.getMainValuePrefix(ft);
+>           final BytesRef prefix;
+>           if (prefixStr != null) {
+>             prefix = new BytesRef(prefixStr);
+>           } else {
+>             prefix = new BytesRef();
+>           }
+270c279,290
+<           BytesRef term = termsEnum.next();
+---
+>           BytesRef term;
+>           switch (termsEnum.seekCeil(prefix)) {
+>             case FOUND:
+>             case NOT_FOUND:
+>               term = termsEnum.term();
+>               break;
+>             case END:
+>               term = null;
+>               break;
+>             default:
+>               throw new AssertionError();
+>           }
+272c292
+<           for (int skipped = hashTable.size; skipped < offset && term != null; ) {
+---
+>           for (int skipped = hashTable.size; skipped < offset && term != null && StringHelper.startsWith(term, prefix); ) {
+280c300
+<           for ( ; term != null && (limit < 0 || result.size() < limit); term = termsEnum.next()) {
+---
+>           for ( ; term != null && StringHelper.startsWith(term, prefix) && (limit < 0 || result.size() < limit); term = termsEnum.next()) {
+303a324,330
+>         final String prefixStr = TrieField.getMainValuePrefix(ft);
+>         final BytesRef prefix;
+>         if (prefixStr != null) {
+>           prefix = new BytesRef(prefixStr);
+>         } else {
+>           prefix = new BytesRef();
+>         }
+304a332,343
+>         BytesRef term;
+>         switch (termsEnum.seekCeil(prefix)) {
+>           case FOUND:
+>           case NOT_FOUND:
+>             term = termsEnum.term();
+>             break;
+>           case END:
+>             term = null;
+>             break;
+>           default:
+>             throw new AssertionError();
+>         }
+306,307c345
+<         BytesRef term = termsEnum.next();
+<         for (int i = 0; i < offset && term != null; ++i) {
+---
+>         for (int i = 0; i < offset && term != null && StringHelper.startsWith(term, prefix); ++i) {
+310c348
+<         for ( ; term != null && (limit < 0 || result.size() < limit); term = termsEnum.next()) {
+---
+>         for ( ; term != null && StringHelper.startsWith(term, prefix) && (limit < 0 || result.size() < limit); term = termsEnum.next()) {

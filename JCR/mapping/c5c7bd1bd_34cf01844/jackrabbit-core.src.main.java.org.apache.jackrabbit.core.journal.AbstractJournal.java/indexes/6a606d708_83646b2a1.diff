@@ -1,0 +1,6 @@
+33d32
+< import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
+74c73
+<     private final ReadWriteLock rwLock = new ReentrantWriterPreferenceReadWriteLock();
+---
+>     private final ReadWriteLock rwLock = new JournalLock();

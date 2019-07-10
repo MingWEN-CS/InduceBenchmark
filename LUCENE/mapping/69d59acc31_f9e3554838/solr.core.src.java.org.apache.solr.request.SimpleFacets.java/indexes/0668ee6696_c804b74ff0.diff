@@ -1,0 +1,131 @@
+416c416
+<     FacetMethod method = null;
+---
+>     final FacetMethod requestedMethod;
+418c418
+<       method = FacetMethod.ENUM;
+---
+>       requestedMethod = FacetMethod.ENUM;
+420c420
+<       method = FacetMethod.FCS;
+---
+>       requestedMethod = FacetMethod.FCS;
+422c422
+<       method = FacetMethod.FC;
+---
+>       requestedMethod = FacetMethod.FC;
+424,434c424,426
+<       method = FacetMethod.UIF;
+<     }
+< 
+<     if (method == FacetMethod.ENUM && TrieField.getMainValuePrefix(ft) != null) {
+<       
+<       method = sf.multiValued() ? FacetMethod.FC : FacetMethod.FCS;
+<     }
+< 
+<     if (method == null && ft instanceof BoolField) {
+<       
+<       method = FacetMethod.ENUM;
+---
+>       requestedMethod = FacetMethod.UIF;
+>     }else{
+>       requestedMethod=null;
+438,444d429
+<     
+<     if (ft.getNumericType() != null && !sf.multiValued()) {
+<       
+<       
+<       
+<       method = FacetMethod.FCS;
+<     }
+446,459c431
+<     if (method == null) {
+<       
+<       method = FacetMethod.FC;
+<     }
+< 
+<     if (method == FacetMethod.FCS && multiToken) {
+<       
+<       method = FacetMethod.FC;
+<     }
+<     
+<     if (method == FacetMethod.ENUM && sf.hasDocValues()) {
+<       
+<       method = FacetMethod.FC;
+<     }
+---
+>     FacetMethod appliedFacetMethod = selectFacetMethod(sf, requestedMethod, mincount);
+463c435,436
+<        fdebug.putInfoItem("method", method.name());
+---
+>        fdebug.putInfoItem("requestedMethod", requestedMethod==null?"not specified":requestedMethod.name());
+>        fdebug.putInfoItem("appliedMethod", appliedFacetMethod.name());
+472,473c445,446
+<       assert method != null;
+<       switch (method) {
+---
+>       assert appliedFacetMethod != null;
+>       switch (appliedFacetMethod) {
+497d469
+< 
+568a541,600
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>    static FacetMethod selectFacetMethod(SchemaField field, FacetMethod method, Integer mincount) {
+> 
+>      FieldType type = field.getType();
+> 
+>      
+>      if (method == null) {
+>       
+>        if (type instanceof BoolField) {
+>          method = FacetMethod.ENUM;
+>        } else if (type.getNumericType() != null && !field.multiValued()) {
+>         
+> 
+> 
+>          method = FacetMethod.FCS;
+>        } else {
+>          
+>          method = FacetMethod.FC;
+>        }
+>      }
+> 
+>      
+>      if (method == FacetMethod.FC
+>          && type.getNumericType() != null && !field.multiValued()) {
+>        method = FacetMethod.FCS;
+>      }
+> 
+>      
+> 
+> 
+>      if (method == FacetMethod.UIF
+>          && !field.hasDocValues() && mincount == 0) {
+>        method = field.multiValued() ? FacetMethod.FC : FacetMethod.FCS;
+>      }
+> 
+>      
+>      if (method == FacetMethod.ENUM
+>          && TrieField.getMainValuePrefix(type) != null) {
+>        method = field.multiValued() ? FacetMethod.FC : FacetMethod.FCS;
+>      }
+> 
+>      
+>      final boolean multiToken = field.multiValued() || type.multiValuedFieldCache();
+>      if (method == FacetMethod.FCS
+>          && multiToken) {
+>        method = FacetMethod.FC;
+>      }
+> 
+>      return method;
+>   }
+> 

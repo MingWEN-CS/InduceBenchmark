@@ -1,0 +1,4 @@
+1504c1504
+<         throw new UndeclaredThrowableException(pae,"Unknown exception in doAs");
+---
+>         throw new UndeclaredThrowableException(cause);

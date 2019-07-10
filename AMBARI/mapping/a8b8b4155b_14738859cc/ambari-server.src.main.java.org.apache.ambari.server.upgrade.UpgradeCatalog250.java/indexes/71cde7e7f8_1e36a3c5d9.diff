@@ -1,0 +1,64 @@
+20,33c20,21
+< import java.sql.ResultSet;
+< import java.sql.SQLException;
+< import java.sql.Statement;
+< import java.util.ArrayList;
+< import java.util.Arrays;
+< import java.util.Collection;
+< import java.util.Collections;
+< import java.util.HashMap;
+< import java.util.HashSet;
+< import java.util.List;
+< import java.util.Map;
+< import java.util.Set;
+< import java.util.concurrent.atomic.AtomicLong;
+< 
+---
+> import com.google.inject.Inject;
+> import com.google.inject.Injector;
+49,50c37,49
+< import com.google.inject.Inject;
+< import com.google.inject.Injector;
+---
+> import java.sql.ResultSet;
+> import java.sql.SQLException;
+> import java.sql.Statement;
+> import java.util.ArrayList;
+> import java.util.Arrays;
+> import java.util.Collection;
+> import java.util.Collections;
+> import java.util.HashMap;
+> import java.util.HashSet;
+> import java.util.List;
+> import java.util.Map;
+> import java.util.Set;
+> import java.util.concurrent.atomic.AtomicLong;
+164d162
+<     updateTEZInteractiveConfigs();
+685,710d682
+<   protected void updateTEZInteractiveConfigs() throws AmbariException {
+<     AmbariManagementController ambariManagementController = injector.getInstance(AmbariManagementController.class);
+<     Clusters clusters = ambariManagementController.getClusters();
+<     if (clusters != null) {
+<       Map<String, Cluster> clusterMap = clusters.getClusters();
+< 
+<       if (clusterMap != null && !clusterMap.isEmpty()) {
+<         for (final Cluster cluster : clusterMap.values()) {
+<           Config tezInteractiveSite = cluster.getDesiredConfigByType("tez-interactive-site");
+<           if (tezInteractiveSite != null) {
+< 
+<             updateConfigurationProperties("tez-interactive-site", Collections.singletonMap("tez.runtime.io.sort.mb", "512"), true, true);
+< 
+<             updateConfigurationProperties("tez-interactive-site", Collections.singletonMap("tez.runtime.unordered.output.buffer.size-mb",
+<                 "100"), true, true);
+<           }
+<         }
+<       }
+<     }
+<   }
+< 
+<   
+< 
+< 
+< 
+< 

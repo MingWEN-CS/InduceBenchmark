@@ -1,0 +1,10 @@
+187c187,193
+<     docMap =  (List<Entry<SolrInputDocument,Map<Object,Object>>>) namedList[0].get("docsMap");
+---
+>     Object docsMapObj = namedList[0].get("docsMap");
+> 
+>     if (docsMapObj instanceof Map) {
+>       docMap =  new ArrayList(((Map)docsMapObj).entrySet());
+>     } else {
+>       docMap = (List<Entry<SolrInputDocument, Map<Object, Object>>>) docsMapObj;
+>     }

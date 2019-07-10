@@ -1,0 +1,219 @@
+23a24,25
+> import org.apache.hadoop.filecache.DistributedCache;
+> import org.apache.hadoop.fs.FileSystem;
+30a33,34
+> import java.net.URI;
+> import java.net.URISyntaxException;
+33d36
+< import java.util.HashSet;
+46,47d48
+<     private static final String DIST_FILES = "spark.yarn.dist.files=";
+<     private static final String JARS_OPTION = "--jars";
+50c51
+< 
+---
+>     private static final String PWD = "$PWD" + File.separator + "*";
+54,57d54
+< 
+<     private String sparkJars = null;
+<     private String sparkClasspath = null;
+< 
+68a66
+> 
+77a76,79
+>         
+>         
+>         
+>         
+101,123d102
+< 
+<         
+<         
+<         
+<         
+< 
+<         
+<         
+<         
+<         
+<         
+<         
+<         
+<         
+<         
+<         
+<         
+<         
+<         
+<         
+<         
+<         
+<         determineSparkJarsAndClasspath(actionConf, jarPath);
+126,127d104
+<         boolean addedDistFiles = false;
+<         boolean addedJars = false;
+135,151c112
+<                 if (sparkJars != null) {
+<                     if (opt.equals(JARS_OPTION)) {
+<                         sparkArgs.add(opt);
+<                         i++;
+<                         if(i < sparkOptions.size()) {
+<                             opt = sparkOptions.get(i);
+<                             opt = opt + "," + sparkJars;
+<                             addedJars = true;
+<                         } else {
+<                             throw new OozieActionConfiguratorException(JARS_OPTION + " missing a parameter.");
+<                         }
+<                     } else if (yarnClientMode && opt.startsWith(DIST_FILES)) {
+<                         opt = opt + "," + sparkJars;
+<                         addedDistFiles = true;
+<                     }
+<                 }
+<                 if ((yarnClusterMode || yarnClientMode) && sparkClasspath != null) {
+---
+>                 if (yarnClusterMode || yarnClientMode) {
+153c114,117
+<                         opt = opt + File.pathSeparator + sparkClasspath;
+---
+>                         
+>                         
+>                         
+>                         opt = opt + File.pathSeparator + PWD;
+157c121,124
+<                         opt = opt + File.pathSeparator + sparkClasspath;
+---
+>                         
+>                         
+>                         
+>                         opt = opt + File.pathSeparator + PWD;
+170,174c137,138
+<         if (!addedJars && sparkJars != null) {
+<             sparkArgs.add("--jars");
+<             sparkArgs.add(sparkJars);
+<         }
+<         if ((yarnClusterMode || yarnClientMode) && sparkClasspath != null) {
+---
+> 
+>         if ((yarnClusterMode || yarnClientMode)) {
+175a140,142
+>                 
+>                 
+>                 
+177c144
+<                 sparkArgs.add(EXECUTOR_CLASSPATH + sparkClasspath);
+---
+>                 sparkArgs.add(EXECUTOR_CLASSPATH + PWD);
+179a147,149
+>                 
+>                 
+>                 
+181c151
+<                 sparkArgs.add(DRIVER_CLASSPATH + sparkClasspath);
+---
+>                 sparkArgs.add(DRIVER_CLASSPATH + PWD);
+184,188d153
+<         if (yarnClientMode && !addedDistFiles && sparkJars != null) {
+<             sparkArgs.add("--conf");
+<             sparkArgs.add(DIST_FILES + sparkJars);
+<         }
+< 
+207a173,186
+> 
+>         if ((yarnClusterMode || yarnClientMode)) {
+>             String cachedFiles = fixFsDefaultUris(DistributedCache.getCacheFiles(actionConf), jarPath);
+>             if (cachedFiles != null && !cachedFiles.isEmpty()) {
+>                 sparkArgs.add("--files");
+>                 sparkArgs.add(cachedFiles);
+>             }
+>             String cachedArchives = fixFsDefaultUris(DistributedCache.getCacheArchives(actionConf), jarPath);
+>             if (cachedArchives != null && !cachedArchives.isEmpty()) {
+>                 sparkArgs.add("--archives");
+>                 sparkArgs.add(cachedArchives);
+>             }
+>         }
+> 
+219a199
+> 
+302,344d281
+<     private void determineSparkJarsAndClasspath(Configuration actionConf, String jarPath) {
+<         
+<         
+<         
+<         
+<         
+<         String[] distCache = new String[]{};
+<         String dCache = actionConf.get("mapreduce.job.classpath.files");
+<         if (dCache != null) {
+<             distCache = dCache.split(",");
+<         }
+<         String[] classpath = System.getProperty("java.class.path").split(File.pathSeparator);
+<         StringBuilder cp = new StringBuilder();
+<         StringBuilder jars = new StringBuilder();
+<         HashSet<String> distCacheJars = new HashSet<String>(distCache.length);
+<         for (String path : distCache) {
+<             
+<             if (!path.equals(jarPath)) {
+<                 String name = path.substring(path.lastIndexOf("/") + 1);
+<                 distCacheJars.add(name);
+<                 cp.append(name).append(File.pathSeparator);
+<                 jars.append(path).append(",");
+<             }
+<         }
+<         for (String path : classpath) {
+<             if (!path.startsWith("job.jar") && path.endsWith(".jar")) {
+<                 String name = path.substring(path.lastIndexOf("/") + 1);
+<                 if (!distCacheJars.contains(name)) {
+<                     jars.append(path).append(",");
+<                 }
+<                 cp.append(name).append(File.pathSeparator);
+<             }
+<         }
+<         if (cp.length() > 0) {
+<             cp.setLength(cp.length() - 1);
+<             sparkClasspath = cp.toString();
+<         }
+<         if (jars.length() > 0) {
+<             jars.setLength(jars.length() - 1);
+<             sparkJars = jars.toString();
+<         }
+<     }
+< 
+421a359,396
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     private String fixFsDefaultUris(URI[] files, String jarPath) throws IOException, URISyntaxException {
+>         if (files == null) {
+>             return null;
+>         }
+>         ArrayList<URI> listUris = new ArrayList<URI>();
+>         FileSystem fs = FileSystem.get(new Configuration(true));
+>         for (int i = 0; i < files.length; i++) {
+>             URI fileUri = files[i];
+>             
+>             
+>             
+>             
+>             
+>             if (!fileUri.toString().equals(jarPath) && fs.getUri().getScheme().equals(fileUri.getScheme())
+>                     && (fs.getUri().getHost().equals(fileUri.getHost()) || fileUri.getHost() == null)
+>                     && (fs.getUri().getPort() == -1 || fileUri.getPort() == -1
+>                             || fs.getUri().getPort() == fileUri.getPort())) {
+>                 URI uri = new URI(fs.getUri().getScheme(), fileUri.getUserInfo(), fs.getUri().getHost(),
+>                         fs.getUri().getPort(), fileUri.getPath(), fileUri.getQuery(), fileUri.getFragment());
+>                 
+>                 
+>                 
+>                 if (!uri.toString().equals(jarPath)) {
+>                     listUris.add(uri);
+>                 }
+>             }
+>         }
+>         return StringUtils.join(listUris, ",");
+>     }

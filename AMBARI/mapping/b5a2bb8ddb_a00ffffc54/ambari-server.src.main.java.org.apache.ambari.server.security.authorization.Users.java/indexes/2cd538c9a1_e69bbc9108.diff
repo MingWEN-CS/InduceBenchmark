@@ -1,0 +1,20 @@
+52d51
+< import org.apache.ambari.server.orm.entities.ResourceEntity;
+55d53
+< import org.apache.ambari.server.security.ClientSecurityType;
+280c278
+<       groupEntity.setLdapGroup(true);
+---
+>       groupEntity.setGroupType(GroupType.LDAP);
+438c436
+<     groupEntity.setgroupType(groupType);
+---
+>     groupEntity.setGroupType(groupType);
+704c702
+<       groupEntity.setLdapGroup(true);
+---
+>       groupEntity.setGroupType(GroupType.LDAP);
+740c738
+<       groupEntity.setLdapGroup(true);
+---
+>       groupEntity.setGroupType(GroupType.LDAP);

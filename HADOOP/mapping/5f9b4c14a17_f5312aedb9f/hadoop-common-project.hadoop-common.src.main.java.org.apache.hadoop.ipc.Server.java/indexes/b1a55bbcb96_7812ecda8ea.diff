@@ -1,0 +1,76 @@
+284a285,293
+>   
+>   
+> 
+> 
+> 
+>   public static int getCallRetryCount() {
+>     Call call = CurCall.get();
+>     return call != null ? call.retryCount : RpcConstants.INVALID_RETRY_COUNT;
+>   }
+458a468
+>     private final int retryCount;        
+467,468c477,479
+<     private Call(int id, Writable param, Connection connection) {
+<       this(id, param, connection, RPC.RpcKind.RPC_BUILTIN,
+---
+>     private Call(int id, int retryCount, Writable param, 
+>         Connection connection) {
+>       this(id, retryCount, param, connection, RPC.RpcKind.RPC_BUILTIN,
+472c483
+<     private Call(int id, Writable param, Connection connection,
+---
+>     private Call(int id, int retryCount, Writable param, Connection connection,
+474a486
+>       this.retryCount = retryCount;
+485c497,498
+<       return rpcRequest + " from " + connection + " Call#" + callId;
+---
+>       return rpcRequest + " from " + connection + " Call#" + callId + " Retry#"
+>           + retryCount;
+1165,1166c1178,1179
+<     private final Call authFailedCall = 
+<       new Call(AUTHORIZATION_FAILED_CALLID, null, this);
+---
+>     private final Call authFailedCall = new Call(AUTHORIZATION_FAILED_CALLID,
+>         RpcConstants.INVALID_RETRY_COUNT, null, this);
+1169c1182,1183
+<     private final Call saslCall = new Call(AuthProtocol.SASL.callId, null, this);
+---
+>     private final Call saslCall = new Call(AuthProtocol.SASL.callId,
+>         RpcConstants.INVALID_RETRY_COUNT, null, this);
+1597c1611,1612
+<         Call fakeCall =  new Call(-1, null, this);
+---
+>         Call fakeCall = new Call(-1, RpcConstants.INVALID_RETRY_COUNT, null,
+>             this);
+1603c1618,1619
+<         Call fakeCall =  new Call(-1, null, this);
+---
+>         Call fakeCall = new Call(-1, RpcConstants.INVALID_RETRY_COUNT, null,
+>             this);
+1610c1626,1627
+<         Call fakeCall =  new Call(0, null, this);
+---
+>         Call fakeCall = new Call(0, RpcConstants.INVALID_RETRY_COUNT, null,
+>             this);
+1623c1640
+<       Call fakeCall =  new Call(0, null, this);
+---
+>       Call fakeCall = new Call(0, RpcConstants.INVALID_RETRY_COUNT, null, this);
+1754a1772
+>       int retry = RpcConstants.INVALID_RETRY_COUNT;
+1760a1779
+>         retry = header.getRetryCount();
+1777c1796
+<         final Call call = new Call(callId, null, this);
+---
+>         final Call call = new Call(callId, retry, null, this);
+1851,1853c1870,1872
+<       Call call = new Call(header.getCallId(), rpcRequest, this,
+<           ProtoUtil.convert(header.getRpcKind()), header.getClientId()
+<               .toByteArray());
+---
+>       Call call = new Call(header.getCallId(), header.getRetryCount(),
+>           rpcRequest, this, ProtoUtil.convert(header.getRpcKind()), header
+>               .getClientId().toByteArray());

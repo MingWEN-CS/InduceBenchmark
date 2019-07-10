@@ -1,0 +1,16 @@
+105c105
+<                 allowedReferrerHosts = new HashSet<String>(allowed.length);                
+---
+>                 allowedReferrerHosts = new HashSet<String>(allowed.length);
+147c147
+<                 log.debug("POST with content type" + ct + " blocked due to missing referer header field");
+---
+>                 log.debug("POST with content type " + ct + " blocked due to missing referer header field");
+158c158
+<                     log.debug("POST with content type" + ct + " blocked due to referer header field being: " + refHeader);
+---
+>                     log.debug("POST with content type " + ct + " blocked due to referer header field being: " + refHeader);
+163c163
+<                 log.debug("POST with content type" + ct + " blocked due to malformed referer header field: " + refHeader);
+---
+>                 log.debug("POST with content type " + ct + " blocked due to malformed referer header field: " + refHeader);

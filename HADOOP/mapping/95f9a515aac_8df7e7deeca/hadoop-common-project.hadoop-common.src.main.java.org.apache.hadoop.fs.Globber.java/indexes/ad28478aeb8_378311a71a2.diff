@@ -1,0 +1,16 @@
+102c102
+<     String scheme = pathPattern.toUri().getScheme();
+---
+>     String scheme = path.toUri().getScheme();
+107c107
+<         scheme = fc.getFSofPath(path).getUri().getScheme();
+---
+>         scheme = fc.getDefaultFileSystem().getUri().getScheme();
+114c114
+<     String authority = pathPattern.toUri().getAuthority();
+---
+>     String authority = path.toUri().getAuthority();
+119c119
+<         authority = fc.getFSofPath(path).getUri().getAuthority();
+---
+>         authority = fc.getDefaultFileSystem().getUri().getAuthority();

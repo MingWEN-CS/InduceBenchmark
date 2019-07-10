@@ -1,0 +1,90 @@
+144c144
+<             bundle.setModCount((short) readInt());
+---
+>             bundle.setModCount((short) readVarInt());
+185c185
+<                     count = readInt() + 0x0f - 1;
+---
+>                     count = readVarInt() + 0x0f - 1;
+191c191
+<             entry.setModCount((short) readInt());
+---
+>             entry.setModCount((short) readVarInt());
+218c218
+<                         val = InternalValue.create(binding.dataStore, in.readUTF());
+---
+>                         val = InternalValue.create(binding.dataStore, readString());
+220c220
+<                         blobIds[i] = in.readUTF();
+---
+>                         blobIds[i] = readString();
+267,269d266
+<                     
+<                     
+<                     int len;
+271c268,269
+<                         len = readInt();
+---
+>                         val = InternalValue.valueOf(
+>                                 readString(), entry.getType());
+273c271,277
+<                         len = in.readInt();
+---
+>                         
+>                         
+>                         int len = in.readInt();
+>                         byte[] bytes = new byte[len];
+>                         in.readFully(bytes);
+>                         val = InternalValue.valueOf(
+>                                 new String(bytes, "UTF-8"), entry.getType());
+275,278d278
+<                     byte[] bytes = new byte[len];
+<                     in.readFully(bytes);
+<                     val = InternalValue.valueOf(
+<                             new String(bytes, "UTF-8"), entry.getType());
+313c313
+<             return new BigDecimal(in.readUTF());
+---
+>             return new BigDecimal(readString());
+372c372
+<                 uri = in.readUTF();
+---
+>                 uri = readString();
+378,386c378
+<             String local;
+<             int len = b & 0x0f;
+<             if (b != 0x0f) {
+<                 byte[] buffer = new byte[len + 1];
+<                 in.readFully(buffer);
+<                 local = new String(buffer, "UTF-8");
+<             } else {
+<                 local = in.readUTF();
+<             }
+---
+>             String local = new String(readBytes((b & 0x0f) + 1, 0x10), "UTF-8");
+399c391
+<     private int readInt() throws IOException {
+---
+>     private int readVarInt() throws IOException {
+404c396
+<             return readInt() << 7 | b & 0x7f;
+---
+>             return readVarInt() << 7 | b & 0x7f;
+407a400,416
+>     private String readString() throws IOException {
+>         if (version >= BundleBinding.VERSION_3) {
+>             return new String(readBytes(0, 0), "UTF-8");
+>         } else {
+>             return in.readUTF();
+>         }
+>     }
+> 
+>     private byte[] readBytes(int len, int base) throws IOException {
+>         if (len == base) {
+>             len += readVarInt();
+>         }
+>         byte[] bytes = new byte[len];
+>         in.readFully(bytes);
+>         return bytes;
+>     }
+> 

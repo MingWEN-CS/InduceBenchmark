@@ -1,0 +1,12 @@
+25c25
+< import org.apache.lucene.store.RAMDirectory;
+---
+> import org.apache.lucene.store.MockRAMDirectory;
+135c135
+<     RAMDirectory directory = new MockRAMDirectory();
+---
+>     MockRAMDirectory directory = new MockRAMDirectory();
+153c153
+<     RAMDirectory target = new MockRAMDirectory();
+---
+>     MockRAMDirectory target = new MockRAMDirectory();

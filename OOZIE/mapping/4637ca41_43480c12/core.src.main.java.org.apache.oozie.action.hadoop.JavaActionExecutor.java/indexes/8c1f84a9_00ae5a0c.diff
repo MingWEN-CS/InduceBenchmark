@@ -1,0 +1,43 @@
+392c392
+<     protected void addShareLib(Configuration conf, String actionShareLibName)
+---
+>     protected void addShareLib(Path appPath, Configuration conf, String actionShareLibName)
+400,401c400,409
+<                     FileSystem fs =
+<                         Services.get().get(HadoopAccessorService.class).createFileSystem(user, actionLibPath.toUri(), conf);
+---
+>                     FileSystem fs;
+>                     
+>                     
+>                     
+>                     if (actionLibPath.toUri().getScheme() != null && actionLibPath.toUri().getAuthority() != null) {
+>                         fs = Services.get().get(HadoopAccessorService.class).createFileSystem(user, actionLibPath.toUri(), conf);
+>                     }
+>                     else {
+>                         fs = Services.get().get(HadoopAccessorService.class).createFileSystem(user, appPath.toUri(), conf);
+>                     }
+485c493
+<         addAllShareLibs(conf, context, actionXml);
+---
+>         addAllShareLibs(appPath, conf, context, actionXml);
+489c497
+<     private void addAllShareLibs(Configuration conf, Context context, Element actionXml)
+---
+>     private void addAllShareLibs(Path appPath, Configuration conf, Context context, Element actionXml)
+492c500
+<         addActionShareLib(conf, context, actionXml);
+---
+>         addActionShareLib(appPath, conf, context, actionXml);
+494c502
+<         addShareLib(conf, JavaActionExecutor.OOZIE_COMMON_LIBDIR);
+---
+>         addShareLib(appPath, conf, JavaActionExecutor.OOZIE_COMMON_LIBDIR);
+497c505,506
+<     private void addActionShareLib(Configuration conf, Context context, Element actionXml) throws ActionExecutorException {
+---
+>     private void addActionShareLib(Path appPath, Configuration conf, Context context, Element actionXml)
+>             throws ActionExecutorException {
+509c518
+<             addShareLib(conf, getShareLibName(context, actionXml, conf));
+---
+>             addShareLib(appPath, conf, getShareLibName(context, actionXml, conf));

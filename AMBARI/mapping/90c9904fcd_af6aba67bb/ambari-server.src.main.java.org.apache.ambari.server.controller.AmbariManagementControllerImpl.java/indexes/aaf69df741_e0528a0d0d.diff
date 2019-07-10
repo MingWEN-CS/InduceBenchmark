@@ -1,0 +1,33 @@
+187a188
+> import org.apache.ambari.server.topology.Setting;
+2086c2087,2088
+<                                 ServiceComponentHostEvent event
+---
+>                                 ServiceComponentHostEvent event,
+>                                 boolean skipFailure
+2093,2094c2095
+<         Role.valueOf(scHost.getServiceComponentName()), roleCommand, event, cluster, serviceName,
+<         false, false);
+---
+>         Role.valueOf(scHost.getServiceComponentName()), roleCommand, event, cluster, serviceName, false, skipFailure);
+2461a2463,2468
+>       boolean skipFailure = false;
+>       if (requestProperties.containsKey(Setting.SETTING_NAME_SKIP_FAILURE) && requestProperties.get(Setting.SETTING_NAME_SKIP_FAILURE).equalsIgnoreCase("true")) {
+>         skipFailure = true;
+>       }
+>       stage.setAutoSkipFailureSupported(skipFailure);
+>       stage.setSkippable(skipFailure);
+2463,2464c2470,2471
+<       Collection<ServiceComponentHost> componentsToEnableKerberos = new ArrayList<ServiceComponentHost>();
+<       Set<String> hostsToForceKerberosOperations = new HashSet<String>();
+---
+>       Collection<ServiceComponentHost> componentsToEnableKerberos = new ArrayList<>();
+>       Set<String> hostsToForceKerberosOperations = new HashSet<>();
+2705c2712
+<                 roleCommand, requestParameters, event);
+---
+>                 roleCommand, requestParameters, event, skipFailure);
+2823c2830
+<                      roleCommand, null, null);
+---
+>                      roleCommand, null, null, false);

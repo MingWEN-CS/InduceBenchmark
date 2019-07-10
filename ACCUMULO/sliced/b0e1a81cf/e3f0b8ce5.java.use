@@ -1,0 +1,60 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+49	tid	long	param	56	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+45	master	Master	param	56	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+36	ex	TTransportException	param	81	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+38	ex	Exception	param	83	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+45	master	Master	param	59	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+45	master	Master	param	61	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+45	master	Master	param	68	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+45	master	Master	param	69	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+45	master	Master	param	70	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+45	master	Master	param	71	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+45	master	Master	param	77	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+38	ex	Exception	param	84	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+46	path	String	variable	59	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+50	zoo	IZooReaderWriter	variable	62	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+44	listener	Listener	variable	68	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+43	connection	TServerConnection	variable	71	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+47	status	TabletServerStatus	variable	74	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+46	path	String	variable	59	set	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+46	path	String	variable	61	set	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+50	zoo	IZooReaderWriter	variable	62	set	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+44	listener	Listener	variable	68	set	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+43	connection	TServerConnection	variable	71	set	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+47	status	TabletServerStatus	variable	74	set	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+59	ShutdownTServer.force	boolean	variable	58	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+42	ZTSERVERS		variable	59	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+62	ShutdownTServer.server	TServerInstance	variable	59	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+46	path	String	variable	60	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+41	ZDEADTSERVERS		variable	61	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+62	ShutdownTServer.server	TServerInstance	variable	61	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+50	zoo	IZooReaderWriter	variable	63	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+46	path	String	variable	63	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+40	UTF_8		variable	63	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+39	OVERWRITE		variable	63	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+62	ShutdownTServer.server	TServerInstance	variable	69	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+62	ShutdownTServer.server	TServerInstance	variable	70	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+62	ShutdownTServer.server	TServerInstance	variable	71	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+43	connection	TServerConnection	variable	72	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+43	connection	TServerConnection	variable	74	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+47	status	TabletServerStatus	variable	75	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+48	tableMap		variable	75	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+47	status	TabletServerStatus	variable	75	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+60	ShutdownTServer.log	Logger	variable	76	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+62	ShutdownTServer.server	TServerInstance	variable	76	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+43	connection	TServerConnection	variable	77	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+60	ShutdownTServer.log	Logger	variable	78	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+62	ShutdownTServer.server	TServerInstance	variable	78	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+60	ShutdownTServer.log	Logger	variable	84	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+62	ShutdownTServer.server	TServerInstance	variable	84	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+44	listener	Listener	variable	87	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.call	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	56	90
+54	tid	long	param	51	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.isReady	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	51	53
+53	environment	Master	param	51	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.isReady	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	51	53
+16	server	TServerInstance	param	45	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.ShutdownTServer	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	45	48
+15	force	boolean	param	45	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.ShutdownTServer	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	45	48
+16	server	TServerInstance	param	46	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.ShutdownTServer	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	45	48
+15	force	boolean	param	47	use	org.apache.accumulo.master.tserverOps.ShutdownTServer.ShutdownTServer	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	45	48
+62	ShutdownTServer.server	TServerInstance	variable	46	set	org.apache.accumulo.master.tserverOps.ShutdownTServer.ShutdownTServer	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	45	48
+59	ShutdownTServer.force	boolean	variable	47	set	org.apache.accumulo.master.tserverOps.ShutdownTServer.ShutdownTServer	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	45	48
+57	tid	long	param	94	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.undo	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	94	94
+56	m	Master	param	94	define	org.apache.accumulo.master.tserverOps.ShutdownTServer.undo	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/b0e1a81cf/e3f0b8ce5.java	94	94

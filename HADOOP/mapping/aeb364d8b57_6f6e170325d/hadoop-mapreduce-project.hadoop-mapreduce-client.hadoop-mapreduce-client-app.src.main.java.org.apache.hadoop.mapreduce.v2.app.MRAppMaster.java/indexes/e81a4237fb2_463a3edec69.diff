@@ -1,0 +1,15 @@
+90,91d89
+< import org.apache.hadoop.security.token.Token;
+< import org.apache.hadoop.security.token.TokenIdentifier;
+492,500c490
+< 
+<         for (Token<? extends TokenIdentifier> tk : fsTokens.getAllTokens()) {
+<           if (LOG.isDebugEnabled()) {
+<             LOG.debug("Token of kind " + tk.getKind()
+<                 + "in current ugi in the AppMaster for service "
+<                 + tk.getService());
+<           }
+<           currentUser.addToken(tk); 
+<         }
+---
+>         fsTokens.addTokensToUGI(currentUser); 

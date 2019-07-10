@@ -1,0 +1,7 @@
+568c568,571
+<       core.getUpdateHandler().getSolrCoreState().setLastReplicateIndexSuccess(successfulInstall);
+---
+>       if (core.getCoreDescriptor().getCoreContainer().isZooKeeperAware()) {
+>         
+>         core.getUpdateHandler().getSolrCoreState().setLastReplicateIndexSuccess(successfulInstall);
+>       }

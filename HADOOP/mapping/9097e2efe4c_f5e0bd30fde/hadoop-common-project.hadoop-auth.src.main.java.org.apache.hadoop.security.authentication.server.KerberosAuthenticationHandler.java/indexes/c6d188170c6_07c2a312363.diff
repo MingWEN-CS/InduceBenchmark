@@ -1,0 +1,10 @@
+346,347d345
+<       final String serverName = InetAddress.getByName(request.getServerName())
+<                                            .getCanonicalHostName();
+357,360c355
+<               gssCreds = gssManager.createCredential(
+<                   gssManager.createName(
+<                       KerberosUtil.getServicePrincipal("HTTP", serverName),
+<                       KerberosUtil.getOidInstance("NT_GSS_KRB5_PRINCIPAL")),
+---
+>               gssCreds = gssManager.createCredential(null,

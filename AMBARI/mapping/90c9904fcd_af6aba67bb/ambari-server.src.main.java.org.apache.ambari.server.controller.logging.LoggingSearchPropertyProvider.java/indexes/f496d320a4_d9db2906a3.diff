@@ -1,0 +1,59 @@
+29a30,33
+> import org.apache.ambari.server.security.authorization.AuthorizationHelper;
+> import org.apache.ambari.server.security.authorization.ResourceType;
+> import org.apache.ambari.server.security.authorization.RoleAuthorization;
+> import org.apache.ambari.server.state.Cluster;
+32a37
+> import org.apache.commons.lang.StringUtils;
+35a41
+> import java.util.EnumSet;
+48a55,59
+>   
+> 
+> 
+>   private static final Set<RoleAuthorization> REQUIRED_AUTHORIZATIONS = EnumSet.of(RoleAuthorization.SERVICE_VIEW_OPERATIONAL_LOGS);
+> 
+71a83,92
+>       
+>       if(!AuthorizationHelper.isAuthorized(ResourceType.CLUSTER, getClusterResourceID(clusterName), REQUIRED_AUTHORIZATIONS)) {
+>         if(LOG.isDebugEnabled()) {
+>           LOG.debug(String.format("The authenticated user (%s) is not authorized to access LogSearch data for the cluster named %s",
+>               AuthorizationHelper.getAuthenticatedName(),
+>               clusterName));
+>         }
+>         continue;
+>       }
+> 
+116a138,169
+>   
+> 
+> 
+> 
+> 
+> 
+>   private Long getClusterResourceID(String clusterName) {
+>     Long clusterResourceId = null;
+> 
+>     if(!StringUtils.isEmpty(clusterName)) {
+>       try {
+>         Cluster cluster = ambariManagementController.getClusters().getCluster(clusterName);
+> 
+>         if(cluster == null) {
+>           LOG.warn(String.format("No cluster found with the name %s, assuming null resource id", clusterName));
+>         }
+>         else {
+>           clusterResourceId = cluster.getResourceId();
+>         }
+> 
+>       } catch (AmbariException e) {
+>         LOG.warn(String.format("An exception occurred looking up the cluster named %s, assuming null resource id: %s",
+>             clusterName, e.getLocalizedMessage()));
+>       }
+>     }
+>     else {
+>       LOG.debug("The cluster name is not set, assuming null resource id");
+>     }
+> 
+>     return clusterResourceId;
+>   }
+> 

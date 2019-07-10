@@ -1,0 +1,15 @@
+21,22c21
+< import org.apache.jackrabbit.core.NodeId;
+< import org.apache.jackrabbit.core.NodeIdIterator;
+---
+> import org.apache.jackrabbit.core.id.NodeId;
+79a79
+> import java.util.Iterator;
+595c595
+<     public void updateNodes(NodeIdIterator remove, NodeStateIterator add)
+---
+>     public void updateNodes(Iterator<NodeId> remove, NodeStateIterator add)
+605c605
+<             UUID uuid = remove.nextNodeId().getUUID();
+---
+>             UUID uuid = remove.next().getUUID();

@@ -1,0 +1,179 @@
+20a21,23
+> import static org.apache.ambari.server.orm.DBAccessor.DbType.ORACLE;
+> import static org.apache.ambari.server.orm.dao.DaoUtils.ORACLE_LIST_LIMIT;
+> 
+28a32
+> import java.util.concurrent.locks.ReadWriteLock;
+35a40,42
+> import org.apache.ambari.annotations.TransactionalLock;
+> import org.apache.ambari.annotations.TransactionalLock.LockArea;
+> import org.apache.ambari.annotations.TransactionalLock.LockType;
+45a53
+> import org.apache.ambari.server.orm.TransactionalLocks;
+63,65d70
+< import static org.apache.ambari.server.orm.DBAccessor.DbType.ORACLE;
+< import static org.apache.ambari.server.orm.dao.DaoUtils.ORACLE_LIST_LIMIT;
+< 
+108a114,121
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+123a137,145
+>   
+> 
+> 
+> 
+> 
+> 
+>   @Inject
+>   private final TransactionalLocks transactionLocks = null;
+> 
+133c155
+<     if (!hostRoleCommandStatusSummaryCacheEnabled )
+---
+>     if (!hostRoleCommandStatusSummaryCacheEnabled ) {
+134a157
+>     }
+138d160
+< 
+147c169
+<     if ( !hostRoleCommandStatusSummaryCacheEnabled )
+---
+>     if ( !hostRoleCommandStatusSummaryCacheEnabled ) {
+148a171
+>     }
+154c177
+<         if (stageEntity != null)
+---
+>         if (stageEntity != null) {
+155a179
+>         }
+158c182
+<       if (requestId != null)
+---
+>       if (requestId != null) {
+159a184
+>       }
+161d185
+< 
+172a197
+>     Map<Long, HostRoleCommandStatusSummaryDTO> map = new HashMap<Long, HostRoleCommandStatusSummaryDTO>();
+174,188c199,202
+<     TypedQuery<HostRoleCommandStatusSummaryDTO> query = entityManagerProvider.get().createQuery(
+<       SUMMARY_DTO, HostRoleCommandStatusSummaryDTO.class);
+< 
+<     query.setParameter("requestId", requestId);
+<     query.setParameter("aborted", HostRoleStatus.ABORTED);
+<     query.setParameter("completed", HostRoleStatus.COMPLETED);
+<     query.setParameter("failed", HostRoleStatus.FAILED);
+<     query.setParameter("holding", HostRoleStatus.HOLDING);
+<     query.setParameter("holding_failed", HostRoleStatus.HOLDING_FAILED);
+<     query.setParameter("holding_timedout", HostRoleStatus.HOLDING_TIMEDOUT);
+<     query.setParameter("in_progress", HostRoleStatus.IN_PROGRESS);
+<     query.setParameter("pending", HostRoleStatus.PENDING);
+<     query.setParameter("queued", HostRoleStatus.QUEUED);
+<     query.setParameter("timedout", HostRoleStatus.TIMEDOUT);
+<     query.setParameter("skipped_failed", HostRoleStatus.SKIPPED_FAILED);
+---
+>     
+>     
+>     ReadWriteLock lock = transactionLocks.getLock(LockArea.HRC_STATUS_CACHE);
+>     lock.readLock().lock();
+190c204,219
+<     Map<Long, HostRoleCommandStatusSummaryDTO> map = new HashMap<Long, HostRoleCommandStatusSummaryDTO>();
+---
+>     try {
+>       TypedQuery<HostRoleCommandStatusSummaryDTO> query = entityManagerProvider.get().createQuery(
+>           SUMMARY_DTO, HostRoleCommandStatusSummaryDTO.class);
+> 
+>       query.setParameter("requestId", requestId);
+>       query.setParameter("aborted", HostRoleStatus.ABORTED);
+>       query.setParameter("completed", HostRoleStatus.COMPLETED);
+>       query.setParameter("failed", HostRoleStatus.FAILED);
+>       query.setParameter("holding", HostRoleStatus.HOLDING);
+>       query.setParameter("holding_failed", HostRoleStatus.HOLDING_FAILED);
+>       query.setParameter("holding_timedout", HostRoleStatus.HOLDING_TIMEDOUT);
+>       query.setParameter("in_progress", HostRoleStatus.IN_PROGRESS);
+>       query.setParameter("pending", HostRoleStatus.PENDING);
+>       query.setParameter("queued", HostRoleStatus.QUEUED);
+>       query.setParameter("timedout", HostRoleStatus.TIMEDOUT);
+>       query.setParameter("skipped_failed", HostRoleStatus.SKIPPED_FAILED);
+192,193c221,225
+<     for (HostRoleCommandStatusSummaryDTO dto : daoUtils.selectList(query)) {
+<       map.put(dto.getStageId(), dto);
+---
+>       for (HostRoleCommandStatusSummaryDTO dto : daoUtils.selectList(query)) {
+>         map.put(dto.getStageId(), dto);
+>       }
+>     } finally {
+>       lock.readLock().unlock();
+200c232,235
+<   public HostRoleCommandDAO(@Named(HRC_STATUS_SUMMARY_CACHE_ENABLED) boolean hostRoleCommandStatusSummaryCacheEnabled, @Named(HRC_STATUS_SUMMARY_CACHE_SIZE) long hostRoleCommandStatusSummaryCacheLimit, @Named(HRC_STATUS_SUMMARY_CACHE_EXPIRY_DURATION_MINUTES) long hostRoleCommandStatusSummaryCacheExpiryDurationMins) {
+---
+>   public HostRoleCommandDAO(
+>       @Named(HRC_STATUS_SUMMARY_CACHE_ENABLED) boolean hostRoleCommandStatusSummaryCacheEnabled,
+>       @Named(HRC_STATUS_SUMMARY_CACHE_SIZE) long hostRoleCommandStatusSummaryCacheLimit,
+>       @Named(HRC_STATUS_SUMMARY_CACHE_EXPIRY_DURATION_MINUTES) long hostRoleCommandStatusSummaryCacheExpiryDurationMins) {
+205d239
+< 
+208c242
+<       .expireAfterAccess(hostRoleCommandStatusSummaryCacheExpiryDurationMins, TimeUnit.MINUTES)
+---
+>       .expireAfterWrite(hostRoleCommandStatusSummaryCacheExpiryDurationMins, TimeUnit.MINUTES)
+545,546c579,582
+<   public void create(HostRoleCommandEntity stageEntity) {
+<     entityManagerProvider.get().persist(stageEntity);
+---
+>   @TransactionalLock(lockArea = LockArea.HRC_STATUS_CACHE, lockType = LockType.WRITE)
+>   public void create(HostRoleCommandEntity entity) {
+>     EntityManager entityManager = entityManagerProvider.get();
+>     entityManager.persist(entity);
+548c584
+<     invalidateHostRoleCommandStatusCache(stageEntity);
+---
+>     invalidateHostRoleCommandStatusCache(entity);
+552,553c588,591
+<   public HostRoleCommandEntity merge(HostRoleCommandEntity stageEntity) {
+<     HostRoleCommandEntity entity = entityManagerProvider.get().merge(stageEntity);
+---
+>   @TransactionalLock(lockArea = LockArea.HRC_STATUS_CACHE, lockType = LockType.WRITE)
+>   public HostRoleCommandEntity merge(HostRoleCommandEntity entity) {
+>     EntityManager entityManager = entityManagerProvider.get();
+>     entity = entityManager.merge(entity);
+568a607
+>   @TransactionalLock(lockArea = LockArea.HRC_STATUS_CACHE, lockType = LockType.WRITE)
+572,573c611,612
+<       managedList.add(entityManagerProvider.get().merge(entity));
+< 
+---
+>       EntityManager entityManager = entityManagerProvider.get();
+>       managedList.add(entityManager.merge(entity));
+575a615
+> 
+580,583c620,624
+<   public void remove(HostRoleCommandEntity stageEntity) {
+<     entityManagerProvider.get().remove(merge(stageEntity));
+< 
+<     invalidateHostRoleCommandStatusCache(stageEntity);
+---
+>   @TransactionalLock(lockArea = LockArea.HRC_STATUS_CACHE, lockType = LockType.WRITE)
+>   public void remove(HostRoleCommandEntity entity) {
+>     EntityManager entityManager = entityManagerProvider.get();
+>     entityManager.remove(merge(entity));
+>     invalidateHostRoleCommandStatusCache(entity);
+598c639
+<     if (hostRoleCommandStatusSummaryCacheEnabled)
+---
+>     if (hostRoleCommandStatusSummaryCacheEnabled) {
+600c641,642
+<     else
+---
+>     }
+>     else {
+601a644
+>     }

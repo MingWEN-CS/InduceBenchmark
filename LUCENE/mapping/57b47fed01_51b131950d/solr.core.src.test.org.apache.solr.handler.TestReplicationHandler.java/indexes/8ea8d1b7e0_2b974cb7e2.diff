@@ -1,0 +1,9 @@
+159c159,160
+<       HttpSolrClient client = new HttpSolrClient(buildUrl(port) + "/" + DEFAULT_TEST_CORENAME);
+---
+>       final String baseUrl = buildUrl(port) + "/" + DEFAULT_TEST_CORENAME;
+>       HttpSolrClient client = getHttpSolrClient(baseUrl);
+278c279
+<     return new HttpSolrClient(adminUrl);
+---
+>     return getHttpSolrClient(adminUrl);

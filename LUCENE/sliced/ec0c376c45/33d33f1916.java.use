@@ -1,0 +1,146 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+30	clazz	Class	param	111	define	org.apache.lucene.analysis.TokenStream.MethodSupport.isMethodOverridden	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	111	117
+31	name	String	param	111	define	org.apache.lucene.analysis.TokenStream.MethodSupport.isMethodOverridden	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	111	117
+32	params	Class[]	param	111	define	org.apache.lucene.analysis.TokenStream.MethodSupport.isMethodOverridden	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	111	117
+28	e	NoSuchMethodException	param	114	define	org.apache.lucene.analysis.TokenStream.MethodSupport.isMethodOverridden	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	111	117
+30	clazz	Class	param	113	use	org.apache.lucene.analysis.TokenStream.MethodSupport.isMethodOverridden	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	111	117
+31	name	String	param	113	use	org.apache.lucene.analysis.TokenStream.MethodSupport.isMethodOverridden	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	111	117
+32	params	Class[]	param	113	use	org.apache.lucene.analysis.TokenStream.MethodSupport.isMethodOverridden	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	111	117
+28	e	NoSuchMethodException	param	116	use	org.apache.lucene.analysis.TokenStream.MethodSupport.isMethodOverridden	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	111	117
+29	class		variable	113	use	org.apache.lucene.analysis.TokenStream.MethodSupport.isMethodOverridden	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	111	117
+24	clazz	Class	param	105	define	org.apache.lucene.analysis.TokenStream.MethodSupport.MethodSupport	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	105	109
+24	clazz	Class	param	106	use	org.apache.lucene.analysis.TokenStream.MethodSupport.MethodSupport	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	105	109
+24	clazz	Class	param	107	use	org.apache.lucene.analysis.TokenStream.MethodSupport.MethodSupport	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	105	109
+24	clazz	Class	param	108	use	org.apache.lucene.analysis.TokenStream.MethodSupport.MethodSupport	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	105	109
+35	MethodSupport.hasIncrementToken	boolean	variable	106	set	org.apache.lucene.analysis.TokenStream.MethodSupport.MethodSupport	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	105	109
+37	MethodSupport.hasReusableNext	boolean	variable	107	set	org.apache.lucene.analysis.TokenStream.MethodSupport.MethodSupport	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	105	109
+36	MethodSupport.hasNext	boolean	variable	108	set	org.apache.lucene.analysis.TokenStream.MethodSupport.MethodSupport	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	105	109
+33	MethodSupport.METHOD_NO_PARAMS	Class[]	variable	106	use	org.apache.lucene.analysis.TokenStream.MethodSupport.MethodSupport	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	105	109
+34	MethodSupport.METHOD_TOKEN_PARAM	Class[]	variable	107	use	org.apache.lucene.analysis.TokenStream.MethodSupport.MethodSupport	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	105	109
+33	MethodSupport.METHOD_NO_PARAMS	Class[]	variable	108	use	org.apache.lucene.analysis.TokenStream.MethodSupport.MethodSupport	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	105	109
+87	TokenStream.onlyUseNewAPI	boolean	variable	234	use	org.apache.lucene.analysis.TokenStream.check	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	233	240
+88	TokenStream.supportedMethods	MethodSupport	variable	234	use	org.apache.lucene.analysis.TokenStream.check	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	233	240
+35	MethodSupport.hasIncrementToken	boolean	variable	234	use	org.apache.lucene.analysis.TokenStream.check	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	233	240
+88	TokenStream.supportedMethods	MethodSupport	variable	239	use	org.apache.lucene.analysis.TokenStream.check	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	233	240
+35	MethodSupport.hasIncrementToken	boolean	variable	239	use	org.apache.lucene.analysis.TokenStream.check	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	233	240
+88	TokenStream.supportedMethods	MethodSupport	variable	239	use	org.apache.lucene.analysis.TokenStream.check	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	233	240
+36	MethodSupport.hasNext	boolean	variable	239	use	org.apache.lucene.analysis.TokenStream.check	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	233	240
+88	TokenStream.supportedMethods	MethodSupport	variable	239	use	org.apache.lucene.analysis.TokenStream.check	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	233	240
+37	MethodSupport.hasReusableNext	boolean	variable	239	use	org.apache.lucene.analysis.TokenStream.check	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	233	240
+87	TokenStream.onlyUseNewAPI	boolean	variable	281	use	org.apache.lucene.analysis.TokenStream.getOnlyUseNewAPI	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	280	282
+67	clazz	Class	param	128	define	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+67	clazz	Class	param	131	use	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+67	clazz	Class	param	133	use	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+67	clazz	Class	param	133	use	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+68	supportedMethods	MethodSupport	variable	129	define	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+68	supportedMethods	MethodSupport	variable	131	set	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+68	supportedMethods	MethodSupport	variable	133	set	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+86	TokenStream.knownMethodSupport	IdentityHashMap	variable	130	use	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+86	TokenStream.knownMethodSupport	IdentityHashMap	variable	131	use	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+68	supportedMethods	MethodSupport	variable	132	use	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+86	TokenStream.knownMethodSupport	IdentityHashMap	variable	133	use	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+68	supportedMethods	MethodSupport	variable	136	use	org.apache.lucene.analysis.TokenStream.getSupportedMethods	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	128	137
+71	token	Token	variable	310	define	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+71	token	Token	variable	312	set	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+71	token	Token	variable	315	set	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+89	TokenStream.tokenWrapper	TokenWrapper	variable	318	set	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+89	TokenStream.tokenWrapper	TokenWrapper	variable	308	use	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+88	TokenStream.supportedMethods	MethodSupport	variable	311	use	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+37	MethodSupport.hasReusableNext	boolean	variable	311	use	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+89	TokenStream.tokenWrapper	TokenWrapper	variable	312	use	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+70	delegate		variable	312	use	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+88	TokenStream.supportedMethods	MethodSupport	variable	314	use	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+36	MethodSupport.hasNext	boolean	variable	314	use	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+71	token	Token	variable	317	use	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+70	delegate		variable	318	use	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+71	token	Token	variable	318	use	org.apache.lucene.analysis.TokenStream.incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	307	319
+75	input	AttributeSource	param	203	define	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+75	input	AttributeSource	param	209	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+75	input	AttributeSource	param	209	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+75	input	AttributeSource	param	210	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+74	att	Attribute	variable	213	define	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+74	att	Attribute	variable	213	set	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+87	TokenStream.onlyUseNewAPI	boolean	variable	204	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+89	TokenStream.tokenWrapper	TokenWrapper	variable	209	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+89	TokenStream.tokenWrapper	TokenWrapper	variable	210	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+29	class		variable	213	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+74	att	Attribute	variable	214	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+29	class		variable	215	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+74	att	Attribute	variable	215	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+29	class		variable	216	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+74	att	Attribute	variable	216	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+29	class		variable	217	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+74	att	Attribute	variable	217	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+29	class		variable	218	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+74	att	Attribute	variable	218	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+29	class		variable	219	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+74	att	Attribute	variable	219	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+74	att	Attribute	variable	221	use	org.apache.lucene.analysis.TokenStream.initTokenWrapper	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	203	227
+77	reusableToken	Token	param	369	define	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+77	reusableToken	Token	param	370	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+77	reusableToken	Token	param	376	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+78	token	Token	variable	380	define	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+89	TokenStream.tokenWrapper	TokenWrapper	variable	376	set	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+78	token	Token	variable	380	set	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+89	TokenStream.tokenWrapper	TokenWrapper	variable	382	set	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+89	TokenStream.tokenWrapper	TokenWrapper	variable	372	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+88	TokenStream.supportedMethods	MethodSupport	variable	375	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+35	MethodSupport.hasIncrementToken	boolean	variable	375	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+70	delegate		variable	376	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+89	TokenStream.tokenWrapper	TokenWrapper	variable	377	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+70	delegate		variable	377	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+88	TokenStream.supportedMethods	MethodSupport	variable	379	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+36	MethodSupport.hasNext	boolean	variable	379	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+78	token	Token	variable	381	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+70	delegate		variable	382	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+78	token	Token	variable	382	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+78	token	Token	variable	383	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	369	383
+81	token	Token	variable	403	define	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+81	token	Token	variable	403	set	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+89	TokenStream.tokenWrapper	TokenWrapper	variable	405	set	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+89	TokenStream.tokenWrapper	TokenWrapper	variable	396	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+88	TokenStream.supportedMethods	MethodSupport	variable	399	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+35	MethodSupport.hasIncrementToken	boolean	variable	399	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+89	TokenStream.tokenWrapper	TokenWrapper	variable	400	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+88	TokenStream.supportedMethods	MethodSupport	variable	402	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+37	MethodSupport.hasReusableNext	boolean	variable	402	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+89	TokenStream.tokenWrapper	TokenWrapper	variable	403	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+70	delegate		variable	403	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+81	token	Token	variable	404	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+70	delegate		variable	405	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+81	token	Token	variable	405	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+81	token	Token	variable	406	use	org.apache.lucene.analysis.TokenStream.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	395	407
+84	onlyUseNewAPI	boolean	param	269	define	org.apache.lucene.analysis.TokenStream.setOnlyUseNewAPI	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	269	271
+84	onlyUseNewAPI	boolean	param	270	use	org.apache.lucene.analysis.TokenStream.setOnlyUseNewAPI	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	269	271
+87	TokenStream.onlyUseNewAPI	boolean	variable	270	set	org.apache.lucene.analysis.TokenStream.setOnlyUseNewAPI	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	269	271
+89	TokenStream.tokenWrapper	TokenWrapper	variable	177	set	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	172	179
+87	TokenStream.onlyUseNewAPI	boolean	variable	173	use	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	172	179
+53	DEFAULT_ATTRIBUTE_FACTORY		variable	174	use	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	172	179
+85	TokenStream.DEFAULT_TOKEN_WRAPPER_ATTRIBUTE_FACTORY	AttributeFactory	variable	175	use	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	172	179
+57	factory	AttributeFactory	param	193	define	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	193	200
+57	factory	AttributeFactory	param	195	use	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	193	200
+57	factory	AttributeFactory	param	196	use	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	193	200
+89	TokenStream.tokenWrapper	TokenWrapper	variable	198	set	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	193	200
+87	TokenStream.onlyUseNewAPI	boolean	variable	194	use	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	193	200
+55	input	AttributeSource	param	184	define	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	184	188
+55	input	AttributeSource	param	185	use	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	184	188
+55	input	AttributeSource	param	186	use	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	184	188
+89	TokenStream.tokenWrapper	TokenWrapper	variable	186	set	org.apache.lucene.analysis.TokenStream.TokenStream	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	184	188
+44	attClass	Class	param	147	define	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.createAttributeInstance	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	147	151
+44	attClass	Class	param	148	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.createAttributeInstance	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	147	151
+44	attClass	Class	param	150	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.createAttributeInstance	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	147	151
+29	class		variable	148	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.createAttributeInstance	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	147	151
+51	TokenWrapperAttributeFactory.delegate	AttributeFactory	variable	150	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.createAttributeInstance	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	147	151
+48	other	Object	param	155	define	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	155	162
+48	other	Object	param	156	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	155	162
+48	other	Object	param	157	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	155	162
+48	other	Object	param	158	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	155	162
+47	af	TokenWrapperAttributeFactory	variable	158	define	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	155	162
+47	af	TokenWrapperAttributeFactory	variable	158	set	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	155	162
+51	TokenWrapperAttributeFactory.delegate	AttributeFactory	variable	159	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	155	162
+47	af	TokenWrapperAttributeFactory	variable	159	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	155	162
+51	TokenWrapperAttributeFactory.delegate	AttributeFactory	variable	159	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	155	162
+51	TokenWrapperAttributeFactory.delegate	AttributeFactory	variable	165	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.hashCode	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	164	166
+40	delegate	AttributeFactory	param	143	define	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.TokenWrapperAttributeFactory	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	143	145
+40	delegate	AttributeFactory	param	144	use	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.TokenWrapperAttributeFactory	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	143	145
+51	TokenWrapperAttributeFactory.delegate	AttributeFactory	variable	144	set	org.apache.lucene.analysis.TokenStream.TokenWrapperAttributeFactory.TokenWrapperAttributeFactory	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/ec0c376c45/33d33f1916.java	143	145

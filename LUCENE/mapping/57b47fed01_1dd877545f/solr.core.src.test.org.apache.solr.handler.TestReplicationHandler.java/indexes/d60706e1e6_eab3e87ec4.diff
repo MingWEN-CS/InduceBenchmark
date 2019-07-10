@@ -1,0 +1,10 @@
+49a50
+> import org.apache.solr.client.solrj.embedded.JettyConfig;
+147,148c148,151
+<     JettySolrRunner jetty = new JettySolrRunner(instance.getHomeDir(), "/solr", 0);
+<     jetty.setDataDir(instance.getDataDir());
+---
+>     Properties nodeProperties = new Properties();
+>     nodeProperties.setProperty("solr.data.dir", instance.getDataDir());
+>     JettyConfig jettyConfig = JettyConfig.builder().setContext("/solr").setPort(0).build();
+>     JettySolrRunner jetty = new JettySolrRunner(instance.getHomeDir(), nodeProperties, jettyConfig);

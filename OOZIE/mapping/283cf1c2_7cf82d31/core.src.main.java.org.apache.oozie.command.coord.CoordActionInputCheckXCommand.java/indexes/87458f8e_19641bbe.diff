@@ -1,0 +1,30 @@
+37a38
+> import org.apache.oozie.executor.jpa.CoordActionUpdateForModifiedTimeJPAExecutor;
+113a115
+>         boolean isChangeInDependency = false;
+121c123,124
+<             CoordCommandUtils.getResolvedList(coordAction.getMissingDependencies(), nonExistList, nonResolvedList);
+---
+>             String missingDeps = coordAction.getMissingDependencies();
+>             CoordCommandUtils.getResolvedList(missingDeps, nonExistList, nonResolvedList);
+137c140,145
+<             coordAction.setMissingDependencies(nonExistList.toString());
+---
+>             String nonExistListStr = nonExistList.toString();
+>             if (!missingDeps.equals(nonExistListStr)) {
+>                 isChangeInDependency = true;
+>                 coordAction.setMissingDependencies(nonExistListStr);
+>             }
+> 			coordAction.setMissingDependencies(nonExistList.toString());
+164c172,178
+<                     jpaService.execute(new org.apache.oozie.executor.jpa.CoordActionUpdateForInputCheckJPAExecutor(coordAction));
+---
+>                     if (isChangeInDependency) {
+>                         jpaService.execute(new org.apache.oozie.executor.jpa.CoordActionUpdateForInputCheckJPAExecutor(
+>                                 coordAction));
+>                     }
+>                     else {
+>                         jpaService.execute(new CoordActionUpdateForModifiedTimeJPAExecutor(coordAction));
+>                     }
+513a528
+>     

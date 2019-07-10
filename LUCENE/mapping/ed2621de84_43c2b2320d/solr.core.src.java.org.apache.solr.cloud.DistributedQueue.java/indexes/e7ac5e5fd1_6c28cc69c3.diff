@@ -1,0 +1,68 @@
+89,90c89
+<   
+< 
+---
+>   private boolean isDirty = true;
+92c91
+<   private ChildWatcher lastWatcher = null;
+---
+>   private int watcherCount = 0;
+243d241
+<           
+244a243
+>           isDirty = true;
+272,274c271,279
+<       
+<       if (lastWatcher != null && !knownChildren.isEmpty()) {
+<         return remove ? knownChildren.pollFirst() : knownChildren.first();
+---
+>       if (!isDirty) {
+>         
+>         if (!knownChildren.isEmpty()) {
+>           
+>           return remove ? knownChildren.pollFirst() : knownChildren.first();
+>         } else {
+>           
+>           return null;
+>         }
+278c283,284
+<       ChildWatcher newWatcher = new ChildWatcher();
+---
+>       
+>       ChildWatcher newWatcher = (watcherCount == 0) ? new ChildWatcher() : null;
+280c286,289
+<       lastWatcher = newWatcher; 
+---
+>       if (newWatcher != null) {
+>         watcherCount++; 
+>       }
+>       isDirty = false;
+425c434
+<   @VisibleForTesting boolean hasWatcher() throws InterruptedException {
+---
+>   @VisibleForTesting int watcherCount() throws InterruptedException {
+428c437
+<       return lastWatcher != null;
+---
+>       return watcherCount;
+434c443,452
+<   private class ChildWatcher implements Watcher {
+---
+>   @VisibleForTesting boolean isDirty() throws InterruptedException {
+>     updateLock.lockInterruptibly();
+>     try {
+>       return isDirty;
+>     } finally {
+>       updateLock.unlock();
+>     }
+>   }
+> 
+>   @VisibleForTesting class ChildWatcher implements Watcher {
+444,447c462,463
+<         
+<         if (lastWatcher == this) {
+<           lastWatcher = null;
+<         }
+---
+>         isDirty = true;
+>         watcherCount--;

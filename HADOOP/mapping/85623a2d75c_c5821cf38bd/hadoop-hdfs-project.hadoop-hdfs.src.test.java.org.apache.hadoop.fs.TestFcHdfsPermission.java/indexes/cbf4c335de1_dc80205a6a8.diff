@@ -1,0 +1,17 @@
+37a38,40
+>   private static final FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+>   private static FileContext fc;
+> 
+40a44,53
+>   @Override
+>   protected FileContextTestHelper getFileContextHelper() {
+>     return fileContextTestHelper;
+>   }
+>   
+>   @Override
+>   protected FileContext getFileContext() {
+>     return fc;
+>   }
+>   
+44d56
+<     FileContextTestHelper.TEST_ROOT_DIR = "/tmp/TestFcHdfsPermission";

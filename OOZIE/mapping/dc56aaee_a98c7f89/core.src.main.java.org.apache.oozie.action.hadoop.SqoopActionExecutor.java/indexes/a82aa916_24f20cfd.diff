@@ -1,0 +1,43 @@
+144a145
+>                 
+146c147,148
+<                 String []jobIds = externalIds.split(",");
+---
+>                 if (externalIds != null && !externalIds.trim().isEmpty()) {
+>                     String []jobIds = externalIds.split(",");
+148,154c150,156
+<                 for(String jobId : jobIds) {
+<                     RunningJob runningJob = jobClient.getJob(JobID.forName(jobId));
+<                     if (runningJob == null) {
+<                       throw new ActionExecutorException(ActionExecutorException.ErrorType.FAILED, "SQOOP001",
+<                         "Unknown hadoop job [{0}] associated with action [{1}].  Failing this action!", action
+<                         .getExternalId(), action.getId());
+<                     }
+---
+>                     for(String jobId : jobIds) {
+>                         RunningJob runningJob = jobClient.getJob(JobID.forName(jobId));
+>                         if (runningJob == null) {
+>                           throw new ActionExecutorException(ActionExecutorException.ErrorType.FAILED, "SQOOP001",
+>                             "Unknown hadoop job [{0}] associated with action [{1}].  Failing this action!", action
+>                             .getExternalId(), action.getId());
+>                         }
+156,159c158,164
+<                     Counters taskCounters = runningJob.getCounters();
+<                     if(taskCounters != null) {
+<                         if(counters == null) {
+<                           counters = taskCounters;
+---
+>                         Counters taskCounters = runningJob.getCounters();
+>                         if(taskCounters != null) {
+>                             if(counters == null) {
+>                               counters = taskCounters;
+>                             } else {
+>                               counters.incrAllCounters(taskCounters);
+>                             }
+161c166
+<                           counters.incrAllCounters(taskCounters);
+---
+>                           XLog.getLog(getClass()).warn("Could not find Hadoop Counters for job: [{0}]", jobId);
+163,164d167
+<                     } else {
+<                       XLog.getLog(getClass()).warn("Could not find Hadoop Counters for job: [{0}]", jobId);

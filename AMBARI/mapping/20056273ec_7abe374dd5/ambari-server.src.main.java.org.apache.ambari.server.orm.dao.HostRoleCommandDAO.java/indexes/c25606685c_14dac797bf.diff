@@ -1,0 +1,12 @@
+637c637,645
+<       requestsToInvalidate.add(entity.getRequestId());
+---
+>       Long requestId = entity.getRequestId();
+>       if (requestId == null) {
+>         StageEntity stageEntity = entity.getStage();
+>         if (stageEntity != null) {
+>           requestId = stageEntity.getRequestId();
+>         }
+>       }
+> 
+>       requestsToInvalidate.add(requestId);

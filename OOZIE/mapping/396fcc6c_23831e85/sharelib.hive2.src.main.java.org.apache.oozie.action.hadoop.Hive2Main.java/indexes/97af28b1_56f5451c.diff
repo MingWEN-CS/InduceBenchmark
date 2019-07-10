@@ -1,0 +1,10 @@
+29a30
+> import java.util.Map;
+212a214
+>         
+216a219,223
+>         
+>         for (Map.Entry<String, String> oozieConfig : actionConf.getValByRegex("^oozie\\.(?!launcher).+").entrySet()) {
+>             arguments.add("--hiveconf");
+>             arguments.add(oozieConfig.getKey() + "=" + oozieConfig.getValue());
+>         }

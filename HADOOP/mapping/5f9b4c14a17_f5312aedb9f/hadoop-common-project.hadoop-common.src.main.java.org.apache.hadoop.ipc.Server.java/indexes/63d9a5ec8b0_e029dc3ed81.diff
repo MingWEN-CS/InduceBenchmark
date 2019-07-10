@@ -1,0 +1,13 @@
+275a276,287
+> 
+> 
+> 
+> 
+>   public static int getCallId() {
+>     Call call = CurCall.get();
+>     return call != null ? call.callId : RpcConstants.INVALID_CALL_ID;
+>   }
+> 
+>   
+> 
+> 

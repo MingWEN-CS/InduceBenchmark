@@ -1,0 +1,37 @@
+1203d1202
+<       
+1312,1315c1311,1317
+<       Stat stat = stats.get(op);
+<       if (stat == null) {
+<         stat = new Stat();
+<         stats.put(op, stat);
+---
+>       synchronized (stats) {
+>         Stat stat = stats.get(op);
+>         if (stat == null) {
+>           stat = new Stat();
+>           stats.put(op, stat);
+>         }
+>         stat.success.incrementAndGet();
+1317d1318
+<       stat.success.incrementAndGet();
+1321a1323
+>       synchronized (stats) {
+1328a1331
+>     }
+1332c1335,1337
+<       Stat stat = stats.get(op);
+---
+>       Stat stat;
+>       synchronized (stats) {
+>         stat = stats.get(op);
+1336a1342
+>       }
+1342c1348,1350
+<       Stat stat = stats.get(op);
+---
+>       Stat stat ;
+>       synchronized (stats) {
+>         stat = stats.get(op);
+1354a1363
+>     }

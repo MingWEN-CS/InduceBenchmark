@@ -1,0 +1,8 @@
+37c37
+< import org.apache.lucene.index.DimensionalValues;
+---
+> import org.apache.lucene.index.PointValues;
+817c817
+<     public DimensionalValues getDimensionalValues() {
+---
+>     public PointValues getPointValues() {

@@ -1,0 +1,58 @@
+121c121
+<     private void init() throws RepositoryException {
+---
+>     private synchronized void init() throws RepositoryException {
+179c179
+<     void reload() throws RepositoryException {
+---
+>     synchronized void reload() throws RepositoryException {
+198c198
+<     InternalVersionImpl createVersionInstance(Name name) {
+---
+>     synchronized InternalVersionImpl createVersionInstance(Name name) {
+224c224
+<     InternalVersionImpl createVersionInstance(NodeStateEx child) {
+---
+>     synchronized InternalVersionImpl createVersionInstance(NodeStateEx child) {
+269c269,270
+<     public InternalVersion getVersion(Name versionName) throws VersionException {
+---
+>     public synchronized InternalVersion getVersion(Name versionName)
+>             throws VersionException {
+285c286
+<     public boolean hasVersion(Name versionName) {
+---
+>     public synchronized boolean hasVersion(Name versionName) {
+318c319
+<     private InternalVersion getCachedVersion(NodeId id) {
+---
+>     private synchronized InternalVersion getCachedVersion(NodeId id) {
+334c335
+<     public InternalVersion getVersionByLabel(Name label) {
+---
+>     public synchronized InternalVersion getVersionByLabel(Name label) {
+351c352
+<     public Name[] getVersionNames() {
+---
+>     public synchronized Name[] getVersionNames() {
+358c359
+<     public int getNumVersions() {
+---
+>     public synchronized int getNumVersions() {
+372c373
+<     public Name[] getVersionLabels() {
+---
+>     public synchronized Name[] getVersionLabels() {
+395c396
+<     void removeVersion(Name versionName) throws RepositoryException {
+---
+>     synchronized void removeVersion(Name versionName) throws RepositoryException {
+471c472
+<     InternalVersion setVersionLabel(Name versionName, Name label, boolean move)
+---
+>     synchronized InternalVersion setVersionLabel(Name versionName, Name label, boolean move)
+529c530,531
+<     InternalVersionImpl checkin(Name name, NodeStateEx src, Calendar created)
+---
+>     synchronized InternalVersionImpl checkin(
+>             Name name, NodeStateEx src, Calendar created)

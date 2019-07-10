@@ -1,0 +1,51 @@
+781c781
+<         assertTrue("segment generation should be > 0 but got " + gen, gen > 0);
+---
+>         assertTrue("segment generation should be > 1 but got " + gen, gen > 1);
+841c841
+<         assertTrue("segment generation should be > 0 but got " + gen, gen > 0);
+---
+>         assertTrue("segment generation should be > 1 but got " + gen, gen > 1);
+906c906
+<         assertTrue("segment generation should be > 0 but got " + gen, gen > 0);
+---
+>         assertTrue("segment generation should be > 1 but got " + gen, gen > 1);
+2329c2329
+<     dir.setMaxSizeInBytes(Math.max(1, dir.getRecomputedActualSizeInBytes()));
+---
+>     dir.setMaxSizeInBytes(dir.getRecomputedActualSizeInBytes());
+2647c2647
+<     assertTrue("segment generation should be > 0 but got " + gen, gen > 0);
+---
+>     assertTrue("segment generation should be > 1 but got " + gen, gen > 1);
+2676,2677c2676
+<     writer.commit();
+<     
+---
+> 
+3538,3539c3537
+<     writer.commit();
+<     
+---
+> 
+3590,3591c3588
+<     writer.commit();
+<     
+---
+> 
+3676d3672
+<       writer2.commit();
+4959,4971d4954
+<   
+<   public void testNoCommits() throws Exception {
+<     
+<     
+<     
+<     Directory dir = new RAMDirectory();
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+<     assertEquals("expected 0 commits!", 0, IndexReader.listCommits(dir).size());
+<     
+<     writer.close();
+<     assertEquals("expected 1 commits!", 1, IndexReader.listCommits(dir).size());
+<   }
+<   

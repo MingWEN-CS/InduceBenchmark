@@ -1,0 +1,17 @@
+477c477
+< 
+---
+>     List<String> blacklistedPackagePrefixes = configuration.getRollingUpgradeSkipPackagesPrefixes();
+491c491,500
+<           packages.add(aPackage);
+---
+>           boolean blacklisted = false;
+>           for(String prefix : blacklistedPackagePrefixes) {
+>             if (aPackage.getName().startsWith(prefix)) {
+>               blacklisted = true;
+>               break;
+>             }
+>           }
+>           if (! blacklisted) {
+>             packages.add(aPackage);
+>           }

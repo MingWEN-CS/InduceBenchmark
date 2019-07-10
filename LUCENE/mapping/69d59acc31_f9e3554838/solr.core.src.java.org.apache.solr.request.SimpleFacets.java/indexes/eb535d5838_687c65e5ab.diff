@@ -1,0 +1,18 @@
+50a51
+> import org.apache.lucene.search.FilteredQuery;
+228c229
+<         searcher.search(new MatchAllDocsQuery(), base.getTopFilter(), allGroupHeadsCollector);
+---
+>         searcher.search(new FilteredQuery(new MatchAllDocsQuery(), base.getTopFilter()), allGroupHeadsCollector);
+328c329
+<     searcher.search(facetQuery, mainQueryFilter, collector);
+---
+>     searcher.search(new FilteredQuery(facetQuery, mainQueryFilter), collector);
+498c499
+<       searcher.search(new MatchAllDocsQuery(), base.getTopFilter(), new FilterCollector(collector) {
+---
+>       searcher.search(new FilteredQuery(new MatchAllDocsQuery(), base.getTopFilter()), new FilterCollector(collector) {
+506c507
+<       searcher.search(new MatchAllDocsQuery(), base.getTopFilter(), collector);
+---
+>       searcher.search(new FilteredQuery(new MatchAllDocsQuery(), base.getTopFilter()), collector);

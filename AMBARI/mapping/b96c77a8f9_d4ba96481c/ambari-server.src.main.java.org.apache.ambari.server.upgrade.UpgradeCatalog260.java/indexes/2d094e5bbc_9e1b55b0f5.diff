@@ -1,0 +1,20 @@
+58a59
+>   public static final String REPO_VERSION_HIDDEN_COLUMN = "hidden";
+149a151
+>     updateRepositoryVersionTable();
+153c155
+<     List<DBAccessor.DBColumnInfo> columns = new ArrayList<DBAccessor.DBColumnInfo>();
+---
+>     List<DBAccessor.DBColumnInfo> columns = new ArrayList<>();
+307a310,320
+> 
+> 
+> 
+>   private void updateRepositoryVersionTable() throws SQLException {
+>     dbAccessor.addColumn(REPO_VERSION_TABLE,
+>         new DBAccessor.DBColumnInfo(REPO_VERSION_HIDDEN_COLUMN, Short.class, null, 0, false));
+>   }
+> 
+>   
+> 
+> 

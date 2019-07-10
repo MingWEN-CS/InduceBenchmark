@@ -1,0 +1,627 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.query.lucene;
+
+import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.query.lucene.hits.AbstractHitCollector;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.Similarity;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.Weight;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.io.IOException;
+import java.util.BitSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+
+
+
+
+
+@SuppressWarnings("serial")
+class DescendantSelfAxisQuery extends Query implements JackrabbitQuery {
+
+    
+
+
+    private static final Logger log = LoggerFactory.getLogger(DescendantSelfAxisQuery.class);
+
+    
+
+
+    private final Query contextQuery;
+
+    
+
+
+    private Scorer contextScorer;
+
+    
+
+
+    private final Query subQuery;
+
+    
+
+
+
+    private final int minLevels;
+
+    
+
+
+    private Scorer subScorer;
+
+    
+
+
+
+
+
+
+
+
+
+
+    public DescendantSelfAxisQuery(Query context, boolean includeSelf) {
+        this(context, new MatchAllDocsQuery(), includeSelf);
+    }
+
+    
+
+
+
+
+
+
+    public DescendantSelfAxisQuery(Query context, Query sub) {
+        this(context, sub, true);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public DescendantSelfAxisQuery(Query context, Query sub, boolean includeSelf) {
+        this(context, sub, includeSelf ? 0 : 1);
+    }
+
+    
+
+
+
+
+
+
+
+
+    public DescendantSelfAxisQuery(Query context, Query sub, int minLevels) {
+        this.contextQuery = context;
+        this.subQuery = sub;
+        this.minLevels = minLevels;
+    }
+
+    
+
+
+    Query getContextQuery() {
+        return contextQuery;
+    }
+
+    
+
+
+
+    boolean subQueryMatchesAll() {
+        return subQuery instanceof MatchAllDocsQuery;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    int getMinLevels() {
+        return minLevels;
+    }
+
+    
+
+
+
+
+
+    public Weight createWeight(Searcher searcher) {
+        return new DescendantSelfAxisWeight(searcher);
+    }
+
+    
+
+
+    public String toString(String field) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("DescendantSelfAxisQuery(");
+        sb.append(contextQuery);
+        sb.append(", ");
+        sb.append(subQuery);
+        sb.append(", ");
+        sb.append(minLevels);
+        sb.append(")");
+        return sb.toString();
+    }
+
+    
+
+
+    public void extractTerms(Set<Term> terms) {
+        contextQuery.extractTerms(terms);
+        subQuery.extractTerms(terms);
+    }
+
+    
+
+
+    public Query rewrite(IndexReader reader) throws IOException {
+        Query cQuery = contextQuery.rewrite(reader);
+        Query sQuery = subQuery.rewrite(reader);
+        if (contextQuery instanceof DescendantSelfAxisQuery) {
+            DescendantSelfAxisQuery dsaq = (DescendantSelfAxisQuery) contextQuery;
+            if (dsaq.subQueryMatchesAll()) {
+                return new DescendantSelfAxisQuery(dsaq.getContextQuery(),
+                        sQuery, dsaq.getMinLevels() + getMinLevels()).rewrite(reader);
+            }
+        }
+        if (cQuery == contextQuery && sQuery == subQuery) {
+            return this;
+        } else {
+            return new DescendantSelfAxisQuery(cQuery, sQuery, minLevels);
+        }
+    }
+
+    
+
+    
+
+
+    public QueryHits execute(final JackrabbitIndexSearcher searcher,
+                             final SessionImpl session,
+                             final Sort sort) throws IOException {
+        if (sort.getSort().length == 0 && subQueryMatchesAll()) {
+            
+            Map<String, ScoreNode> startingPoints = new TreeMap<String, ScoreNode>();
+            QueryHits result = searcher.evaluate(getContextQuery());
+            try {
+                
+                
+                
+                for (int i = 2; i <= getMinLevels(); i++) {
+                    result = new ChildNodesQueryHits(result, session);
+                }
+
+                ScoreNode sn;
+                while ((sn = result.nextScoreNode()) != null) {
+                    NodeId id = sn.getNodeId();
+                    try {
+                        Node node = session.getNodeById(id);
+                        startingPoints.put(node.getPath(), sn);
+                    } catch (ItemNotFoundException e) {
+                        
+                        log.warn("Access denied to node id {}.", id);
+                    } catch (RepositoryException e) {
+                        throw Util.createIOException(e);
+                    }
+                }
+            } finally {
+                result.close();
+            }
+
+            
+            String previousPath = null;
+            for (Iterator<String> it = startingPoints.keySet().iterator(); it.hasNext(); ) {
+                String path = it.next();
+                
+                
+                if (previousPath != null && path.startsWith(previousPath)) {
+                    it.remove();
+                } else {
+                    previousPath = path;
+                }
+            }
+
+            final Iterator<ScoreNode> scoreNodes = startingPoints.values().iterator();
+            return new AbstractQueryHits() {
+
+                private NodeTraversingQueryHits currentTraversal;
+
+                {
+                    fetchNextTraversal();
+                }
+
+                public void close() throws IOException {
+                    if (currentTraversal != null) {
+                        currentTraversal.close();
+                    }
+                }
+
+                public ScoreNode nextScoreNode() throws IOException {
+                    while (currentTraversal != null) {
+                        ScoreNode sn = currentTraversal.nextScoreNode();
+                        if (sn != null) {
+                            return sn;
+                        } else {
+                            fetchNextTraversal();
+                        }
+                    }
+                    
+                    return null;
+                }
+
+                private void fetchNextTraversal() throws IOException {
+                    if (currentTraversal != null) {
+                        currentTraversal.close();
+                    }
+                    currentTraversal = null;
+                    
+                    
+                    while (scoreNodes.hasNext()) {
+                        ScoreNode sn = scoreNodes.next();
+                        NodeId id = sn.getNodeId();
+                        try {
+                            Node node = session.getNodeById(id);
+                            currentTraversal = new NodeTraversingQueryHits(
+                                    node, getMinLevels() == 0);
+                            break;
+                        } catch (ItemNotFoundException e) {
+                            
+                            log.warn("Access denied to node id {}.", id);
+                        } catch (RepositoryException e) {
+                            throw Util.createIOException(e);
+                        }
+                    }
+                }
+            };
+        } else {
+            return null;
+        }
+    }
+
+    
+
+    
+
+
+
+    private class DescendantSelfAxisWeight extends Weight {
+
+        
+
+
+        private final Searcher searcher;
+
+        
+
+
+
+
+
+        private DescendantSelfAxisWeight(Searcher searcher) {
+            this.searcher = searcher;
+        }
+
+        
+
+        
+
+
+
+
+        public Query getQuery() {
+            return DescendantSelfAxisQuery.this;
+        }
+
+        
+
+
+        public float getValue() {
+            return 1.0f;
+        }
+
+        
+
+
+        public float sumOfSquaredWeights() throws IOException {
+            return 1.0f;
+        }
+
+        
+
+
+        public void normalize(float norm) {
+        }
+
+        
+
+
+
+
+
+
+        public Scorer scorer(IndexReader reader, boolean scoreDocsInOrder,
+                boolean topScorer) throws IOException {
+            contextScorer = contextQuery.weight(searcher).scorer(reader, scoreDocsInOrder, topScorer);
+            subScorer = subQuery.weight(searcher).scorer(reader, scoreDocsInOrder, topScorer);
+            HierarchyResolver resolver = (HierarchyResolver) reader;
+            return new DescendantSelfAxisScorer(searcher.getSimilarity(), reader, resolver);
+        }
+
+        
+
+
+        public Explanation explain(IndexReader reader, int doc) throws IOException {
+            return new Explanation();
+        }
+    }
+
+    
+    
+
+
+
+    private class DescendantSelfAxisScorer extends Scorer {
+
+        
+
+
+        private final HierarchyResolver hResolver;
+
+        
+
+
+        private final BitSet contextHits;
+
+        
+
+
+        private boolean contextHitsCalculated = false;
+
+        
+
+
+        private int[] ancestorDocs = new int[2];
+
+        
+
+
+        private int[] pDocs = new int[1];
+
+        
+
+
+        private final int[] singleDoc = new int[1];
+
+        
+
+
+        private int currentDoc = -1;
+
+        
+
+
+
+
+
+
+        protected DescendantSelfAxisScorer(Similarity similarity,
+                                           IndexReader reader,
+                                           HierarchyResolver hResolver) {
+            super(similarity);
+            this.hResolver = hResolver;
+            
+            this.contextHits = new BitSet(reader.maxDoc());
+        }
+
+        @Override
+        public int nextDoc() throws IOException {
+            if (currentDoc == NO_MORE_DOCS) {
+                return currentDoc;
+            }
+
+            collectContextHits();
+            currentDoc = subScorer.nextDoc();
+            if (contextHits.isEmpty()) {
+                currentDoc = NO_MORE_DOCS;
+            }
+            while (currentDoc != NO_MORE_DOCS) {
+                if (isValid(currentDoc)) {
+                    return currentDoc;
+                }
+
+                
+                currentDoc = subScorer.nextDoc();
+            }
+            return currentDoc;
+        }
+
+        @Override
+        public int docID() {
+            return currentDoc;
+        }
+
+        @Override
+        public float score() throws IOException {
+            return subScorer.score();
+        }
+
+        @Override
+        public int advance(int target) throws IOException {
+            if (currentDoc == NO_MORE_DOCS) {
+                return currentDoc;
+            }
+
+            currentDoc = subScorer.nextDoc();
+            if (currentDoc == NO_MORE_DOCS) {
+                return NO_MORE_DOCS;
+            } else {
+                collectContextHits();
+                return isValid(currentDoc) ? currentDoc : nextDoc();
+            }
+        }
+
+        private void collectContextHits() throws IOException {
+            if (!contextHitsCalculated) {
+                long time = System.currentTimeMillis();
+                contextScorer.score(new AbstractHitCollector() {
+                    @Override
+                    protected void collect(int doc, float score) {
+                        contextHits.set(doc);
+                    }
+                }); 
+                contextHitsCalculated = true;
+                time = System.currentTimeMillis() - time;
+                if (log.isDebugEnabled()) {
+                    log.debug("Collected {} context hits in {} ms for {}",
+                            new Object[]{
+                                    contextHits.cardinality(),
+                                    time,
+                                    DescendantSelfAxisQuery.this
+                            });
+                }
+            }
+        }
+
+        
+
+
+
+
+
+
+
+
+        private boolean isValid(int doc) throws IOException {
+            
+            if (minLevels == 0 && contextHits.get(doc)) {
+                return true;
+            }
+
+            
+            pDocs = hResolver.getParents(doc, pDocs);
+
+            if (pDocs.length == 0) {
+                return false;
+            }
+
+            int ancestorCount = 0;
+            
+            ancestorDocs[ancestorCount++] = pDocs[0];
+
+            
+            while (pDocs.length != 0) {
+                boolean valid = false;
+                for (int pDoc : pDocs) {
+                    if (ancestorCount >= minLevels && contextHits.get(pDoc)) {
+                        valid = true;
+                        break;
+                    }
+                }
+                if (valid) {
+                    break;
+                } else {
+                    
+                    pDocs = getParents(pDocs, singleDoc);
+                    
+                    if (ancestorCount == ancestorDocs.length) {
+                        
+                        int[] copy = new int[ancestorDocs.length * 2];
+                        System.arraycopy(ancestorDocs, 0, copy, 0, ancestorDocs.length);
+                        ancestorDocs = copy;
+                    }
+                    if (pDocs.length != 0) {
+                        
+                        ancestorDocs[ancestorCount++] = pDocs[0];
+                    }
+                }
+            }
+
+            if (pDocs.length > 0) {
+                
+                
+                for (int i = 0; i < ancestorCount; i++) {
+                    contextHits.set(ancestorDocs[i]);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        
+
+
+
+
+
+
+
+
+        private int[] getParents(int[] docs, int[] pDocs) throws IOException {
+            
+            if (docs.length == 1) {
+                return hResolver.getParents(docs[0], pDocs);
+            } else {
+                pDocs = new int[0];
+                for (int doc : docs) {
+                    int[] p = hResolver.getParents(doc, new int[0]);
+                    int[] tmp = new int[p.length + pDocs.length];
+                    System.arraycopy(pDocs, 0, tmp, 0, pDocs.length);
+                    System.arraycopy(p, 0, tmp, pDocs.length, p.length);
+                    pDocs = tmp;
+                }
+                return pDocs;
+            }
+        }
+    }
+}

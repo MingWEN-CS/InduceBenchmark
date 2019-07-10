@@ -1,0 +1,11 @@
+251,253c251,252
+<                 NodeState nodeState =
+<                     (NodeState) stateMgr.getItemState(entry.getId());
+<                 NodeImpl node = (NodeImpl) itemMgr.getItem(entry.getId());
+---
+>                 NodeState nodeState = (NodeState) stateMgr.getItemState(entry.getId());
+>                 NodeImpl childNode = (NodeImpl) itemMgr.getItem(entry.getId());
+270c269
+<                     node.onRedefine(newDef.unwrap());
+---
+>                     childNode.onRedefine(newDef.unwrap());

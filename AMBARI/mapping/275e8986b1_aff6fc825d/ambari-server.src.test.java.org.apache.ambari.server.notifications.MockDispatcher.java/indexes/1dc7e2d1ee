@@ -1,0 +1,54 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.notifications;
+
+
+
+
+public class MockDispatcher implements NotificationDispatcher {
+
+  
+
+
+
+  public MockDispatcher() {
+  }
+
+  
+
+
+  @Override
+  public String getType() {
+    return "MOCK";
+  }
+
+  
+
+
+  @Override
+  public boolean isDigestSupported() {
+    return true;
+  }
+
+  
+
+
+  @Override
+  public void dispatch(Notification notification) {
+  }
+}

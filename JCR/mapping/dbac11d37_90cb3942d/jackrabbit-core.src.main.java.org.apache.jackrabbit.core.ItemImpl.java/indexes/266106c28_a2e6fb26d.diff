@@ -1,0 +1,18 @@
+609,612c609,620
+<             if (itemState.isNode()) {
+<                 def = itemMgr.getDefinition((NodeState) itemState).unwrap();
+<             } else {
+<                 def = itemMgr.getDefinition((PropertyState) itemState).unwrap();
+---
+>             try {
+>                 if (itemState.isNode()) {
+>                     def = itemMgr.getDefinition((NodeState) itemState).unwrap();
+>                 } else {
+>                     def = itemMgr.getDefinition((PropertyState) itemState).unwrap();
+>                 }
+>             } catch (ConstraintViolationException e) {
+>                 
+>                 
+>                 
+>                 
+>                 continue;

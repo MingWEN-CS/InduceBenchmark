@@ -1,0 +1,26 @@
+153d152
+< 
+458d456
+< 
+1514c1512
+<       for (FileStatus tmp : fs.globStatus(new Path(location, "*_tmp"))){
+---
+>       for (FileStatus tmp : fs.globStatus(new Path(location, "*_tmp"))) {
+2487d2484
+< 
+3059c3056
+<         if ( (first == null && last == null) || !this.extent.contains(first.getRow()) || !this.extent.contains(last.getRow())) {
+---
+>         if ((first == null && last == null) || !this.extent.contains(first.getRow()) || !this.extent.contains(last.getRow())) {
+3611,3612c3608,3609
+<         splitPoint = new SplitRowSpec(FileUtil.estimatePercentageLTE(fs, tabletServer.getSystemConfiguration(), extent.getPrevEndRow(),
+<             extent.getEndRow(), datafileManager.getFiles(), tsp), tsp);
+---
+>         splitPoint = new SplitRowSpec(FileUtil.estimatePercentageLTE(fs, tabletServer.getSystemConfiguration(), extent.getPrevEndRow(), extent.getEndRow(),
+>             datafileManager.getFiles(), tsp), tsp);
+3948,3949c3945,3946
+<       
+<       
+---
+>         
+>         

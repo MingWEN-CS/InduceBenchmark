@@ -1,0 +1,17 @@
+33d32
+< import org.junit.Assume;
+636,649d634
+<   protected Path getHiddenPathForTest() {
+<     return null;
+<   }
+<   
+<   @Test
+<   public void testGlobStatusFilterWithHiddenPathTrivialFilter()
+<       throws Exception {
+<     Path hidden = getHiddenPathForTest();
+<     Assume.assumeNotNull(hidden);
+<     FileStatus[] filteredPaths = fc.util().globStatus(hidden, DEFAULT_FILTER);
+<     Assert.assertNotNull(filteredPaths);
+<     Assert.assertEquals(1, filteredPaths.length);
+<   }
+< 

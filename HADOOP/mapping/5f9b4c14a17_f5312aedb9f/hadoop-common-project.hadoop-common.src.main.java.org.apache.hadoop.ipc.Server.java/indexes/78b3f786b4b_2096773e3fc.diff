@@ -1,0 +1,23 @@
+75d74
+< import org.apache.hadoop.ipc.ProtobufRpcEngine.RpcResponseWrapper;
+76a76
+> import org.apache.hadoop.ipc.ProtobufRpcEngine.RpcResponseWrapper;
+82c82,84
+< import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcResponseHeaderProto.RpcStatusProto;
+---
+> import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcKindProto;
+> import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcRequestHeaderProto;
+> import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcResponseHeaderProto;
+84,85c86,88
+< import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcSaslProto.*;
+< import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.*;
+---
+> import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcResponseHeaderProto.RpcStatusProto;
+> import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcSaslProto;
+> import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcSaslProto.SaslState;
+1497c1500,1502
+<           if (isSimpleEnabled) { 
+---
+>           
+>           
+>           if (isSimpleEnabled && enabledAuthMethods.size() == 1) {

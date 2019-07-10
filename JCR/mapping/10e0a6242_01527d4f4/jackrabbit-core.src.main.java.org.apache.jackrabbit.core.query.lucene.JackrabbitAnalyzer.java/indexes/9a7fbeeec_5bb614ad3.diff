@@ -1,0 +1,77 @@
+20a21
+> import java.lang.reflect.Constructor;
+26a28,29
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+36a40
+> public class JackrabbitAnalyzer extends Analyzer {
+38c42,95
+< public class JackrabbitAnalyzer  extends Analyzer {
+---
+>     private static Logger log =
+>             LoggerFactory.getLogger(JackrabbitAnalyzer.class);
+> 
+>     private static final Analyzer DEFAULT_ANALYZER =
+>             new StandardAnalyzer(Version.LUCENE_24, Collections.emptySet());
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+>     static Analyzer getAnalyzerInstance(String className) {
+>         Class<?> analyzerClass;
+>         try {
+>             analyzerClass = Class.forName(className);
+>         } catch (ClassNotFoundException e) {
+>             log.warn(className + " could not be found", e);
+>             return DEFAULT_ANALYZER;
+>         }
+>         if (!Analyzer.class.isAssignableFrom(analyzerClass)) {
+>             log.warn(className + " is not a Lucene Analyzer");
+>             return DEFAULT_ANALYZER;
+>         } else if (JackrabbitAnalyzer.class.isAssignableFrom(analyzerClass)) {
+>             log.warn(className + " can not be used as a JackrabbitAnalyzer component");
+>             return DEFAULT_ANALYZER;
+>         }
+> 
+>         Exception cause = null;
+>         Constructor<?>[] constructors = analyzerClass.getConstructors();
+>         for (Constructor<?> constructor : constructors) {
+>             Class<?>[] types = constructor.getParameterTypes();
+>             if (types.length == 1 && types[0] == Version.class) {
+>                 try {
+>                     return (Analyzer) constructor.newInstance(Version.LUCENE_24);
+>                 } catch (Exception e) {
+>                     cause = e;
+>                 }
+>             }
+>         }
+>         for (Constructor<?> constructor : constructors) {
+>             if (constructor.getParameterTypes().length == 0) {
+>                 try {
+>                     return (Analyzer) constructor.newInstance();
+>                 } catch (Exception e) {
+>                     cause = e;
+>                 }
+>             }
+>         }
+> 
+>         log.warn(className + " could not be instantiated", cause);
+>         return DEFAULT_ANALYZER;
+>     }
+44c101
+<     private Analyzer defaultAnalyzer =  new StandardAnalyzer(Version.LUCENE_24, Collections.emptySet());
+---
+>     private Analyzer defaultAnalyzer = DEFAULT_ANALYZER;
+64a122,129
+>     String getDefaultAnalyzerClass() {
+>         return defaultAnalyzer.getClass().getName();
+>     }
+> 
+>     void setDefaultAnalyzerClass(String className) {
+>         setDefaultAnalyzer(getAnalyzerInstance(className));
+>     }
+> 

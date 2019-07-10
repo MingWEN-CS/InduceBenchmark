@@ -1,0 +1,85 @@
+16a17,18
+> import java.util.HashMap;
+> import java.util.List;
+18d19
+< import java.util.Set;
+20,24c21
+< import javax.inject.Inject;
+< import javax.inject.Provider;
+< import javax.inject.Singleton;
+< 
+< import org.apache.ambari.server.events.AmbariLdapConfigChangedEvent;
+---
+> import org.apache.ambari.server.events.AmbariConfigurationChangedEvent;
+35,36c32,34
+< import com.google.gson.Gson;
+< import com.google.gson.GsonBuilder;
+---
+> import com.google.inject.Inject;
+> import com.google.inject.Provider;
+> import com.google.inject.Singleton;
+63,64d60
+<   private Gson gson = new GsonBuilder().create();
+< 
+76c72
+<     return instance != null ? instance : loadInstance(null);
+---
+>     return instance != null ? instance : loadInstance();
+84,86c80,81
+< 
+<   private AmbariLdapConfiguration loadInstance(Long configurationId) {
+<     AmbariConfigurationEntity configEntity = null;
+---
+>   private AmbariLdapConfiguration loadInstance() {
+>     List<AmbariConfigurationEntity> configEntities;
+89c84
+<     if (null == configurationId) {
+---
+>     configEntities = ambariConfigurationDAOProvider.get().findByCategory("ldap-configuration");
+91,92c86,89
+<       LOGGER.debug("Initial loading of the ldap configuration ...");
+<       configEntity = ambariConfigurationDAOProvider.get().getLdapConfiguration();
+---
+>     if (configEntities != null) {
+>       Map<String, Object> properties = toProperties(configEntities);
+>       instance = ldapConfigurationFactory.createLdapConfiguration(properties);
+>     }
+94c91
+<     } else {
+---
+>     LOGGER.info("Loaded LDAP configuration instance: [ {} ]", instance);
+96,97c93,94
+<       LOGGER.debug("Reloading configuration based on the provied id: {}", configurationId);
+<       configEntity = ambariConfigurationDAOProvider.get().findByPK(configurationId);
+---
+>     return instance;
+>   }
+99c96,97
+<     }
+---
+>   private Map<String, Object> toProperties(List<AmbariConfigurationEntity> configEntities) {
+>     Map<String, Object> map = new HashMap<>();
+101,103c99,100
+<     if (configEntity != null) {
+<       Set propertyMaps = gson.fromJson(configEntity.getConfigurationBaseEntity().getConfigurationData(), Set.class);
+<       instance = ldapConfigurationFactory.createLdapConfiguration((Map<String, Object>) propertyMaps.iterator().next());
+---
+>     for (AmbariConfigurationEntity entity : configEntities) {
+>       map.put(entity.getPropertyName(), entity.getPropertyValue());
+106,108c103
+<     LOGGER.info("Loaded LDAP configuration instance: [ {} ]", instance);
+< 
+<     return instance;
+---
+>     return map;
+113c108
+<   public void ambariLdapConfigChanged(AmbariLdapConfigChangedEvent event) {
+---
+>   public void ambariLdapConfigChanged(AmbariConfigurationChangedEvent event) {
+115c110
+<     loadInstance(event.getConfigurationId());
+---
+>     loadInstance();
+118,119d112
+< 
+< 

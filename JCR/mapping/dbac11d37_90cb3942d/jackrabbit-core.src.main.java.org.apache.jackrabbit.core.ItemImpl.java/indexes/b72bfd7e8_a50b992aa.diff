@@ -1,0 +1,48 @@
+51d50
+< import org.apache.jackrabbit.core.nodetype.NodeDef;
+56,57d54
+< import org.apache.jackrabbit.core.nodetype.PropDef;
+< import org.apache.jackrabbit.core.nodetype.PropertyDefinitionImpl;
+71a69,70
+> import org.apache.jackrabbit.spi.QPropertyDefinition;
+> import org.apache.jackrabbit.spi.QItemDefinition;
+376c375
+<                 def = ntMgr.getNodeDefinition(((NodeState) itemState).getDefinitionId());
+---
+>                 def = itemMgr.getDefinition((NodeState) itemState);
+378c377
+<                 def = ntMgr.getPropertyDefinition(((PropertyState) itemState).getDefinitionId());
+---
+>                 def = itemMgr.getDefinition((PropertyState) itemState);
+447c446
+<                 PropDef[] pda = ent.getMandatoryPropDefs();
+---
+>                 QPropertyDefinition[] pda = ent.getMandatoryPropDefs();
+449c448
+<                     PropDef pd = pda[i];
+---
+>                     QPropertyDefinition pd = pda[i];
+468c467
+<                 NodeDef[] cnda = ent.getMandatoryNodeDefs();
+---
+>                 QItemDefinition[] cnda = ent.getMandatoryNodeDefs();
+470c469
+<                     NodeDef cnd = cnda[i];
+---
+>                     QItemDefinition cnd = cnda[i];
+483c482
+<                 PropertyDefinitionImpl propDef = (PropertyDefinitionImpl) def;
+---
+>                 org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl propDef = (org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl) def;
+582c581
+<             ItemDefinition def;
+---
+>             QItemDefinition def;
+584c583
+<                 def = ntMgr.getNodeDefinition(((NodeState) itemState).getDefinitionId());
+---
+>                 def = itemMgr.getDefinition((NodeState) itemState).unwrap();
+586c585
+<                 def = ntMgr.getPropertyDefinition(((PropertyState) itemState).getDefinitionId());
+---
+>                 def = itemMgr.getDefinition((PropertyState) itemState).unwrap();

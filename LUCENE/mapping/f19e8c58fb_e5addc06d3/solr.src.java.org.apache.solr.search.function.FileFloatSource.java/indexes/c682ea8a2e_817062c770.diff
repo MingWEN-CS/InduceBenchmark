@@ -1,0 +1,26 @@
+20a21,22
+> import org.apache.lucene.index.IndexReader.AtomicReaderContext;
+> import org.apache.lucene.index.IndexReader.ReaderContext;
+22a25
+> import org.apache.lucene.util.ReaderUtil;
+29d31
+< import org.apache.solr.search.SolrIndexReader;
+58c60
+<   public DocValues getValues(Map context, IndexReader reader) throws IOException {
+---
+>   public DocValues getValues(Map context, AtomicReaderContext readerContext) throws IOException {
+60,67c62
+<     if (reader instanceof SolrIndexReader) {
+<       SolrIndexReader r = (SolrIndexReader)reader;
+<       while (r.getParent() != null) {
+<         offset += r.getBase();
+<         r = r.getParent();
+<       }
+<       reader = r;
+<     }
+---
+>     ReaderContext topLevelContext = ReaderUtil.getTopLevelContext(readerContext);
+70c65
+<     final float[] arr = getCachedFloats(reader);
+---
+>     final float[] arr = getCachedFloats(topLevelContext.reader);

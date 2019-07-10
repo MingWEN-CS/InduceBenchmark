@@ -1,0 +1,50 @@
+273a274
+>           TermOffsetsTokenStream tots = null;
+278c279,281
+<               tstream = TokenSources.getTokenStream(searcher.getReader(), docId, fieldName);
+---
+>               if( tots == null )
+>                 tots = new TermOffsetsTokenStream( TokenSources.getTokenStream(searcher.getReader(), docId, fieldName) );
+>               tstream = tots.getMultiValuedTokenStream( docTexts[j].length() );
+412a416,456
+> 
+> class TermOffsetsTokenStream {
+> 
+>   TokenStream bufferedTokenStream = null;
+>   Token bufferedToken;
+>   int startOffset;
+>   int endOffset;
+> 
+>   public TermOffsetsTokenStream( TokenStream tstream ){
+>     bufferedTokenStream = tstream;
+>     startOffset = 0;
+>     bufferedToken = null;
+>   }
+> 
+>   public TokenStream getMultiValuedTokenStream( final int length ){
+>     endOffset = startOffset + length;
+>     return new TokenStream(){
+>       Token token;
+>       public Token next() throws IOException {
+>         while( true ){
+>           if( bufferedToken == null )
+>             bufferedToken = bufferedTokenStream.next();
+>           if( bufferedToken == null ) return null;
+>           if( startOffset <= bufferedToken.startOffset() &&
+>               bufferedToken.endOffset() <= endOffset ){
+>             token = bufferedToken;
+>             bufferedToken = null;
+>             token.setStartOffset( token.startOffset() - startOffset );
+>             token.setEndOffset( token.endOffset() - startOffset );
+>             return token;
+>           }
+>           else if( bufferedToken.endOffset() > endOffset ){
+>             startOffset += length + 1;
+>             return null;
+>           }
+>           bufferedToken = null;
+>         }
+>       }
+>     };
+>   }
+> }

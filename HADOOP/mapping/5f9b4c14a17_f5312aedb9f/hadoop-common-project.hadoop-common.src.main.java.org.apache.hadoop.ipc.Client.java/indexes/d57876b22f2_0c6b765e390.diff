@@ -1,0 +1,166 @@
+85,89d84
+< import org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod;
+< import org.apache.hadoop.security.token.Token;
+< import org.apache.hadoop.security.token.TokenIdentifier;
+< import org.apache.hadoop.security.token.TokenInfo;
+< import org.apache.hadoop.security.token.TokenSelector;
+371d365
+<     private String serverPrincipal;  
+374c368
+<     private Token<? extends TokenIdentifier> token;
+---
+>     private AuthProtocol authProtocol;
+421,445d414
+<       Class<?> protocol = remoteId.getProtocol();
+<       if (protocol != null) {
+<         TokenInfo tokenInfo = SecurityUtil.getTokenInfo(protocol, conf);
+<         if (tokenInfo != null) {
+<           TokenSelector<? extends TokenIdentifier> tokenSelector = null;
+<           try {
+<             tokenSelector = tokenInfo.value().newInstance();
+<           } catch (InstantiationException e) {
+<             throw new IOException(e.toString());
+<           } catch (IllegalAccessException e) {
+<             throw new IOException(e.toString());
+<           }
+<           token = tokenSelector.selectToken(
+<               SecurityUtil.buildTokenService(server),
+<               ticket.getTokens());
+<         }
+<         KerberosInfo krbInfo = SecurityUtil.getKerberosInfo(protocol, conf);
+<         if (krbInfo != null) {
+<           serverPrincipal = remoteId.getServerPrincipal();
+<           if (LOG.isDebugEnabled()) {
+<             LOG.debug("RPC Server's Kerberos principal name for protocol="
+<                 + protocol.getCanonicalName() + " is " + serverPrincipal);
+<           }
+<         }
+<       }
+447,455d415
+<       AuthenticationMethod authentication;
+<       if (token != null) {
+<         authentication = AuthenticationMethod.TOKEN;
+<       } else if (ticket != null) {
+<         authentication = ticket.getRealAuthenticationMethod();
+<       } else { 
+<         authentication = AuthenticationMethod.SIMPLE;
+<       }
+<       authMethod = authentication.getAuthMethod();
+457,459c417,419
+<       if (LOG.isDebugEnabled())
+<         LOG.debug("Use " + authMethod + " authentication for protocol "
+<             + (protocol == null? null: protocol.getSimpleName()));
+---
+>       boolean trySasl = UserGroupInformation.isSecurityEnabled() ||
+>                         (ticket != null && !ticket.getTokens().isEmpty());
+>       this.authProtocol = trySasl ? AuthProtocol.SASL : AuthProtocol.NONE;
+570,574c530,533
+<     private synchronized boolean setupSaslConnection(final InputStream in2, 
+<         final OutputStream out2) 
+<         throws IOException {
+<       saslRpcClient = new SaslRpcClient(authMethod, token, serverPrincipal,
+<           fallbackAllowed);
+---
+>     private synchronized AuthMethod setupSaslConnection(final InputStream in2, 
+>         final OutputStream out2) throws IOException, InterruptedException {
+>       saslRpcClient = new SaslRpcClient(remoteId.getTicket(),
+>           remoteId.getProtocol(), remoteId.getAddress(), conf);
+612c571,572
+<           if (UserGroupInformation.isSecurityEnabled()) {
+---
+>           UserGroupInformation ticket = remoteId.getTicket();
+>           if (ticket != null && ticket.hasKerberosCredentials()) {
+690c650
+<                   + serverPrincipal;
+---
+>                   + remoteId;
+726c686
+<           if (authMethod != AuthMethod.SIMPLE) {
+---
+>           if (authProtocol == AuthProtocol.SASL) {
+733d692
+<             boolean continueSasl = false;
+735,736c694,695
+<               continueSasl = ticket
+<                   .doAs(new PrivilegedExceptionAction<Boolean>() {
+---
+>               authMethod = ticket
+>                   .doAs(new PrivilegedExceptionAction<AuthMethod>() {
+738c697,698
+<                     public Boolean run() throws IOException {
+---
+>                     public AuthMethod run()
+>                         throws IOException, InterruptedException {
+750c710
+<             if (continueSasl) {
+---
+>             if (authMethod != AuthMethod.SIMPLE) {
+754,756c714,718
+<             } else {
+<               
+<               authMethod = AuthMethod.SIMPLE;
+---
+>             } else if (UserGroupInformation.isSecurityEnabled() &&
+>                        !fallbackAllowed) {
+>               throw new IOException("Server asks us to fall back to SIMPLE " +
+>                   "auth, but this client is configured to only allow secure " +
+>                   "connections.");
+876,883d837
+<       final AuthProtocol authProtocol;
+<       switch (authMethod) {
+<         case SIMPLE:
+<           authProtocol = AuthProtocol.NONE;
+<           break;
+<         default:
+<           authProtocol = AuthProtocol.SASL;
+<       }
+1496d1449
+<     private final String serverPrincipal;
+1507,1508c1460
+<                  UserGroupInformation ticket, int rpcTimeout,
+<                  String serverPrincipal, int maxIdleTime, 
+---
+>                  UserGroupInformation ticket, int rpcTimeout, int maxIdleTime, 
+1515d1466
+<       this.serverPrincipal = serverPrincipal;
+1540,1543d1490
+<     String getServerPrincipal() {
+<       return serverPrincipal;
+<     }
+<     
+1593d1539
+<       String remotePrincipal = getRemotePrincipal(conf, addr, protocol);
+1596,1597c1542
+<       return new ConnectionId(addr, protocol, ticket,
+<           rpcTimeout, remotePrincipal,
+---
+>       return new ConnectionId(addr, protocol, ticket, rpcTimeout,
+1610,1628d1554
+<     private static String getRemotePrincipal(Configuration conf,
+<         InetSocketAddress address, Class<?> protocol) throws IOException {
+<       if (!UserGroupInformation.isSecurityEnabled() || protocol == null) {
+<         return null;
+<       }
+<       KerberosInfo krbInfo = SecurityUtil.getKerberosInfo(protocol, conf);
+<       if (krbInfo != null) {
+<         String serverKey = krbInfo.serverPrincipal();
+<         if (serverKey == null) {
+<           throw new IOException(
+<               "Can't obtain server Kerberos config key from protocol="
+<                   + protocol.getCanonicalName());
+<         }
+<         return SecurityUtil.getServerPrincipal(conf.get(serverKey), address
+<             .getAddress());
+<       }
+<       return null;
+<     }
+<     
+1647d1572
+<             && isEqual(this.serverPrincipal, that.serverPrincipal)
+1663,1664d1587
+<       result = PRIME * result
+<           + ((serverPrincipal == null) ? 0 : serverPrincipal.hashCode());
+1672c1595
+<       return serverPrincipal + "@" + address;
+---
+>       return address.toString();

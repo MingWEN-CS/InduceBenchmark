@@ -1,0 +1,19 @@
+1706,1707c1706,1720
+<             state.setContainer(this);
+<             cache.cache(state);
+---
+>             synchronized (this) {
+>                 
+>                 
+>                 
+>                 
+>                 ItemState cachedState = cache.retrieve(id);
+>                 if (cachedState == null) {
+>                     
+>                     cache.cache(state);
+>                     
+>                     state.setContainer(this);
+>                 } else {
+>                     state = cachedState;
+>                 }
+>             }

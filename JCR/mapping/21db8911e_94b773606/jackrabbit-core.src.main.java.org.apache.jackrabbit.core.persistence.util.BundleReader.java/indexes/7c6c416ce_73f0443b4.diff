@@ -1,0 +1,86 @@
+18a19,20
+> import static org.apache.jackrabbit.core.persistence.util.BundleBinding.NULL_NODE_ID;
+> 
+31a34
+> import java.util.Collections;
+177,181c180
+<         NodeId childId = readNodeId();
+<         while (childId != null) {
+<             bundle.addChildNodeEntry(readQName(), childId);
+<             childId = readNodeId();
+<         }
+---
+>         readChildNodeEntries(bundle);
+191,192c190,209
+<         Set<NodeId> sharedSet = new HashSet<NodeId>();
+<         if (version >= BundleBinding.VERSION_2) {
+---
+>         readSharedSet(bundle);
+> 
+>         return bundle;
+>     }
+> 
+>     private void readSharedSet(NodePropBundle bundle) throws IOException {
+>         Set<NodeId> sharedSet;
+>         if (version >= BundleBinding.VERSION_3) {
+>             int n = readVarInt();
+>             if (n == 0) {
+>                 sharedSet = Collections.emptySet();
+>             } else if (n == 1) {
+>                 sharedSet = Collections.singleton(readNodeId());
+>             } else {
+>                 sharedSet = new HashSet<NodeId>();
+>                 for (int i = 0; i < n; i++) {
+>                     sharedSet.add(readNodeId());
+>                 }
+>             }
+>         } else if (version == BundleBinding.VERSION_2) {
+195,197c212,219
+<             while (parentId != null) {
+<                 sharedSet.add(parentId);
+<                 parentId = readNodeId();
+---
+>             if (parentId != null) {
+>                 sharedSet = new HashSet<NodeId>();
+>                 do {
+>                     sharedSet.add(parentId);
+>                     parentId = readNodeId();
+>                 } while (parentId != null);
+>             } else {
+>                 sharedSet = Collections.emptySet();
+198a221,222
+>         } else {
+>             sharedSet = Collections.emptySet();
+200a225
+>     }
+202c227,241
+<         return bundle;
+---
+>     private void readChildNodeEntries(NodePropBundle bundle) throws IOException {
+>         if (version >= BundleBinding.VERSION_3) {
+>             int n = readVarInt();
+>             for (int i = 0; i < n; i++) {
+>                 NodeId id = readNodeId();
+>                 Name name = readQName();
+>                 bundle.addChildNodeEntry(name, id);
+>             }
+>         } else {
+>             NodeId childId = readNodeId();
+>             while (childId != null) {
+>                 bundle.addChildNodeEntry(readQName(), childId);
+>                 childId = readNodeId();
+>             }
+>         }
+345c384
+<         if (in.readBoolean()) {
+---
+>         if (version >= BundleBinding.VERSION_3 || in.readBoolean()) {
+348c387,392
+<             return new NodeId(msb, lsb);
+---
+>             if (msb != NULL_NODE_ID.getMostSignificantBits()
+>                     || lsb != NULL_NODE_ID.getLeastSignificantBits()) {
+>                 return new NodeId(msb, lsb);
+>             } else {
+>                 return null;
+>             }

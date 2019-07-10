@@ -1,0 +1,8 @@
+32c32
+< import org.apache.lucene.index.DocsAndPositionsEnum;
+---
+> import org.apache.lucene.index.PostingsEnum;
+266c266
+<         DocsAndPositionsEnum docPosEnum = it.docsAndPositions(null, null, DocsAndPositionsEnum.FLAG_OFFSETS);
+---
+>         PostingsEnum docPosEnum = it.postings(null, null, PostingsEnum.FLAG_OFFSETS);

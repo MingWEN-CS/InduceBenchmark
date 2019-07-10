@@ -1,0 +1,60 @@
+18a19
+> import java.io.File;
+24c25
+< import org.junit.After;
+---
+> import org.apache.commons.io.FileUtils;
+26a28
+> import org.junit.Rule;
+28c30
+< import org.junit.rules.TemporaryFolder;
+---
+> import org.junit.rules.TestName;
+31,33c33,39
+<   
+<   public TemporaryFolder folder = new TemporaryFolder();
+<   
+---
+> 
+>   private File baseDir = new File(System.getProperty("user.dir") + "/target/mini-tests/" + this.getClass().getName());
+>   private File testDir;
+> 
+>   @Rule
+>   public TestName testName = new TestName();
+> 
+36,41c42,45
+<     folder.create();
+<   }
+<   
+<   @After
+<   public void deleteMacDir() {
+<     folder.delete();
+---
+>     baseDir.mkdirs();
+>     testDir = new File(baseDir, testName.getMethodName());
+>     FileUtils.deleteQuietly(testDir);
+>     testDir.mkdir();
+43c47
+<   
+---
+> 
+46c50
+<     MiniAccumuloCluster accumulo = new MiniAccumuloCluster(folder.getRoot(), "superSecret");
+---
+>     MiniAccumuloCluster accumulo = new MiniAccumuloCluster(testDir, "superSecret");
+48c52
+<     
+---
+> 
+58c62
+<   
+---
+> 
+61c65
+<     MiniAccumuloCluster accumulo = new MiniAccumuloCluster(folder.getRoot(), "superSecret");
+---
+>     MiniAccumuloCluster accumulo = new MiniAccumuloCluster(testDir, "superSecret");
+63c67
+<     
+---
+> 

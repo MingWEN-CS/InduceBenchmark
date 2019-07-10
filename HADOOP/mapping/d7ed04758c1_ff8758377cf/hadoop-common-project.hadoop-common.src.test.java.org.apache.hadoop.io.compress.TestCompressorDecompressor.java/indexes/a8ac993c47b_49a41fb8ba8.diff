@@ -1,0 +1,12 @@
+28a29
+> import org.apache.hadoop.test.GenericTestUtils;
+69c70,71
+<       fail("testCompressorDecompressor error !!!" + ex);
+---
+>       GenericTestUtils.assertExceptionContains(
+>           "testCompressorDecompressor error !!!", ex);
+91c93,94
+<       fail("testCompressorDecompressorWithExeedBufferLimit error !!!" + ex);
+---
+>       GenericTestUtils.assertExceptionContains(
+>           "testCompressorDecompressorWithExeedBufferLimit error !!!", ex);

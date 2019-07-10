@@ -1,0 +1,89 @@
+19,25d18
+< import junit.framework.TestCase;
+< 
+< import javax.servlet.RequestDispatcher;
+< import javax.servlet.ServletInputStream;
+< import javax.servlet.http.Cookie;
+< import javax.servlet.http.HttpServletRequest;
+< import javax.servlet.http.HttpSession;
+29d21
+< import java.net.MalformedURLException;
+39a32,40
+> import java.util.Vector;
+> 
+> import javax.servlet.RequestDispatcher;
+> import javax.servlet.ServletInputStream;
+> import javax.servlet.http.Cookie;
+> import javax.servlet.http.HttpServletRequest;
+> import javax.servlet.http.HttpSession;
+> 
+> import junit.framework.TestCase;
+57a59,60
+>         validURLs.add("
+>         validURLs.add("/jackrabbit/server");
+64c67,69
+<     private static void testValid(CSRFUtil util, Collection<String> validURLs, String method, Set<String> contentTypes) throws MalformedURLException {
+---
+>     static String[] noContentType = new String[0];
+> 
+>     private static void testValid(CSRFUtil util, Collection<String> validURLs, String method, Set<String> contentTypes) {
+67c72
+<                 assertTrue(url, util.isValidRequest(createRequest(url, method, null)));
+---
+>                 assertTrue(url, util.isValidRequest(createRequest(url, method, noContentType)));
+78c83
+<     private static void testInvalid(CSRFUtil util, Collection<String> invalidURLs, String method, Set<String> contentTypes) throws MalformedURLException {
+---
+>     private static void testInvalid(CSRFUtil util, Collection<String> invalidURLs, String method, Set<String> contentTypes) {
+81c86
+<                 assertFalse(url, util.isValidRequest(createRequest(url, method, null)));
+---
+>                 assertFalse(url, util.isValidRequest(createRequest(url, method, noContentType)));
+91a97,100
+>     private static HttpServletRequest createRequest(String url, String method, String[] contentTypes) {
+>         return new DummyRequest(url, SERVER_NAME, method, contentTypes);
+>     }
+> 
+93c102
+<         return new DummyRequest(url, SERVER_NAME, method, contentType);
+---
+>         return new DummyRequest(url, SERVER_NAME, method, new String[] { contentType });
+111a121,124
+>         assertFalse("no referrer", util.isValidRequest(createRequest(null, POST, noContentType)));
+>         assertFalse("no referrer", util.isValidRequest(createRequest(null, POST, "TEXT/PLAIN; foo=bar")));
+>         assertTrue("no referrer", util.isValidRequest(createRequest(null, POST, "application/json")));
+>         assertFalse("no referrer", util.isValidRequest(createRequest(null, POST, new String[] { "application/json", "foo/bar" })));
+158c171
+<         private final String contentType;
+---
+>         private final String[] contentTypes;
+160c173
+<         private DummyRequest(String referer, String serverName, String method, String contentType) {
+---
+>         private DummyRequest(String referer, String serverName, String method, String[] contentTypes) {
+164c177
+<             this.contentType = contentType;
+---
+>             this.contentTypes = contentTypes;
+180a194,206
+>         public String getContentType() {
+>             return contentTypes.length == 0 ? null : contentTypes[0];
+>         }
+> 
+>         @SuppressWarnings({ "rawtypes", "unchecked" })
+>         public Enumeration getHeaders(String name) {
+>             if (name != null && contentTypes.length > 0 && name.toLowerCase(Locale.ENGLISH).equals("content-type")) {
+>                 return new Vector(Arrays.asList(contentTypes)).elements();
+>             } else {
+>                 return null;
+>             }
+>         }
+> 
+191,193d216
+<         public Enumeration getHeaders(String name) {
+<             return null;
+<         }
+269,271d291
+<         public String getContentType() {
+<             return contentType;
+<         }

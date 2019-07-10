@@ -1,0 +1,1969 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.query.lucene;
+
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.query.lucene.directory.DirectoryManager;
+import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.ItemStateManager;
+import org.apache.jackrabbit.core.state.NoSuchItemStateException;
+import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
+import org.apache.jackrabbit.util.Timer;
+import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.PathFactory;
+import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
+import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
+import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.store.Directory;
+
+import javax.jcr.RepositoryException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class MultiIndex {
+
+    
+
+
+    private static final Logger log = LoggerFactory.getLogger(MultiIndex.class);
+
+    
+
+
+    private static final PathFactory PATH_FACTORY = PathFactoryImpl.getInstance();
+
+    
+
+
+    private final IndexInfos indexNames = new IndexInfos("indexes");
+
+    
+
+
+    private final Set<String> deletable = new HashSet<String>();
+
+    
+
+
+
+
+
+    private final List<PersistentIndex> indexes =
+        new ArrayList<PersistentIndex>();
+
+    
+
+
+    private final NamespaceMappings nsMappings;
+
+    
+
+
+    private final DirectoryManager directoryManager;
+
+    
+
+
+    private final Directory indexDir;
+
+    
+
+
+    private final SearchIndex handler;
+
+    
+
+
+    private VolatileIndex volatileIndex;
+
+    
+
+
+    private boolean updateInProgress = false;
+
+    
+
+
+
+    private CachingMultiIndexReader multiReader;
+
+    
+
+
+    private final DocNumberCache cache;
+
+    
+
+
+
+    private final Object updateMonitor = new Object();
+
+    
+
+
+    private boolean redoLogApplied = false;
+
+    
+
+
+    private long lastFlushTime;
+
+    
+
+
+    private final IndexMerger merger;
+
+    
+
+
+    private static final Timer FLUSH_TIMER = new Timer(true);
+
+    
+
+
+
+    private final Timer.Task flushTask;
+
+    
+
+
+    private final RedoLog redoLog;
+
+    
+
+
+    private IndexingQueue indexingQueue;
+
+    
+
+
+    private final Set<NodeId> excludedIDs;
+
+    
+
+
+    private long nextTransactionId = 0;
+
+    
+
+
+    private long currentTransactionId = -1;
+
+    
+
+
+    private boolean reindexing = false;
+
+    
+
+
+    private final IndexFormatVersion version;
+
+    
+
+
+
+
+
+
+
+    MultiIndex(SearchIndex handler, Set<NodeId> excludedIDs) throws IOException {
+        this.directoryManager = handler.getDirectoryManager();
+        this.indexDir = directoryManager.getDirectory(".");
+        this.handler = handler;
+        this.cache = new DocNumberCache(handler.getCacheSize());
+        this.redoLog = new RedoLog(indexDir);
+        this.excludedIDs = new HashSet<NodeId>(excludedIDs);
+        this.nsMappings = handler.getNamespaceMappings();
+
+        if (indexNames.exists(indexDir)) {
+            indexNames.read(indexDir);
+        }
+
+        
+        removeDeletable();
+
+        
+        merger = new IndexMerger(this, handler.getIndexMergerPoolSize());
+        merger.setMaxMergeDocs(handler.getMaxMergeDocs());
+        merger.setMergeFactor(handler.getMergeFactor());
+        merger.setMinMergeDocs(handler.getMinMergeDocs());
+
+        IndexingQueueStore store = new IndexingQueueStore(indexDir);
+
+        
+        this.indexingQueue = new IndexingQueue(store);
+
+        
+        for (int i = 0; i < indexNames.size(); i++) {
+            String name = indexNames.getName(i);
+            
+            
+            
+            
+            if (!directoryManager.hasDirectory(name)) {
+                log.debug("index does not exist anymore: " + name);
+                
+                continue;
+            }
+            PersistentIndex index = new PersistentIndex(name,
+                    handler.getTextAnalyzer(), handler.getSimilarity(),
+                    cache, indexingQueue, directoryManager);
+            index.setMaxFieldLength(handler.getMaxFieldLength());
+            index.setUseCompoundFile(handler.getUseCompoundFile());
+            index.setTermInfosIndexDivisor(handler.getTermInfosIndexDivisor());
+            indexes.add(index);
+            merger.indexAdded(index.getName(), index.getNumDocuments());
+        }
+
+        
+        resetVolatileIndex();
+
+        
+        
+        CachingMultiIndexReader reader = getIndexReader(handler.isInitializeHierarchyCache());
+        try {
+            version = IndexFormatVersion.getVersion(reader);
+        } finally {
+            reader.release();
+        }
+
+        indexingQueue.initialize(this);
+
+        redoLogApplied = redoLog.hasEntries();
+
+        
+        Recovery.run(this, redoLog);
+
+        
+        enqueueUnusedSegments();
+        attemptDelete();
+
+        
+        merger.start();
+
+        if (redoLogApplied) {
+            
+            try {
+                merger.waitUntilIdle();
+            } catch (InterruptedException e) {
+                
+            }
+            flush();
+        }
+
+        flushTask = new Timer.Task() {
+            public void run() {
+                
+                checkIndexingQueue();
+                
+                checkFlush();
+            }
+        };
+
+        if (indexNames.size() > 0) {
+            scheduleFlushTask();
+        }
+    }
+
+    
+
+
+
+
+
+    int numDocs() throws IOException {
+        if (indexNames.size() == 0) {
+            return volatileIndex.getNumDocuments();
+        } else {
+            CachingMultiIndexReader reader = getIndexReader();
+            try {
+                return reader.numDocs();
+            } finally {
+                reader.release();
+            }
+        }
+    }
+
+    
+
+
+    IndexFormatVersion getIndexFormatVersion() {
+        return version;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    void createInitialIndex(ItemStateManager stateMgr,
+                            NodeId rootId,
+                            Path rootPath)
+            throws IOException {
+        
+        if (indexNames.size() == 0) {
+            reindexing = true;
+            try {
+                long count = 0;
+                
+                executeAndLog(new Start(Action.INTERNAL_TRANSACTION));
+                NodeState rootState = (NodeState) stateMgr.getItemState(rootId);
+                count = createIndex(rootState, rootPath, stateMgr, count);
+                executeAndLog(new Commit(getTransactionId()));
+                log.info("Created initial index for {} nodes", new Long(count));
+                scheduleFlushTask();
+            } catch (Exception e) {
+                String msg = "Error indexing workspace";
+                IOException ex = new IOException(msg);
+                ex.initCause(e);
+                throw ex;
+            } finally {
+                reindexing = false;
+            }
+        } else {
+            throw new IllegalStateException("Index already present");
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    synchronized void update(
+            Collection<NodeId> remove, Collection<Document> add)
+            throws IOException {
+        
+        if (add.size() > handler.getBufferSize()) {
+            getIndexReader().release();
+        }
+
+        synchronized (updateMonitor) {
+            updateInProgress = true;
+        }
+        try {
+            long transactionId = nextTransactionId++;
+            executeAndLog(new Start(transactionId));
+
+            boolean flush = false;
+
+            for (NodeId id : remove) {
+                executeAndLog(new DeleteNode(transactionId, id));
+            }
+
+            for (Document document : add) {
+                if (document != null) {
+                    executeAndLog(new AddNode(transactionId, document));
+                    
+                    flush |= checkVolatileCommit();
+                }
+            }
+            executeAndLog(new Commit(transactionId));
+
+            
+            if (flush) {
+                flush();
+            }
+        } finally {
+            synchronized (updateMonitor) {
+                updateInProgress = false;
+                updateMonitor.notifyAll();
+                releaseMultiReader();
+            }
+        }
+    }
+
+    
+
+
+
+
+
+
+    void addDocument(Document doc) throws IOException {
+        Collection<NodeId> empty = Collections.emptyList();
+        update(empty, Collections.singleton(doc));
+    }
+
+    
+
+
+
+
+
+    void removeDocument(NodeId id) throws IOException {
+        Collection<Document> empty = Collections.emptyList();
+        update(Collections.singleton(id), empty);
+    }
+
+    
+
+
+
+
+
+
+    synchronized int removeAllDocuments(NodeId id) throws IOException {
+        synchronized (updateMonitor) {
+            updateInProgress = true;
+        }
+        int num;
+        try {
+            Term idTerm = new Term(FieldNames.UUID, id.toString());
+            executeAndLog(new Start(Action.INTERNAL_TRANSACTION));
+            num = volatileIndex.removeDocument(idTerm);
+            if (num > 0) {
+                redoLog.append(new DeleteNode(getTransactionId(), id));
+            }
+            for (int i = 0; i < indexes.size(); i++) {
+                PersistentIndex index = (PersistentIndex) indexes.get(i);
+                
+                if (indexNames.contains(index.getName())) {
+                    int removed = index.removeDocument(idTerm);
+                    if (removed > 0) {
+                        redoLog.append(new DeleteNode(getTransactionId(), id));
+                    }
+                    num += removed;
+                }
+            }
+            executeAndLog(new Commit(getTransactionId()));
+        } finally {
+            synchronized (updateMonitor) {
+                updateInProgress = false;
+                updateMonitor.notifyAll();
+                releaseMultiReader();
+            }
+        }
+        return num;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    synchronized IndexReader[] getIndexReaders(
+            String[] indexNames, IndexListener listener) throws IOException {
+        Set<String> names = new HashSet<String>(Arrays.asList(indexNames));
+        Map<ReadOnlyIndexReader, PersistentIndex> indexReaders =
+            new HashMap<ReadOnlyIndexReader, PersistentIndex>();
+
+        try {
+            for (PersistentIndex index : indexes) {
+                if (names.contains(index.getName())) {
+                    indexReaders.put(index.getReadOnlyIndexReader(listener), index);
+                }
+            }
+        } catch (IOException e) {
+            
+            for (Map.Entry<ReadOnlyIndexReader, PersistentIndex> entry
+                    : indexReaders.entrySet()) {
+                try {
+                    entry.getKey().release();
+                } catch (IOException ex) {
+                    log.warn("Exception releasing index reader: " + ex);
+                }
+                entry.getValue().resetListener();
+            }
+            throw e;
+        }
+
+        return indexReaders.keySet().toArray(new IndexReader[indexReaders.size()]);
+    }
+
+    
+
+
+
+
+
+
+
+
+    synchronized PersistentIndex getOrCreateIndex(String indexName)
+            throws IOException {
+        
+        for (PersistentIndex idx : indexes) {
+            if (idx.getName().equals(indexName)) {
+                return idx;
+            }
+        }
+
+        
+        if (indexName == null) {
+            do {
+                indexName = indexNames.newName();
+            } while (directoryManager.hasDirectory(indexName));
+        }
+        PersistentIndex index = new PersistentIndex(indexName,
+                handler.getTextAnalyzer(), handler.getSimilarity(),
+                cache, indexingQueue, directoryManager);
+        index.setMaxFieldLength(handler.getMaxFieldLength());
+        index.setUseCompoundFile(handler.getUseCompoundFile());
+        index.setTermInfosIndexDivisor(handler.getTermInfosIndexDivisor());
+
+        
+        indexes.add(index);
+        return index;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    synchronized boolean hasIndex(String indexName) throws IOException {
+        
+        for (PersistentIndex idx : indexes) {
+            if (idx.getName().equals(indexName)) {
+                return true;
+            }
+        }
+        
+        return directoryManager.hasDirectory(indexName);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    void replaceIndexes(String[] obsoleteIndexes,
+                        PersistentIndex index,
+                        Collection<Term> deleted)
+            throws IOException {
+
+        if (handler.isInitializeHierarchyCache()) {
+            
+            long time = System.currentTimeMillis();
+            index.getReadOnlyIndexReader(true).release();
+            time = System.currentTimeMillis() - time;
+            log.debug("hierarchy cache initialized in {} ms", new Long(time));
+        }
+
+        synchronized (this) {
+            synchronized (updateMonitor) {
+                updateInProgress = true;
+            }
+            try {
+                
+                if (!reindexing) {
+                    executeAndLog(new Start(Action.INTERNAL_TRANS_REPL_INDEXES));
+                }
+                
+                Set<String> names = new HashSet<String>(Arrays.asList(obsoleteIndexes));
+                for (String indexName : names) {
+                    
+                    if (indexNames.contains(indexName)) {
+                        executeAndLog(new DeleteIndex(getTransactionId(), indexName));
+                    }
+                }
+
+                
+                
+                executeAndLog(new CreateIndex(getTransactionId(), index.getName()));
+
+                executeAndLog(new AddIndex(getTransactionId(), index.getName()));
+
+                
+                for (Term id : deleted) {
+                    index.removeDocument(id);
+                }
+                index.commit();
+
+                if (!reindexing) {
+                    
+                    
+                    executeAndLog(new Commit(getTransactionId()));
+                }
+            } finally {
+                synchronized (updateMonitor) {
+                    updateInProgress = false;
+                    updateMonitor.notifyAll();
+                    releaseMultiReader();
+                }
+            }
+        }
+        if (reindexing) {
+            
+            attemptDelete();
+        }
+    }
+
+    
+
+
+
+
+
+
+    public CachingMultiIndexReader getIndexReader() throws IOException {
+        return getIndexReader(false);
+    }
+
+    
+
+
+
+
+
+
+
+
+    public CachingMultiIndexReader getIndexReader(boolean initCache) throws IOException {
+        synchronized (updateMonitor) {
+            if (multiReader != null) {
+                multiReader.acquire();
+                return multiReader;
+            }
+            
+            
+            while (updateInProgress) {
+                try {
+                    updateMonitor.wait();
+                } catch (InterruptedException e) {
+                    throw new IOException("Interrupted while waiting to aquire reader");
+                }
+            }
+            
+            
+            if (multiReader == null) {
+                List<ReadOnlyIndexReader> readerList =
+                    new ArrayList<ReadOnlyIndexReader>();
+                for (int i = 0; i < indexes.size(); i++) {
+                    PersistentIndex pIdx = (PersistentIndex) indexes.get(i);
+                    if (indexNames.contains(pIdx.getName())) {
+                        readerList.add(pIdx.getReadOnlyIndexReader(initCache));
+                    }
+                }
+                readerList.add(volatileIndex.getReadOnlyIndexReader());
+                ReadOnlyIndexReader[] readers =
+                    readerList.toArray(new ReadOnlyIndexReader[readerList.size()]);
+                multiReader = new CachingMultiIndexReader(readers, cache);
+            }
+            multiReader.acquire();
+            return multiReader;
+        }
+    }
+
+    
+
+
+
+
+    VolatileIndex getVolatileIndex() {
+        return volatileIndex;
+    }
+
+    
+
+
+    void close() {
+
+        
+        
+        
+        merger.dispose();
+
+        synchronized (this) {
+            
+            flushTask.cancel();
+
+            
+            try {
+                releaseMultiReader();
+            } catch (IOException e) {
+                log.error("Exception while closing search index.", e);
+            }
+            try {
+                flush();
+            } catch (IOException e) {
+                log.error("Exception while closing search index.", e);
+            }
+            volatileIndex.close();
+            for (int i = 0; i < indexes.size(); i++) {
+                ((PersistentIndex) indexes.get(i)).close();
+            }
+
+            
+            indexingQueue.close();
+
+            
+            try {
+                indexDir.close();
+            } catch (IOException e) {
+                log.error("Exception while closing directory.", e);
+            }
+        }
+    }
+
+    
+
+
+
+    NamespaceMappings getNamespaceMappings() {
+        return nsMappings;
+    }
+
+    
+
+
+
+    IndexingQueue getIndexingQueue() {
+        return indexingQueue;
+    }
+
+    
+
+
+
+
+
+
+
+    Document createDocument(NodeState node) throws RepositoryException {
+        return handler.createDocument(node, nsMappings, version);
+    }
+
+    
+
+
+
+
+
+
+
+
+    Document createDocument(NodeId id) throws RepositoryException {
+        try {
+            NodeState state = (NodeState) handler.getContext().getItemStateManager().getItemState(id);
+            return createDocument(state);
+        } catch (NoSuchItemStateException e) {
+            throw new RepositoryException("Node " + id + " does not exist", e);
+        } catch (ItemStateException e) {
+            throw new RepositoryException("Error retrieving node: " + id, e);
+        }
+    }
+
+    
+
+
+
+
+    boolean getRedoLogApplied() {
+        return redoLogApplied;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    synchronized void deleteIndex(PersistentIndex index) {
+        
+        indexes.remove(index);
+        indexNames.removeName(index.getName());
+        synchronized (deletable) {
+            log.debug("Moved " + index.getName() + " to deletable");
+            deletable.add(index.getName());
+        }
+    }
+
+    
+
+
+
+
+
+    void flush() throws IOException {
+        synchronized (this) {
+            
+            executeAndLog(new Start(Action.INTERNAL_TRANSACTION));
+            commitVolatileIndex();
+
+            
+            for (int i = indexes.size() - 1; i >= 0; i--) {
+                PersistentIndex index = (PersistentIndex) indexes.get(i);
+                
+                
+                
+                if (indexNames.contains(index.getName())) {
+                    index.commit();
+                    
+                    if (index.getNumDocuments() == 0) {
+                        executeAndLog(new DeleteIndex(getTransactionId(), index.getName()));
+                    }
+                }
+            }
+            executeAndLog(new Commit(getTransactionId()));
+
+            indexNames.write(indexDir);
+
+            
+            redoLog.clear();
+
+            lastFlushTime = System.currentTimeMillis();
+        }
+
+        
+        attemptDelete();
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    void releaseMultiReader() throws IOException {
+        if (multiReader != null) {
+            try {
+                multiReader.release();
+            } finally {
+                multiReader = null;
+            }
+        }
+    }
+
+    
+
+    
+
+
+
+
+
+
+    private void enqueueUnusedSegments() throws IOException {
+        
+        String[] dirNames = directoryManager.getDirectoryNames();
+        for (int i = 0; i < dirNames.length; i++) {
+            if (dirNames[i].startsWith("_") && !indexNames.contains(dirNames[i])) {
+                deletable.add(dirNames[i]);
+            }
+        }
+    }
+
+    private void scheduleFlushTask() {
+        lastFlushTime = System.currentTimeMillis();
+        FLUSH_TIMER.schedule(flushTask, 0, 1000);
+    }
+
+    
+
+
+    private void resetVolatileIndex() throws IOException {
+        volatileIndex = new VolatileIndex(handler.getTextAnalyzer(),
+                handler.getSimilarity(), indexingQueue);
+        volatileIndex.setUseCompoundFile(handler.getUseCompoundFile());
+        volatileIndex.setMaxFieldLength(handler.getMaxFieldLength());
+        volatileIndex.setBufferSize(handler.getBufferSize());
+    }
+
+    
+
+
+
+
+    private long getTransactionId() {
+        return currentTransactionId;
+    }
+
+    
+
+
+
+
+
+
+
+
+    private Action executeAndLog(Action a)
+            throws IOException {
+        a.execute(this);
+        redoLog.append(a);
+        
+        
+        
+        
+        if (a.getType() == Action.TYPE_COMMIT || a.getType() == Action.TYPE_ADD_INDEX) {
+            redoLog.flush();
+        }
+        return a;
+    }
+
+    
+
+
+
+
+
+
+
+
+    private boolean checkVolatileCommit() throws IOException {
+        if (volatileIndex.getRamSizeInBytes() >= handler.getMaxVolatileIndexSize()) {
+            commitVolatileIndex();
+            return true;
+        }
+        return false;
+    }
+
+    
+
+
+
+
+
+
+
+    private void commitVolatileIndex() throws IOException {
+
+        
+        if (volatileIndex.getNumDocuments() > 0) {
+
+            long time = System.currentTimeMillis();
+            
+            CreateIndex create = new CreateIndex(getTransactionId(), null);
+            executeAndLog(create);
+
+            
+            executeAndLog(new VolatileCommit(getTransactionId(), create.getIndexName()));
+
+            
+            AddIndex add = new AddIndex(getTransactionId(), create.getIndexName());
+            executeAndLog(add);
+
+            
+            resetVolatileIndex();
+
+            time = System.currentTimeMillis() - time;
+            log.debug("Committed in-memory index in " + time + "ms.");
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private long createIndex(NodeState node,
+                             Path path,
+                             ItemStateManager stateMgr,
+                             long count)
+            throws IOException, ItemStateException, RepositoryException {
+        NodeId id = node.getNodeId();
+        if (excludedIDs.contains(id)) {
+            return count;
+        }
+        executeAndLog(new AddNode(getTransactionId(), id));
+        if (++count % 100 == 0) {
+            PathResolver resolver = new DefaultNamePathResolver(
+                    handler.getContext().getNamespaceRegistry());
+            log.info("indexing... {} ({})", resolver.getJCRPath(path), new Long(count));
+        }
+        if (count % 10 == 0) {
+            checkIndexingQueue(true);
+        }
+        checkVolatileCommit();
+        for (ChildNodeEntry child : node.getChildNodeEntries()) {
+            Path childPath = PATH_FACTORY.create(path, child.getName(),
+                    child.getIndex(), false);
+            NodeState childState = null;
+            try {
+                childState = (NodeState) stateMgr.getItemState(child.getId());
+            } catch (NoSuchItemStateException e) {
+                handler.getOnWorkspaceInconsistencyHandler().handleMissingChildNode(
+                        e, handler, path, node, child);
+            }
+            if (childState != null) {
+                count = createIndex(childState, childPath, stateMgr, count);
+            }
+        }
+        return count;
+    }
+
+    
+
+
+    private void attemptDelete() {
+        synchronized (deletable) {
+            for (Iterator<String> it = deletable.iterator(); it.hasNext(); ) {
+                String indexName = it.next();
+                if (directoryManager.delete(indexName)) {
+                    it.remove();
+                } else {
+                    log.info("Unable to delete obsolete index: " + indexName);
+                }
+            }
+        }
+    }
+
+    
+
+
+
+    private void removeDeletable() {
+        String fileName = "deletable";
+        try {
+            if (indexDir.fileExists(fileName)) {
+                indexDir.deleteFile(fileName);
+            }
+        } catch (IOException e) {
+            log.warn("Unable to remove file 'deletable'.", e);
+        }
+    }
+
+    
+
+
+
+
+
+    private synchronized void checkFlush() {
+        long idleTime = System.currentTimeMillis() - lastFlushTime;
+        
+        if (handler.getVolatileIdleTime() > 0
+                && idleTime > handler.getVolatileIdleTime() * 1000) {
+            try {
+                if (redoLog.hasEntries()) {
+                    log.debug("Flushing index after being idle for "
+                            + idleTime + " ms.");
+                    synchronized (updateMonitor) {
+                        updateInProgress = true;
+                    }
+                    try {
+                        flush();
+                    } finally {
+                        synchronized (updateMonitor) {
+                            updateInProgress = false;
+                            updateMonitor.notifyAll();
+                            releaseMultiReader();
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                log.error("Unable to commit volatile index", e);
+            }
+        }
+    }
+
+    
+
+
+
+
+
+
+    private synchronized void checkIndexingQueue() {
+        checkIndexingQueue(false);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    private void checkIndexingQueue(boolean transactionPresent) {
+        Map<NodeId, Document> finished = new HashMap<NodeId, Document>();
+        for (Document document : indexingQueue.getFinishedDocuments()) {
+            NodeId id = new NodeId(document.get(FieldNames.UUID));
+            finished.put(id, document);
+        }
+
+        
+        if (!finished.isEmpty()) {
+            log.info("updating index with {} nodes from indexing queue.",
+                    new Long(finished.size()));
+
+            
+            for (NodeId id : finished.keySet()) {
+                indexingQueue.removeDocument(id.toString());
+            }
+
+            try {
+                if (transactionPresent) {
+                    for (NodeId id : finished.keySet()) {
+                        executeAndLog(new DeleteNode(getTransactionId(), id));
+                    }
+                    for (Document document : finished.values()) {
+                        executeAndLog(new AddNode(getTransactionId(), document));
+                    }
+                } else {
+                    update(finished.keySet(), finished.values());
+                }
+            } catch (IOException e) {
+                
+                log.warn("Failed to update index with deferred text extraction", e);
+            }
+        }
+    }
+
+    
+
+    
+
+
+    public abstract static class Action {
+
+        
+
+
+        static final String START = "STR";
+
+        
+
+
+        public static final int TYPE_START = 0;
+
+        
+
+
+        static final String ADD_NODE = "ADD";
+
+        
+
+
+        public static final int TYPE_ADD_NODE = 1;
+
+        
+
+
+        static final String DELETE_NODE = "DEL";
+
+        
+
+
+        public static final int TYPE_DELETE_NODE = 2;
+
+        
+
+
+        static final String COMMIT = "COM";
+
+        
+
+
+        public static final int TYPE_COMMIT = 3;
+
+        
+
+
+        static final String VOLATILE_COMMIT = "VOL_COM";
+
+        
+
+
+        public static final int TYPE_VOLATILE_COMMIT = 4;
+
+        
+
+
+        static final String CREATE_INDEX = "CRE_IDX";
+
+        
+
+
+        public static final int TYPE_CREATE_INDEX = 5;
+
+        
+
+
+        static final String ADD_INDEX = "ADD_IDX";
+
+        
+
+
+        public static final int TYPE_ADD_INDEX = 6;
+
+        
+
+
+        static final String DELETE_INDEX = "DEL_IDX";
+
+        
+
+
+        public static final int TYPE_DELETE_INDEX = 7;
+
+        
+
+
+
+        static final long INTERNAL_TRANSACTION = -1;
+
+        
+
+
+        static final long INTERNAL_TRANS_REPL_INDEXES = -2;
+
+        
+
+
+        private final long transactionId;
+
+        
+
+
+        private final int type;
+
+        
+
+
+
+
+
+
+        Action(long transactionId, int type) {
+            this.transactionId = transactionId;
+            this.type = type;
+        }
+
+        
+
+
+
+
+        long getTransactionId() {
+            return transactionId;
+        }
+
+        
+
+
+
+
+        int getType() {
+            return type;
+        }
+
+        
+
+
+
+
+
+
+        public abstract void execute(MultiIndex index) throws IOException;
+
+        
+
+
+
+
+
+
+
+        public void undo(MultiIndex index) throws IOException {
+        }
+
+        
+
+
+
+
+
+        public abstract String toString();
+
+        
+
+
+
+
+
+
+        static Action fromString(String line) throws IllegalArgumentException {
+            int endTransIdx = line.indexOf(' ');
+            if (endTransIdx == -1) {
+                throw new IllegalArgumentException(line);
+            }
+            long transactionId;
+            try {
+                transactionId = Long.parseLong(line.substring(0, endTransIdx));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(line);
+            }
+            int endActionIdx = line.indexOf(' ', endTransIdx + 1);
+            if (endActionIdx == -1) {
+                
+                endActionIdx = line.length();
+            }
+            String actionLabel = line.substring(endTransIdx + 1, endActionIdx);
+            String arguments = "";
+            if (endActionIdx + 1 <= line.length()) {
+                arguments = line.substring(endActionIdx + 1);
+            }
+            Action a;
+            if (actionLabel.equals(Action.ADD_NODE)) {
+                a = AddNode.fromString(transactionId, arguments);
+            } else if (actionLabel.equals(Action.ADD_INDEX)) {
+                a = AddIndex.fromString(transactionId, arguments);
+            } else if (actionLabel.equals(Action.COMMIT)) {
+                a = Commit.fromString(transactionId, arguments);
+            } else if (actionLabel.equals(Action.CREATE_INDEX)) {
+                a = CreateIndex.fromString(transactionId, arguments);
+            } else if (actionLabel.equals(Action.DELETE_INDEX)) {
+                a = DeleteIndex.fromString(transactionId, arguments);
+            } else if (actionLabel.equals(Action.DELETE_NODE)) {
+                a = DeleteNode.fromString(transactionId, arguments);
+            } else if (actionLabel.equals(Action.START)) {
+                a = Start.fromString(transactionId, arguments);
+            } else if (actionLabel.equals(Action.VOLATILE_COMMIT)) {
+                a = VolatileCommit.fromString(transactionId, arguments);
+            } else {
+                throw new IllegalArgumentException(line);
+            }
+            return a;
+        }
+    }
+
+    
+
+
+    private static class AddIndex extends Action {
+
+        
+
+
+        private String indexName;
+
+        
+
+
+
+
+
+
+
+        AddIndex(long transactionId, String indexName) {
+            super(transactionId, Action.TYPE_ADD_INDEX);
+            this.indexName = indexName;
+        }
+
+        
+
+
+
+
+
+
+
+
+        static AddIndex fromString(long transactionId, String arguments) {
+            return new AddIndex(transactionId, arguments);
+        }
+
+        
+
+
+
+
+        public void execute(MultiIndex index) throws IOException {
+            PersistentIndex idx = index.getOrCreateIndex(indexName);
+            if (!index.indexNames.contains(indexName)) {
+                index.indexNames.addName(indexName);
+                
+                index.merger.indexAdded(indexName, idx.getNumDocuments());
+            }
+        }
+
+        
+
+
+        public String toString() {
+            StringBuffer logLine = new StringBuffer();
+            logLine.append(Long.toString(getTransactionId()));
+            logLine.append(' ');
+            logLine.append(Action.ADD_INDEX);
+            logLine.append(' ');
+            logLine.append(indexName);
+            return logLine.toString();
+        }
+    }
+
+    
+
+
+    private static class AddNode extends Action {
+
+        
+
+
+        private static final int ENTRY_LENGTH =
+            Long.toString(Long.MAX_VALUE).length() + Action.ADD_NODE.length()
+            + new NodeId().toString().length() + 2;
+
+        
+
+
+        private final NodeId id;
+
+        
+
+
+        private Document doc;
+
+        
+
+
+
+
+
+        AddNode(long transactionId, NodeId id) {
+            super(transactionId, Action.TYPE_ADD_NODE);
+            this.id = id;
+        }
+
+        
+
+
+
+
+
+        AddNode(long transactionId, Document doc) {
+            this(transactionId, new NodeId(doc.get(FieldNames.UUID)));
+            this.doc = doc;
+        }
+
+        
+
+
+
+
+
+
+
+
+
+        static AddNode fromString(long transactionId, String arguments)
+                throws IllegalArgumentException {
+            return new AddNode(transactionId, new NodeId(arguments));
+        }
+
+        
+
+
+
+
+        public void execute(MultiIndex index) throws IOException {
+            if (doc == null) {
+                try {
+                    doc = index.createDocument(id);
+                } catch (RepositoryException e) {
+                    
+                    log.debug(e.getMessage());
+                }
+            }
+            if (doc != null) {
+                index.volatileIndex.addDocuments(new Document[]{doc});
+            }
+        }
+
+        
+
+
+        public String toString() {
+            StringBuffer logLine = new StringBuffer(ENTRY_LENGTH);
+            logLine.append(Long.toString(getTransactionId()));
+            logLine.append(' ');
+            logLine.append(Action.ADD_NODE);
+            logLine.append(' ');
+            logLine.append(id);
+            return logLine.toString();
+        }
+    }
+
+    
+
+
+    private static class Commit extends Action {
+
+        
+
+
+
+
+        Commit(long transactionId) {
+            super(transactionId, Action.TYPE_COMMIT);
+        }
+
+        
+
+
+
+
+
+
+
+        static Commit fromString(long transactionId, String arguments) {
+            return new Commit(transactionId);
+        }
+
+        
+
+
+
+
+        public void execute(MultiIndex index) throws IOException {
+            index.lastFlushTime = System.currentTimeMillis();
+        }
+
+        
+
+
+        public String toString() {
+            return Long.toString(getTransactionId()) + ' ' + Action.COMMIT;
+        }
+    }
+
+    
+
+
+
+    private static class CreateIndex extends Action {
+
+        
+
+
+        private String indexName;
+
+        
+
+
+
+
+
+
+
+        CreateIndex(long transactionId, String indexName) {
+            super(transactionId, Action.TYPE_CREATE_INDEX);
+            this.indexName = indexName;
+        }
+
+        
+
+
+
+
+
+
+
+
+        static CreateIndex fromString(long transactionId, String arguments) {
+            
+            return new CreateIndex(transactionId, arguments);
+        }
+
+        
+
+
+
+
+        public void execute(MultiIndex index) throws IOException {
+            PersistentIndex idx = index.getOrCreateIndex(indexName);
+            indexName = idx.getName();
+        }
+
+        
+
+
+        public void undo(MultiIndex index) throws IOException {
+            if (index.hasIndex(indexName)) {
+                PersistentIndex idx = index.getOrCreateIndex(indexName);
+                idx.close();
+                index.deleteIndex(idx);
+            }
+        }
+
+        
+
+
+        public String toString() {
+            StringBuffer logLine = new StringBuffer();
+            logLine.append(Long.toString(getTransactionId()));
+            logLine.append(' ');
+            logLine.append(Action.CREATE_INDEX);
+            logLine.append(' ');
+            logLine.append(indexName);
+            return logLine.toString();
+        }
+
+        
+
+
+
+
+
+        String getIndexName() {
+            return indexName;
+        }
+    }
+
+    
+
+
+    private static class DeleteIndex extends Action {
+
+        
+
+
+        private String indexName;
+
+        
+
+
+
+
+
+
+        DeleteIndex(long transactionId, String indexName) {
+            super(transactionId, Action.TYPE_DELETE_INDEX);
+            this.indexName = indexName;
+        }
+
+        
+
+
+
+
+
+
+
+
+        static DeleteIndex fromString(long transactionId, String arguments) {
+            return new DeleteIndex(transactionId, arguments);
+        }
+
+        
+
+
+
+
+        public void execute(MultiIndex index) throws IOException {
+            
+            for (PersistentIndex idx : index.indexes) {
+                if (idx.getName().equals(indexName)) {
+                    idx.close();
+                    index.deleteIndex(idx);
+                    break;
+                }
+            }
+        }
+
+        
+
+
+        public String toString() {
+            StringBuffer logLine = new StringBuffer();
+            logLine.append(Long.toString(getTransactionId()));
+            logLine.append(' ');
+            logLine.append(Action.DELETE_INDEX);
+            logLine.append(' ');
+            logLine.append(indexName);
+            return logLine.toString();
+        }
+    }
+
+    
+
+
+    private static class DeleteNode extends Action {
+
+        
+
+
+        private static final int ENTRY_LENGTH =
+            Long.toString(Long.MAX_VALUE).length() + Action.DELETE_NODE.length()
+            + new NodeId().toString().length() + 2;
+
+        
+
+
+        private final NodeId id;
+
+        
+
+
+
+
+
+        DeleteNode(long transactionId, NodeId id) {
+            super(transactionId, Action.TYPE_DELETE_NODE);
+            this.id = id;
+        }
+
+        
+
+
+
+
+
+
+
+
+
+        static DeleteNode fromString(long transactionId, String arguments) {
+            return new DeleteNode(transactionId, new NodeId(arguments));
+        }
+
+        
+
+
+
+
+        public void execute(MultiIndex index) throws IOException {
+            String uuidString = id.toString();
+            
+            
+            Document doc = index.indexingQueue.removeDocument(uuidString);
+            if (doc != null) {
+                Util.disposeDocument(doc);
+            }
+            Term idTerm = new Term(FieldNames.UUID, uuidString);
+            
+            
+            int num = index.volatileIndex.removeDocument(idTerm);
+            if (num == 0) {
+                for (int i = index.indexes.size() - 1; i >= 0; i--) {
+                    
+                    PersistentIndex idx = (PersistentIndex) index.indexes.get(i);
+                    if (index.indexNames.contains(idx.getName())) {
+                        num = idx.removeDocument(idTerm);
+                        if (num > 0) {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        
+
+
+        public String toString() {
+            StringBuffer logLine = new StringBuffer(ENTRY_LENGTH);
+            logLine.append(Long.toString(getTransactionId()));
+            logLine.append(' ');
+            logLine.append(Action.DELETE_NODE);
+            logLine.append(' ');
+            logLine.append(id);
+            return logLine.toString();
+        }
+    }
+
+    
+
+
+    private static class Start extends Action {
+
+        
+
+
+
+
+        Start(long transactionId) {
+            super(transactionId, Action.TYPE_START);
+        }
+
+        
+
+
+
+
+
+
+
+        static Start fromString(long transactionId, String arguments) {
+            return new Start(transactionId);
+        }
+
+        
+
+
+
+
+        public void execute(MultiIndex index) throws IOException {
+            index.currentTransactionId = getTransactionId();
+        }
+
+        
+
+
+        public String toString() {
+            return Long.toString(getTransactionId()) + ' ' + Action.START;
+        }
+    }
+
+    
+
+
+    private static class VolatileCommit extends Action {
+
+        
+
+
+        private final String targetIndex;
+
+        
+
+
+
+
+        VolatileCommit(long transactionId, String targetIndex) {
+            super(transactionId, Action.TYPE_VOLATILE_COMMIT);
+            this.targetIndex = targetIndex;
+        }
+
+        
+
+
+
+
+
+
+
+        static VolatileCommit fromString(long transactionId, String arguments) {
+            return new VolatileCommit(transactionId, arguments);
+        }
+
+        
+
+
+
+
+        public void execute(MultiIndex index) throws IOException {
+            VolatileIndex volatileIndex = index.getVolatileIndex();
+            PersistentIndex persistentIndex = index.getOrCreateIndex(targetIndex);
+            persistentIndex.copyIndex(volatileIndex);
+            index.resetVolatileIndex();
+        }
+
+        
+
+
+        public String toString() {
+            StringBuffer logLine = new StringBuffer();
+            logLine.append(Long.toString(getTransactionId()));
+            logLine.append(' ');
+            logLine.append(Action.VOLATILE_COMMIT);
+            logLine.append(' ');
+            logLine.append(targetIndex);
+            return logLine.toString();
+        }
+    }
+}

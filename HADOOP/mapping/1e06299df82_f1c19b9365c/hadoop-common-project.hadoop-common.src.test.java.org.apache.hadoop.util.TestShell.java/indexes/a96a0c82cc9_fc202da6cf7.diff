@@ -1,0 +1,24 @@
+166c166
+<       expectedCommand = new String[]{ "kill", "-0", "--", "-" + anyPid };
+---
+>       expectedCommand = new String[] { "bash", "-c", "kill -0 -- -" + anyPid };
+168c168
+<       expectedCommand = new String[]{"kill", "-0", anyPid};
+---
+>       expectedCommand = new String[]{ "bash", "-c", "kill -0 " + anyPid };
+179a180
+> 
+182c183
+<           new String[]{ Shell.WINUTILS, "task", "kill", anyPid };
+---
+>           new String[]{ Shell.WINUTILS, "task", "isAlive", anyPid };
+184,185c185
+<       expectedCommand =
+<           new String[]{ "kill", "-" + anySignal, "--", "-" + anyPid };
+---
+>       expectedCommand = new String[] { "bash", "-c", "kill -9 -- -" + anyPid };
+187,188c187
+<       expectedCommand =
+<           new String[]{ "kill", "-" + anySignal, anyPid };
+---
+>       expectedCommand = new String[]{ "bash", "-c", "kill -9 " + anyPid };

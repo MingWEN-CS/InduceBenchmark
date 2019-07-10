@@ -1,0 +1,10 @@
+849a850,858
+>     assertQ(
+>         "Might be double-escaping a client-escaped colon", 
+>         req("q", "text_sw:(theos OR thistokenhasa\\:preescapedcolon OR theou)", "defType", "edismax", "qf", "id"),
+>         "*[count(
+>     assertQ(
+>         "Might be double-escaping a client-escaped colon", 
+>         req("q", "text_sw:(theos OR thistokenhasa\\:preescapedcolon OR theou)", "defType", "edismax", "qf", "text"),
+>         "*[count(
+>     

@@ -1,0 +1,36 @@
+122d121
+<     private long fileLen = -1L;
+246a246,263
+>   }
+>   
+>   private static class FSDataBoundedInputStream extends FSDataInputStream {
+>     private FileSystem fs;
+>     private Path file;
+>     private long fileLen = -1L;
+> 
+>     FSDataBoundedInputStream(FileSystem fs, Path file, InputStream in)
+>         throws IOException {
+>       super(in);
+>       this.fs = fs;
+>       this.file = file;
+>     }
+>     
+>     @Override
+>     public boolean markSupported() {
+>       return false;
+>     }
+307,309c324,333
+<     return verifyChecksum
+<       ? new FSDataInputStream(new ChecksumFSInputChecker(this, f, bufferSize))
+<       : getRawFileSystem().open(f, bufferSize);
+---
+>     FileSystem fs;
+>     InputStream in;
+>     if (verifyChecksum) {
+>       fs = this;
+>       in = new ChecksumFSInputChecker(this, f, bufferSize);
+>     } else {
+>       fs = getRawFileSystem();
+>       in = fs.open(f, bufferSize);
+>     }
+>     return new FSDataBoundedInputStream(fs, f, in);

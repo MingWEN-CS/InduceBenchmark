@@ -1,0 +1,36 @@
+54a55,57
+>     private static final String EXECUTOR_EXTRA_JAVA_OPTIONS = "spark.executor.extraJavaOptions=";
+>     private static final String DRIVER_EXTRA_JAVA_OPTIONS = "spark.driver.extraJavaOptions=";
+>     private static final String LOG4J_CONFIGURATION_JAVA_OPTION = "-Dlog4j.configuration=";
+121a125,126
+>         boolean addedLog4jDriverSettings = false;
+>         boolean addedLog4jExecutorSettings = false;
+152a158,170
+>                 if (opt.startsWith(EXECUTOR_EXTRA_JAVA_OPTIONS) || opt.startsWith(DRIVER_EXTRA_JAVA_OPTIONS)) {
+>                     if(!opt.contains(LOG4J_CONFIGURATION_JAVA_OPTION)) {
+>                         opt += " " + LOG4J_CONFIGURATION_JAVA_OPTION + SPARK_LOG4J_PROPS;
+>                     }else{
+>                         System.out.println("Warning: Spark Log4J settings are overwritten." +
+>                                 " Child job IDs may not be available");
+>                     }
+>                     if(opt.startsWith(EXECUTOR_EXTRA_JAVA_OPTIONS)) {
+>                         addedLog4jExecutorSettings = true;
+>                     }else{
+>                         addedLog4jDriverSettings = true;
+>                     }
+>                 }
+172,176d189
+<         sparkArgs.add("--conf");
+<         sparkArgs.add("spark.executor.extraJavaOptions=-Dlog4j.configuration=" + SPARK_LOG4J_PROPS);
+< 
+<         sparkArgs.add("--conf");
+<         sparkArgs.add("spark.driver.extraJavaOptions=-Dlog4j.configuration=" + SPARK_LOG4J_PROPS);
+190a204,211
+>         if(!addedLog4jExecutorSettings) {
+>             sparkArgs.add("--conf");
+>             sparkArgs.add(EXECUTOR_EXTRA_JAVA_OPTIONS + LOG4J_CONFIGURATION_JAVA_OPTION + SPARK_LOG4J_PROPS);
+>         }
+>         if(!addedLog4jDriverSettings) {
+>             sparkArgs.add("--conf");
+>             sparkArgs.add(DRIVER_EXTRA_JAVA_OPTIONS + LOG4J_CONFIGURATION_JAVA_OPTION + SPARK_LOG4J_PROPS);
+>         }

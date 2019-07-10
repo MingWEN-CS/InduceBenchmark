@@ -1,0 +1,5 @@
+473c473,474
+<                 if (state.getStatus() == ItemState.STATUS_EXISTING_MODIFIED) {
+---
+>                 if (state.getStatus() == ItemState.STATUS_EXISTING_MODIFIED
+>                         || state.getStatus() == ItemState.STATUS_STALE_DESTROYED) {

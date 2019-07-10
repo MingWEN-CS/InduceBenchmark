@@ -1,0 +1,27 @@
+915,919c915
+<             try {
+<               doPurge(call, now);
+<             } catch (IOException e) {
+<               LOG.warn("Error in purging old calls " + e);
+<             }
+---
+>             doPurge(call, now);
+964c960
+<     private void doPurge(Call call, long now) throws IOException {
+---
+>     private void doPurge(Call call, long now) {
+1519c1515
+<         throws IOException, InterruptedException {
+---
+>         throws IOException {
+1991c1987
+<     private synchronized void close() throws IOException {
+---
+>     private synchronized void close() {
+2267,2270c2263
+<     try {
+<       connection.close();
+<     } catch (IOException e) {
+<     }
+---
+>     connection.close();

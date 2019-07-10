@@ -1,0 +1,6 @@
+2482c2482,2484
+<       LOG.debug("parsing URL " + url);
+---
+>       if (LOG.isDebugEnabled()) {
+>         LOG.debug("parsing URL " + url);
+>       }

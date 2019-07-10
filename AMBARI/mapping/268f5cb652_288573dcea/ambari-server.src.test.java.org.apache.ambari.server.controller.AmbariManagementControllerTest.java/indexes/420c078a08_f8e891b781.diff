@@ -1,0 +1,38 @@
+8693,8694c8693,8694
+<     properties.setProperty(Configuration.METADATA_DIR_PATH, "src/test/resources/stacks");
+<     properties.setProperty(Configuration.SERVER_VERSION_FILE, "src/test/resources/version");
+---
+>     properties.setProperty(Configuration.METADATA_DIR_PATH.getKey(), "src/test/resources/stacks");
+>     properties.setProperty(Configuration.SERVER_VERSION_FILE.getKey(), "src/test/resources/version");
+8800c8800
+<     backingProperties.setProperty(Configuration.REPO_SUFFIX_KEY_UBUNTU, "/repodata/repomd.xml");
+---
+>     backingProperties.setProperty(Configuration.REPO_SUFFIX_KEY_UBUNTU.getKey(), "/repodata/repomd.xml");
+8813c8813
+<     backingProperties.setProperty(Configuration.REPO_SUFFIX_KEY_DEFAULT, "repodata/repomd.xml");
+---
+>     backingProperties.setProperty(Configuration.REPO_SUFFIX_KEY_DEFAULT.getKey(), "repodata/repomd.xml");
+8839c8839
+<     backingProperties.setProperty(Configuration.REPO_SUFFIX_KEY_DEFAULT, "/repodata/repomd.xml");
+---
+>     backingProperties.setProperty(Configuration.REPO_SUFFIX_KEY_DEFAULT.getKey(), "/repodata/repomd.xml");
+8852c8852
+<     backingProperties.setProperty(Configuration.REPO_SUFFIX_KEY_UBUNTU, "/foo/bar.xml,/repodata/repomd.xml");
+---
+>     backingProperties.setProperty(Configuration.REPO_SUFFIX_KEY_UBUNTU.getKey(), "/foo/bar.xml,/repodata/repomd.xml");
+9287c9287
+<         properties.setProperty(Configuration.SERVER_PERSISTENCE_TYPE_KEY, "in-memory");
+---
+>         properties.setProperty(Configuration.SERVER_PERSISTENCE_TYPE.getKey(), "in-memory");
+9289,9294c9289,9292
+<         properties.setProperty(Configuration.METADATA_DIR_PATH,
+<             "src/test/resources/stacks");
+<         properties.setProperty(Configuration.SERVER_VERSION_FILE,
+<             "../version");
+<         properties.setProperty(Configuration.OS_VERSION_KEY, "centos6");
+<         properties.setProperty(Configuration.SHARED_RESOURCES_DIR_KEY, "src/test/resources/");
+---
+>         properties.setProperty(Configuration.METADATA_DIR_PATH.getKey(),"src/test/resources/stacks");
+>         properties.setProperty(Configuration.SERVER_VERSION_FILE.getKey(),"../version");
+>         properties.setProperty(Configuration.OS_VERSION.getKey(), "centos6");
+>         properties.setProperty(Configuration.SHARED_RESOURCES_DIR.getKey(), "src/test/resources/");

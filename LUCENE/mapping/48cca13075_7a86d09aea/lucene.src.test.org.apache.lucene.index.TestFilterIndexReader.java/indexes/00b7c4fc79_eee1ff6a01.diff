@@ -1,0 +1,10 @@
+115a116,118
+>     
+>     RAMDirectory target = new MockRAMDirectory();
+>     writer = new IndexWriter(target, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+116a120,124
+>     writer.addIndexes(reader);
+>     writer.close();
+>     reader.close();
+>     reader = IndexReader.open(target, true);
+>     

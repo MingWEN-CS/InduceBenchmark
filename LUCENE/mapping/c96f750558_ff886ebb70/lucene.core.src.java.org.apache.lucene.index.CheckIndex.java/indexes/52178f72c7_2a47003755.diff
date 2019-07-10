@@ -1,0 +1,56 @@
+715c715
+<   public static Status.FieldNormStatus testFieldNorms(AtomicReader reader, PrintStream infoStream, boolean failFast) throws IOException {
+---
+>   public static Status.FieldNormStatus testFieldNorms(LeafReader reader, PrintStream infoStream, boolean failFast) throws IOException {
+1309c1309
+<   public static Status.TermIndexStatus testPostings(AtomicReader reader, PrintStream infoStream) throws IOException {
+---
+>   public static Status.TermIndexStatus testPostings(LeafReader reader, PrintStream infoStream) throws IOException {
+1317c1317
+<   public static Status.TermIndexStatus testPostings(AtomicReader reader, PrintStream infoStream, boolean verbose, boolean failFast) throws IOException {
+---
+>   public static Status.TermIndexStatus testPostings(LeafReader reader, PrintStream infoStream, boolean verbose, boolean failFast) throws IOException {
+1359c1359
+<   public static Status.StoredFieldStatus testStoredFields(AtomicReader reader, PrintStream infoStream, boolean failFast) throws IOException {
+---
+>   public static Status.StoredFieldStatus testStoredFields(LeafReader reader, PrintStream infoStream, boolean failFast) throws IOException {
+1404c1404
+<   public static Status.DocValuesStatus testDocValues(AtomicReader reader,
+---
+>   public static Status.DocValuesStatus testDocValues(LeafReader reader,
+1446c1446
+<   private static void checkBinaryDocValues(String fieldName, AtomicReader reader, BinaryDocValues dv, Bits docsWithField) {
+---
+>   private static void checkBinaryDocValues(String fieldName, LeafReader reader, BinaryDocValues dv, Bits docsWithField) {
+1456c1456
+<   private static void checkSortedDocValues(String fieldName, AtomicReader reader, SortedDocValues dv, Bits docsWithField) {
+---
+>   private static void checkSortedDocValues(String fieldName, LeafReader reader, SortedDocValues dv, Bits docsWithField) {
+1496c1496
+<   private static void checkSortedSetDocValues(String fieldName, AtomicReader reader, SortedSetDocValues dv, Bits docsWithField) {
+---
+>   private static void checkSortedSetDocValues(String fieldName, LeafReader reader, SortedSetDocValues dv, Bits docsWithField) {
+1566c1566
+<   private static void checkSortedNumericDocValues(String fieldName, AtomicReader reader, SortedNumericDocValues ndv, Bits docsWithField) {
+---
+>   private static void checkSortedNumericDocValues(String fieldName, LeafReader reader, SortedNumericDocValues ndv, Bits docsWithField) {
+1590c1590
+<   private static void checkNumericDocValues(String fieldName, AtomicReader reader, NumericDocValues ndv, Bits docsWithField) {
+---
+>   private static void checkNumericDocValues(String fieldName, LeafReader reader, NumericDocValues ndv, Bits docsWithField) {
+1599c1599
+<   private static void checkDocValues(FieldInfo fi, AtomicReader reader, PrintStream infoStream, DocValuesStatus status) throws Exception {
+---
+>   private static void checkDocValues(FieldInfo fi, LeafReader reader, PrintStream infoStream, DocValuesStatus status) throws Exception {
+1662c1662
+<   private static void checkNorms(FieldInfo fi, AtomicReader reader, PrintStream infoStream) throws IOException {
+---
+>   private static void checkNorms(FieldInfo fi, LeafReader reader, PrintStream infoStream) throws IOException {
+1676c1676
+<   public static Status.TermVectorStatus testTermVectors(AtomicReader reader, PrintStream infoStream) throws IOException {
+---
+>   public static Status.TermVectorStatus testTermVectors(LeafReader reader, PrintStream infoStream) throws IOException {
+1684c1684
+<   public static Status.TermVectorStatus testTermVectors(AtomicReader reader, PrintStream infoStream, boolean verbose, boolean crossCheckTermVectors, boolean failFast) throws IOException {
+---
+>   public static Status.TermVectorStatus testTermVectors(LeafReader reader, PrintStream infoStream, boolean verbose, boolean crossCheckTermVectors, boolean failFast) throws IOException {

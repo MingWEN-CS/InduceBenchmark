@@ -1,0 +1,20 @@
+57d56
+< import java.util.Iterator;
+81a81
+> import org.apache.ambari.server.actionmanager.CommandExecutionType;
+85d84
+< import org.apache.ambari.server.actionmanager.CommandExecutionType;
+938,939d936
+<     Config config = configFactory.createNew(cluster, type,
+<       properties, propertiesAttributes);
+941,945c938,939
+<     if (!StringUtils.isEmpty(versionTag)) {
+<       config.setTag(versionTag);
+<     }
+< 
+<     config.persist();
+---
+>     Config config = configFactory.createNew(cluster, type, versionTag, properties,
+>         propertiesAttributes);
+948d941
+< 

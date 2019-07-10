@@ -1,0 +1,12 @@
+165c165,167
+<       defaultClient.getConnectionManager().shutdown();
+---
+>       if(defaultClient != null) {
+>         defaultClient.getConnectionManager().shutdown();
+>       }
+170c172,174
+<       loadbalancer.shutdown();
+---
+>       if(loadbalancer != null) {
+>         loadbalancer.shutdown();
+>       }

@@ -1,0 +1,14 @@
+381c381
+<       DataConfig.Field field = entity.colNameVsField.get(key);
+---
+>       List<DataConfig.Field> field = entity.colNameVsField.get(key);
+393,394c393,396
+<         if (field != null && field.toWrite) {
+<           addFieldToDoc(entry.getValue(), field.getName(), field.boost, field.multiValued, doc);
+---
+>         if (field != null ) {
+>           for (DataConfig.Field f : field) {
+>             if(f.toWrite) addFieldToDoc(entry.getValue(), f.getName(), f.boost, f.multiValued, doc);
+>           }
+397d398
+< 

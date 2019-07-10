@@ -1,0 +1,33 @@
+147,148d146
+<     String[] files = directory.listAll();
+< 
+150,153c148,149
+< 
+<     for(int i=0;i<files.length;i++) {
+< 
+<       String fileName = files[i];
+---
+>     boolean seenIndexFiles = false;
+>     for (String fileName : directory.listAll()) {
+156c152,153
+< 
+---
+>         seenIndexFiles = true;
+>         
+198c195,198
+<     if (currentCommitPoint == null) {
+---
+>     
+>     
+>     
+>     if (currentCommitPoint == null && seenIndexFiles) {
+238c238,240
+<     policy.onInit(commits);
+---
+>     if (seenIndexFiles) {
+>       policy.onInit(commits);
+>     }
+244c246
+<     startingCommitDeleted = currentCommitPoint.isDeleted();
+---
+>     startingCommitDeleted = currentCommitPoint == null ? false : currentCommitPoint.isDeleted();

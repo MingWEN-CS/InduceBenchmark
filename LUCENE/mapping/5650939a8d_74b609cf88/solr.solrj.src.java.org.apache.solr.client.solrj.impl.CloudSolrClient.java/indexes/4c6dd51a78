@@ -1,0 +1,1746 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.client.solrj.impl;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.net.ConnectException;
+import java.net.SocketException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.apache.http.NoHttpResponseException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.solr.client.solrj.ResponseParser;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.AbstractUpdateRequest;
+import org.apache.solr.client.solrj.request.IsUpdateRequest;
+import org.apache.solr.client.solrj.request.RequestWriter;
+import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.client.solrj.util.ClientUtils;
+import org.apache.solr.common.SolrException;
+import org.apache.solr.common.SolrException.ErrorCode;
+import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.ToleratedUpdateError;
+import org.apache.solr.common.cloud.ClusterState;
+import org.apache.solr.common.cloud.CollectionStatePredicate;
+import org.apache.solr.common.cloud.CollectionStateWatcher;
+import org.apache.solr.common.cloud.DocCollection;
+import org.apache.solr.common.cloud.DocRouter;
+import org.apache.solr.common.cloud.ImplicitDocRouter;
+import org.apache.solr.common.cloud.Replica;
+import org.apache.solr.common.cloud.Slice;
+import org.apache.solr.common.cloud.ZkCoreNodeProps;
+import org.apache.solr.common.cloud.ZkNodeProps;
+import org.apache.solr.common.cloud.ZkStateReader;
+import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.ShardParams;
+import org.apache.solr.common.params.SolrParams;
+import org.apache.solr.common.params.UpdateParams;
+import org.apache.solr.common.util.ExecutorUtil;
+import org.apache.solr.common.util.Hash;
+import org.apache.solr.common.util.NamedList;
+import org.apache.solr.common.util.SimpleOrderedMap;
+import org.apache.solr.common.util.SolrjNamedThreadFactory;
+import org.apache.solr.common.util.StrUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
+import static org.apache.solr.common.params.CommonParams.ADMIN_PATHS;
+import static org.apache.solr.common.params.CommonParams.ID;
+
+
+
+
+
+
+
+
+
+
+
+@SuppressWarnings("serial")
+public class CloudSolrClient extends SolrClient {
+
+  private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+  private final ClusterStateProvider stateProvider;
+  private volatile String defaultCollection;
+  private final LBHttpSolrClient lbClient;
+  private final boolean shutdownLBHttpSolrServer;
+  private HttpClient myClient;
+  private final boolean clientIsInternal;
+  
+  private static final int MAX_STALE_RETRIES = 5;
+  Random rand = new Random();
+  
+  private final boolean updatesToLeaders;
+  private final boolean directUpdatesToLeadersOnly;
+  private boolean parallelUpdates = true;
+  private ExecutorService threadPool = ExecutorUtil
+      .newMDCAwareCachedThreadPool(new SolrjNamedThreadFactory(
+          "CloudSolrClient ThreadPool"));
+  private String idField = ID;
+  public static final String STATE_VERSION = "_stateVer_";
+  private long retryExpiryTime = TimeUnit.NANOSECONDS.convert(3, TimeUnit.SECONDS);
+  private final Set<String> NON_ROUTABLE_PARAMS;
+  {
+    NON_ROUTABLE_PARAMS = new HashSet<>();
+    NON_ROUTABLE_PARAMS.add(UpdateParams.EXPUNGE_DELETES);
+    NON_ROUTABLE_PARAMS.add(UpdateParams.MAX_OPTIMIZE_SEGMENTS);
+    NON_ROUTABLE_PARAMS.add(UpdateParams.COMMIT);
+    NON_ROUTABLE_PARAMS.add(UpdateParams.WAIT_SEARCHER);
+    NON_ROUTABLE_PARAMS.add(UpdateParams.OPEN_SEARCHER);
+    
+    NON_ROUTABLE_PARAMS.add(UpdateParams.SOFT_COMMIT);
+    NON_ROUTABLE_PARAMS.add(UpdateParams.PREPARE_COMMIT);
+    NON_ROUTABLE_PARAMS.add(UpdateParams.OPTIMIZE);
+    
+    
+    
+
+  }
+  private volatile List<Object> locks = objectList(3);
+
+
+  static class StateCache extends ConcurrentHashMap<String, ExpiringCachedDocCollection> {
+    final AtomicLong puts = new AtomicLong();
+    final AtomicLong hits = new AtomicLong();
+    final Lock evictLock = new ReentrantLock(true);
+    private volatile long timeToLive = 60 * 1000L;
+
+    @Override
+    public ExpiringCachedDocCollection get(Object key) {
+      ExpiringCachedDocCollection val = super.get(key);
+      if(val == null) {
+        
+        
+        evictStale();
+        return null;
+      }
+      if(val.isExpired(timeToLive)) {
+        super.remove(key);
+        return null;
+      }
+      hits.incrementAndGet();
+      return val;
+    }
+
+    @Override
+    public ExpiringCachedDocCollection put(String key, ExpiringCachedDocCollection value) {
+      puts.incrementAndGet();
+      return super.put(key, value);
+    }
+
+    void evictStale() {
+      if(!evictLock.tryLock()) return;
+      try {
+        for (Entry<String, ExpiringCachedDocCollection> e : entrySet()) {
+          if(e.getValue().isExpired(timeToLive)){
+            super.remove(e.getKey());
+          }
+        }
+      } finally {
+        evictLock.unlock();
+      }
+    }
+
+  }
+
+  
+
+
+
+
+
+  public void setRetryExpiryTime(int secs) {
+    this.retryExpiryTime = TimeUnit.NANOSECONDS.convert(secs, TimeUnit.SECONDS);
+  }
+
+  public void setSoTimeout(int timeout) {
+    lbClient.setSoTimeout(timeout);
+  }
+
+  protected final StateCache collectionStateCache = new StateCache();
+  class ExpiringCachedDocCollection {
+    final DocCollection cached;
+    final long cachedAt;
+    
+    long retriedAt = -1;
+    
+    boolean maybeStale = false;
+
+    ExpiringCachedDocCollection(DocCollection cached) {
+      this.cached = cached;
+      this.cachedAt = System.nanoTime();
+    }
+
+    boolean isExpired(long timeToLiveMs) {
+      return (System.nanoTime() - cachedAt)
+          > TimeUnit.NANOSECONDS.convert(timeToLiveMs, TimeUnit.MILLISECONDS);
+    }
+
+    boolean shoulRetry() {
+      if (maybeStale) {
+        if ((retriedAt == -1 ||
+            (System.nanoTime() - retriedAt) > retryExpiryTime)) {
+          return true;
+          
+        }
+      }
+      return false;
+    }
+
+    void setRetriedAt() {
+      retriedAt = System.nanoTime();
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Deprecated
+  public CloudSolrClient(String zkHost) {
+    this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+      this.clientIsInternal = true;
+      this.myClient = HttpClientUtil.createClient(null);
+      this.lbClient = new LBHttpSolrClient.Builder()
+          .withHttpClient(myClient)
+          .build();
+      this.lbClient.setRequestWriter(new BinaryRequestWriter());
+      this.lbClient.setParser(new BinaryResponseParser());
+      this.updatesToLeaders = true;
+      this.directUpdatesToLeadersOnly = false;
+      shutdownLBHttpSolrServer = true;
+      lbClient.addQueryParams(STATE_VERSION);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Deprecated
+  public CloudSolrClient(String zkHost, HttpClient httpClient) {
+    this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+    this.clientIsInternal = httpClient == null;
+    this.myClient = httpClient == null ? HttpClientUtil.createClient(null) : httpClient;
+    this.lbClient = createLBHttpSolrClient(myClient);
+    this.updatesToLeaders = true;
+    this.directUpdatesToLeadersOnly = false;
+    shutdownLBHttpSolrServer = true;
+    lbClient.addQueryParams(STATE_VERSION);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Deprecated
+  public CloudSolrClient(Collection<String> zkHosts, String chroot) {
+    this(zkHosts, chroot, null);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Deprecated
+  public CloudSolrClient(Collection<String> zkHosts, String chroot, HttpClient httpClient) {
+    this.stateProvider = new ZkClientClusterStateProvider(zkHosts, chroot);
+    this.clientIsInternal = httpClient == null;
+    this.myClient = httpClient == null ? HttpClientUtil.createClient(null) : httpClient;
+    this.lbClient = createLBHttpSolrClient(myClient);
+    this.updatesToLeaders = true;
+    this.directUpdatesToLeadersOnly = false;
+    shutdownLBHttpSolrServer = true;
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Deprecated
+  public CloudSolrClient(Collection<String> zkHosts, String chroot, HttpClient httpClient, LBHttpSolrClient lbSolrClient, boolean updatesToLeaders) {
+    this(zkHosts, chroot, httpClient, lbSolrClient, null, updatesToLeaders, false, null);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  private CloudSolrClient(Collection<String> zkHosts,
+                          String chroot,
+                          HttpClient httpClient,
+                          LBHttpSolrClient lbSolrClient,
+                          LBHttpSolrClient.Builder lbHttpSolrClientBuilder,
+                          boolean updatesToLeaders,
+                          boolean directUpdatesToLeadersOnly,
+                          ClusterStateProvider stateProvider
+
+  ) {
+    if (stateProvider == null) {
+      this.stateProvider = new ZkClientClusterStateProvider(zkHosts, chroot);
+    } else {
+      this.stateProvider = stateProvider;
+    }
+    this.clientIsInternal = httpClient == null;
+    this.shutdownLBHttpSolrServer = lbSolrClient == null;
+    if(lbHttpSolrClientBuilder != null) lbSolrClient = lbHttpSolrClientBuilder.build();
+    if(lbSolrClient != null) httpClient = lbSolrClient.getHttpClient();
+    this.myClient = httpClient == null ? HttpClientUtil.createClient(null) : httpClient;
+    if (lbSolrClient == null) lbSolrClient = createLBHttpSolrClient(myClient);
+    this.lbClient = lbSolrClient;
+    this.updatesToLeaders = updatesToLeaders;
+    this.directUpdatesToLeadersOnly = directUpdatesToLeadersOnly;
+  }
+  
+  
+
+
+
+
+
+
+
+  @Deprecated
+  public CloudSolrClient(String zkHost, boolean updatesToLeaders) {
+    this(zkHost, updatesToLeaders, null);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  @Deprecated
+  public CloudSolrClient(String zkHost, boolean updatesToLeaders, HttpClient httpClient) {
+    this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+    this.clientIsInternal = httpClient == null;
+    this.myClient = httpClient == null ? HttpClientUtil.createClient(null) : httpClient;
+    this.lbClient = new LBHttpSolrClient.Builder()
+        .withHttpClient(myClient)
+        .build();
+    this.lbClient.setRequestWriter(new BinaryRequestWriter());
+    this.lbClient.setParser(new BinaryResponseParser());
+    this.updatesToLeaders = updatesToLeaders;
+    this.directUpdatesToLeadersOnly = false;
+    shutdownLBHttpSolrServer = true;
+    lbClient.addQueryParams(STATE_VERSION);
+  }
+
+  
+
+
+  public void setCollectionCacheTTl(int seconds){
+    assert seconds > 0;
+    this.collectionStateCache.timeToLive = seconds * 1000L;
+  }
+
+  
+
+
+
+
+
+
+
+  @Deprecated
+  public CloudSolrClient(String zkHost, LBHttpSolrClient lbClient) {
+    this(zkHost, lbClient, true);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+  @Deprecated
+  public CloudSolrClient(String zkHost, LBHttpSolrClient lbClient, boolean updatesToLeaders) {
+    this.lbClient = lbClient;
+    this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+    this.updatesToLeaders = updatesToLeaders;
+    this.directUpdatesToLeadersOnly = false;
+    shutdownLBHttpSolrServer = false;
+    this.clientIsInternal = false;
+    lbClient.addQueryParams(STATE_VERSION);
+  }
+  
+  public ResponseParser getParser() {
+    return lbClient.getParser();
+  }
+
+  
+
+
+
+
+
+
+
+  public void setParser(ResponseParser processor) {
+    lbClient.setParser(processor);
+  }
+  
+  public RequestWriter getRequestWriter() {
+    return lbClient.getRequestWriter();
+  }
+  
+  public void setRequestWriter(RequestWriter requestWriter) {
+    lbClient.setRequestWriter(requestWriter);
+  }
+
+  
+
+
+  public String getZkHost() {
+    return assertZKStateProvider().zkHost;
+  }
+
+  public ZkStateReader getZkStateReader() {
+    if (stateProvider instanceof ZkClientClusterStateProvider) {
+      ZkClientClusterStateProvider provider = (ZkClientClusterStateProvider) stateProvider;
+      return provider.zkStateReader;
+    }
+    throw new IllegalStateException("This has no Zk stateReader");
+  }
+
+  
+
+
+  public void setIdField(String idField) {
+    this.idField = idField;
+  }
+
+  
+
+
+  public String getIdField() {
+    return idField;
+  }
+  
+  
+  public void setDefaultCollection(String collection) {
+    this.defaultCollection = collection;
+  }
+
+  
+  public String getDefaultCollection() {
+    return defaultCollection;
+  }
+
+  
+  public void setZkConnectTimeout(int zkConnectTimeout) {
+    assertZKStateProvider().zkConnectTimeout = zkConnectTimeout;
+  }
+
+  
+  public void setZkClientTimeout(int zkClientTimeout) {
+    assertZKStateProvider().zkClientTimeout = zkClientTimeout;
+  }
+
+  
+
+
+
+
+  public void connect() {
+    stateProvider.connect();
+  }
+
+  
+
+
+
+
+
+
+  public void connect(long duration, TimeUnit timeUnit) throws TimeoutException, InterruptedException {
+    log.info("Waiting for {} {} for cluster at {} to be ready", duration, timeUnit, stateProvider);
+    long timeout = System.nanoTime() + timeUnit.toNanos(duration);
+    while (System.nanoTime() < timeout) {
+      try {
+        connect();
+        log.info("Cluster at {} ready", stateProvider);
+        return;
+      }
+      catch (RuntimeException e) {
+        
+      }
+      TimeUnit.MILLISECONDS.sleep(250);
+    }
+    throw new TimeoutException("Timed out waiting for cluster");
+  }
+
+  public void setParallelUpdates(boolean parallelUpdates) {
+    this.parallelUpdates = parallelUpdates;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  @Deprecated
+  public void uploadConfig(Path configPath, String configName) throws IOException {
+    stateProvider.connect();
+    assertZKStateProvider().uploadConfig(configPath, configName);
+  }
+
+  private ZkClientClusterStateProvider assertZKStateProvider() {
+    if (stateProvider instanceof ZkClientClusterStateProvider) {
+      return (ZkClientClusterStateProvider) stateProvider;
+    }
+    throw new IllegalArgumentException("This client does not use ZK");
+
+  }
+
+  
+
+
+
+
+
+
+
+  @Deprecated
+  public void downloadConfig(String configName, Path downloadPath) throws IOException {
+    assertZKStateProvider().downloadConfig(configName, downloadPath);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  public void waitForState(String collection, long wait, TimeUnit unit, CollectionStatePredicate predicate)
+      throws InterruptedException, TimeoutException {
+    stateProvider.connect();
+    assertZKStateProvider().zkStateReader.waitForState(collection, wait, unit, predicate);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  public void registerCollectionStateWatcher(String collection, CollectionStateWatcher watcher) {
+    stateProvider.connect();
+    assertZKStateProvider().zkStateReader.registerCollectionStateWatcher(collection, watcher);
+  }
+
+  private NamedList<Object> directUpdate(AbstractUpdateRequest request, String collection) throws SolrServerException {
+    UpdateRequest updateRequest = (UpdateRequest) request;
+    ModifiableSolrParams params = (ModifiableSolrParams) request.getParams();
+    ModifiableSolrParams routableParams = new ModifiableSolrParams();
+    ModifiableSolrParams nonRoutableParams = new ModifiableSolrParams();
+
+    if(params != null) {
+      nonRoutableParams.add(params);
+      routableParams.add(params);
+      for(String param : NON_ROUTABLE_PARAMS) {
+        routableParams.remove(param);
+      }
+    }
+
+    if (collection == null) {
+      throw new SolrServerException("No collection param specified on request and no default collection has been set.");
+    }
+
+
+    
+    collection = stateProvider.getCollectionName(collection);
+
+    DocCollection col = getDocCollection(collection, null);
+
+    DocRouter router = col.getRouter();
+    
+    if (router instanceof ImplicitDocRouter) {
+      
+      return null;
+    }
+
+    
+    
+    
+    final Map<String,List<String>> urlMap = buildUrlMap(col);
+    final Map<String, LBHttpSolrClient.Req> routes = (urlMap == null ? null : updateRequest.getRoutes(router, col, urlMap, routableParams, this.idField));
+    if (routes == null) {
+      if (directUpdatesToLeadersOnly && hasInfoToFindLeaders(updateRequest, idField)) {
+          
+          
+          throw new SolrException(ErrorCode.SERVICE_UNAVAILABLE,
+              "directUpdatesToLeadersOnly==true but could not find leader(s)");
+      } else {
+        
+        return null;
+      }
+    }
+
+    final NamedList<Throwable> exceptions = new NamedList<>();
+    final NamedList<NamedList> shardResponses = new NamedList<>(routes.size()+1); 
+
+    long start = System.nanoTime();
+
+    if (parallelUpdates) {
+      final Map<String, Future<NamedList<?>>> responseFutures = new HashMap<>(routes.size());
+      for (final Map.Entry<String, LBHttpSolrClient.Req> entry : routes.entrySet()) {
+        final String url = entry.getKey();
+        final LBHttpSolrClient.Req lbRequest = entry.getValue();
+        try {
+          MDC.put("CloudSolrClient.url", url);
+          responseFutures.put(url, threadPool.submit(() -> lbClient.request(lbRequest).getResponse()));
+        } finally {
+          MDC.remove("CloudSolrClient.url");
+        }
+      }
+
+      for (final Map.Entry<String, Future<NamedList<?>>> entry: responseFutures.entrySet()) {
+        final String url = entry.getKey();
+        final Future<NamedList<?>> responseFuture = entry.getValue();
+        try {
+          shardResponses.add(url, responseFuture.get());
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+          exceptions.add(url, e.getCause());
+        }
+      }
+
+      if (exceptions.size() > 0) {
+        Throwable firstException = exceptions.getVal(0);
+        if(firstException instanceof SolrException) {
+          SolrException e = (SolrException) firstException;
+          throw new RouteException(ErrorCode.getErrorCode(e.code()), exceptions, routes);
+        } else {
+          throw new RouteException(ErrorCode.SERVER_ERROR, exceptions, routes);
+        }
+      }
+    } else {
+      for (Map.Entry<String, LBHttpSolrClient.Req> entry : routes.entrySet()) {
+        String url = entry.getKey();
+        LBHttpSolrClient.Req lbRequest = entry.getValue();
+        try {
+          NamedList<Object> rsp = lbClient.request(lbRequest).getResponse();
+          shardResponses.add(url, rsp);
+        } catch (Exception e) {
+          if(e instanceof SolrException) {
+            throw (SolrException) e;
+          } else {
+            throw new SolrServerException(e);
+          }
+        }
+      }
+    }
+
+    UpdateRequest nonRoutableRequest = null;
+    List<String> deleteQuery = updateRequest.getDeleteQuery();
+    if (deleteQuery != null && deleteQuery.size() > 0) {
+      UpdateRequest deleteQueryRequest = new UpdateRequest();
+      deleteQueryRequest.setDeleteQuery(deleteQuery);
+      nonRoutableRequest = deleteQueryRequest;
+    }
+    
+    Set<String> paramNames = nonRoutableParams.getParameterNames();
+    
+    Set<String> intersection = new HashSet<>(paramNames);
+    intersection.retainAll(NON_ROUTABLE_PARAMS);
+    
+    if (nonRoutableRequest != null || intersection.size() > 0) {
+      if (nonRoutableRequest == null) {
+        nonRoutableRequest = new UpdateRequest();
+      }
+      nonRoutableRequest.setParams(nonRoutableParams);
+      List<String> urlList = new ArrayList<>();
+      urlList.addAll(routes.keySet());
+      Collections.shuffle(urlList, rand);
+      LBHttpSolrClient.Req req = new LBHttpSolrClient.Req(nonRoutableRequest, urlList);
+      try {
+        LBHttpSolrClient.Rsp rsp = lbClient.request(req);
+        shardResponses.add(urlList.get(0), rsp.getResponse());
+      } catch (Exception e) {
+        throw new SolrException(ErrorCode.SERVER_ERROR, urlList.get(0), e);
+      }
+    }
+
+    long end = System.nanoTime();
+
+    RouteResponse rr = condenseResponse(shardResponses, (int) TimeUnit.MILLISECONDS.convert(end - start, TimeUnit.NANOSECONDS));
+    rr.setRouteResponses(shardResponses);
+    rr.setRoutes(routes);
+    return rr;
+  }
+
+  private Map<String,List<String>> buildUrlMap(DocCollection col) {
+    Map<String, List<String>> urlMap = new HashMap<>();
+    Collection<Slice> slices = col.getActiveSlices();
+    Iterator<Slice> sliceIterator = slices.iterator();
+    while (sliceIterator.hasNext()) {
+      Slice slice = sliceIterator.next();
+      String name = slice.getName();
+      List<String> urls = new ArrayList<>();
+      Replica leader = slice.getLeader();
+      if (leader == null) {
+        if (directUpdatesToLeadersOnly) {
+          continue;
+        }
+        
+        return null;
+      }
+      ZkCoreNodeProps zkProps = new ZkCoreNodeProps(leader);
+      String url = zkProps.getCoreUrl();
+      urls.add(url);
+      if (!directUpdatesToLeadersOnly) {
+        for (Replica replica : slice.getReplicas()) {
+          if (!replica.getNodeName().equals(leader.getNodeName()) &&
+              !replica.getName().equals(leader.getName())) {
+            ZkCoreNodeProps zkProps1 = new ZkCoreNodeProps(replica);
+            String url1 = zkProps1.getCoreUrl();
+            urls.add(url1);
+          }
+        }
+      }
+      urlMap.put(name, urls);
+    }
+    return urlMap;
+  }
+
+  public RouteResponse condenseResponse(NamedList response, int timeMillis) {
+    RouteResponse condensed = new RouteResponse();
+    int status = 0;
+    Integer rf = null;
+    Integer minRf = null;
+    
+    
+    List<SimpleOrderedMap<String>> toleratedErrors = null; 
+    int maxToleratedErrors = Integer.MAX_VALUE;
+
+    
+    Map<String, NamedList> versions = new HashMap<>();
+
+    for(int i=0; i<response.size(); i++) {
+      NamedList shardResponse = (NamedList)response.getVal(i);
+      NamedList header = (NamedList)shardResponse.get("responseHeader");      
+      Integer shardStatus = (Integer)header.get("status");
+      int s = shardStatus.intValue();
+      if(s > 0) {
+          status = s;
+      }
+      Object rfObj = header.get(UpdateRequest.REPFACT);
+      if (rfObj != null && rfObj instanceof Integer) {
+        Integer routeRf = (Integer)rfObj;
+        if (rf == null || routeRf < rf)
+          rf = routeRf;
+      }
+      minRf = (Integer)header.get(UpdateRequest.MIN_REPFACT);
+
+      List<SimpleOrderedMap<String>> shardTolerantErrors = 
+        (List<SimpleOrderedMap<String>>) header.get("errors");
+      if (null != shardTolerantErrors) {
+        Integer shardMaxToleratedErrors = (Integer) header.get("maxErrors");
+        assert null != shardMaxToleratedErrors : "TolerantUpdateProcessor reported errors but not maxErrors";
+        
+        
+        maxToleratedErrors = Math.min(maxToleratedErrors,
+                                      ToleratedUpdateError.getEffectiveMaxErrors(shardMaxToleratedErrors.intValue()));
+        
+        if (null == toleratedErrors) {
+          toleratedErrors = new ArrayList<SimpleOrderedMap<String>>(shardTolerantErrors.size());
+        }
+        for (SimpleOrderedMap<String> err : shardTolerantErrors) {
+          toleratedErrors.add(err);
+        }
+      }
+      for (String updateType: Arrays.asList("adds", "deletes", "deleteByQuery")) {
+        Object obj = shardResponse.get(updateType);
+        if (obj instanceof NamedList) {
+          NamedList versionsList = versions.containsKey(updateType) ?
+              versions.get(updateType): new NamedList();
+          versionsList.addAll((NamedList)obj);
+          versions.put(updateType, versionsList);
+        }
+      }
+    }
+
+    NamedList cheader = new NamedList();
+    cheader.add("status", status);
+    cheader.add("QTime", timeMillis);
+    if (rf != null)
+      cheader.add(UpdateRequest.REPFACT, rf);
+    if (minRf != null)
+      cheader.add(UpdateRequest.MIN_REPFACT, minRf);
+    if (null != toleratedErrors) {
+      cheader.add("maxErrors", ToleratedUpdateError.getUserFriendlyMaxErrors(maxToleratedErrors));
+      cheader.add("errors", toleratedErrors);
+      if (maxToleratedErrors < toleratedErrors.size()) {
+        
+
+        
+        
+        
+        StringBuilder msgBuf =  new StringBuilder()
+          .append(toleratedErrors.size()).append(" Async failures during distributed update: ");
+          
+        NamedList metadata = new NamedList<String>();
+        for (SimpleOrderedMap<String> err : toleratedErrors) {
+          ToleratedUpdateError te = ToleratedUpdateError.parseMap(err);
+          metadata.add(te.getMetadataKey(), te.getMetadataValue());
+          
+          msgBuf.append("\n").append(te.getMessage());
+        }
+        
+        SolrException toThrow = new SolrException(ErrorCode.BAD_REQUEST, msgBuf.toString());
+        toThrow.setMetadata(metadata);
+        throw toThrow;
+      }
+    }
+    for (String updateType: versions.keySet()) {
+      condensed.add(updateType, versions.get(updateType));
+    }
+    condensed.add("responseHeader", cheader);
+    return condensed;
+  }
+
+  public static class RouteResponse extends NamedList {
+    private NamedList routeResponses;
+    private Map<String, LBHttpSolrClient.Req> routes;
+
+    public void setRouteResponses(NamedList routeResponses) {
+      this.routeResponses = routeResponses;
+    }
+
+    public NamedList getRouteResponses() {
+      return routeResponses;
+    }
+
+    public void setRoutes(Map<String, LBHttpSolrClient.Req> routes) {
+      this.routes = routes;
+    }
+
+    public Map<String, LBHttpSolrClient.Req> getRoutes() {
+      return routes;
+    }
+
+  }
+
+  public static class RouteException extends SolrException {
+
+    private NamedList<Throwable> throwables;
+    private Map<String, LBHttpSolrClient.Req> routes;
+
+    public RouteException(ErrorCode errorCode, NamedList<Throwable> throwables, Map<String, LBHttpSolrClient.Req> routes){
+      super(errorCode, throwables.getVal(0).getMessage(), throwables.getVal(0));
+      this.throwables = throwables;
+      this.routes = routes;
+
+      
+      NamedList<String> metadata = new NamedList<String>();
+      for (int i = 0; i < throwables.size(); i++) {
+        Throwable t = throwables.getVal(i);
+        if (t instanceof SolrException) {
+          SolrException e = (SolrException) t;
+          NamedList<String> eMeta = e.getMetadata();
+          if (null != eMeta) {
+            metadata.addAll(eMeta);
+          }
+        }
+      }
+      if (0 < metadata.size()) {
+        this.setMetadata(metadata);
+      }
+    }
+
+    public NamedList<Throwable> getThrowables() {
+      return throwables;
+    }
+
+    public Map<String, LBHttpSolrClient.Req> getRoutes() {
+      return this.routes;
+    }
+  }
+
+  @Override
+  public NamedList<Object> request(SolrRequest request, String collection) throws SolrServerException, IOException {
+    SolrParams reqParams = request.getParams();
+
+    if (collection == null)
+      collection = (reqParams != null) ? reqParams.get("collection", getDefaultCollection()) : getDefaultCollection();
+    return requestWithRetryOnStaleState(request, 0, collection);
+  }
+
+  
+
+
+
+
+  protected NamedList<Object> requestWithRetryOnStaleState(SolrRequest request, int retryCount, String collection)
+      throws SolrServerException, IOException {
+
+    connect(); 
+
+    
+    
+    
+    
+    String stateVerParam = null;
+    List<DocCollection> requestedCollections = null;
+    boolean isAdmin = ADMIN_PATHS.contains(request.getPath());
+    if (collection != null &&  !isAdmin) { 
+      Set<String> requestedCollectionNames = getCollectionNames(collection);
+
+      StringBuilder stateVerParamBuilder = null;
+      for (String requestedCollection : requestedCollectionNames) {
+        
+        DocCollection coll = getDocCollection(requestedCollection, null);
+        if (coll == null) {
+          throw new SolrException(ErrorCode.BAD_REQUEST, "Collection not found: " + requestedCollection);
+        }
+        int collVer = coll.getZNodeVersion();
+        if (coll.getStateFormat()>1) {
+          if(requestedCollections == null) requestedCollections = new ArrayList<>(requestedCollectionNames.size());
+          requestedCollections.add(coll);
+
+          if (stateVerParamBuilder == null) {
+            stateVerParamBuilder = new StringBuilder();
+          } else {
+            stateVerParamBuilder.append("|"); 
+          }
+
+          stateVerParamBuilder.append(coll.getName()).append(":").append(collVer);
+        }
+      }
+
+      if (stateVerParamBuilder != null) {
+        stateVerParam = stateVerParamBuilder.toString();
+      }
+    }
+
+    if (request.getParams() instanceof ModifiableSolrParams) {
+      ModifiableSolrParams params = (ModifiableSolrParams) request.getParams();
+      if (stateVerParam != null) {
+        params.set(STATE_VERSION, stateVerParam);
+      } else {
+        params.remove(STATE_VERSION);
+      }
+    } 
+
+    NamedList<Object> resp = null;
+    try {
+      resp = sendRequest(request, collection);
+      
+      Object o = resp == null || resp.size() == 0 ? null : resp.get(STATE_VERSION, resp.size() - 1);
+      if(o != null && o instanceof Map) {
+        
+        resp.remove(resp.size()-1);
+        Map invalidStates = (Map) o;
+        for (Object invalidEntries : invalidStates.entrySet()) {
+          Map.Entry e = (Map.Entry) invalidEntries;
+          getDocCollection((String) e.getKey(), (Integer) e.getValue());
+        }
+
+      }
+    } catch (Exception exc) {
+
+      Throwable rootCause = SolrException.getRootCause(exc);
+      
+      if (collection == null || isAdmin) {
+        if (exc instanceof SolrServerException) {
+          throw (SolrServerException)exc;
+        } else if (exc instanceof IOException) {
+          throw (IOException)exc;
+        }else if (exc instanceof RuntimeException) {
+          throw (RuntimeException) exc;
+        }
+        else {
+          throw new SolrServerException(rootCause);
+        }
+      }
+
+      int errorCode = (rootCause instanceof SolrException) ?
+          ((SolrException)rootCause).code() : SolrException.ErrorCode.UNKNOWN.code;
+
+      log.error("Request to collection {} failed due to ("+errorCode+
+          ") {}, retry? "+retryCount, collection, rootCause.toString());
+
+      boolean wasCommError =
+          (rootCause instanceof ConnectException ||
+              rootCause instanceof ConnectTimeoutException ||
+              rootCause instanceof NoHttpResponseException ||
+              rootCause instanceof SocketException);
+
+      if (wasCommError) {
+        
+        
+        
+        
+        
+        for (DocCollection ext : requestedCollections) {
+          ExpiringCachedDocCollection cacheEntry = collectionStateCache.get(ext.getName());
+          if (cacheEntry == null) continue;
+          cacheEntry.maybeStale = true;
+        }
+        if (retryCount < MAX_STALE_RETRIES) {
+          
+          
+          
+          
+          return requestWithRetryOnStaleState(request, retryCount + 1, collection);
+        }
+      }
+
+      boolean stateWasStale = false;
+      if (retryCount < MAX_STALE_RETRIES  &&
+          requestedCollections != null    &&
+          !requestedCollections.isEmpty() &&
+          SolrException.ErrorCode.getErrorCode(errorCode) == SolrException.ErrorCode.INVALID_STATE)
+      {
+        
+        
+        stateWasStale = true;
+
+        
+        for (DocCollection ext : requestedCollections) {
+          collectionStateCache.remove(ext.getName());
+        }
+      }
+
+      
+      
+      if (retryCount < MAX_STALE_RETRIES &&
+          !stateWasStale &&
+          requestedCollections != null &&
+          !requestedCollections.isEmpty() &&
+          wasCommError) {
+        for (DocCollection ext : requestedCollections) {
+          DocCollection latestStateFromZk = getDocCollection(ext.getName(), null);
+          if (latestStateFromZk.getZNodeVersion() != ext.getZNodeVersion()) {
+            
+            stateWasStale = true;
+            
+            collectionStateCache.put(ext.getName(), new ExpiringCachedDocCollection(latestStateFromZk));
+          }
+        }
+      }
+
+      if (requestedCollections != null) {
+        requestedCollections.clear(); 
+      }
+
+      
+      if (stateWasStale) {
+        log.warn("Re-trying request to  collection(s) "+collection+" after stale state error from server.");
+        resp = requestWithRetryOnStaleState(request, retryCount+1, collection);
+      } else {
+        if(exc instanceof SolrException) {
+          throw exc;
+        } if (exc instanceof SolrServerException) {
+          throw (SolrServerException)exc;
+        } else if (exc instanceof IOException) {
+          throw (IOException)exc;
+        } else {
+          throw new SolrServerException(rootCause);
+        }
+      }
+    }
+
+    return resp;
+  }
+
+  protected NamedList<Object> sendRequest(SolrRequest request, String collection)
+      throws SolrServerException, IOException {
+    connect();
+
+    boolean sendToLeaders = false;
+    List<String> replicas = null;
+    
+    if (request instanceof IsUpdateRequest) {
+      if (request instanceof UpdateRequest) {
+        NamedList<Object> response = directUpdate((AbstractUpdateRequest) request, collection);
+        if (response != null) {
+          return response;
+        }
+      }
+      sendToLeaders = true;
+      replicas = new ArrayList<>();
+    }
+    
+    SolrParams reqParams = request.getParams();
+    if (reqParams == null) {
+      reqParams = new ModifiableSolrParams();
+    }
+    List<String> theUrlList = new ArrayList<>();
+    if (ADMIN_PATHS.contains(request.getPath())) {
+      Set<String> liveNodes = stateProvider.liveNodes();
+      for (String liveNode : liveNodes) {
+        theUrlList.add(ZkStateReader.getBaseUrlForNodeName(liveNode,
+            (String) stateProvider.getClusterProperties().getOrDefault(ZkStateReader.URL_SCHEME,"http")));
+      }
+    } else {
+      
+      if (collection == null) {
+        throw new SolrServerException(
+            "No collection param specified on request and no default collection has been set.");
+      }
+
+      Set<String> collectionNames = getCollectionNames(collection);
+      if (collectionNames.size() == 0) {
+        throw new SolrException(ErrorCode.BAD_REQUEST,
+            "Could not find collection: " + collection);
+      }
+
+      String shardKeys =  reqParams.get(ShardParams._ROUTE_);
+
+      
+      
+      
+      
+      
+      
+      
+      Map<String,Slice> slices = new HashMap<>();
+      for (String collectionName : collectionNames) {
+        DocCollection col = getDocCollection(collectionName, null);
+        Collection<Slice> routeSlices = col.getRouter().getSearchSlices(shardKeys, reqParams , col);
+        ClientUtils.addSlices(slices, collectionName, routeSlices, true);
+      }
+      Set<String> liveNodes = stateProvider.liveNodes();
+
+      List<String> leaderUrlList = null;
+      List<String> urlList = null;
+      List<String> replicasList = null;
+      
+      
+      
+      Map<String,ZkNodeProps> nodes = new HashMap<>();
+      List<String> urlList2 = new ArrayList<>();
+      for (Slice slice : slices.values()) {
+        for (ZkNodeProps nodeProps : slice.getReplicasMap().values()) {
+          ZkCoreNodeProps coreNodeProps = new ZkCoreNodeProps(nodeProps);
+          String node = coreNodeProps.getNodeName();
+          if (!liveNodes.contains(coreNodeProps.getNodeName())
+              || Replica.State.getState(coreNodeProps.getState()) != Replica.State.ACTIVE) continue;
+          if (nodes.put(node, nodeProps) == null) {
+            if (!sendToLeaders || coreNodeProps.isLeader()) {
+              String url;
+              if (reqParams.get(UpdateParams.COLLECTION) == null) {
+                url = ZkCoreNodeProps.getCoreUrl(nodeProps.getStr(ZkStateReader.BASE_URL_PROP), collection);
+              } else {
+                url = coreNodeProps.getCoreUrl();
+              }
+              urlList2.add(url);
+            } else {
+              String url;
+              if (reqParams.get(UpdateParams.COLLECTION) == null) {
+                url = ZkCoreNodeProps.getCoreUrl(nodeProps.getStr(ZkStateReader.BASE_URL_PROP), collection);
+              } else {
+                url = coreNodeProps.getCoreUrl();
+              }
+              replicas.add(url);
+            }
+          }
+        }
+      }
+      
+      if (sendToLeaders) {
+        leaderUrlList = urlList2;
+        replicasList = replicas;
+      } else {
+        urlList = urlList2;
+      }
+      
+      if (sendToLeaders) {
+        theUrlList = new ArrayList<>(leaderUrlList.size());
+        theUrlList.addAll(leaderUrlList);
+      } else {
+        theUrlList = new ArrayList<>(urlList.size());
+        theUrlList.addAll(urlList);
+      }
+
+      Collections.shuffle(theUrlList, rand);
+      if (sendToLeaders) {
+        ArrayList<String> theReplicas = new ArrayList<>(
+            replicasList.size());
+        theReplicas.addAll(replicasList);
+        Collections.shuffle(theReplicas, rand);
+        theUrlList.addAll(theReplicas);
+      }
+      
+      if (theUrlList.isEmpty()) {
+        for (String s : collectionNames) {
+          if (s != null) collectionStateCache.remove(s);
+        }
+        throw new SolrException(SolrException.ErrorCode.INVALID_STATE,
+            "Could not find a healthy node to handle the request.");
+      }
+    }
+
+    LBHttpSolrClient.Req req = new LBHttpSolrClient.Req(request, theUrlList);
+    LBHttpSolrClient.Rsp rsp = lbClient.request(req);
+    return rsp.getResponse();
+  }
+
+  Set<String> getCollectionNames(String collection) {
+    
+    List<String> rawCollectionsList = StrUtils.splitSmart(collection, ",", true);
+    Set<String> collectionNames = new HashSet<>();
+    
+    for (String collectionName : rawCollectionsList) {
+      if (stateProvider.getState(collectionName) == null) {
+        String alias = stateProvider.getAlias(collection);
+        if (alias != null) {
+          List<String> aliasList = StrUtils.splitSmart(alias, ",", true);
+          collectionNames.addAll(aliasList);
+          continue;
+        }
+
+          throw new SolrException(ErrorCode.BAD_REQUEST, "Collection not found: " + collectionName);
+        }
+
+      collectionNames.add(collectionName);
+    }
+    return collectionNames;
+  }
+
+  @Override
+  public void close() throws IOException {
+    stateProvider.close();
+    
+    if (shutdownLBHttpSolrServer) {
+      lbClient.close();
+    }
+    
+    if (clientIsInternal && myClient!=null) {
+      HttpClientUtil.close(myClient);
+    }
+
+    if(this.threadPool != null && !this.threadPool.isShutdown()) {
+      this.threadPool.shutdown();
+    }
+  }
+
+  public LBHttpSolrClient getLbClient() {
+    return lbClient;
+  }
+
+  public HttpClient getHttpClient() {
+    return myClient;
+  }
+  
+  public boolean isUpdatesToLeaders() {
+    return updatesToLeaders;
+  }
+
+  
+
+
+  public boolean isDirectUpdatesToLeadersOnly() {
+    return directUpdatesToLeadersOnly;
+  }
+
+  
+
+
+  public void setParallelCacheRefreshes(int n){ locks = objectList(n); }
+
+  private static ArrayList<Object> objectList(int n) {
+    ArrayList<Object> l =  new ArrayList<>(n);
+    for(int i=0;i<n;i++) l.add(new Object());
+    return l;
+  }
+
+
+  protected DocCollection getDocCollection(String collection, Integer expectedVersion) throws SolrException {
+    if (expectedVersion == null) expectedVersion = -1;
+    if (collection == null) return null;
+    ExpiringCachedDocCollection cacheEntry = collectionStateCache.get(collection);
+    DocCollection col = cacheEntry == null ? null : cacheEntry.cached;
+    if (col != null) {
+      if (expectedVersion <= col.getZNodeVersion()
+          && !cacheEntry.shoulRetry()) return col;
+    }
+
+    ClusterState.CollectionRef ref = getCollectionRef(collection);
+    if (ref == null) {
+      
+      return null;
+    }
+    if (!ref.isLazilyLoaded()) {
+      
+      return ref.get();
+    }
+    List locks = this.locks;
+    final Object lock = locks.get(Math.abs(Hash.murmurhash3_x86_32(collection, 0, collection.length(), 0) % locks.size()));
+    DocCollection fetchedCol = null;
+    synchronized (lock) {
+      
+      cacheEntry = collectionStateCache.get(collection);
+      col = cacheEntry == null ? null : cacheEntry.cached;
+      if (col != null) {
+        if (expectedVersion <= col.getZNodeVersion()
+            && !cacheEntry.shoulRetry()) return col;
+      }
+      
+      
+      fetchedCol = ref.get();
+      if (fetchedCol == null) return null;
+      if (col != null && fetchedCol.getZNodeVersion() == col.getZNodeVersion()) {
+        cacheEntry.setRetriedAt();
+        cacheEntry.maybeStale = false;
+      } else {
+        if (fetchedCol.getStateFormat() > 1)
+          collectionStateCache.put(collection, new ExpiringCachedDocCollection(fetchedCol));
+      }
+      return fetchedCol;
+    }
+  }
+
+  ClusterState.CollectionRef getCollectionRef(String collection) {
+    return stateProvider.getState(collection);
+  }
+
+  
+
+
+
+
+  @SuppressWarnings("rawtypes")
+  public int getMinAchievedReplicationFactor(String collection, NamedList resp) {
+    
+    NamedList header = (NamedList)resp.get("responseHeader");
+    Integer achRf = (Integer)header.get(UpdateRequest.REPFACT);
+    if (achRf != null)
+      return achRf.intValue();
+
+    
+    Map<String,Integer> shardRf = getShardReplicationFactor(collection, resp);
+    for (Integer rf : shardRf.values()) {
+      if (achRf == null || rf < achRf) {
+        achRf = rf;
+      }
+    }    
+    return (achRf != null) ? achRf.intValue() : -1;
+  }
+  
+  
+
+
+
+
+  @SuppressWarnings("rawtypes")
+  public Map<String,Integer> getShardReplicationFactor(String collection, NamedList resp) {
+    connect();
+    
+    Map<String,Integer> results = new HashMap<String,Integer>();
+    if (resp instanceof CloudSolrClient.RouteResponse) {
+      NamedList routes = ((CloudSolrClient.RouteResponse)resp).getRouteResponses();
+      DocCollection coll = getDocCollection(collection, null);
+      Map<String,String> leaders = new HashMap<String,String>();
+      for (Slice slice : coll.getActiveSlices()) {
+        Replica leader = slice.getLeader();
+        if (leader != null) {
+          ZkCoreNodeProps zkProps = new ZkCoreNodeProps(leader);
+          String leaderUrl = zkProps.getBaseUrl() + "/" + zkProps.getCoreName();
+          leaders.put(leaderUrl, slice.getName());
+          String altLeaderUrl = zkProps.getBaseUrl() + "/" + collection;
+          leaders.put(altLeaderUrl, slice.getName());
+        }
+      }
+      
+      Iterator<Map.Entry<String,Object>> routeIter = routes.iterator();
+      while (routeIter.hasNext()) {
+        Map.Entry<String,Object> next = routeIter.next();
+        String host = next.getKey();
+        NamedList hostResp = (NamedList)next.getValue();
+        Integer rf = (Integer)((NamedList)hostResp.get("responseHeader")).get(UpdateRequest.REPFACT);
+        if (rf != null) {
+          String shard = leaders.get(host);
+          if (shard == null) {
+            if (host.endsWith("/"))
+              shard = leaders.get(host.substring(0,host.length()-1));
+            if (shard == null) {
+              shard = host;
+            }
+          }
+          results.put(shard, rf);
+        }
+      }
+    }    
+    return results;
+  }
+  
+  public void setConnectionTimeout(int timeout) {
+    this.lbClient.setConnectionTimeout(timeout); 
+  }
+
+  public ClusterStateProvider getClusterStateProvider(){
+    return stateProvider;
+  }
+
+  private static boolean hasInfoToFindLeaders(UpdateRequest updateRequest, String idField) {
+    final Map<SolrInputDocument,Map<String,Object>> documents = updateRequest.getDocumentsMap();
+    final Map<String,Map<String,Object>> deleteById = updateRequest.getDeleteByIdMap();
+
+    final boolean hasNoDocuments = (documents == null || documents.isEmpty());
+    final boolean hasNoDeleteById = (deleteById == null || deleteById.isEmpty());
+    if (hasNoDocuments && hasNoDeleteById) {
+      
+      return false;
+    }
+
+    if (documents != null) {
+      for (final Map.Entry<SolrInputDocument,Map<String,Object>> entry : documents.entrySet()) {
+        final SolrInputDocument doc = entry.getKey();
+        final Object fieldValue = doc.getFieldValue(idField);
+        if (fieldValue == null) {
+          
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  private static LBHttpSolrClient createLBHttpSolrClient(HttpClient httpClient) {
+    final LBHttpSolrClient lbClient = new LBHttpSolrClient.Builder()
+        .withHttpClient(httpClient)
+        .build();
+    lbClient.setRequestWriter(new BinaryRequestWriter());
+    lbClient.setParser(new BinaryResponseParser());
+    
+    return lbClient;
+  }
+
+  
+
+
+  public static class Builder {
+    private Collection<String> zkHosts;
+    private HttpClient httpClient;
+    private String zkChroot;
+    private LBHttpSolrClient loadBalancedSolrClient;
+    private LBHttpSolrClient.Builder lbClientBuilder;
+    private boolean shardLeadersOnly;
+    private boolean directUpdatesToLeadersOnly;
+    private ClusterStateProvider stateProvider;
+
+
+    public Builder() {
+      this.zkHosts = new ArrayList();
+      this.shardLeadersOnly = true;
+    }
+    
+    
+
+
+
+
+
+
+
+
+    public Builder withZkHost(String zkHost) {
+      this.zkHosts.add(zkHost);
+      return this;
+    }
+    
+    
+
+
+    public Builder withLBHttpSolrClientBuilder(LBHttpSolrClient.Builder lbHttpSolrClientBuilder) {
+      this.lbClientBuilder = lbHttpSolrClientBuilder;
+      return this;
+    }
+
+    
+
+
+    public Builder withHttpClient(HttpClient httpClient) {
+      this.httpClient = httpClient;
+      return this;
+    }
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    public Builder withZkHost(Collection<String> zkHosts) {
+      this.zkHosts.addAll(zkHosts);
+      return this;
+    }
+
+    
+
+
+    public Builder withZkChroot(String zkChroot) {
+      this.zkChroot = zkChroot;
+      return this;
+    }
+    
+    
+
+
+    public Builder withLBHttpSolrClient(LBHttpSolrClient loadBalancedSolrClient) {
+      this.loadBalancedSolrClient = loadBalancedSolrClient;
+      return this;
+    }
+
+    
+
+
+    public Builder sendUpdatesOnlyToShardLeaders() {
+      shardLeadersOnly = true;
+      return this;
+    }
+    
+    
+
+
+    public Builder sendUpdatesToAllReplicasInShard() {
+      shardLeadersOnly = false;
+      return this;
+    }
+
+    
+
+
+    public Builder sendDirectUpdatesToShardLeadersOnly() {
+      directUpdatesToLeadersOnly = true;
+      return this;
+    }
+
+    
+
+
+
+    public Builder sendDirectUpdatesToAnyShardReplica() {
+      directUpdatesToLeadersOnly = false;
+      return this;
+    }
+
+    public Builder withClusterStateProvider(ClusterStateProvider stateProvider) {
+      this.stateProvider = stateProvider;
+      return this;
+    }
+
+    
+
+
+    public CloudSolrClient build() {
+      if (stateProvider == null) {
+        stateProvider = new ZkClientClusterStateProvider(zkHosts, zkChroot);
+      }
+      return new CloudSolrClient(zkHosts, zkChroot, httpClient, loadBalancedSolrClient, lbClientBuilder,
+          shardLeadersOnly, directUpdatesToLeadersOnly, stateProvider);
+    }
+  }
+
+  interface ClusterStateProvider extends Closeable {
+
+    ClusterState.CollectionRef getState(String collection);
+
+    Set<String> liveNodes();
+
+    String getAlias(String collection);
+
+    String getCollectionName(String name);
+
+    Map<String, Object> getClusterProperties();
+
+    void connect();
+  }
+}

@@ -1,0 +1,8 @@
+29d28
+< import org.apache.solr.client.solrj.SolrServerException;
+366c365
+<     public SolrResponse process(SolrClient server) throws SolrServerException, IOException {
+---
+>     protected SolrResponse createResponse(SolrClient client) {
+368a368
+> 

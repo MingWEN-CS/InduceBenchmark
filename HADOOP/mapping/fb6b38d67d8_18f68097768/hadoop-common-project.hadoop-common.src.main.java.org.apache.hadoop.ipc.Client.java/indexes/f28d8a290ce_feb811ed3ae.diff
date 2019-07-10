@@ -1,0 +1,128 @@
+45a46
+> import java.util.concurrent.Callable;
+58a60,61
+> import com.google.common.cache.Cache;
+> import com.google.common.cache.CacheBuilder;
+127,128c130,131
+<   private Hashtable<ConnectionId, Connection> connections =
+<     new Hashtable<ConnectionId, Connection>();
+---
+>   private final Cache<ConnectionId, Connection> connections =
+>       CacheBuilder.newBuilder().build();
+1170,1176c1173
+<       
+<       
+<       synchronized (connections) {
+<         if (connections.get(remoteId) == this) {
+<           connections.remove(remoteId);
+<         }
+<       }
+---
+>       connections.invalidate(remoteId);
+1263,1266c1260,1261
+<     synchronized (connections) {
+<       for (Connection conn : connections.values()) {
+<         conn.interrupt();
+<       }
+---
+>     for (Connection conn : connections.asMap().values()) {
+>       conn.interrupt();
+1270c1265
+<     while (!connections.isEmpty()) {
+---
+>     while (connections.size() > 0) {
+1286,1312c1281
+<     return call(RPC.RpcKind.RPC_BUILTIN, param, address);
+<     
+<   }
+<   
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public Writable call(RPC.RpcKind rpcKind, Writable param, InetSocketAddress address)
+<   throws IOException {
+<       return call(rpcKind, param, address, null);
+<   }
+<   
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public Writable call(RPC.RpcKind rpcKind, Writable param, InetSocketAddress addr, 
+<       UserGroupInformation ticket) throws IOException {
+<     ConnectionId remoteId = ConnectionId.getConnectionId(addr, null, ticket, 0,
+---
+>     ConnectionId remoteId = ConnectionId.getConnectionId(address, null, null, 0,
+1314,1321c1283
+<     return call(rpcKind, param, remoteId);
+<   }
+<   
+<   
+< 
+< 
+< 
+< 
+---
+>     return call(RpcKind.RPC_BUILTIN, param, remoteId);
+1323,1332d1284
+< 
+< 
+< 
+<   @Deprecated
+<   public Writable call(RPC.RpcKind rpcKind, Writable param, InetSocketAddress addr, 
+<                        Class<?> protocol, UserGroupInformation ticket,
+<                        int rpcTimeout) throws IOException {
+<     ConnectionId remoteId = ConnectionId.getConnectionId(addr, protocol,
+<         ticket, rpcTimeout, conf);
+<     return call(rpcKind, param, remoteId);
+1336d1287
+<   
+1509,1511c1460
+<     synchronized (connections) {
+<       return connections.keySet();
+<     }
+---
+>     return connections.asMap().keySet();
+1516,1517c1465,1467
+<   private Connection getConnection(ConnectionId remoteId,
+<       Call call, int serviceClass, AtomicBoolean fallbackToSimpleAuth)
+---
+>   private Connection getConnection(
+>       final ConnectionId remoteId,
+>       Call call, final int serviceClass, AtomicBoolean fallbackToSimpleAuth)
+1528,1534c1478,1487
+<     do {
+<       synchronized (connections) {
+<         connection = connections.get(remoteId);
+<         if (connection == null) {
+<           connection = new Connection(remoteId, serviceClass);
+<           connections.put(remoteId, connection);
+<         }
+---
+>     while(true) {
+>       try {
+>         connection = connections.get(remoteId, new Callable<Connection>() {
+>           @Override
+>           public Connection call() throws Exception {
+>             return new Connection(remoteId, serviceClass);
+>           }
+>         });
+>       } catch (ExecutionException e) {
+>         throw new IOException(e);
+1536c1489,1494
+<     } while (!connection.addCall(call));
+---
+>       if (connection.addCall(call)) {
+>         break;
+>       } else {
+>         connections.invalidate(remoteId);
+>       }
+>     }

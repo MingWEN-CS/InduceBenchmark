@@ -1,0 +1,23 @@
+300d299
+<         final String coreZkNodeName = descriptor.getCloudDescriptor().getCoreNodeName();
+319a319
+>       }
+320a321
+>       for (CoreDescriptor descriptor : descriptors) {
+334c335,336
+<             return;
+---
+>             log.debug("looks like we are going to be the leader for collection {} shard {}", collection, slice);
+>             continue;
+338c340,341
+<          return;
+---
+>           log.debug("looks like we are going to be the leader for collection {} shard {}", collection, slice);
+>           continue;
+345c348,349
+<         
+---
+> 
+>         final String coreZkNodeName = descriptor.getCloudDescriptor().getCoreNodeName();
+346a351
+>           log.debug("calling waitForLeaderToSeeDownState for coreZkNodeName={} collection={} shard={}", new Object[] {coreZkNodeName,  collection, slice});

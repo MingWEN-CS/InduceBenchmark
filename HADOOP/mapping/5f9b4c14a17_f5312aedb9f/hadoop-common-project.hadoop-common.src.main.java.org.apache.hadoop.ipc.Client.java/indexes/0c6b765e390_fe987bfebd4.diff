@@ -1,0 +1,4 @@
+1164c1164
+<     this.clientId = StringUtils.getUuidBytes();
+---
+>     this.clientId = ClientId.getClientId();

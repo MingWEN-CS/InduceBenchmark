@@ -1,0 +1,17 @@
+886c886,887
+<     if ( (rb.getFieldFlags() & SolrIndexSearcher.GET_SCORES)!=0 || rb.getSortSpec().includesScore()) {
+---
+>     boolean shardQueryIncludeScore = (rb.getFieldFlags() & SolrIndexSearcher.GET_SCORES) != 0 || rb.getSortSpec().includesScore();
+>     if (shardQueryIncludeScore) {
+889a891,893
+>     } else  {
+>       
+>       sreq.params.set(CommonParams.FL, rb.req.getSchema().getUniqueKeyField().getName());
+891c895
+<     boolean shardQueryIncludeScore = (rb.getFieldFlags() & SolrIndexSearcher.GET_SCORES) != 0 || rb.getSortSpec().includesScore();
+---
+> 
+905c909
+<     if (!distribSinglePass || !fields.wantsField(keyFieldName)) 
+---
+>     if (!distribSinglePass || !fields.wantsField(keyFieldName))

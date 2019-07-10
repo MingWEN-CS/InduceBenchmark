@@ -1,0 +1,19 @@
+43a44
+> import org.apache.lucene.util.BytesRefBuilder;
+855c856
+<       BytesRef lastTerm = null;
+---
+>       BytesRefBuilder lastTerm = null;
+873c874,875
+<           lastTerm = BytesRef.deepCopyOf(term);
+---
+>           lastTerm = new BytesRefBuilder();
+>           lastTerm.copyBytes(term);
+875c877
+<           if (lastTerm.compareTo(term) >= 0) {
+---
+>           if (lastTerm.get().compareTo(term) >= 0) {
+1187c1189
+<           if (termsEnum.seekCeil(lastTerm) != TermsEnum.SeekStatus.FOUND) { 
+---
+>           if (termsEnum.seekCeil(lastTerm.get()) != TermsEnum.SeekStatus.FOUND) { 

@@ -1,0 +1,357 @@
+21,28c21,23
+< import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.KERBEROS;
+< import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.SIMPLE;
+< import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.TOKEN;
+< import static org.junit.Assert.assertEquals;
+< import static org.junit.Assert.assertFalse;
+< import static org.junit.Assert.assertNotNull;
+< import static org.junit.Assert.assertNull;
+< import static org.junit.Assert.assertTrue;
+---
+> import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_SECURITY_AUTHENTICATION;
+> import static org.apache.hadoop.security.SaslRpcServer.AuthMethod.*;
+> import static org.junit.Assert.*;
+53a49
+> import org.apache.commons.lang.StringUtils;
+105a102,108
+>   static enum UseToken {
+>     NONE(),
+>     VALID(),
+>     INVALID(),
+>     OTHER();
+>   }
+>   
+116c119
+<     SecurityUtil.setAuthenticationMethod(KERBEROS, conf);
+---
+>     conf.set(HADOOP_SECURITY_AUTHENTICATION, KERBEROS.toString());
+118a122,123
+>     forceSecretManager = null;
+>     clientFallBackToSimpleAllowed = true;
+371,392d375
+<   public void testGetRemotePrincipal() throws Exception {
+<     try {
+<       Configuration newConf = new Configuration(conf);
+<       newConf.set(SERVER_PRINCIPAL_KEY, SERVER_PRINCIPAL_1);
+<       ConnectionId remoteId = ConnectionId.getConnectionId(
+<           new InetSocketAddress(0), TestSaslProtocol.class, null, 0, newConf);
+<       assertEquals(SERVER_PRINCIPAL_1, remoteId.getServerPrincipal());
+<       
+<       SecurityUtil.setAuthenticationMethod(SIMPLE, newConf);
+<       UserGroupInformation.setConfiguration(newConf);
+<       remoteId = ConnectionId.getConnectionId(new InetSocketAddress(0),
+<           TestSaslProtocol.class, null, 0, newConf);
+<       assertEquals(
+<           "serverPrincipal should be null when security is turned off", null,
+<           remoteId.getServerPrincipal());
+<     } finally {
+<       
+<       UserGroupInformation.setConfiguration(conf);
+<     }
+<   }
+<   
+<   @Test
+412d394
+<     newConf.set(SERVER_PRINCIPAL_KEY, SERVER_PRINCIPAL_1);
+416a399
+>     int timeouts[] = {111222, 3333333};
+417a401
+>       newConf.setInt(CommonConfigurationKeysPublic.IPC_CLIENT_CONNECTION_MAXIDLETIME_KEY, timeouts[0]);
+430c414
+<       newConf.set(SERVER_PRINCIPAL_KEY, SERVER_PRINCIPAL_2);
+---
+>       newConf.setInt(CommonConfigurationKeysPublic.IPC_CLIENT_CONNECTION_MAXIDLETIME_KEY, timeouts[1]);
+434,443c418,428
+<       ConnectionId[] connsArray = conns.toArray(new ConnectionId[0]);
+<       assertEquals("number of connections in cache is wrong", 2,
+<           connsArray.length);
+<       String p1 = connsArray[0].getServerPrincipal();
+<       String p2 = connsArray[1].getServerPrincipal();
+<       assertFalse("should have different principals", p1.equals(p2));
+<       assertTrue("principal not as expected", p1.equals(SERVER_PRINCIPAL_1)
+<           || p1.equals(SERVER_PRINCIPAL_2));
+<       assertTrue("principal not as expected", p2.equals(SERVER_PRINCIPAL_1)
+<           || p2.equals(SERVER_PRINCIPAL_2));
+---
+>       assertEquals("number of connections in cache is wrong", 2, conns.size());
+>       
+>       ConnectionId[] connsArray = {
+>           RPC.getConnectionIdForProxy(proxy1),
+>           RPC.getConnectionIdForProxy(proxy2),
+>           RPC.getConnectionIdForProxy(proxy3)
+>       };
+>       assertEquals(connsArray[0], connsArray[1]);
+>       assertEquals(connsArray[0].getMaxIdleTime(), timeouts[0]);
+>       assertFalse(connsArray[0].equals(connsArray[2]));
+>       assertNotSame(connsArray[2].getMaxIdleTime(), timeouts[1]);
+602c587
+<   private static Pattern Denied(AuthenticationMethod method) {
+---
+>   private static Pattern Denied(AuthMethod method) {
+604c589,594
+<           +method.getAuthMethod() + " authentication is not enabled.*");
+---
+>           + method + " authentication is not enabled.*");
+>   }
+>   private static Pattern No(AuthMethod ... method) {
+>     String methods = StringUtils.join(method, ",\\s*");
+>     return Pattern.compile(".*Failed on local exception:.* " +
+>         "Client cannot authenticate via:\\[" + methods + "\\].*");
+609c599,603
+<   
+---
+>   private static Pattern NoFallback = 
+>       Pattern.compile(".*Failed on local exception:.* " +
+>           "Server asks us to fall back to SIMPLE auth, " +
+>           "but this client is configured to only allow secure connections.*");
+> 
+615a610
+>     assertAuthEquals(SIMPLE,    getAuthMethod(SIMPLE,   SIMPLE, UseToken.OTHER));
+617c612,613
+<     assertAuthEquals(KrbFailed, getAuthMethod(KERBEROS, SIMPLE));
+---
+>     assertAuthEquals(SIMPLE,    getAuthMethod(KERBEROS, SIMPLE));
+>     assertAuthEquals(SIMPLE,    getAuthMethod(KERBEROS, SIMPLE, UseToken.OTHER));
+621c617
+<   public void testSimpleServerWithTokensWithNoClientFallbackToSimple()
+---
+>   public void testNoClientFallbackToSimple()
+623d618
+< 
+624a620,624
+>     
+>     assertAuthEquals(SIMPLE,     getAuthMethod(SIMPLE, SIMPLE));
+>     assertAuthEquals(SIMPLE,     getAuthMethod(SIMPLE, SIMPLE, UseToken.OTHER));
+>     assertAuthEquals(SIMPLE,     getAuthMethod(SIMPLE, SIMPLE, UseToken.VALID));
+>     assertAuthEquals(SIMPLE,     getAuthMethod(SIMPLE, SIMPLE, UseToken.INVALID));
+626,638c626,630
+<     try{
+<       
+<       
+<       
+<       getAuthMethod(SIMPLE,   SIMPLE, true);
+<     } catch (IOException ioe) {
+<       Assert
+<         .assertTrue(ioe.getMessage().contains("Failed on local exception: " +
+<         		"java.io.IOException: java.io.IOException: " +
+<         		"Server asks us to fall back to SIMPLE auth, " +
+<         		"but this client is configured to only allow secure connections"
+<           ));
+<     }
+---
+>     
+>     assertAuthEquals(NoFallback, getAuthMethod(KERBEROS, SIMPLE));
+>     assertAuthEquals(NoFallback, getAuthMethod(KERBEROS, SIMPLE, UseToken.OTHER));
+>     assertAuthEquals(NoFallback, getAuthMethod(KERBEROS, SIMPLE, UseToken.VALID));
+>     assertAuthEquals(NoFallback, getAuthMethod(KERBEROS, SIMPLE, UseToken.INVALID));
+643,645c635,656
+<     assertAuthEquals(TOKEN, getAuthMethod(SIMPLE,   SIMPLE, true));
+<     forceSecretManager = false;
+<     clientFallBackToSimpleAllowed = true;
+---
+>     assertAuthEquals(SIMPLE,     getAuthMethod(SIMPLE, SIMPLE));
+>     assertAuthEquals(SIMPLE,     getAuthMethod(SIMPLE, SIMPLE, UseToken.OTHER));
+>     assertAuthEquals(TOKEN,      getAuthMethod(SIMPLE, SIMPLE, UseToken.VALID));
+>     assertAuthEquals(BadToken,   getAuthMethod(SIMPLE, SIMPLE, UseToken.INVALID));
+> 
+>     
+>     assertAuthEquals(NoFallback, getAuthMethod(KERBEROS, SIMPLE));
+>     assertAuthEquals(NoFallback, getAuthMethod(KERBEROS, SIMPLE, UseToken.OTHER));
+>     assertAuthEquals(TOKEN,      getAuthMethod(KERBEROS, SIMPLE, UseToken.VALID));
+>     assertAuthEquals(BadToken,   getAuthMethod(KERBEROS, SIMPLE, UseToken.INVALID));
+>     
+>     
+>     assertAuthEquals(Denied(SIMPLE), getAuthMethod(SIMPLE, TOKEN));
+>     
+>     assertAuthEquals(No(TOKEN),      getAuthMethod(SIMPLE, TOKEN, UseToken.OTHER));
+>     assertAuthEquals(TOKEN,          getAuthMethod(SIMPLE, TOKEN, UseToken.VALID));
+>     assertAuthEquals(BadToken,       getAuthMethod(SIMPLE, TOKEN, UseToken.INVALID));
+>     
+>     assertAuthEquals(No(TOKEN),      getAuthMethod(KERBEROS, TOKEN));
+>     assertAuthEquals(No(TOKEN),      getAuthMethod(KERBEROS, TOKEN, UseToken.OTHER));
+>     assertAuthEquals(TOKEN,          getAuthMethod(KERBEROS, TOKEN, UseToken.VALID));
+>     assertAuthEquals(BadToken,       getAuthMethod(KERBEROS, TOKEN, UseToken.INVALID));
+653c664
+<     assertAuthEquals(KrbFailed, getAuthMethod(KERBEROS, SIMPLE));
+---
+>     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE));
+656c667,669
+<     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, true));
+---
+>     
+>     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, UseToken.VALID));
+>     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, UseToken.OTHER));
+657a671
+>     
+659,660c673,685
+<     assertAuthEquals(SIMPLE, getAuthMethod(SIMPLE,   SIMPLE, true));
+<     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, true));
+---
+>     assertAuthEquals(SIMPLE, getAuthMethod(SIMPLE,   SIMPLE, UseToken.VALID));
+>     assertAuthEquals(SIMPLE, getAuthMethod(SIMPLE,   SIMPLE, UseToken.OTHER));
+>     
+>     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, UseToken.VALID));
+>     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, UseToken.OTHER));
+>     
+>     
+>     forceSecretManager = true;
+>     assertAuthEquals(TOKEN,  getAuthMethod(SIMPLE,   SIMPLE, UseToken.VALID));
+>     assertAuthEquals(SIMPLE, getAuthMethod(SIMPLE,   SIMPLE, UseToken.OTHER));
+>     
+>     assertAuthEquals(TOKEN,  getAuthMethod(KERBEROS, SIMPLE, UseToken.VALID));
+>     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, UseToken.OTHER));
+666,667c691,692
+<     assertAuthEquals(SIMPLE, getAuthMethod(SIMPLE,   SIMPLE, false));
+<     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, false));
+---
+>     assertAuthEquals(SIMPLE, getAuthMethod(SIMPLE,   SIMPLE, UseToken.INVALID));
+>     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, UseToken.INVALID));
+669,670c694,698
+<     assertAuthEquals(SIMPLE, getAuthMethod(SIMPLE,   SIMPLE, false));
+<     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, false));
+---
+>     assertAuthEquals(SIMPLE, getAuthMethod(SIMPLE,   SIMPLE, UseToken.INVALID));
+>     assertAuthEquals(SIMPLE, getAuthMethod(KERBEROS, SIMPLE, UseToken.INVALID));
+>     forceSecretManager = true;
+>     assertAuthEquals(BadToken, getAuthMethod(SIMPLE,   SIMPLE, UseToken.INVALID));
+>     assertAuthEquals(BadToken, getAuthMethod(KERBEROS, SIMPLE, UseToken.INVALID));
+677a706
+>     
+679c708,710
+<     assertAuthEquals(KrbFailed,      getAuthMethod(KERBEROS, TOKEN));
+---
+>     assertAuthEquals(No(TOKEN),      getAuthMethod(SIMPLE,   TOKEN, UseToken.OTHER));
+>     assertAuthEquals(No(TOKEN),      getAuthMethod(KERBEROS, TOKEN));
+>     assertAuthEquals(No(TOKEN),      getAuthMethod(KERBEROS, TOKEN, UseToken.OTHER));
+684,685c715,716
+<     assertAuthEquals(TOKEN, getAuthMethod(SIMPLE,   TOKEN, true));
+<     assertAuthEquals(TOKEN, getAuthMethod(KERBEROS, TOKEN, true));
+---
+>     assertAuthEquals(TOKEN,       getAuthMethod(SIMPLE,   TOKEN, UseToken.VALID));
+>     assertAuthEquals(TOKEN,       getAuthMethod(KERBEROS, TOKEN, UseToken.VALID));
+687,688c718,719
+<     assertAuthEquals(NoTokenAuth, getAuthMethod(SIMPLE,   TOKEN, true));
+<     assertAuthEquals(NoTokenAuth, getAuthMethod(KERBEROS, TOKEN, true));
+---
+>     assertAuthEquals(NoTokenAuth, getAuthMethod(SIMPLE,   TOKEN, UseToken.VALID));
+>     assertAuthEquals(NoTokenAuth, getAuthMethod(KERBEROS, TOKEN, UseToken.VALID));
+693,694c724,725
+<     assertAuthEquals(BadToken, getAuthMethod(SIMPLE,   TOKEN, false));
+<     assertAuthEquals(BadToken, getAuthMethod(KERBEROS, TOKEN, false));
+---
+>     assertAuthEquals(BadToken,    getAuthMethod(SIMPLE,   TOKEN, UseToken.INVALID));
+>     assertAuthEquals(BadToken,    getAuthMethod(KERBEROS, TOKEN, UseToken.INVALID));
+696,697c727,728
+<     assertAuthEquals(NoTokenAuth, getAuthMethod(SIMPLE,   TOKEN, false));
+<     assertAuthEquals(NoTokenAuth, getAuthMethod(KERBEROS, TOKEN, false));
+---
+>     assertAuthEquals(NoTokenAuth, getAuthMethod(SIMPLE,   TOKEN, UseToken.INVALID));
+>     assertAuthEquals(NoTokenAuth, getAuthMethod(KERBEROS, TOKEN, UseToken.INVALID));
+705,706c736,742
+<     assertAuthEquals(Denied(SIMPLE), getAuthMethod(SIMPLE,   KERBEROS));
+<     assertAuthEquals(KrbFailed,      getAuthMethod(KERBEROS, KERBEROS));    
+---
+>     
+>     assertAuthEquals(Denied(SIMPLE),     getAuthMethod(SIMPLE,   KERBEROS));
+>     
+>     assertAuthEquals(No(TOKEN,KERBEROS), getAuthMethod(SIMPLE,   KERBEROS, UseToken.OTHER));
+>     
+>     assertAuthEquals(KrbFailed,          getAuthMethod(KERBEROS, KERBEROS));
+>     assertAuthEquals(KrbFailed,          getAuthMethod(KERBEROS, KERBEROS, UseToken.OTHER));
+712,714c748,749
+<     assertAuthEquals(TOKEN, getAuthMethod(SIMPLE,   KERBEROS, true));
+<     assertAuthEquals(TOKEN, getAuthMethod(KERBEROS, KERBEROS, true));
+<     
+---
+>     assertAuthEquals(TOKEN,        getAuthMethod(SIMPLE,   KERBEROS, UseToken.VALID));
+>     assertAuthEquals(TOKEN,        getAuthMethod(KERBEROS, KERBEROS, UseToken.VALID));
+716,717c751,753
+<     assertAuthEquals(Denied(TOKEN), getAuthMethod(SIMPLE,   KERBEROS, true));
+<     assertAuthEquals(Denied(TOKEN), getAuthMethod(KERBEROS, KERBEROS, true));
+---
+>     
+>     assertAuthEquals(No(KERBEROS), getAuthMethod(SIMPLE,   KERBEROS, UseToken.VALID));
+>     assertAuthEquals(KrbFailed,    getAuthMethod(KERBEROS, KERBEROS, UseToken.VALID));
+722,723c758,759
+<     assertAuthEquals(BadToken, getAuthMethod(SIMPLE,   KERBEROS, false));
+<     assertAuthEquals(BadToken, getAuthMethod(KERBEROS, KERBEROS, false));
+---
+>     assertAuthEquals(BadToken,     getAuthMethod(SIMPLE,   KERBEROS, UseToken.INVALID));
+>     assertAuthEquals(BadToken,     getAuthMethod(KERBEROS, KERBEROS, UseToken.INVALID));
+725,726c761,762
+<     assertAuthEquals(Denied(TOKEN), getAuthMethod(SIMPLE,   KERBEROS, false));
+<     assertAuthEquals(Denied(TOKEN), getAuthMethod(KERBEROS, KERBEROS, false));
+---
+>     assertAuthEquals(No(KERBEROS), getAuthMethod(SIMPLE,   KERBEROS, UseToken.INVALID));
+>     assertAuthEquals(KrbFailed,    getAuthMethod(KERBEROS, KERBEROS, UseToken.INVALID));
+733,734c769,770
+<       final AuthenticationMethod clientAuth,
+<       final AuthenticationMethod serverAuth) throws Exception {
+---
+>       final AuthMethod clientAuth,
+>       final AuthMethod serverAuth) throws Exception {
+736c772
+<       return internalGetAuthMethod(clientAuth, serverAuth, false, false);
+---
+>       return internalGetAuthMethod(clientAuth, serverAuth, UseToken.NONE);
+744,746c780,782
+<       final AuthenticationMethod clientAuth,
+<       final AuthenticationMethod serverAuth,
+<       final boolean useValidToken) throws Exception {
+---
+>       final AuthMethod clientAuth,
+>       final AuthMethod serverAuth,
+>       final UseToken tokenType) throws Exception {
+748c784
+<       return internalGetAuthMethod(clientAuth, serverAuth, true, useValidToken);
+---
+>       return internalGetAuthMethod(clientAuth, serverAuth, tokenType);
+756,759c792,794
+<       final AuthenticationMethod clientAuth,
+<       final AuthenticationMethod serverAuth,
+<       final boolean useToken,
+<       final boolean useValidToken) throws Exception {
+---
+>       final AuthMethod clientAuth,
+>       final AuthMethod serverAuth,
+>       final UseToken tokenType) throws Exception {
+764c799
+<     SecurityUtil.setAuthenticationMethod(serverAuth, serverConf);
+---
+>     serverConf.set(HADOOP_SECURITY_AUTHENTICATION, serverAuth.toString());
+796c831
+<     SecurityUtil.setAuthenticationMethod(clientAuth, clientConf);
+---
+>     clientConf.set(HADOOP_SECURITY_AUTHENTICATION, clientAuth.toString());
+807c842
+<     if (useToken) {
+---
+>     if (tokenType != UseToken.NONE) {
+810,812c845,852
+<       Token<TestTokenIdentifier> token = useValidToken
+<           ? new Token<TestTokenIdentifier>(tokenId, sm)
+<           : new Token<TestTokenIdentifier>(
+---
+>       Token<TestTokenIdentifier> token = null;
+>       switch (tokenType) {
+>         case VALID:
+>           token = new Token<TestTokenIdentifier>(tokenId, sm);
+>           SecurityUtil.setTokenService(token, addr);
+>           break;
+>         case INVALID:
+>           token = new Token<TestTokenIdentifier>(
+815,816c855,861
+<       
+<       SecurityUtil.setTokenService(token, addr);
+---
+>           SecurityUtil.setTokenService(token, addr);
+>           break;
+>         case OTHER:
+>           token = new Token<TestTokenIdentifier>();
+>           break;
+>         case NONE: 
+>       }
+851c896
+<   private static void assertAuthEquals(AuthenticationMethod expect,
+---
+>   private static void assertAuthEquals(AuthMethod expect,

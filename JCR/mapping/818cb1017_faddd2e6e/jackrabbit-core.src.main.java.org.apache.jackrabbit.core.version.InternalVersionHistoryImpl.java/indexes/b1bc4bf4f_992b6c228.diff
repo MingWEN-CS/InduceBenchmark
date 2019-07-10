@@ -1,0 +1,11 @@
+502c502
+<     InternalVersionImpl checkin(Name name, NodeStateEx src)
+---
+>     InternalVersionImpl checkin(Name name, NodeStateEx src, Calendar created)
+543c543,546
+<         vNode.setPropertyValue(NameConstants.JCR_CREATED, InternalValue.create(getCurrentTime()));
+---
+>         if (created == null) {
+>             created = getCurrentTime();
+>         }
+>         vNode.setPropertyValue(NameConstants.JCR_CREATED, InternalValue.create(created));

@@ -1,0 +1,35 @@
+1469,1475c1469,1472
+<                         List<Fieldable> fulltextFields = new ArrayList<Fieldable>();
+<                         fulltextFields.addAll(removeFields(doc, FieldNames.FULLTEXT));
+<                         Collections.sort(fulltextFields, new Comparator<Fieldable>() {
+<                             public int compare(Fieldable o1, Fieldable o2) {
+<                                 return Boolean.valueOf(o2.isStored()).compareTo(o1.isStored());
+<                             }
+<                         });
+---
+>                         Fieldable[] fulltextFields = doc
+>                                 .getFieldables(FieldNames.FULLTEXT);
+>                         doc.removeFields(FieldNames.FULLTEXT);
+>                         Arrays.sort(fulltextFields, FIELDS_COMPARATOR_STORED);
+1540,1554c1537,1541
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<     protected final Collection<Fieldable> removeFields(Document document,
+<                                                  String name) {
+<         List<Fieldable> fields = new ArrayList<Fieldable>();
+<         fields.addAll(Arrays.asList(document.getFieldables(name)));
+<         document.removeFields(FieldNames.FULLTEXT);
+<         return fields;
+<     }
+---
+>     private static final Comparator<Fieldable> FIELDS_COMPARATOR_STORED = new Comparator<Fieldable>() {
+>         public int compare(Fieldable o1, Fieldable o2) {
+>             return Boolean.valueOf(o2.isStored()).compareTo(o1.isStored());
+>         }
+>     };

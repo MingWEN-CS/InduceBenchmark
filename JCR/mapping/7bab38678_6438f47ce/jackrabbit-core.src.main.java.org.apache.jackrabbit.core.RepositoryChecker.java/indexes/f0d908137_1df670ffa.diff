@@ -1,0 +1,20 @@
+43a44
+> import org.apache.jackrabbit.core.version.VersionHistoryInfo;
+132c133,144
+<                 message = "Removing references to a missing version history of node " + nid;
+---
+>                 String intro = "Removing references to an inconsistent version history of node "
+>                     + nid;
+> 
+>                 message = intro + " (getting the VersionInfo)";
+>                 VersionHistoryInfo vhi = versionManager.getVersionHistoryInfoForNode(node);
+>                 if (vhi != null) {
+>                     
+>                     
+>                     vhid = vhi.getVersionHistoryId();
+>                 }
+> 
+>                 message = intro + " (getting the InternalVersionHistory)";
+138,139d149
+<                 String intro = "Removing references to an inconsistent version history of node "
+<                     + nid;

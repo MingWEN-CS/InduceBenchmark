@@ -1,0 +1,62 @@
+23,24d22
+< import org.apache.jackrabbit.core.persistence.PersistenceManager;
+< import org.apache.jackrabbit.core.state.NodeState;
+512,569d509
+< 
+< 
+<     private NodeState readState(NodeId id, PersistenceManager pMgr)
+<             throws IOException {
+<         NodeState state = pMgr.createNew(id);
+<         
+<         int index = in.readInt();
+<         int version = (index >> 24) & 0x0ff;
+<         String uri = binding.nsIndex.indexToString(index & 0x0ffffff);
+<         String local = in.readUTF();
+<         state.setNodeTypeName(NameFactoryImpl.getInstance().create(uri, local));
+< 
+<         
+<         state.setParentId(readNodeId());
+<         
+<         in.readUTF();
+< 
+<         
+<         int count = in.readInt();   
+<         Set<Name> set = new HashSet<Name>(count);
+<         for (int i = 0; i < count; i++) {
+<             set.add(readQName()); 
+<         }
+<         if (set.size() > 0) {
+<             state.setMixinTypeNames(set);
+<         }
+<         
+<         count = in.readInt();   
+<         for (int i = 0; i < count; i++) {
+<             state.addPropertyName(readIndexedQName()); 
+<         }
+<         
+<         count = in.readInt();   
+<         for (int i = 0; i < count; i++) {
+<             Name name = readQName();
+<             NodeId parentId = readNodeId();
+<             state.addChildNodeEntry(name, parentId);
+<         }
+< 
+<         if (version >= BundleBinding.VERSION_1) {
+<             state.setModCount(readModCount());
+<         }
+<         if (version >= BundleBinding.VERSION_2) {
+<             
+<             count = in.readInt();   
+<             for (int i = 0; i < count; i++) {
+<                 state.addShare(readNodeId());
+<             }
+<         }
+<         return state;
+<     }
+< 
+<     
+< 
+< 
+< 
+< 
+< 

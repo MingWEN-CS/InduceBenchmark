@@ -1,0 +1,85 @@
+20a21
+> import com.google.common.annotations.VisibleForTesting;
+28,30d28
+< import org.apache.oozie.service.Service;
+< import org.apache.oozie.service.ServiceException;
+< import org.apache.oozie.service.Services;
+33d30
+< import org.apache.oozie.ErrorCode;
+36a34,35
+> import org.apache.oozie.util.Instrumentable;
+> import org.apache.oozie.util.Instrumentation;
+38c37
+< public class ActionService implements Service {
+---
+> public class ActionService implements Service, Instrumentable {
+48c47,48
+<     @SuppressWarnings("unchecked")
+---
+>     @SuppressWarnings({"unchecked", "deprecation"})
+>     @Override
+66a67,68
+> 
+>         initExecutors();
+69c71
+<     private void registerExecutors(Class<? extends ActionExecutor>[] classes) throws ServiceException {
+---
+>     private void registerExecutors(Class<? extends ActionExecutor>[] classes) {
+72c74,76
+<                 register(executorClass);
+---
+>                 @SuppressWarnings("deprecation")
+>                 ActionExecutor executor = (ActionExecutor) ReflectionUtils.newInstance(executorClass, services.getConf());
+>                 executors.put(executor.getType(), executorClass);
+76a81,88
+>     private void initExecutors() {
+>         for (Class<? extends ActionExecutor> executorClass : executors.values()) {
+>             initExecutor(executorClass);
+>         }
+>         LOG.info("Initialized action types: " + getActionTypes());
+>     }
+> 
+>     @Override
+83a96
+>     @Override
+88c101,126
+<     public void register(Class<? extends ActionExecutor> klass) throws ServiceException {
+---
+>     @Override
+>     public void instrument(Instrumentation instr) {
+>         instr.addVariable("configuration", "action.types", new Instrumentation.Variable<String>() {
+>             @Override
+>             public String getValue() {
+>                 Set<String> actionTypes = getActionTypes();
+>                 if (actionTypes != null) {
+>                     return actionTypes.toString();
+>                 }
+>                 return "(unavailable)";
+>             }
+>         });
+>     }
+> 
+>     @SuppressWarnings("unchecked")
+>     @VisibleForTesting
+>     public void registerAndInitExecutor(Class<? extends ActionExecutor> klass) {
+>         ActionExecutor.enableInit();
+>         ActionExecutor.resetInitInfo();
+>         ActionExecutor.disableInit();
+>         registerExecutors(new Class[]{klass});
+>         initExecutors();
+>     }
+> 
+>     private void initExecutor(Class<? extends ActionExecutor> klass) {
+>         @SuppressWarnings("deprecation")
+90,93c128
+<         LOG.trace("Registering action type [{0}] class [{1}]", executor.getType(), klass);
+<         if (executors.containsKey(executor.getType())) {
+<             throw new ServiceException(ErrorCode.E0150, executor.getType());
+<         }
+---
+>         LOG.debug("Initializing action type [{0}] class [{1}]", executor.getType(), klass);
+97,98c132
+<         executors.put(executor.getType(), klass);
+<         LOG.trace("Registered Action executor for action type [{0}] class [{1}]", executor.getType(), klass);
+---
+>         LOG.trace("Initialized Executor for action type [{0}] class [{1}]", executor.getType(), klass);

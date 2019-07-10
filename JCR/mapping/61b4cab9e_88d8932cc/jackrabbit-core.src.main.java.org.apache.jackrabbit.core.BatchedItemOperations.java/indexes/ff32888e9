@@ -1,0 +1,1904 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.PropertyType;
+import javax.jcr.ReferentialIntegrityException;
+import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
+
+import org.apache.jackrabbit.core.id.ItemId;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
+import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
+import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
+import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.retention.RetentionRegistry;
+import org.apache.jackrabbit.core.security.AccessManager;
+import org.apache.jackrabbit.core.security.authorization.Permission;
+import org.apache.jackrabbit.core.session.SessionContext;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
+import org.apache.jackrabbit.core.state.ItemState;
+import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.ItemStateManager;
+import org.apache.jackrabbit.core.state.NoSuchItemStateException;
+import org.apache.jackrabbit.core.state.NodeReferences;
+import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.core.state.PropertyState;
+import org.apache.jackrabbit.core.state.UpdatableItemStateManager;
+import org.apache.jackrabbit.core.util.ReferenceChangeTracker;
+import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.core.version.VersionHistoryInfo;
+import org.apache.jackrabbit.core.version.InternalVersionManager;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.QPropertyDefinition;
+import org.apache.jackrabbit.spi.QItemDefinition;
+import org.apache.jackrabbit.spi.QNodeDefinition;
+import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+
+
+
+
+public class BatchedItemOperations extends ItemValidator {
+
+    private static Logger log = LoggerFactory.getLogger(BatchedItemOperations.class);
+
+    
+    protected static final int COPY = 0;
+    protected static final int CLONE = 1;
+    protected static final int CLONE_REMOVE_EXISTING = 2;
+
+    
+
+
+    protected final UpdatableItemStateManager stateMgr;
+    
+
+
+    protected final SessionImpl session;
+
+    private final HierarchyManager hierMgr;
+
+    
+
+
+
+
+
+
+    public BatchedItemOperations(
+            UpdatableItemStateManager stateMgr, SessionContext sessionContext)
+            throws RepositoryException {
+        super(sessionContext);
+        this.stateMgr = stateMgr;
+        this.session = sessionContext.getSessionImpl();
+        this.hierMgr = sessionContext.getHierarchyManager();
+    }
+
+    
+    
+
+
+
+
+
+
+    public void edit() throws IllegalStateException {
+        stateMgr.edit();
+    }
+
+    
+
+
+
+
+
+    public void store(ItemState state) throws IllegalStateException {
+        stateMgr.store(state);
+    }
+
+    
+
+
+
+
+
+    public void destroy(ItemState state) throws IllegalStateException {
+        stateMgr.destroy(state);
+    }
+
+    
+
+
+
+
+
+
+
+    public void update() throws RepositoryException, IllegalStateException {
+        try {
+            stateMgr.update();
+        } catch (ItemStateException ise) {
+            String msg = "update operation failed";
+            log.debug(msg, ise);
+            throw new RepositoryException(msg, ise);
+        }
+    }
+
+    
+
+
+
+
+
+    public void cancel() throws IllegalStateException {
+        stateMgr.cancel();
+    }
+
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public NodeId clone(Path srcPath, Path destPath)
+            throws ConstraintViolationException, AccessDeniedException,
+                   VersionException, PathNotFoundException, ItemExistsException,
+                   LockException, RepositoryException, IllegalStateException {
+
+        
+        checkInEditMode();
+
+        
+        NodeState srcState = getNodeState(srcPath);
+
+        Path destParentPath = destPath.getAncestor(1);
+        NodeState destParentState = getNodeState(destParentPath);
+        int ind = destPath.getIndex();
+        if (ind > 0) {
+            
+            String msg =
+                "invalid destination path: " + safeGetJCRPath(destPath)
+                + " (subscript in name element is not allowed)";
+            log.debug(msg);
+            throw new RepositoryException(msg);
+        }
+
+        return clone(srcState, destParentState, destPath.getName());
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public NodeId clone(NodeState srcState, NodeState destParentState, Name destName)
+            throws ConstraintViolationException, AccessDeniedException,
+                   VersionException, PathNotFoundException, ItemExistsException,
+                   LockException, RepositoryException, IllegalStateException {
+
+
+        
+        checkAddNode(destParentState, destName,
+                srcState.getNodeTypeName(), CHECK_ACCESS | CHECK_LOCK
+                | CHECK_CHECKED_OUT | CHECK_CONSTRAINTS | CHECK_HOLD | CHECK_RETENTION);
+
+        
+        if (!isShareable(srcState)) {
+            String msg =
+                "Cloning inside a workspace is only allowed for shareable"
+                + " nodes. Node with type " + srcState.getNodeTypeName()
+                + " is not shareable.";
+            log.debug(msg);
+            throw new RepositoryException(msg);
+        }
+
+        
+        NodeId srcId = srcState.getNodeId();
+        NodeId destParentId = destParentState.getNodeId();
+        if (destParentId.equals(srcId) || hierMgr.isAncestor(srcId, destParentId)) {
+            String msg =
+                "Cloning Node with id " + srcId
+                + " to parent with id " + destParentId
+                + " would create a share cycle.";
+            log.debug(msg);
+            throw new RepositoryException(msg);
+        }
+
+        
+        if (!srcState.addShare(destParentState.getNodeId())) {
+            String msg =
+                "Adding a shareable node with id ("
+                + destParentState.getNodeId()
+                + ") twice to the same parent is not supported.";
+            log.debug(msg);
+            throw new UnsupportedRepositoryOperationException(msg);
+        }
+        destParentState.addChildNodeEntry(destName, srcState.getNodeId());
+
+        
+        stateMgr.store(srcState);
+        stateMgr.store(destParentState);
+        return destParentState.getNodeId();
+    }
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public NodeId copy(Path srcPath, Path destPath, int flag)
+            throws RepositoryException {
+        return copy(
+                srcPath, stateMgr, hierMgr, context.getAccessManager(),
+                destPath, flag);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public NodeId copy(Path srcPath,
+                       ItemStateManager srcStateMgr,
+                       HierarchyManager srcHierMgr,
+                       AccessManager srcAccessMgr,
+                       Path destPath,
+                       int flag)
+            throws ConstraintViolationException, AccessDeniedException,
+            VersionException, PathNotFoundException, ItemExistsException,
+            LockException, RepositoryException, IllegalStateException {
+
+        
+        checkInEditMode();
+
+        
+
+        NodeState srcState = getNodeState(srcStateMgr, srcHierMgr, srcPath);
+
+        Path destParentPath = destPath.getAncestor(1);
+        NodeState destParentState = getNodeState(destParentPath);
+        int ind = destPath.getIndex();
+        if (ind > 0) {
+            
+            String msg =
+                "invalid copy destination path: " + safeGetJCRPath(destPath)
+                + " (subscript in name element is not allowed)";
+            log.debug(msg);
+            throw new RepositoryException(msg);
+        }
+
+        
+
+        
+        
+        
+        stateMgr.store(destParentState);
+        checkAddNode(destParentState, destPath.getName(),
+                srcState.getNodeTypeName(), CHECK_ACCESS | CHECK_LOCK
+                | CHECK_CHECKED_OUT | CHECK_CONSTRAINTS | CHECK_HOLD | CHECK_RETENTION);
+        
+        try {
+            if (!srcAccessMgr.isGranted(srcPath, Permission.READ)) {
+                throw new PathNotFoundException(safeGetJCRPath(srcPath));
+            }
+        } catch (ItemNotFoundException infe) {
+            String msg =
+                "internal error: failed to check access rights for "
+                + safeGetJCRPath(srcPath);
+            log.debug(msg);
+            throw new RepositoryException(msg, infe);
+        }
+
+        
+
+        ReferenceChangeTracker refTracker = new ReferenceChangeTracker();
+
+        
+        NodeState newState = copyNodeState(srcState, srcPath, srcStateMgr, srcAccessMgr,
+                destParentState.getNodeId(), flag, refTracker);
+
+        
+        destParentState.addChildNodeEntry(destPath.getName(), newState.getNodeId());
+
+        
+        
+        Iterator<Object> iter = refTracker.getProcessedReferences();
+        while (iter.hasNext()) {
+            PropertyState prop = (PropertyState) iter.next();
+            
+            if (prop.getType() != PropertyType.REFERENCE
+                    && prop.getType() != PropertyType.WEAKREFERENCE) {
+                continue;
+            }
+            boolean modified = false;
+            InternalValue[] values = prop.getValues();
+            InternalValue[] newVals = new InternalValue[values.length];
+            for (int i = 0; i < values.length; i++) {
+                NodeId adjusted = refTracker.getMappedId(values[i].getNodeId());
+                if (adjusted != null) {
+                    boolean weak = prop.getType() == PropertyType.WEAKREFERENCE;
+                    newVals[i] = InternalValue.create(adjusted, weak);
+                    modified = true;
+                } else {
+                    
+                    newVals[i] = values[i];
+                }
+            }
+            if (modified) {
+                prop.setValues(newVals);
+                stateMgr.store(prop);
+            }
+        }
+        refTracker.clear();
+
+        
+        stateMgr.store(newState);
+        stateMgr.store(destParentState);
+        return newState.getNodeId();
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public NodeId move(Path srcPath, Path destPath)
+            throws ConstraintViolationException, VersionException,
+            AccessDeniedException, PathNotFoundException, ItemExistsException,
+            LockException, RepositoryException, IllegalStateException {
+
+        
+        if (!stateMgr.inEditMode()) {
+            throw new IllegalStateException(
+                    "cannot move path " + safeGetJCRPath(srcPath)
+                    + " because manager is not in edit mode");
+        }
+
+        
+
+        try {
+            if (srcPath.isAncestorOf(destPath)) {
+                String msg =
+                    safeGetJCRPath(destPath) + ": invalid destination path"
+                    + " (cannot be descendant of source path)";
+                log.debug(msg);
+                throw new RepositoryException(msg);
+            }
+        } catch (MalformedPathException mpe) {
+            String msg = "invalid path for move: " + safeGetJCRPath(destPath);
+            log.debug(msg);
+            throw new RepositoryException(msg, mpe);
+        }
+
+        Path srcParentPath = srcPath.getAncestor(1);
+        NodeState target = getNodeState(srcPath);
+        NodeState srcParent = getNodeState(srcParentPath);
+
+        Path destParentPath = destPath.getAncestor(1);
+        NodeState destParent = getNodeState(destParentPath);
+
+        int ind = destPath.getIndex();
+        if (ind > 0) {
+            
+            String msg =
+                safeGetJCRPath(destPath) + ": invalid destination path"
+                + " (subscript in name element is not allowed)";
+            log.debug(msg);
+            throw new RepositoryException(msg);
+        }
+
+        HierarchyManagerImpl hierMgr = (HierarchyManagerImpl) this.hierMgr;
+        if (hierMgr.isShareAncestor(target.getNodeId(), destParent.getNodeId())) {
+            String msg =
+                safeGetJCRPath(destPath) + ": invalid destination path"
+                + " (share cycle detected)";
+            log.debug(msg);
+            throw new RepositoryException(msg);
+        }
+
+        
+
+        checkRemoveNode(target, srcParent.getNodeId(),
+                CHECK_ACCESS | CHECK_LOCK | CHECK_CHECKED_OUT | CHECK_CONSTRAINTS
+                | CHECK_HOLD | CHECK_RETENTION);
+        checkAddNode(destParent, destPath.getName(),
+                target.getNodeTypeName(), CHECK_ACCESS | CHECK_LOCK
+                | CHECK_CHECKED_OUT | CHECK_CONSTRAINTS | CHECK_HOLD | CHECK_RETENTION);
+
+        
+        boolean renameOnly = srcParent.getNodeId().equals(destParent.getNodeId());
+
+        int srcNameIndex = srcPath.getIndex();
+        if (srcNameIndex == 0) {
+            srcNameIndex = 1;
+        }
+
+        stateMgr.store(target);
+        if (renameOnly) {
+            stateMgr.store(srcParent);
+            
+            destParent.renameChildNodeEntry(srcPath.getName(), srcNameIndex,
+                    destPath.getName());
+        } else {
+            
+            if (target.isShareable()) {
+                String msg =
+                    "Moving a shareable node (" + safeGetJCRPath(srcPath)
+                    + ") is not supported.";
+                log.debug(msg);
+                throw new UnsupportedRepositoryOperationException(msg);
+            }
+
+            stateMgr.store(srcParent);
+            stateMgr.store(destParent);
+
+            
+            
+            if (srcParent.removeChildNodeEntry(target.getNodeId())) {
+                
+                target.setParentId(destParent.getNodeId());
+                
+                destParent.addChildNodeEntry(destPath.getName(), target.getNodeId());
+            }
+        }
+
+        return target.getNodeId();
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void removeNode(Path nodePath)
+            throws ConstraintViolationException, AccessDeniedException,
+            VersionException, LockException, ItemNotFoundException,
+            ReferentialIntegrityException, RepositoryException,
+            IllegalStateException {
+
+        
+        if (!stateMgr.inEditMode()) {
+            throw new IllegalStateException(
+                    "cannot remove node (" + safeGetJCRPath(nodePath)
+                    + ") because manager is not in edit mode");
+        }
+
+        
+        NodeState target = getNodeState(nodePath);
+        NodeId parentId = target.getParentId();
+
+        
+        checkRemoveNode(target, parentId,
+                CHECK_ACCESS | CHECK_LOCK | CHECK_CHECKED_OUT
+                | CHECK_CONSTRAINTS | CHECK_REFERENCES | CHECK_HOLD | CHECK_RETENTION);
+
+        
+        removeNodeState(target);
+    }
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void checkAddNode(NodeState parentState, Name nodeName,
+                             Name nodeTypeName, int options)
+            throws ConstraintViolationException, AccessDeniedException,
+            VersionException, LockException, ItemNotFoundException,
+            ItemExistsException, RepositoryException {
+
+        Path parentPath = hierMgr.getPath(parentState.getNodeId());
+
+        
+
+        if ((options & CHECK_LOCK) == CHECK_LOCK) {
+            
+            verifyUnlocked(parentPath);
+        }
+
+        
+
+        if ((options & CHECK_CHECKED_OUT) == CHECK_CHECKED_OUT) {
+            
+            verifyCheckedOut(parentPath);
+        }
+
+        
+
+        if ((options & CHECK_ACCESS) == CHECK_ACCESS) {
+            AccessManager accessMgr = context.getAccessManager();
+            
+            if (!accessMgr.isGranted(parentPath, Permission.READ)) {
+                throw new ItemNotFoundException(safeGetJCRPath(parentState.getNodeId()));
+            }
+            
+            if (!accessMgr.isGranted(parentPath, nodeName, Permission.ADD_NODE)) {
+                throw new AccessDeniedException(safeGetJCRPath(parentState.getNodeId())
+                        + ": not allowed to add child node");
+            }
+            
+            
+            if (!accessMgr.isGranted(parentPath, nodeName, Permission.NODE_TYPE_MNGMT)) {
+                throw new AccessDeniedException(safeGetJCRPath(parentState.getNodeId())
+                        + ": not allowed to add child node");
+            }
+        }
+
+        
+
+        if ((options & CHECK_CONSTRAINTS) == CHECK_CONSTRAINTS) {
+            QItemDefinition parentDef =
+                context.getItemManager().getDefinition(parentState).unwrap();
+            
+            if (parentDef.isProtected()) {
+                throw new ConstraintViolationException(
+                        safeGetJCRPath(parentState.getNodeId())
+                        + ": cannot add child node to protected parent node");
+            }
+            
+            EffectiveNodeType entParent = getEffectiveNodeType(parentState);
+            entParent.checkAddNodeConstraints(
+                    nodeName, nodeTypeName, context.getNodeTypeRegistry());
+            QNodeDefinition newNodeDef =
+                    findApplicableNodeDefinition(nodeName, nodeTypeName,
+                            parentState);
+
+            
+            if (parentState.hasChildNodeEntry(nodeName)) {
+                
+
+                
+                ChildNodeEntry entry = parentState.getChildNodeEntry(nodeName, 1);
+                NodeState conflictingState;
+                NodeId conflictingId = entry.getId();
+                try {
+                    conflictingState = (NodeState) stateMgr.getItemState(conflictingId);
+                } catch (ItemStateException ise) {
+                    String msg =
+                        "internal error: failed to retrieve state of "
+                        + safeGetJCRPath(conflictingId);
+                    log.debug(msg);
+                    throw new RepositoryException(msg, ise);
+                }
+                QNodeDefinition conflictingTargetDef =
+                    context.getItemManager().getDefinition(conflictingState).unwrap();
+                
+                if (!conflictingTargetDef.allowsSameNameSiblings()
+                        || !newNodeDef.allowsSameNameSiblings()) {
+                    throw new ItemExistsException(
+                            "cannot add child node '" + nodeName.getLocalName()
+                            + "' to " + safeGetJCRPath(parentState.getNodeId())
+                            + ": colliding with same-named existing node");
+                }
+            }
+        }
+
+        RetentionRegistry retentionReg =
+            context.getSessionImpl().getRetentionRegistry();
+        if ((options & CHECK_HOLD) == CHECK_HOLD) {
+            if (retentionReg.hasEffectiveHold(parentPath, false)) {
+                throw new RepositoryException("Unable to add node. Parent is affected by a hold.");
+            }
+        }
+        if ((options & CHECK_RETENTION) == CHECK_RETENTION) {
+            if (retentionReg.hasEffectiveRetention(parentPath, false)) {
+                throw new RepositoryException("Unable to add node. Parent is affected by a retention.");
+            }
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void checkRemoveNode(NodeState targetState, int options)
+            throws ConstraintViolationException, AccessDeniedException,
+            VersionException, LockException, ItemNotFoundException,
+            ReferentialIntegrityException, RepositoryException {
+        checkRemoveNode(targetState, targetState.getParentId(), options);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void checkRemoveNode(NodeState targetState, NodeId parentId,
+                                int options)
+            throws ConstraintViolationException, AccessDeniedException,
+            VersionException, LockException, ItemNotFoundException,
+            ReferentialIntegrityException, RepositoryException {
+
+        if (targetState.getParentId() == null) {
+            
+            throw new ConstraintViolationException("cannot remove root node");
+        }
+        Path targetPath = hierMgr.getPath(targetState.getNodeId());
+        NodeState parentState = getNodeState(parentId);
+        Path parentPath = hierMgr.getPath(parentId);
+
+        
+
+        if ((options & CHECK_LOCK) == CHECK_LOCK) {
+            
+            verifyUnlocked(parentPath);
+        }
+
+        
+
+        if ((options & CHECK_CHECKED_OUT) == CHECK_CHECKED_OUT) {
+            
+            verifyCheckedOut(parentPath);
+        }
+
+        
+
+        if ((options & CHECK_ACCESS) == CHECK_ACCESS) {
+            try {
+                AccessManager accessMgr = context.getAccessManager();
+                
+                if (!accessMgr.isGranted(targetPath, Permission.READ)) {
+                    throw new PathNotFoundException(safeGetJCRPath(targetPath));
+                }
+                
+                if (!accessMgr.isGranted(targetPath, Permission.REMOVE_NODE)) {
+                    throw new AccessDeniedException(safeGetJCRPath(targetPath)
+                            + ": not allowed to remove node");
+                }
+            } catch (ItemNotFoundException infe) {
+                String msg = "internal error: failed to check access rights for "
+                        + safeGetJCRPath(targetPath);
+                log.debug(msg);
+                throw new RepositoryException(msg, infe);
+            }
+        }
+
+        
+
+        if ((options & CHECK_CONSTRAINTS) == CHECK_CONSTRAINTS) {
+            QItemDefinition parentDef =
+                context.getItemManager().getDefinition(parentState).unwrap();
+            if (parentDef.isProtected()) {
+                throw new ConstraintViolationException(safeGetJCRPath(parentId)
+                        + ": cannot remove child node of protected parent node");
+            }
+            QItemDefinition targetDef =
+                context.getItemManager().getDefinition(targetState).unwrap();
+            if (targetDef.isMandatory()) {
+                throw new ConstraintViolationException(safeGetJCRPath(targetPath)
+                        + ": cannot remove mandatory node");
+            }
+            if (targetDef.isProtected()) {
+                throw new ConstraintViolationException(safeGetJCRPath(targetPath)
+                        + ": cannot remove protected node");
+            }
+        }
+
+        
+
+        if ((options & CHECK_REFERENCES) == CHECK_REFERENCES) {
+            EffectiveNodeType ent = getEffectiveNodeType(targetState);
+            if (ent.includesNodeType(NameConstants.MIX_REFERENCEABLE)) {
+                NodeId targetId = targetState.getNodeId();
+                if (stateMgr.hasNodeReferences(targetId)) {
+                    try {
+                        NodeReferences refs = stateMgr.getNodeReferences(targetId);
+                        if (refs.hasReferences()) {
+                            throw new ReferentialIntegrityException(safeGetJCRPath(targetPath)
+                                    + ": cannot remove node with references");
+                        }
+                    } catch (ItemStateException ise) {
+                        String msg = "internal error: failed to check references on "
+                                + safeGetJCRPath(targetPath);
+                        log.error(msg, ise);
+                        throw new RepositoryException(msg, ise);
+                    }
+                }
+            }
+        }
+
+        RetentionRegistry retentionReg =
+            context.getSessionImpl().getRetentionRegistry();
+        if ((options & CHECK_HOLD) == CHECK_HOLD) {
+            if (retentionReg.hasEffectiveHold(targetPath, true)) {
+                throw new RepositoryException("Unable to perform removal. Node is affected by a hold.");
+            }
+        }
+        if ((options & CHECK_RETENTION) == CHECK_RETENTION) {
+            if (retentionReg.hasEffectiveRetention(targetPath, true)) {
+                throw new RepositoryException("Unable to perform removal. Node is affected by a retention.");
+            }
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void verifyCanWrite(Path nodePath)
+            throws PathNotFoundException, AccessDeniedException,
+            ConstraintViolationException, VersionException, LockException,
+            RepositoryException {
+
+        NodeState node = getNodeState(nodePath);
+
+        
+        
+        AccessManager accessMgr = context.getAccessManager();
+        if (!accessMgr.isGranted(nodePath, Permission.READ)) {
+            throw new PathNotFoundException(safeGetJCRPath(node.getNodeId()));
+        }
+        
+        
+        
+        
+        
+
+        
+        verifyUnlocked(nodePath);
+
+        
+        verifyNotProtected(nodePath);
+
+        
+        verifyCheckedOut(nodePath);
+
+        RetentionRegistry retentionReg =
+            context.getSessionImpl().getRetentionRegistry();
+        if (retentionReg.hasEffectiveHold(nodePath, false)) {
+            throw new RepositoryException("Unable to write. Node is affected by a hold.");
+        }
+        if (retentionReg.hasEffectiveRetention(nodePath, false)) {
+            throw new RepositoryException("Unable to write. Node is affected by a retention.");
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void verifyCanRead(Path nodePath)
+            throws PathNotFoundException, RepositoryException {
+        
+        
+        AccessManager accessMgr = context.getAccessManager();
+        if (!accessMgr.isGranted(nodePath, Permission.READ)) {
+            throw new PathNotFoundException(safeGetJCRPath(nodePath));
+        }
+    }
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public NodeState createNodeState(NodeState parent,
+                                     Name nodeName,
+                                     Name nodeTypeName,
+                                     Name[] mixinNames,
+                                     NodeId id)
+            throws ItemExistsException, ConstraintViolationException,
+            RepositoryException, IllegalStateException {
+
+        
+        if (!stateMgr.inEditMode()) {
+            throw new IllegalStateException(
+                    "cannot create node state for " + nodeName
+                    + " because manager is not in edit mode");
+        }
+
+        QNodeDefinition def = findApplicableNodeDefinition(nodeName, nodeTypeName, parent);
+        return createNodeState(parent, nodeName, nodeTypeName, mixinNames, id, def);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public NodeState createNodeState(NodeState parent,
+                                     Name nodeName,
+                                     Name nodeTypeName,
+                                     Name[] mixinNames,
+                                     NodeId id,
+                                     QNodeDefinition def)
+            throws ItemExistsException, ConstraintViolationException,
+            RepositoryException, IllegalStateException {
+
+        
+        if (!def.allowsSameNameSiblings() && parent.hasChildNodeEntry(nodeName)) {
+            NodeId errorId = parent.getChildNodeEntry(nodeName, 1).getId();
+            throw new ItemExistsException(safeGetJCRPath(errorId));
+        }
+        if (nodeTypeName == null) {
+            
+            
+            nodeTypeName = def.getDefaultPrimaryType();
+            if (nodeTypeName == null) {
+                String msg =
+                    "an applicable node type could not be determined for "
+                    + nodeName;
+                log.debug(msg);
+                throw new ConstraintViolationException(msg);
+            }
+        }
+        NodeState node = stateMgr.createNew(id, nodeTypeName, parent.getNodeId());
+        if (mixinNames != null && mixinNames.length > 0) {
+            node.setMixinTypeNames(new HashSet<Name>(Arrays.asList(mixinNames)));
+        }
+
+        
+        parent.addChildNodeEntry(nodeName, node.getNodeId());
+
+        EffectiveNodeType ent = getEffectiveNodeType(node);
+
+        
+        if (ent.includesNodeType(NameConstants.MIX_SHAREABLE)) {
+            node.addShare(parent.getNodeId());
+        }
+
+        if (!node.getMixinTypeNames().isEmpty()) {
+            
+            QPropertyDefinition pd = ent.getApplicablePropertyDef(NameConstants.JCR_MIXINTYPES,
+                    PropertyType.NAME, true);
+            createPropertyState(node, pd.getName(), pd.getRequiredType(), pd);
+        }
+
+        
+        for (QPropertyDefinition pd : ent.getAutoCreatePropDefs()) {
+            createPropertyState(node, pd.getName(), pd.getRequiredType(), pd);
+        }
+
+        
+        for (QNodeDefinition nd : ent.getAutoCreateNodeDefs()) {
+            createNodeState(node, nd.getName(), nd.getDefaultPrimaryType(),
+                    null, null, nd);
+        }
+
+        
+        stateMgr.store(node);
+        
+        stateMgr.store(parent);
+
+        return node;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public PropertyState createPropertyState(NodeState parent,
+                                             Name propName,
+                                             int type,
+                                             int numValues)
+            throws ItemExistsException, ConstraintViolationException,
+            RepositoryException, IllegalStateException {
+
+        
+        if (!stateMgr.inEditMode()) {
+            throw new IllegalStateException(
+                    "cannot create property state for " + propName
+                    + " because manager is not in edit mode");
+        }
+
+        
+        QPropertyDefinition def;
+        
+        if (numValues == 1) {
+            
+            try {
+                
+                def = findApplicablePropertyDefinition(propName,
+                        type, false, parent);
+            } catch (ConstraintViolationException cve) {
+                
+                def = findApplicablePropertyDefinition(propName,
+                        type, true, parent);
+            }
+        } else {
+            
+            def = findApplicablePropertyDefinition(propName,
+                    type, true, parent);
+        }
+        return createPropertyState(parent, propName, type, def);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public PropertyState createPropertyState(NodeState parent,
+                                             Name propName,
+                                             int type,
+                                             QPropertyDefinition def)
+            throws ItemExistsException, RepositoryException {
+
+        
+        if (parent.hasPropertyName(propName)) {
+            PropertyId errorId = new PropertyId(parent.getNodeId(), propName);
+            throw new ItemExistsException(safeGetJCRPath(errorId));
+        }
+
+        
+        PropertyState prop = stateMgr.createNew(propName, parent.getNodeId());
+
+        if (def.getRequiredType() != PropertyType.UNDEFINED) {
+            prop.setType(def.getRequiredType());
+        } else if (type != PropertyType.UNDEFINED) {
+            prop.setType(type);
+        } else {
+            prop.setType(PropertyType.STRING);
+        }
+        prop.setMultiValued(def.isMultiple());
+
+        
+        new NodeTypeInstanceHandler(session.getUserID()).setDefaultValues(
+                prop, parent, def);
+
+        
+        parent.addPropertyName(propName);
+        
+        stateMgr.store(parent);
+
+        return prop;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    public void removeNodeState(NodeState target)
+            throws RepositoryException {
+
+        NodeId parentId = target.getParentId();
+        if (parentId == null) {
+            String msg = "root node cannot be removed";
+            log.debug(msg);
+            throw new RepositoryException(msg);
+        }
+        
+        recursiveRemoveNodeState(target);
+        
+        NodeState parent = getNodeState(parentId);
+        parent.removeChildNodeEntry(target.getNodeId());
+        
+        stateMgr.store(parent);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public NodeState getNodeState(Path nodePath)
+            throws PathNotFoundException, RepositoryException {
+        return getNodeState(stateMgr, hierMgr, nodePath);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public NodeState getNodeState(NodeId id)
+            throws ItemNotFoundException, RepositoryException {
+        return (NodeState) getItemState(stateMgr, id);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public PropertyState getPropertyState(PropertyId id)
+            throws ItemNotFoundException, RepositoryException {
+        return (PropertyState) getItemState(stateMgr, id);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public ItemState getItemState(ItemId id)
+            throws ItemNotFoundException, RepositoryException {
+        return getItemState(stateMgr, id);
+    }
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    protected void verifyCheckedOut(Path nodePath)
+            throws PathNotFoundException, VersionException, RepositoryException {
+        
+        
+
+
+
+
+        NodeState nodeState = getNodeState(nodePath);
+        while (!nodeState.hasPropertyName(NameConstants.JCR_ISCHECKEDOUT)) {
+            if (nodePath.denotesRoot()) {
+                return;
+            }
+            nodePath = nodePath.getAncestor(1);
+            nodeState = getNodeState(nodePath);
+        }
+        PropertyId propId =
+                new PropertyId(nodeState.getNodeId(), NameConstants.JCR_ISCHECKEDOUT);
+        PropertyState propState;
+        try {
+            propState = (PropertyState) stateMgr.getItemState(propId);
+        } catch (ItemStateException ise) {
+            String msg = "internal error: failed to retrieve state of "
+                    + safeGetJCRPath(propId);
+            log.debug(msg);
+            throw new RepositoryException(msg, ise);
+        }
+        boolean checkedOut = propState.getValues()[0].getBoolean();
+        if (!checkedOut) {
+            throw new VersionException(safeGetJCRPath(nodePath) + " is checked-in");
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+    protected void verifyUnlocked(Path nodePath)
+            throws LockException, RepositoryException {
+        
+        context.getWorkspace().getInternalLockManager().checkLock(
+                nodePath, session);
+    }
+
+    
+
+
+
+
+
+
+
+
+    protected void verifyNotProtected(Path nodePath)
+            throws PathNotFoundException, ConstraintViolationException,
+            RepositoryException {
+        NodeState node = getNodeState(nodePath);
+        if (context.getItemManager().getDefinition(node).isProtected()) {
+            throw new ConstraintViolationException(safeGetJCRPath(nodePath)
+                    + ": node is protected");
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    protected NodeState getNodeState(ItemStateManager srcStateMgr,
+                                     HierarchyManager srcHierMgr,
+                                     Path nodePath)
+            throws PathNotFoundException, RepositoryException {
+        try {
+            NodeId id = srcHierMgr.resolveNodePath(nodePath);
+            if (id == null) {
+                throw new PathNotFoundException(safeGetJCRPath(nodePath));
+            }
+            return (NodeState) getItemState(srcStateMgr, id);
+        } catch (ItemNotFoundException infe) {
+            throw new PathNotFoundException(safeGetJCRPath(nodePath));
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    protected ItemState getItemState(ItemStateManager srcStateMgr, ItemId id)
+            throws ItemNotFoundException, RepositoryException {
+        try {
+            return srcStateMgr.getItemState(id);
+        } catch (NoSuchItemStateException nsise) {
+            throw new ItemNotFoundException(safeGetJCRPath(id));
+        } catch (ItemStateException ise) {
+            String msg = "internal error: failed to retrieve state of "
+                    + safeGetJCRPath(id);
+            log.debug(msg);
+            throw new RepositoryException(msg, ise);
+        }
+    }
+
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void recursiveRemoveNodeState(NodeState targetState)
+            throws RepositoryException {
+
+        if (targetState.hasChildNodeEntries()) {
+            
+            
+            ArrayList<ChildNodeEntry> tmp = new ArrayList<ChildNodeEntry>(targetState.getChildNodeEntries());
+            
+            for (int i = tmp.size() - 1; i >= 0; i--) {
+                ChildNodeEntry entry = tmp.get(i);
+                NodeId nodeId = entry.getId();
+                try {
+                    NodeState nodeState = (NodeState) stateMgr.getItemState(nodeId);
+                    
+                    
+                    
+                    
+                    
+                    checkRemoveNode(nodeState, targetState.getNodeId(),
+                            CHECK_ACCESS
+                            | CHECK_LOCK
+                            | CHECK_CHECKED_OUT
+                            | CHECK_HOLD
+                            | CHECK_RETENTION
+                    );
+                    
+                    recursiveRemoveNodeState(nodeState);
+                } catch (ItemStateException ise) {
+                    String msg = "internal error: failed to retrieve state of "
+                            + nodeId;
+                    log.debug(msg);
+                    throw new RepositoryException(msg, ise);
+                }
+                
+                targetState.removeChildNodeEntry(entry.getName(), entry.getIndex());
+            }
+        }
+
+        
+        
+        HashSet<Name> tmp = new HashSet<Name>(targetState.getPropertyNames());
+        for (Name propName : tmp) {
+            PropertyId propId =
+                    new PropertyId(targetState.getNodeId(), propName);
+            try {
+                PropertyState propState =
+                        (PropertyState) stateMgr.getItemState(propId);
+                
+                targetState.removePropertyName(propId.getName());
+                
+                stateMgr.destroy(propState);
+            } catch (ItemStateException ise) {
+                String msg = "internal error: failed to retrieve state of "
+                        + propId;
+                log.debug(msg);
+                throw new RepositoryException(msg, ise);
+            }
+        }
+
+        
+        targetState.setParentId(null);
+        
+        
+        stateMgr.destroy(targetState.getOverlayedState());
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private NodeState copyNodeState(NodeState srcState,
+                                    Path srcPath,
+                                    ItemStateManager srcStateMgr,
+                                    AccessManager srcAccessMgr,
+                                    NodeId destParentId,
+                                    int flag,
+                                    ReferenceChangeTracker refTracker)
+            throws RepositoryException {
+
+        NodeState newState;
+        try {
+            NodeId id = null;
+            EffectiveNodeType ent = getEffectiveNodeType(srcState);
+            boolean referenceable = ent.includesNodeType(NameConstants.MIX_REFERENCEABLE);
+            boolean versionable = ent.includesNodeType(NameConstants.MIX_SIMPLE_VERSIONABLE);
+            boolean fullVersionable = ent.includesNodeType(NameConstants.MIX_VERSIONABLE);
+            boolean shareable = ent.includesNodeType(NameConstants.MIX_SHAREABLE);
+            switch (flag) {
+                case COPY:
+                    
+
+
+
+                    if (shareable && refTracker.getMappedId(srcState.getNodeId()) != null) {
+                        NodeId newId = refTracker.getMappedId(srcState.getNodeId());
+                        NodeState sharedState = (NodeState) stateMgr.getItemState(newId);
+                        sharedState.addShare(destParentId);
+                        return sharedState;
+                    }
+                    break;
+                case CLONE:
+                    if (!referenceable) {
+                        
+                        break;
+                    }
+                    
+                    id = srcState.getNodeId();
+
+                    if (stateMgr.hasItemState(id)) {
+                        if (shareable) {
+                            NodeState sharedState = (NodeState) stateMgr.getItemState(id);
+                            sharedState.addShare(destParentId);
+                            return sharedState;
+                        }
+                        
+                        throw new ItemExistsException(safeGetJCRPath(id));
+                    }
+                    break;
+                case CLONE_REMOVE_EXISTING:
+                    if (!referenceable) {
+                        
+                        break;
+                    }
+                    
+                    id = srcState.getNodeId();
+                    if (stateMgr.hasItemState(id)) {
+                        NodeState existingState = (NodeState) stateMgr.getItemState(id);
+                        
+                        
+                        if (id.equals(destParentId)
+                                || hierMgr.isAncestor(id, destParentId)) {
+                            String msg =
+                                "cannot remove node " + safeGetJCRPath(srcPath)
+                                + " because it is an ancestor of the destination";
+                            log.debug(msg);
+                            throw new RepositoryException(msg);
+                        }
+
+                        
+                        
+                        
+                        checkRemoveNode(existingState,
+                                CHECK_ACCESS
+                                | CHECK_LOCK
+                                | CHECK_CHECKED_OUT
+                                | CHECK_CONSTRAINTS
+                                | CHECK_HOLD
+                                | CHECK_RETENTION);
+                        
+                        removeNodeState(existingState);
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                            "unknown flag for copying node state: " + flag);
+            }
+            newState = stateMgr.createNew(id, srcState.getNodeTypeName(), destParentId);
+            id = newState.getNodeId();
+            if (flag == COPY && referenceable) {
+                
+                refTracker.mappedId(srcState.getNodeId(), id);
+            }
+            
+            newState.setMixinTypeNames(srcState.getMixinTypeNames());
+            if (shareable) {
+                
+                newState.addShare(destParentId);
+            }
+            
+            for (ChildNodeEntry entry : srcState.getChildNodeEntries()) {
+                Path srcChildPath = PathFactoryImpl.getInstance().create(srcPath, entry.getName(), true);
+                if (!srcAccessMgr.isGranted(srcChildPath, Permission.READ)) {
+                    continue;
+                }
+                NodeId nodeId = entry.getId();
+                NodeState srcChildState = (NodeState) srcStateMgr.getItemState(nodeId);
+
+                
+
+
+
+
+
+
+                
+
+
+
+
+                if (srcChildState.isShareable()) {
+                    NodeId mappedId = refTracker.getMappedId(srcChildState.getNodeId());
+                    if (mappedId != null) {
+                        if (stateMgr.hasItemState(mappedId)) {
+                            NodeState destState = (NodeState) stateMgr.getItemState(mappedId);
+                            if (!destState.isShareable()) {
+                                String msg =
+                                    "Remapped child (" + safeGetJCRPath(srcPath)
+                                    + ") is not shareable.";
+                                throw new ItemStateException(msg);
+                            }
+                            if (!destState.addShare(id)) {
+                                String msg = "Unable to add share to node: " + id;
+                                throw new ItemStateException(msg);
+                            }
+                            stateMgr.store(destState);
+                            newState.addChildNodeEntry(entry.getName(), mappedId);
+                            continue;
+                        }
+                    }
+                }
+
+                
+                NodeState newChildState = copyNodeState(srcChildState, srcChildPath,
+                        srcStateMgr, srcAccessMgr, id, flag, refTracker);
+                
+                stateMgr.store(newChildState);
+                
+                newState.addChildNodeEntry(entry.getName(), newChildState.getNodeId());
+            }
+            
+            VersionHistoryInfo history = null;
+            if (versionable && flag == COPY) {
+                NodeId copiedFrom = null;
+                if (fullVersionable) {
+                    
+                    
+                    PropertyId propId = new PropertyId(srcState.getNodeId(), NameConstants.JCR_BASEVERSION);
+                    PropertyState prop = (PropertyState) srcStateMgr.getItemState(propId);
+                    copiedFrom = prop.getValues()[0].getNodeId();
+                }
+                InternalVersionManager manager = session.getInternalVersionManager();
+                history = manager.getVersionHistory(session, newState, copiedFrom);
+            }
+            
+            for (Name propName : srcState.getPropertyNames()) {
+                Path propPath = PathFactoryImpl.getInstance().create(srcPath, propName, true);
+                PropertyId propId = new PropertyId(srcState.getNodeId(), propName);
+                if (!srcAccessMgr.canRead(propPath, propId)) {
+                    continue;
+                }
+                PropertyState srcChildState =
+                        (PropertyState) srcStateMgr.getItemState(propId);
+
+                
+
+
+
+
+
+
+                QPropertyDefinition def = ent.getApplicablePropertyDef(
+                        srcChildState.getName(), srcChildState.getType(),
+                        srcChildState.isMultiValued());
+                if (NameConstants.MIX_LOCKABLE.equals(def.getDeclaringNodeType())) {
+                    
+                    continue;
+                }
+
+                PropertyState newChildState =
+                        copyPropertyState(srcChildState, id, propName, def);
+
+                if (history != null) {
+                    if (fullVersionable) {
+                        if (propName.equals(NameConstants.JCR_VERSIONHISTORY)) {
+                            
+                            InternalValue value = InternalValue.create(
+                                    history.getVersionHistoryId());
+                            newChildState.setValues(new InternalValue[] { value });
+                        } else if (propName.equals(NameConstants.JCR_BASEVERSION)
+                                || propName.equals(NameConstants.JCR_PREDECESSORS)) {
+                            
+                            InternalValue value = InternalValue.create(
+                                    history.getRootVersionId());
+                            newChildState.setValues(new InternalValue[] { value });
+                        } else if (propName.equals(NameConstants.JCR_ISCHECKEDOUT)) {
+                            
+                            newChildState.setValues(new InternalValue[]{InternalValue.create(true)});
+                        }
+                    } else {
+                        
+                        
+                        if (propName.equals(NameConstants.JCR_ISCHECKEDOUT)) {
+                            
+                            newChildState.setValues(new InternalValue[]{InternalValue.create(true)});
+                        }
+                    }
+                }
+
+                if (newChildState.getType() == PropertyType.REFERENCE
+                        || newChildState.getType() == PropertyType.WEAKREFERENCE) {
+                    refTracker.processedReference(newChildState);
+                }
+                
+                stateMgr.store(newChildState);
+                
+                newState.addPropertyName(propName);
+            }
+            return newState;
+        } catch (ItemStateException ise) {
+            String msg = "internal error: failed to copy state of " + srcState.getNodeId();
+            log.debug(msg);
+            throw new RepositoryException(msg, ise);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    private PropertyState copyPropertyState(PropertyState srcState,
+                                            NodeId parentId,
+                                            Name propName,
+                                            QPropertyDefinition def)
+            throws RepositoryException {
+
+        PropertyState newState = stateMgr.createNew(propName, parentId);
+
+        newState.setType(srcState.getType());
+        newState.setMultiValued(srcState.isMultiValued());
+        InternalValue[] values = srcState.getValues();
+        if (values != null) {
+            
+
+
+
+
+
+
+            if (propName.equals(NameConstants.JCR_UUID)
+                    && def.getDeclaringNodeType().equals(NameConstants.MIX_REFERENCEABLE)) {
+                
+                newState.setValues(new InternalValue[]{InternalValue.create(parentId.toString())});
+            } else {
+                InternalValue[] newValues = new InternalValue[values.length];
+                for (int i = 0; i < values.length; i++) {
+                    newValues[i] = values[i].createCopy();
+                }
+                newState.setValues(newValues);
+            }
+        }
+        return newState;
+    }
+
+    
+
+
+
+
+    private void checkInEditMode() throws IllegalStateException {
+        if (!stateMgr.inEditMode()) {
+            throw new IllegalStateException("not in edit mode");
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+    private boolean isShareable(NodeState state) throws RepositoryException {
+        
+        Name primary = state.getNodeTypeName();
+        Set<Name> mixins = state.getMixinTypeNames();
+        if (mixins.contains(NameConstants.MIX_SHAREABLE)) {
+            return true;
+        }
+
+        try {
+            NodeTypeRegistry registry = context.getNodeTypeRegistry();
+            EffectiveNodeType type =
+                registry.getEffectiveNodeType(primary, mixins);
+            return type.includesNodeType(NameConstants.MIX_REFERENCEABLE);
+        } catch (NodeTypeConflictException ntce) {
+            String msg = "internal error: failed to build effective node type for node "
+                    + state.getNodeId();
+            log.debug(msg);
+            throw new RepositoryException(msg, ntce);
+        }
+    }
+}

@@ -1,0 +1,115 @@
+41a42
+> import java.util.Map;
+64c65
+<     private HashMap labelCache = new HashMap();
+---
+>     private Map<Name, Name> labelCache = new HashMap<Name, Name>();
+76c77
+<     private LinkedHashMap nameCache = new LinkedHashMap();
+---
+>     private Map<Name, NodeId> nameCache = new LinkedHashMap<Name, NodeId>();
+83c84
+<     private HashMap versionCache = new HashMap();
+---
+>     private Map<NodeId, InternalVersion> versionCache = new HashMap<NodeId, InternalVersion>();
+88c89
+<     private HashMap tempVersionCache = new HashMap();
+---
+>     private Map<NodeId, InternalVersion> tempVersionCache = new HashMap<NodeId, InternalVersion>();
+139,140c140
+<             for (int i = 0; i < labels.length; i++) {
+<                 PropertyState pState = labels[i];
+---
+>             for (PropertyState pState : labels) {
+162,163c162
+<         for (int i = 0; i < children.length; i++) {
+<             ChildNodeEntry child = children[i];
+---
+>         for (ChildNodeEntry child : children) {
+172,174c171
+<             Iterator iter = nameCache.keySet().iterator();
+<             while (iter.hasNext()) {
+<                 Name versionName = (Name) iter.next();
+---
+>             for (Name versionName : nameCache.keySet()) {
+191,193c188,189
+<         Iterator iter = tempVersionCache.values().iterator();
+<         while (iter.hasNext()) {
+<             InternalVersionImpl v = (InternalVersionImpl) iter.next();
+---
+>         for (Object o : tempVersionCache.values()) {
+>             InternalVersionImpl v = (InternalVersionImpl) o;
+213,216c209,210
+<             Iterator iter = labelCache.keySet().iterator();
+<             while (iter.hasNext()) {
+<                 Name labelName = (Name) iter.next();
+<                 Name versionName = (Name) labelCache.get(labelName);
+---
+>             for (Name labelName: labelCache.keySet()) {
+>                 Name versionName = labelCache.get(labelName);
+268c262
+<         NodeId versionId = (NodeId) nameCache.get(versionName);
+---
+>         NodeId versionId = nameCache.get(versionName);
+273c267
+<         InternalVersion v = (InternalVersion) versionCache.get(versionId);
+---
+>         InternalVersion v = versionCache.get(versionId);
+291c285
+<         InternalVersion v = (InternalVersion) versionCache.get(id);
+---
+>         InternalVersion v = versionCache.get(id);
+293,295c287
+<             Iterator iter = nameCache.keySet().iterator();
+<             while (iter.hasNext()) {
+<                 Name versionName = (Name) iter.next();
+---
+>             for (Name versionName : nameCache.keySet()) {
+309c301
+<         Name versionName = (Name) labelCache.get(label);
+---
+>         Name versionName = labelCache.get(label);
+314,315c306,307
+<         NodeId id = (NodeId) nameCache.get(versionName);
+<         InternalVersion v = (InternalVersion) versionCache.get(id);
+---
+>         NodeId id = nameCache.get(versionName);
+>         InternalVersion v = versionCache.get(id);
+326c318
+<         return (Name[]) nameCache.keySet().toArray(new Name[nameCache.size()]);
+---
+>         return nameCache.keySet().toArray(new Name[nameCache.size()]);
+347c339
+<         return (Name[]) labelCache.keySet().toArray(new Name[labelCache.size()]);
+---
+>         return labelCache.keySet().toArray(new Name[labelCache.size()]);
+384,386c376,378
+<         for (int i = 0; i < labels.length; i++) {
+<             v.internalRemoveLabel(labels[i]);
+<             labelNode.removeProperty(labels[i]);
+---
+>         for (Name label : labels) {
+>             v.internalRemoveLabel(label);
+>             labelNode.removeProperty(label);
+420,421c412,413
+<         for (int i = 0; i < labels.length; i++) {
+<             labelCache.remove(labels[i]);
+---
+>         for (Name label : labels) {
+>             labelCache.remove(label);
+446c438
+<         Name prevName = (Name) labelCache.get(label);
+---
+>         Name prevName = labelCache.get(label);
+563a556
+> 
+566c559
+<             NodeState nodeState) throws RepositoryException {
+---
+>             NodeState nodeState, NodeId copiedFrom) throws RepositoryException {
+579a573,577
+>         if (copiedFrom != null) {
+>             pNode.setPropertyValue(NameConstants.JCR_COPIEDFROM, InternalValue.create(copiedFrom.getUUID(), true));
+>         }
+>         
+>         

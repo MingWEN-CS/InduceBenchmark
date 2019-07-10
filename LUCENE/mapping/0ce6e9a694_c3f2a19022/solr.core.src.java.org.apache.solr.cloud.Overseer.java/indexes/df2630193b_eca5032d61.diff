@@ -1,0 +1,94 @@
+65a66,67
+>   private long lastUpdatedTime = 0;
+>   
+154c156
+<           log.debug("am_i_leader unclear {}", isLeader);                  
+---
+>           log.debug("am_i_leader unclear {}", isLeader);
+156a159,175
+>         DistributedQueue.QueueEvent head = null;
+>         try {
+>           head = stateUpdateQueue.peek(true);
+>         } catch (KeeperException e) {
+>           if (e.code() == KeeperException.Code.SESSIONEXPIRED) {
+>             log.warn(
+>                 "Solr cannot talk to ZK, exiting Overseer main queue loop", e);
+>             return;
+>           }
+>           log.error("Exception in Overseer main queue loop", e);
+>         } catch (InterruptedException e) {
+>           Thread.currentThread().interrupt();
+>           return;
+>           
+>         } catch (Exception e) {
+>           log.error("Exception in Overseer main queue loop", e);
+>         }
+159,163c178,190
+<             byte[] head = stateUpdateQueue.peek();
+<             
+<             if (head != null) {
+<               reader.updateClusterState(true);
+<               ClusterState clusterState = reader.getClusterState();
+---
+>             reader.updateClusterState(true);
+>             ClusterState clusterState = reader.getClusterState();
+> 
+>             while (head != null) {
+>               final ZkNodeProps message = ZkNodeProps.load(head.getBytes());
+>               final String operation = message.getStr(QUEUE_OPERATION);
+> 
+>               clusterState = processMessage(clusterState, message, operation);
+>               workQueue.offer(head.getBytes());
+> 
+>               stateUpdateQueue.poll();
+> 
+>               if (System.currentTimeMillis() - lastUpdatedTime > STATE_UPDATE_DELAY) break;
+165,176c192,193
+<               while (head != null) {
+<                 final ZkNodeProps message = ZkNodeProps.load(head);
+<                 final String operation = message.getStr(QUEUE_OPERATION);
+<                 
+<                 clusterState = processMessage(clusterState, message, operation);
+<                 workQueue.offer(head);
+<                 
+<                 stateUpdateQueue.poll();
+<                 head = stateUpdateQueue.peek();
+<               }
+<               zkClient.setData(ZkStateReader.CLUSTER_STATE,
+<                   ZkStateReader.toJSON(clusterState), true);
+---
+>               
+>               head = stateUpdateQueue.peek(100); 
+177a195,197
+>             lastUpdatedTime = System.currentTimeMillis();
+>             zkClient.setData(ZkStateReader.CLUSTER_STATE,
+>                 ZkStateReader.toJSON(clusterState), true);
+179,180c199,200
+<             while (workQueue.poll() != null);
+<             
+---
+>             while (workQueue.poll() != null) ;
+> 
+196,200d215
+<         try {
+<           Thread.sleep(STATE_UPDATE_DELAY);
+<         } catch (InterruptedException e) {
+<           Thread.currentThread().interrupt();
+<         }
+942,943d956
+<   private volatile boolean isClosed;
+< 
+956a970
+>     close();
+978d991
+<     isClosed = true;
+995,1000c1008,1009
+<     
+<     try {
+<       reader.close();
+<     } catch (Throwable t) {
+<       log.error("Error closing zkStateReader", t);
+<     }
+---
+>     updaterThread = null;
+>     ccThread = null;

@@ -1,0 +1,7 @@
+36d35
+< import org.apache.jackrabbit.core.security.user.UserManagerImpl;
+306,309d304
+< 
+<         if (isRemoval && item.isNode() && UserManagerImpl.includesAdmin((NodeImpl) item)) {
+<             throw new RepositoryException("Attempt to remove/move the admin user.");
+<         }

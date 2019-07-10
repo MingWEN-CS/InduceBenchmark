@@ -1,0 +1,12 @@
+22d21
+< import static org.apache.hadoop.fs.FileContextTestHelper.getTestRootPath;
+44a44
+>   private static FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+52,53d51
+<     FileContextTestHelper.TEST_ROOT_DIR =
+<       "/tmp/TestHDFSFileContextMainOperations";
+105a104,107
+>   private Path getTestRootPath(FileContext fc, String path) {
+>     return fileContextTestHelper.getTestRootPath(fc, path);
+>   }
+>   

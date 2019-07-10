@@ -1,0 +1,17 @@
+32d31
+< import org.apache.oozie.WorkflowActionBean;
+184c183
+<                 RunningJob runningJob = jobClient.getJob(JobID.forName(action.getExternalId()));
+---
+>                 RunningJob runningJob = jobClient.getJob(JobID.forName(action.getExternalChildIDs()));
+187,188c186,187
+<                                                       "Unknown hadoop job [{0}] associated with action [{1}].  Failing this action!", action
+<                             .getExternalId(), action.getId());
+---
+>                             "Unknown hadoop job [{0}] associated with action [{1}].  Failing this action!",
+>                             action.getExternalChildIDs(), action.getId());
+210c209,210
+<                     XLog.getLog(getClass()).warn("Could not find Hadoop Counters for: [{0}]", action.getExternalId());
+---
+>                     XLog.getLog(getClass()).warn("Could not find Hadoop Counters for: [{0}]",
+>                             action.getExternalChildIDs());

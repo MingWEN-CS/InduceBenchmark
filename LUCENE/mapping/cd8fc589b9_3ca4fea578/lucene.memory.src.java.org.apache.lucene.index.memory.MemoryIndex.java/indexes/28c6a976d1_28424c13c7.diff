@@ -1,0 +1,135 @@
+31a32
+> import org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
+62a64,65
+> import org.apache.lucene.util.BytesRefArray;
+> import org.apache.lucene.util.BytesRefBuilder;
+189a193,194
+>   private static final boolean DEBUG = false;
+> 
+194,195c199
+<   
+<   private static final boolean DEBUG = false;
+---
+>   private final boolean storePayloads;
+200a205
+>   private final BytesRefArray payloadsBytesRefs;
+225d229
+< 
+227c231
+<     this(storeOffsets, 0);
+---
+>     this(storeOffsets, false);
+228a233
+> 
+229a235,243
+> 
+> 
+> 
+> 
+> 
+>   public MemoryIndex(boolean storeOffsets, boolean storePayloads) {
+>     this(storeOffsets, storePayloads, 0);
+>   }
+> 
+235c249,251
+<   MemoryIndex(boolean storeOffsets, long maxReusedBytes) {
+---
+> 
+> 
+>   MemoryIndex(boolean storeOffsets, boolean storePayloads, long maxReusedBytes) {
+236a253
+>     this.storePayloads = storePayloads;
+243a261,262
+>     
+>     payloadsBytesRefs = storePayloads ? new BytesRefArray(bytesUsed) : null;
+394,395c413,415
+<   public void addField(String fieldName, TokenStream stream, float boost, int positionIncrementGap, int offsetGap) {
+<     try {
+---
+>   public void addField(String fieldName, TokenStream tokenStream, float boost, int positionIncrementGap,
+>                        int offsetGap) {
+>     try (TokenStream stream = tokenStream) {
+401c421
+<           throw new IllegalArgumentException("token stream must not be null");
+---
+>         throw new IllegalArgumentException("token stream must not be null");
+403c423
+<           throw new IllegalArgumentException("boost factor must be greater than 0.0");
+---
+>         throw new IllegalArgumentException("boost factor must be greater than 0.0");
+424,425c444,446
+<         fieldInfo = new FieldInfo(fieldName, fields.size(), false, false, false,
+<             this.storeOffsets ? IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS,
+---
+>         fieldInfo = new FieldInfo(fieldName, fields.size(), false, false, this.storePayloads,
+>             this.storeOffsets
+>                 ? IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS,
+433a455
+>       PayloadAttribute payloadAtt = storePayloads ? stream.addAttribute(PayloadAttribute.class) : null;
+454,457c476,477
+<         if (!storeOffsets) {
+<           postingsWriter.writeInt(pos);
+<         } else {
+<           postingsWriter.writeInt(pos);
+---
+>         postingsWriter.writeInt(pos);
+>         if (storeOffsets) {
+460a481,485
+>         if (storePayloads) {
+>           final BytesRef payload = payloadAtt.getPayload();
+>           int pIndex = payload == null ? -1 : payloadsBytesRefs.append(payload);
+>           postingsWriter.writeInt(pIndex);
+>         }
+469c494
+<     } catch (Exception e) { 
+---
+>     } catch (IOException e) {
+471,478d495
+<     } finally {
+<       try {
+<         if (stream != null) {
+<           stream.close();
+<         }
+<       } catch (IOException e2) {
+<         throw new RuntimeException(e2);
+<       }
+864c881
+<             return false;
+---
+>             return storePayloads;
+1045a1063
+>       private final SliceReader sliceReader;
+1050d1067
+<       private SliceReader sliceReader;
+1054c1071,1073
+<       
+---
+>       private int payloadIndex;
+>       private final BytesRefBuilder payloadBuilder;
+> 
+1056a1076
+>         this.payloadBuilder = storePayloads ? new BytesRefBuilder() : null;
+1098a1119
+>         int pos = sliceReader.readInt();
+1100d1120
+<           int pos = sliceReader.readInt();
+1103,1105d1122
+<           return pos;
+<         } else {
+<           return sliceReader.readInt();
+1106a1124,1127
+>         if (storePayloads) {
+>           payloadIndex = sliceReader.readInt();
+>         }
+>         return pos;
+1121c1142,1145
+<         return null;
+---
+>         if (payloadBuilder == null || payloadIndex == -1) {
+>           return null;
+>         }
+>         return payloadsBytesRefs.get(payloadBuilder, payloadIndex);
+1180a1205,1207
+>     if (payloadsBytesRefs != null) {
+>       payloadsBytesRefs.clear();
+>     }

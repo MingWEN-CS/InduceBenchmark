@@ -1,0 +1,73 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.analysis;
+
+import org.apache.solr.common.ResourceLoader;
+import org.apache.solr.core.SolrConfig;
+import org.apache.solr.util.plugin.ResourceLoaderAware;
+import org.apache.lucene.analysis.StopFilter;
+import org.apache.lucene.analysis.TokenStream;
+
+import java.util.Map;
+import java.util.List;
+import java.util.Set;
+import java.io.IOException;
+
+
+
+
+
+public class KeepWordFilterFactory extends BaseTokenFilterFactory implements ResourceLoaderAware {
+
+  private Set<String> words;
+  private boolean ignoreCase;
+
+  @SuppressWarnings("unchecked")
+  public void inform(ResourceLoader loader) {
+    String wordFile = args.get("words");
+    ignoreCase = getBoolean("ignoreCase",false);
+
+    if (wordFile != null) {
+      try {
+        List<String> wlist = loader.getLines(wordFile);
+        words = StopFilter.makeStopSet(
+            (String[])wlist.toArray(new String[0]), ignoreCase);
+      } 
+      catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  
+
+
+
+  public void setWords(Set<String> words) {
+    this.words = words;
+  }
+
+  public void setIgnoreCase(boolean ignoreCase) {
+    this.ignoreCase = ignoreCase;
+  }
+  
+  public KeepWordFilter create(TokenStream input) {
+    return new KeepWordFilter(input,words,ignoreCase);
+  }
+
+}

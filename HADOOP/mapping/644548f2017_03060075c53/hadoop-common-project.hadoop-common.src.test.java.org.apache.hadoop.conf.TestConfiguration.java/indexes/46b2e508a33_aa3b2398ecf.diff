@@ -1,0 +1,13 @@
+51a52,53
+> import org.apache.hadoop.test.GenericTestUtils;
+> 
+430,431c432
+<       dirs[i] = new Path(System.getProperty("test.build.data"), dirs[i])
+<           .toString();
+---
+>       dirs[i] = new Path(GenericTestUtils.getTempPath(dirs[i])).toString();
+447,448c448
+<       dirs[i] = new Path(System.getProperty("test.build.data"), dirs[i])
+<           .toString();
+---
+>       dirs[i] = new Path(GenericTestUtils.getTempPath(dirs[i])).toString();

@@ -1,0 +1,11 @@
+59a60,61
+>     @NamedQuery(name = "GET_COMPLETED_WORKFLOWS_WITH_NO_PARENT_OLDER_THAN", query = "select w.id from WorkflowJobBean w where w.endTimestamp < :endTime and w.parentId is null"),
+> 
+68c70,74
+<     @NamedQuery(name = "GET_WORKFLOWS_COUNT_WITH_STATUS_IN_LAST_N_SECS", query = "select count(w) from WorkflowJobBean w where w.status = :status and w.lastModifiedTimestamp > :lastModTime")
+---
+>     @NamedQuery(name = "GET_WORKFLOWS_COUNT_WITH_STATUS_IN_LAST_N_SECS", query = "select count(w) from WorkflowJobBean w where w.status = :status and w.lastModifiedTimestamp > :lastModTime"),
+> 
+>     @NamedQuery(name = "GET_WORKFLOWS_WITH_PARENT_ID", query = "select w.id from WorkflowJobBean w where w.parentId = :parentId"),
+> 
+>     @NamedQuery(name = "GET_WORKFLOWS_COUNT_WITH_PARENT_ID_NOT_READY_FOR_PURGE", query = "select count(w) from WorkflowJobBean w where w.parentId = :parentId and (w.status = 'PREP' OR w.status = 'RUNNING' OR w.status = 'SUSPENDED' OR w.endTimestamp >= :endTime)")

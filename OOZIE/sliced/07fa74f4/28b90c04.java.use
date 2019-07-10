@@ -1,0 +1,12 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+4	logMask	int	param	265	define	org.apache.oozie.ErrorCode.ErrorCode	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	265	268
+5	template	String	param	265	define	org.apache.oozie.ErrorCode.ErrorCode	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	265	268
+4	logMask	int	param	266	use	org.apache.oozie.ErrorCode.ErrorCode	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	265	268
+5	template	String	param	267	use	org.apache.oozie.ErrorCode.ErrorCode	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	265	268
+224	ErrorCode.logMask	int	variable	266	set	org.apache.oozie.ErrorCode.ErrorCode	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	265	268
+225	ErrorCode.template	String	variable	267	set	org.apache.oozie.ErrorCode.ErrorCode	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	265	268
+9	args	Object...	param	294	define	org.apache.oozie.ErrorCode.format	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	294	296
+9	args	Object...	param	295	use	org.apache.oozie.ErrorCode.format	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	294	296
+224	ErrorCode.logMask	int	variable	285	use	org.apache.oozie.ErrorCode.getLogMask	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	284	286
+225	ErrorCode.template	String	variable	276	use	org.apache.oozie.ErrorCode.getTemplate	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	275	277
+13	s		param	23	define	org.apache.oozie.ErrorCode.valueOf	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/07fa74f4/28b90c04.java	23	23

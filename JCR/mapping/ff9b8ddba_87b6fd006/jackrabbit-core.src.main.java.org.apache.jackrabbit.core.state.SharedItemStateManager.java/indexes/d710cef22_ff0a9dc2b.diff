@@ -1,0 +1,22 @@
+1524,1533d1523
+<         try {
+<             wLock = acquireWriteLock(external);
+<             holdingWriteLock = true;
+< 
+<             doExternalUpdate(external);
+<         } catch (ItemStateException e) {
+<             String msg = "Unable to acquire write lock.";
+<             log.error(msg);
+<         }
+< 
+1535a1526,1535
+> 	        try {
+> 	            wLock = acquireWriteLock(external);
+> 	            holdingWriteLock = true;
+> 	
+> 	            doExternalUpdate(external);
+> 	        } catch (ItemStateException e) {
+> 	            String msg = "Unable to acquire write lock.";
+> 	            log.error(msg);
+> 	        }
+> 

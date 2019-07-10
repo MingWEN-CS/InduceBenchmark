@@ -1,0 +1,8 @@
+539a540
+>       Mockito.when(response.containsHeader("WWW-Authenticate")).thenReturn(true);
+544d544
+<       Mockito.verify(response).setHeader("WWW-Authenticate", "dummyauth");
+854a855
+>       Mockito.when(response.containsHeader("WWW-Authenticate")).thenReturn(true);
+932a934
+>       Mockito.when(response.containsHeader("WWW-Authenticate")).thenReturn(true);

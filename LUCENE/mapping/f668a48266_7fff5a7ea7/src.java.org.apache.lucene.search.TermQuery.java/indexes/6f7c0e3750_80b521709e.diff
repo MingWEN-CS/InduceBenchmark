@@ -1,0 +1,21 @@
+34c34
+<   private class TermWeight implements Weight {
+---
+>   private class TermWeight extends QueryWeight {
+63c63
+<     public Scorer scorer(IndexReader reader) throws IOException {
+---
+>     public Scorer scorer(IndexReader reader, boolean scoreDocsInOrder, boolean topScorer) throws IOException {
+69,70c69
+<       return new TermScorer(this, termDocs, similarity,
+<                             reader.norms(term.field()));
+---
+>       return new TermScorer(this, termDocs, similarity, reader.norms(term.field()));
+107c106
+<       Explanation tfExpl = scorer(reader).explain(doc);
+---
+>       Explanation tfExpl = scorer(reader, true, false).explain(doc);
+145c144
+<   protected Weight createWeight(Searcher searcher) throws IOException {
+---
+>   public QueryWeight createQueryWeight(Searcher searcher) throws IOException {

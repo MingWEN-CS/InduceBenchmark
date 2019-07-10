@@ -1,0 +1,17 @@
+35,38d34
+< import org.apache.accumulo.server.util.Halt;
+< 
+< import com.google.common.cache.Cache;
+< import com.google.common.cache.CacheBuilder;
+49c45
+< import org.apache.accumulo.server.security.SystemCredentials;
+---
+> import org.apache.accumulo.server.util.Halt;
+58a55,57
+> import com.google.common.cache.Cache;
+> import com.google.common.cache.CacheBuilder;
+> 
+291c290
+<                 ReplicationTableUtil.updateFiles(SystemCredentials.get(), commitSession.getExtent(), logs, status);
+---
+>                 ReplicationTableUtil.updateFiles(tserver, commitSession.getExtent(), logs, status);

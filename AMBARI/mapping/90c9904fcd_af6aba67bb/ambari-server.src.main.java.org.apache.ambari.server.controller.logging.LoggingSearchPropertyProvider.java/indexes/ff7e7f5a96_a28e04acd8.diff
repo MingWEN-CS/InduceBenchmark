@@ -1,0 +1,78 @@
+19a20
+> import com.google.inject.Inject;
+23d23
+< import org.apache.ambari.server.controller.AmbariServer;
+51c51,52
+<   private final LoggingRequestHelperFactory requestHelperFactory;
+---
+>   @Inject
+>   private AmbariManagementController ambariManagementController;
+53c54,55
+<   private final ControllerFactory controllerFactory;
+---
+>   @Inject
+>   private LogSearchDataRetrievalService logSearchDataRetrievalService;
+56,61d57
+<     this(new LoggingRequestHelperFactoryImpl(), new DefaultControllerFactory());
+<   }
+< 
+<   protected LoggingSearchPropertyProvider(LoggingRequestHelperFactory requestHelperFactory, ControllerFactory controllerFactory) {
+<     this.requestHelperFactory = requestHelperFactory;
+<     this.controllerFactory = controllerFactory;
+67,69d62
+<     AmbariManagementController controller =
+<       controllerFactory.getAmbariManagementController();
+< 
+78c71
+<         getMappedComponentNameForSearch(clusterName, componentName, controller);
+---
+>         getMappedComponentNameForSearch(clusterName, componentName, ambariManagementController);
+84,87d76
+<         
+<         
+<         LoggingRequestHelper requestHelper =
+<           requestHelperFactory.getHelper(controller, clusterName);
+90c79
+<         if (requestHelper != null) {
+---
+>         if (logSearchDataRetrievalService != null) {
+93,96c82
+<             requestHelper.sendGetLogFileNamesRequest(mappedComponentNameForLogSearch, hostName);
+< 
+<           LogLevelQueryResponse levelQueryResponse =
+<             requestHelper.sendLogLevelQueryRequest(mappedComponentNameForLogSearch, hostName);
+---
+>             logSearchDataRetrievalService.getLogFileNames(mappedComponentNameForLogSearch, hostName, clusterName);
+105,106c91,92
+<               final String searchEngineURI = controller.getAmbariServerURI(getFullPathToSearchEngine(clusterName));
+<               final String logFileTailURI = requestHelper.createLogFileTailURI(searchEngineURI, mappedComponentNameForLogSearch, hostName);
+---
+>               final String searchEngineURI = ambariManagementController.getAmbariServerURI(getFullPathToSearchEngine(clusterName));
+>               final String logFileTailURI = logSearchDataRetrievalService.getLogFileTailURI(searchEngineURI, mappedComponentNameForLogSearch, hostName, clusterName);
+113,117d98
+<             
+<             if (levelQueryResponse != null) {
+<               loggingInfo.setListOfLogLevels(levelQueryResponse.getNameValueList());
+<             }
+< 
+173,178c154,155
+<   
+< 
+< 
+< 
+<   interface ControllerFactory {
+<     AmbariManagementController getAmbariManagementController();
+---
+>   protected void setAmbariManagementController(AmbariManagementController ambariManagementController) {
+>     this.ambariManagementController = ambariManagementController;
+181,185c158,159
+<   private static class DefaultControllerFactory implements ControllerFactory {
+<     @Override
+<     public AmbariManagementController getAmbariManagementController() {
+<       return AmbariServer.getController();
+<     }
+---
+>   protected void setLogSearchDataRetrievalService(LogSearchDataRetrievalService logSearchDataRetrievalService) {
+>     this.logSearchDataRetrievalService = logSearchDataRetrievalService;
+186a161
+> 

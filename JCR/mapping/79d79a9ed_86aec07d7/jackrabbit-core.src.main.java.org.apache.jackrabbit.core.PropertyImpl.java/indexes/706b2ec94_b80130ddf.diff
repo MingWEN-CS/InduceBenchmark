@@ -1,0 +1,22 @@
+231d230
+<         PropertyDefinition definition = data.getPropertyDefinition();
+233c232
+<         if (multipleValues != definition.isMultiple()) {
+---
+>         if (multipleValues != isMultiple()) {
+236c235
+<                     "Multivalued property can not be set to a single value (an array of lenght one is OK): ";
+---
+>                     "Multivalued property can not be set to a single value (an array of length one is OK): ";
+419c418
+<         if (definition.isMultiple()) {
+---
+>         if (isMultiple()) {
+438c437
+<         if (definition.isMultiple()) {
+---
+>         if (isMultiple()) {
+792c791
+<         return data.getPropertyDefinition().isMultiple();
+---
+>         return getPropertyState().isMultiValued();

@@ -1,0 +1,32 @@
+20a21
+> import java.io.BufferedInputStream;
+24a26,27
+> import java.io.File;
+> import java.io.FileInputStream;
+150a154,155
+>       throw new IOException("Exception reading " + filename, ioe);
+>     } finally {
+151a157,176
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static Credentials readTokenStorageFile(File filename, Configuration conf)
+>       throws IOException {
+>     DataInputStream in = null;
+>     Credentials credentials = new Credentials();
+>     try {
+>       in = new DataInputStream(new BufferedInputStream(
+>           new FileInputStream(filename)));
+>       credentials.readTokenStorageStream(in);
+>       return credentials;
+>     } catch(IOException ioe) {
+152a178,179
+>     } finally {
+>       IOUtils.cleanup(LOG, in);

@@ -1,0 +1,78 @@
+56a57,58
+>   private LoggingRequestHelperFactory loggingRequestHelperFactory;
+>   
+57a60
+>     loggingRequestHelperFactory = new LoggingRequestHelperFactoryImpl();
+68a72,75
+>       if (!logSearchServerRunning(clusterName)) {
+>         continue;
+>       }
+> 
+74,77d80
+<         HostComponentLoggingInfo loggingInfo =
+<           new HostComponentLoggingInfo();
+< 
+< 
+79,95c82,83
+<         if (logSearchDataRetrievalService != null) {
+<           
+<           Set<String> logFileNames =
+<             logSearchDataRetrievalService.getLogFileNames(mappedComponentNameForLogSearch, hostName, clusterName);
+< 
+<           if ((logFileNames != null) && (!logFileNames.isEmpty())) {
+<             loggingInfo.setComponentName(mappedComponentNameForLogSearch);
+<             List<LogFileDefinitionInfo> listOfFileDefinitions =
+<               new LinkedList<LogFileDefinitionInfo>();
+< 
+<             for (String fileName : logFileNames) {
+<               
+<               final String searchEngineURI = ambariManagementController.getAmbariServerURI(getFullPathToSearchEngine(clusterName));
+<               final String logFileTailURI = logSearchDataRetrievalService.getLogFileTailURI(searchEngineURI, mappedComponentNameForLogSearch, hostName, clusterName);
+<               
+<               listOfFileDefinitions.add(new LogFileDefinitionInfo(fileName, LogFileType.SERVICE, searchEngineURI, logFileTailURI));
+<             }
+---
+>         Set<String> logFileNames =
+>           logSearchDataRetrievalService.getLogFileNames(mappedComponentNameForLogSearch, hostName, clusterName);
+97c85,89
+<             loggingInfo.setListOfLogFileDefinitions(listOfFileDefinitions);
+---
+>         if ((logFileNames != null) && (!logFileNames.isEmpty())) {
+>           HostComponentLoggingInfo loggingInfo = new HostComponentLoggingInfo();
+>           loggingInfo.setComponentName(mappedComponentNameForLogSearch);
+>           List<LogFileDefinitionInfo> listOfFileDefinitions =
+>             new LinkedList<LogFileDefinitionInfo>();
+99c91,94
+<             LOG.debug("Adding logging info for component name = " + componentName + " on host name = " + hostName);
+---
+>           for (String fileName : logFileNames) {
+>             
+>             final String searchEngineURI = ambariManagementController.getAmbariServerURI(getFullPathToSearchEngine(clusterName));
+>             final String logFileTailURI = logSearchDataRetrievalService.getLogFileTailURI(searchEngineURI, mappedComponentNameForLogSearch, hostName, clusterName);
+101,104c96
+<             resource.setProperty("logging", loggingInfo);
+<           } else {
+<             Utils.logErrorMessageWithCounter(LOG, errorLogCounterForLogSearchConnectionExceptions,
+<               "Error occurred while making request to LogSearch service, unable to populate logging properties on this resource");
+---
+>             listOfFileDefinitions.add(new LogFileDefinitionInfo(fileName, LogFileType.SERVICE, searchEngineURI, logFileTailURI));
+105a98,106
+> 
+>           loggingInfo.setListOfLogFileDefinitions(listOfFileDefinitions);
+> 
+>           LOG.debug("Adding logging info for component name = " + componentName + " on host name = " + hostName);
+>           
+>           resource.setProperty("logging", loggingInfo);
+>         } else {
+>           Utils.logErrorMessageWithCounter(LOG, errorLogCounterForLogSearchConnectionExceptions,
+>             "Error occurred while making request to LogSearch service, unable to populate logging properties on this resource");
+113a115,118
+>   private boolean logSearchServerRunning(String clusterName) {
+>     return loggingRequestHelperFactory.getHelper(ambariManagementController, clusterName) != null;
+>   }
+> 
+161a167,170
+>   protected void setLoggingRequestHelperFactory(LoggingRequestHelperFactory loggingRequestHelperFactory) {
+>     this.loggingRequestHelperFactory = loggingRequestHelperFactory;
+>   }
+> 

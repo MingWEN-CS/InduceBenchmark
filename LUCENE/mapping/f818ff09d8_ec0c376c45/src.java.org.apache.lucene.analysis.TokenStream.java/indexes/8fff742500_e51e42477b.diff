@@ -1,0 +1,293 @@
+21d20
+< import java.util.Iterator;
+23c22,27
+< import org.apache.lucene.index.Payload;
+---
+> import org.apache.lucene.analysis.tokenattributes.FlagsAttribute;
+> import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
+> import org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
+> import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+> import org.apache.lucene.analysis.tokenattributes.TermAttribute;
+> import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
+24a29
+> import org.apache.lucene.util.AttributeImpl;
+70a76
+> public abstract class TokenStream extends AttributeSource {
+71a78,83
+>   
+>   private static final AttributeFactory DEFAULT_TOKEN_WRAPPER_ATTRIBUTE_FACTORY
+>     = new TokenWrapperAttributeFactory(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
+>   
+>   
+>   private static final Class[] METHOD_NO_PARAMS = new Class[0];
+72a85,92
+>   
+>   private static final Class[] METHOD_TOKEN_PARAM = new Class[]{Token.class};
+>   
+>   
+>   private final TokenWrapper tokenWrapper;
+>   
+>   
+>   private static boolean onlyUseNewAPI = false;
+74,84d93
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< public abstract class TokenStream extends AttributeSource {
+<   private static boolean useNewAPIDefault = false;
+<   private boolean useNewAPI = useNewAPIDefault;
+86,87c95,107
+<   protected TokenStream() {
+<     super();
+---
+>   private final boolean
+>     hasIncrementToken = isMethodOverridden("incrementToken", METHOD_NO_PARAMS),
+>     hasReusableNext = onlyUseNewAPI ? false : isMethodOverridden("next", METHOD_TOKEN_PARAM),
+>     hasNext = onlyUseNewAPI ? false : isMethodOverridden("next", METHOD_NO_PARAMS);
+>   
+>   
+>   private boolean isMethodOverridden(String name, Class[] params) {
+>     try {
+>       return this.getClass().getMethod(name, params).getDeclaringClass() != TokenStream.class;
+>     } catch (NoSuchMethodException e) {
+>       
+>       throw new RuntimeException(e);
+>     }
+90,91c110,133
+<   protected TokenStream(AttributeSource input) {
+<     super(input);
+---
+>   
+>   private static final class TokenWrapperAttributeFactory extends AttributeFactory {
+>     private final AttributeFactory delegate;
+>   
+>     private TokenWrapperAttributeFactory(AttributeFactory delegate) {
+>       this.delegate = delegate;
+>     }
+>   
+>     public AttributeImpl createAttributeInstance(Class attClass) {
+>       return attClass.isAssignableFrom(TokenWrapper.class)
+>         ? new TokenWrapper()
+>         : delegate.createAttributeInstance(attClass);
+>     }
+>     
+>     
+>     
+>     public boolean equals(Object other) {
+>       if (this == other) return true;
+>       if (other instanceof TokenWrapperAttributeFactory) {
+>         final TokenWrapperAttributeFactory af = (TokenWrapperAttributeFactory) other;
+>         return this.delegate.equals(af.delegate);
+>       }
+>       return false;
+>     }
+97,100c139,145
+< 
+< 
+<   public static boolean useNewAPIDefault() {
+<     return useNewAPIDefault;
+---
+>   protected TokenStream() {
+>     super(onlyUseNewAPI
+>       ? AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY
+>       : TokenStream.DEFAULT_TOKEN_WRAPPER_ATTRIBUTE_FACTORY
+>     );
+>     tokenWrapper = initTokenWrapper(null);
+>     check();
+102c147
+< 
+---
+>   
+105a151,157
+>   protected TokenStream(AttributeSource input) {
+>     super(input);
+>     tokenWrapper = initTokenWrapper(input);
+>     check();
+>   }
+>   
+>   
+107a160,167
+>   protected TokenStream(AttributeFactory factory) {
+>     super(onlyUseNewAPI
+>       ? factory
+>       : new TokenWrapperAttributeFactory(factory)
+>     );
+>     tokenWrapper = initTokenWrapper(null);
+>     check();
+>   }
+108a169,197
+>   
+>   private TokenWrapper initTokenWrapper(AttributeSource input) {
+>     if (onlyUseNewAPI) {
+>       
+>       return null;
+>     } else {
+>       
+>       if (input instanceof TokenStream && ((TokenStream) input).tokenWrapper != null) {
+>         return ((TokenStream) input).tokenWrapper;
+>       }
+>       
+>       final AttributeImpl att = addAttribute(TermAttribute.class);
+>       if (att instanceof TokenWrapper &&
+>         addAttribute(TypeAttribute.class) == att &&
+>         addAttribute(PositionIncrementAttribute.class) == att &&
+>         addAttribute(FlagsAttribute.class) == att &&
+>         addAttribute(OffsetAttribute.class) == att &&
+>         addAttribute(PayloadAttribute.class) == att
+>       ) {
+>         return (TokenWrapper) att;
+>       } else {
+>         throw new UnsupportedOperationException(
+>           "If onlyUseNewAPI is disabled, all basic Attributes must be implemented by the internal class "+
+>           "TokenWrapper. Please make sure, that all TokenStreams/TokenFilters in this chain have been "+
+>           "instantiated with this flag disabled and do not add any custom instances for the basic Attributes!"
+>         );
+>       }
+>     }
+>   }
+109a199,203
+>   
+>   private void check() {
+>     if (onlyUseNewAPI && !hasIncrementToken) {
+>       throw new UnsupportedOperationException(getClass().getName()+" does not implement incrementToken() which is needed for onlyUseNewAPI.");
+>     }
+111,115c205,208
+< 
+< 
+< 
+<   public static void setUseNewAPIDefault(boolean use) {
+<     useNewAPIDefault = use;
+---
+>     
+>     if (!(hasIncrementToken || hasNext || hasReusableNext)) {
+>       throw new UnsupportedOperationException(getClass().getName()+" does not implement any of incrementToken(), next(Token), next().");
+>     }
+123,125d215
+<   public boolean useNewAPI() {
+<     return useNewAPI;
+<   }
+127d216
+<   
+137a227,232
+>   public static void setOnlyUseNewAPI(boolean onlyUseNewAPI) {
+>     TokenStream.onlyUseNewAPI = onlyUseNewAPI;
+>   }
+>   
+>   
+> 
+141,142c236,237
+<   public void setUseNewAPI(boolean use) {
+<     useNewAPI = use;
+---
+>   public static boolean getOnlyUseNewAPI() {
+>     return onlyUseNewAPI;
+144,145c239,241
+<     	
+< 	
+---
+>   
+>   
+> 
+164a261,274
+>   public boolean incrementToken() throws IOException {
+>     assert !onlyUseNewAPI && tokenWrapper != null;
+>     
+>     final Token token;
+>     if (hasReusableNext) {
+>       token = next(tokenWrapper.delegate);
+>     } else {
+>       assert hasNext;
+>       token = next();
+>     }
+>     if (token == null) return false;
+>     tokenWrapper.delegate = token;
+>     return true;
+>   }
+166,170d275
+< 	public boolean incrementToken() throws IOException {
+< 	  
+< 	  return false;
+< 	}
+< 	
+175,177d279
+<   public Token next() throws IOException {
+<     final Token reusableToken = new Token();
+<     Token nextToken = next(reusableToken);
+179,184d280
+<     if (nextToken != null) {
+<       Payload p = nextToken.getPayload();
+<       if (p != null) {
+<         nextToken.setPayload((Payload) p.clone());
+<       }
+<     }
+186,187d281
+<     return nextToken;
+<   }
+189d282
+<   
+213a307,323
+>   public Token next(final Token reusableToken) throws IOException {
+>     assert reusableToken != null;
+>     
+>     if (onlyUseNewAPI)
+>       throw new UnsupportedOperationException("This TokenStream only supports the new Attributes API.");
+>     
+>     if (hasIncrementToken) {
+>       tokenWrapper.delegate = reusableToken;
+>       return incrementToken() ? tokenWrapper.delegate : null;
+>     } else {
+>       assert hasNext;
+>       final Token token = next();
+>       if (token == null) return null;
+>       tokenWrapper.delegate = token;
+>       return token;
+>     }
+>   }
+214a325
+>   
+220c331,334
+<   public Token next(final Token reusableToken) throws IOException {
+---
+> 
+>   public Token next() throws IOException {
+>     if (onlyUseNewAPI)
+>       throw new UnsupportedOperationException("This TokenStream only supports the new Attributes API.");
+222,223c336,344
+<     assert reusableToken != null;
+<     return next();
+---
+>     if (hasIncrementToken) {
+>       return incrementToken() ? ((Token) tokenWrapper.delegate.clone()) : null;
+>     } else {
+>       assert hasReusableNext;
+>       final Token token = next(tokenWrapper.delegate);
+>       if (token == null) return null;
+>       tokenWrapper.delegate = token;
+>       return (Token) token.clone();
+>     }
+243,262d363
+<   public String toString() {
+<     StringBuffer sb = new StringBuffer();
+<     sb.append('(');
+<     
+<     if (hasAttributes()) {
+<       
+<       
+<       Iterator it = getAttributesIterator();
+<       if (it.hasNext()) {
+<         sb.append(it.next().toString());
+<       }
+<       while (it.hasNext()) {
+<         sb.append(',');
+<         sb.append(it.next().toString());
+<       }
+<     }
+<     sb.append(')');
+<     return sb.toString();
+<   }
+< 

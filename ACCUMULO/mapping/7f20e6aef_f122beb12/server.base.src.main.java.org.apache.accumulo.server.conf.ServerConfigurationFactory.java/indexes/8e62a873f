@@ -1,0 +1,198 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.accumulo.server.conf;
+
+import java.security.SecurityPermission;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.accumulo.core.client.Instance;
+import org.apache.accumulo.core.client.impl.Tables;
+import org.apache.accumulo.core.conf.AccumuloConfiguration;
+import org.apache.accumulo.core.conf.ConfigSanityCheck;
+import org.apache.accumulo.core.conf.DefaultConfiguration;
+import org.apache.accumulo.core.conf.SiteConfiguration;
+import org.apache.accumulo.core.data.KeyExtent;
+import org.apache.accumulo.fate.zookeeper.ZooCacheFactory;
+
+
+
+
+public class ServerConfigurationFactory {
+
+  private static final Map<String,Map<String,TableConfiguration>> tableConfigs;
+  private static final Map<String,Map<String,NamespaceConfiguration>> namespaceConfigs;
+  private static final Map<String,Map<String,NamespaceConfiguration>> tableParentConfigs;
+  static {
+    tableConfigs = new HashMap<String,Map<String,TableConfiguration>>(1);
+    namespaceConfigs = new HashMap<String,Map<String,NamespaceConfiguration>>(1);
+    tableParentConfigs = new HashMap<String,Map<String,NamespaceConfiguration>>(1);
+  }
+
+  private static void addInstanceToCaches(String iid) {
+    synchronized (tableConfigs) {
+      if (!tableConfigs.containsKey(iid)) {
+        tableConfigs.put(iid, new HashMap<String,TableConfiguration>());
+      }
+    }
+    synchronized (namespaceConfigs) {
+      if (!namespaceConfigs.containsKey(iid)) {
+        namespaceConfigs.put(iid, new HashMap<String,NamespaceConfiguration>());
+      }
+    }
+    synchronized (tableParentConfigs) {
+      if (!tableParentConfigs.containsKey(iid)) {
+        tableParentConfigs.put(iid, new HashMap<String,NamespaceConfiguration>());
+      }
+    }
+  }
+
+  private static final SecurityPermission CONFIGURATION_PERMISSION = new SecurityPermission("configurationPermission");
+  private static final SecurityManager SM = System.getSecurityManager();
+
+  private static void checkPermissions() {
+    if (SM != null) {
+      SM.checkPermission(CONFIGURATION_PERMISSION);
+    }
+  }
+
+  static boolean removeCachedTableConfiguration(String instanceId, String tableId) {
+    synchronized (tableConfigs) {
+      return tableConfigs.get(instanceId).remove(tableId) != null;
+    }
+  }
+
+  static boolean removeCachedNamespaceConfiguration(String instanceId, String namespaceId) {
+    synchronized (namespaceConfigs) {
+      return namespaceConfigs.get(instanceId).remove(namespaceId) != null;
+    }
+  }
+
+  static void clearCachedConfigurations() {
+    synchronized (tableConfigs) {
+      tableConfigs.clear();
+    }
+    synchronized (namespaceConfigs) {
+      namespaceConfigs.clear();
+    }
+    synchronized (tableParentConfigs) {
+      tableParentConfigs.clear();
+    }
+  }
+
+  static void expireAllTableObservers() {
+    synchronized (tableConfigs) {
+      for (Map<String,TableConfiguration> instanceMap : tableConfigs.values()) {
+        for (TableConfiguration c : instanceMap.values()) {
+          c.expireAllObservers();
+        }
+      }
+    }
+  }
+
+  private final Instance instance;
+  private final String instanceID;
+  private ZooCacheFactory zcf = new ZooCacheFactory();
+
+  public ServerConfigurationFactory(Instance instance) {
+    this.instance = instance;
+    instanceID = instance.getInstanceID();
+    addInstanceToCaches(instanceID);
+  }
+
+  void setZooCacheFactory(ZooCacheFactory zcf) {
+    this.zcf = zcf;
+  }
+
+  private SiteConfiguration siteConfig = null;
+  private DefaultConfiguration defaultConfig = null;
+  private AccumuloConfiguration systemConfig = null;
+
+  public synchronized SiteConfiguration getSiteConfiguration() {
+    if (siteConfig == null) {
+      checkPermissions();
+      siteConfig = SiteConfiguration.getInstance(getDefaultConfiguration());
+    }
+    return siteConfig;
+  }
+
+  public synchronized DefaultConfiguration getDefaultConfiguration() {
+    if (defaultConfig == null) {
+      checkPermissions();
+      defaultConfig = DefaultConfiguration.getInstance();
+    }
+    return defaultConfig;
+  }
+
+  public synchronized AccumuloConfiguration getConfiguration() {
+    if (systemConfig == null) {
+      checkPermissions();
+      systemConfig = new ZooConfigurationFactory().getInstance(instance, zcf, getSiteConfiguration());
+    }
+    return systemConfig;
+  }
+
+  public TableConfiguration getTableConfiguration(String tableId) {
+    checkPermissions();
+    synchronized (tableConfigs) {
+      TableConfiguration conf = tableConfigs.get(instanceID).get(tableId);
+      if (conf == null && Tables.exists(instance, tableId)) {
+        conf = new TableConfiguration(instance.getInstanceID(), tableId, getNamespaceConfigurationForTable(tableId));
+        ConfigSanityCheck.validate(conf);
+        tableConfigs.get(instanceID).put(tableId, conf);
+      }
+      return conf;
+    }
+  }
+
+  public TableConfiguration getTableConfiguration(KeyExtent extent) {
+    return getTableConfiguration(extent.getTableId().toString());
+  }
+
+  public NamespaceConfiguration getNamespaceConfigurationForTable(String tableId) {
+    checkPermissions();
+    synchronized (tableParentConfigs) {
+      NamespaceConfiguration conf = tableParentConfigs.get(instanceID).get(tableId);
+      if (conf == null) {
+        
+        conf = new TableParentConfiguration(tableId, instance, getConfiguration());
+        ConfigSanityCheck.validate(conf);
+        tableParentConfigs.get(instanceID).put(tableId, conf);
+      }
+      return conf;
+    }
+  }
+
+  public NamespaceConfiguration getNamespaceConfiguration(String namespaceId) {
+    checkPermissions();
+    synchronized (namespaceConfigs) {
+      NamespaceConfiguration conf = namespaceConfigs.get(instanceID).get(namespaceId);
+      if (conf == null) {
+        
+        conf = new NamespaceConfiguration(namespaceId, instance, getConfiguration());
+        conf.setZooCacheFactory(zcf);
+        ConfigSanityCheck.validate(conf);
+        namespaceConfigs.get(instanceID).put(namespaceId, conf);
+      }
+      return conf;
+    }
+  }
+
+  public Instance getInstance() {
+    return instance;
+  }
+}

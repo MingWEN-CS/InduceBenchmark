@@ -1,0 +1,32 @@
+37,44c37,39
+<   private static final Map<String,Map<String,TableConfiguration>> tableConfigs;
+<   private static final Map<String,Map<String,NamespaceConfiguration>> namespaceConfigs;
+<   private static final Map<String,Map<String,NamespaceConfiguration>> tableParentConfigs;
+<   static {
+<     tableConfigs = new HashMap<String,Map<String,TableConfiguration>>(1);
+<     namespaceConfigs = new HashMap<String,Map<String,NamespaceConfiguration>>(1);
+<     tableParentConfigs = new HashMap<String,Map<String,NamespaceConfiguration>>(1);
+<   }
+---
+>   private static final Map<String,Map<String,TableConfiguration>> tableConfigs = new HashMap<String,Map<String,TableConfiguration>>(1);
+>   private static final Map<String,Map<String,NamespaceConfiguration>> namespaceConfigs = new HashMap<String,Map<String,NamespaceConfiguration>>(1);
+>   private static final Map<String,Map<String,NamespaceConfiguration>> tableParentConfigs = new HashMap<String,Map<String,NamespaceConfiguration>>(1);
+154a150,155
+> 
+>     
+>     
+>     
+>     
+>     
+161c162,170
+<         tableConfigs.get(instanceID).put(tableId, conf);
+---
+>         Map<String,TableConfiguration> configs = tableConfigs.get(instanceID);
+>         TableConfiguration existingConf = configs.get(tableId);
+>         if (null == existingConf) {
+>           
+>           configs.put(tableId, conf);
+>         } else {
+>           
+>           conf = existingConf;
+>         }

@@ -1,0 +1,26 @@
+200,204c200,203
+<                 int val = lock.getParticipantNodes().size();
+<                 
+<                 
+<                 
+<                 if (val == 0) {
+---
+>                 if (zkLocks.get(resource) == null) {
+>                     return;
+>                 }
+>                 if (!isLockHeld()) {
+206c205,209
+<                         zkLocks.remove(resource);
+---
+>                         if (zkLocks.get(resource) != null) {
+>                             if (!isLockHeld()) {
+>                                 zkLocks.remove(resource);
+>                             }
+>                         }
+214a218,223
+> 
+>         private boolean isLockHeld() {
+>             return zkLocks.get(resource).readLock().isAcquiredInThisProcess()
+>                     || zkLocks.get(resource).writeLock().isAcquiredInThisProcess();
+>         }
+> 

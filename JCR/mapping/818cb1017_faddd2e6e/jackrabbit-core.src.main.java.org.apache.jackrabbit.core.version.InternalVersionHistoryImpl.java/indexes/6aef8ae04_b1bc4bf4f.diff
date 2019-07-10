@@ -1,0 +1,49 @@
+25,26d24
+< import java.util.Arrays;
+< import java.util.HashSet;
+232,235c230,239
+<             if (child.getState().getMixinTypeNames().contains(NameConstants.REP_BASELINE)) {
+<                 v = new InternalBaselineImpl(this, child, child.getName());
+<             } else {
+<                 v = new InternalVersionImpl(this, child, child.getName());
+---
+>             try {
+>                 NodeStateEx frozen = child.getNode(NameConstants.JCR_FROZENNODE, 1);
+>                 Name frozenType = frozen.getPropertyValue(NameConstants.JCR_FROZENPRIMARYTYPE).getName();
+>                 if (NameConstants.NT_CONFIGURATION.equals(frozenType)) {
+>                     v = new InternalBaselineImpl(this, child, child.getName());
+>                 } else {
+>                     v = new InternalVersionImpl(this, child, child.getName());
+>                 }
+>             } catch (RepositoryException e) {
+>                 throw new InternalError("Version does not have a jcr:frozenNode: " + child.getNodeId());
+498,499c502
+< 
+<     InternalVersionImpl checkin(Name name, NodeStateEx src, Set<NodeId> configuration)
+---
+>     InternalVersionImpl checkin(Name name, NodeStateEx src)
+538,547d540
+<         
+<         if (configuration != null) {
+<             vNode.setMixins(new HashSet<Name>(Arrays.asList(NameConstants.REP_BASELINE)));
+<             InternalValue[] values = new InternalValue[configuration.size()];
+<             int i=0;
+<             for (NodeId id: configuration) {
+<                 values[i++] = InternalValue.create(id);
+<             }
+<             vNode.setPropertyValues(NameConstants.REP_BASEVERSIONS, PropertyType.REFERENCE, values, true);
+<         }
+558,560c551,554
+<         InternalVersionImpl version = configuration == null
+<                 ? new InternalVersionImpl(this, vNode, name)
+<                 : new InternalBaselineImpl(this, vNode, name);
+---
+>         boolean isConfiguration = src.getEffectiveNodeType().includesNodeType(NameConstants.NT_CONFIGURATION);
+>         InternalVersionImpl version = isConfiguration
+>                 ? new InternalBaselineImpl(this, vNode, name)
+>                 : new InternalVersionImpl(this, vNode, name);
+610,613d603
+<         if (nodeState.getNodeTypeName().equals(NameConstants.NT_CONFIGURATION)) {
+<             
+<             vNode.setMixins(new HashSet<Name>(Arrays.asList(NameConstants.REP_BASELINE)));
+<         }

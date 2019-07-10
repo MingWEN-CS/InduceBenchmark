@@ -1,0 +1,73 @@
+461c461,463
+<       adminPath = cfg.get(ConfigSolr.CfgProp.SOLR_ADMINPATH, null);
+---
+>       adminPath = cfg.get(ConfigSolr.CfgProp.SOLR_ADMINPATH, "/admin/cores");
+>     } else {
+>       adminPath = "/admin/cores";
+509c511
+<     containerProperties = cfg.getSolrProperties(cfg, DEFAULT_HOST_CONTEXT);
+---
+>     containerProperties = cfg.getSolrProperties("solr");
+665c667
+<   private volatile ConfigSolr cfg;
+---
+>   volatile ConfigSolr cfg;
+705c707,710
+<           ; 
+---
+>           Thread.currentThread().interrupt();
+>           if (log.isDebugEnabled()) {
+>             log.debug("backgroundCloser thread was interrupted before finishing");
+>           }
+913c918
+<       log.error("Failed to load file {}/{}", instanceDir, dcore.getConfigName());
+---
+>       log.error("Failed to load file {}", new File(instanceDir, dcore.getConfigName()).getAbsolutePath());
+960a966,969
+>     if (isShutDown) {
+>       throw new SolrException(ErrorCode.SERVICE_UNAVAILABLE, "Solr has shutdown.");
+>     }
+>     
+1067c1076
+<         String badMsg = cfg.getBadCoreMessage(name);
+---
+>         String badMsg = cfg.getBadConfigCoreMessage(name);
+1181c1190
+<       String badMsg = cfg.getBadCoreMessage(name);
+---
+>       String badMsg = cfg.getBadConfigCoreMessage(name);
+1287,1292d1295
+< 
+<   public void setAdminPath(String adminPath) {
+<       this.adminPath = adminPath;
+<   }
+<   
+< 
+1454c1457
+<     return cfg.getBadCoreMessage(name);
+---
+>     return cfg.getBadConfigCoreMessage(name);
+1933c1936
+<     if (cd  != null) collection = cd.getCollectionName();
+---
+>     if (cd != null) collection = cd.getCollectionName();
+1972,1978c1975,1985
+<       if (coreAttribs != null) {
+<         coreAttribs.put(CoreDescriptor.CORE_NAME, coreName);
+<         if (coreAttribs.containsKey(CoreDescriptor.CORE_COLLECTION)) collection = coreAttribs.get(CoreDescriptor.CORE_COLLECTION);
+<         if (coreAttribs.containsKey(CoreDescriptor.CORE_INSTDIR)) instDir = coreAttribs.get(CoreDescriptor.CORE_INSTDIR);
+<       }
+<       addIfNotNull(coreAttribs, CoreDescriptor.CORE_INSTDIR, dcore.getRawInstanceDir());
+<       coreAttribs.put(CoreDescriptor.CORE_COLLECTION, StringUtils.isNotBlank(collection) ? collection : dcore.getName());
+---
+>       
+>       coreAttribs.put(CoreDescriptor.CORE_NAME, coreName);
+>       if (coreAttribs.containsKey(CoreDescriptor.CORE_COLLECTION)) collection = coreAttribs
+>           .get(CoreDescriptor.CORE_COLLECTION);
+>       if (coreAttribs.containsKey(CoreDescriptor.CORE_INSTDIR)) instDir = coreAttribs
+>           .get(CoreDescriptor.CORE_INSTDIR);
+>       
+>       addIfNotNull(coreAttribs, CoreDescriptor.CORE_INSTDIR,
+>           dcore.getRawInstanceDir());
+>       coreAttribs.put(CoreDescriptor.CORE_COLLECTION,
+>           StringUtils.isNotBlank(collection) ? collection : dcore.getName());

@@ -1,0 +1,53 @@
+26a27,30
+> import org.apache.tika.config.TikaConfig;
+> import org.apache.tika.detect.Detector;
+> import org.apache.tika.exception.TikaException;
+> import org.apache.tika.metadata.Metadata;
+73,75c77,79
+<     private String collectionNodetype = JcrConstants.NT_FOLDER;
+<     private String defaultNodetype = JcrConstants.NT_FILE;
+<     
+---
+>     private String collectionNodetype;
+> 
+>     private String defaultNodetype;
+77c81
+<     private String contentNodetype = JcrConstants.NT_UNSTRUCTURED;
+---
+>     private String contentNodetype;
+86a91,94
+> 
+> 
+> 
+> 
+87a96
+>         this(null);
+101c110,116
+<         this.ioManager = ioManager;
+---
+>         this(ioManager,
+>                 JcrConstants.NT_FOLDER,
+>                 JcrConstants.NT_FILE,
+>                 
+>                 
+>                 
+>                 JcrConstants.NT_UNSTRUCTURED);
+643a659,676
+> 
+> 
+> 
+> 
+> 
+>     protected String detect(String name) {
+>         try {
+>             Metadata metadata = new Metadata();
+>             metadata.set(Metadata.RESOURCE_NAME_KEY, name);
+>             return ioManager.getDetector().detect(null, metadata).toString();
+>         } catch (IOException e) {
+>             
+>             throw new IllegalStateException(
+>                     "Unexpected IOException", e);
+>         }
+>     }
+> 
+>     

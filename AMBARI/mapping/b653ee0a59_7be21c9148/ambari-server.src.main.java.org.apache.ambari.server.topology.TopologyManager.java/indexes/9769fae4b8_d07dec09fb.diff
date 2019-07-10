@@ -1,0 +1,29 @@
+103,105d102
+<   private static final String CLUSTER_ENV_CONFIG_TYPE_NAME = "cluster-env";
+<   private static final String CLUSTER_CONFIG_TASK_MAX_TIME_IN_MILLIS_PROPERTY_NAME = "cluster_configure_task_timeout";
+< 
+1122,1142c1119,1120
+< 
+<     String timeoutStr = topology.getConfiguration().getPropertyValue(CLUSTER_ENV_CONFIG_TYPE_NAME,
+<         CLUSTER_CONFIG_TASK_MAX_TIME_IN_MILLIS_PROPERTY_NAME);
+< 
+<     long timeout = 1000 * 60 * 30; 
+<     long delay = 1000; 
+< 
+<     if (timeoutStr != null) {
+<       timeout = Long.parseLong(timeoutStr);
+<       LOG.debug("ConfigureClusterTask timeout set to: {}", timeout);
+<     } else {
+<       LOG.debug("No timeout constraints found in configuration. Wired defaults will be applied.");
+<     }
+< 
+<     ConfigureClusterTask configureClusterTask = configureClusterTaskFactory.createConfigureClusterTask(topology,
+<       configurationRequest, ambariEventPublisher);
+< 
+<     AsyncCallableService<Boolean> asyncCallableService = new AsyncCallableService<>(configureClusterTask, timeout, delay,
+<         Executors.newScheduledThreadPool(1));
+< 
+<     executor.submit(asyncCallableService);
+---
+>     ConfigureClusterTask task = configureClusterTaskFactory.createConfigureClusterTask(topology, configurationRequest, ambariEventPublisher);
+>     executor.submit(new AsyncCallableService<>(task, task.getTimeout(), task.getRepeatDelay(),"ConfigureClusterTask"));

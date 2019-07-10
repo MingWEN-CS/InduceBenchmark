@@ -1,0 +1,60 @@
+52c52
+<   int SQUOTED = 21;
+---
+>   int TERM = 21;
+54c54
+<   int TERM = 22;
+---
+>   int FUZZY_SLOP = 22;
+56c56
+<   int FUZZY_SLOP = 23;
+---
+>   int PREFIXTERM = 23;
+58c58
+<   int PREFIXTERM = 24;
+---
+>   int WILDTERM = 24;
+60c60
+<   int WILDTERM = 25;
+---
+>   int REGEXPTERM = 25;
+62c62
+<   int REGEXPTERM = 26;
+---
+>   int RANGEIN_START = 26;
+64c64
+<   int RANGEIN_START = 27;
+---
+>   int RANGEEX_START = 27;
+66c66
+<   int RANGEEX_START = 28;
+---
+>   int LPARAMS = 28;
+68c68
+<   int LPARAMS = 29;
+---
+>   int NUMBER = 29;
+70c70
+<   int NUMBER = 30;
+---
+>   int RANGE_TO = 30;
+72c72
+<   int RANGE_TO = 31;
+---
+>   int RANGEIN_END = 31;
+74c74
+<   int RANGEIN_END = 32;
+---
+>   int RANGEEX_END = 32;
+76c76
+<   int RANGEEX_END = 33;
+---
+>   int RANGE_QUOTED = 33;
+78,80c78
+<   int RANGE_QUOTED = 34;
+<   
+<   int RANGE_GOOP = 35;
+---
+>   int RANGE_GOOP = 34;
+112d109
+<     "<SQUOTED>",

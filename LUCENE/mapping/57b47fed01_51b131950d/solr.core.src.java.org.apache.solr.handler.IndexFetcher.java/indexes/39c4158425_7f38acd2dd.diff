@@ -1,0 +1,62 @@
+175c175,179
+<   private static HttpClient createHttpClient(SolrCore core, String connTimeout, String readTimeout, String httpBasicAuthUser, String httpBasicAuthPassword, boolean useCompression) {
+---
+>   private Integer connTimeout;
+> 
+>   private Integer soTimeout;
+> 
+>   private static HttpClient createHttpClient(SolrCore core, String httpBasicAuthUser, String httpBasicAuthPassword, boolean useCompression) {
+177,178d180
+<     httpClientParams.set(HttpClientUtil.PROP_CONNECTION_TIMEOUT, connTimeout != null ? connTimeout : "5000");
+<     httpClientParams.set(HttpClientUtil.PROP_SO_TIMEOUT, readTimeout != null ? readTimeout : "20000");
+183c185
+<     return HttpClientUtil.createClient(httpClientParams, core.getCoreDescriptor().getCoreContainer().getUpdateShardHandler().getConnectionManager());
+---
+>     return HttpClientUtil.createClient(httpClientParams, core.getCoreDescriptor().getCoreContainer().getUpdateShardHandler().getConnectionManager(), true);
+202,203c204,206
+<     String connTimeout = (String) initArgs.get(HttpClientUtil.PROP_CONNECTION_TIMEOUT);
+<     String readTimeout = (String) initArgs.get(HttpClientUtil.PROP_SO_TIMEOUT);
+---
+>     connTimeout = getParameter(initArgs, HttpClientUtil.PROP_CONNECTION_TIMEOUT, 30000, null);
+>     soTimeout = getParameter(initArgs, HttpClientUtil.PROP_SO_TIMEOUT, 120000, null);
+> 
+206c209,219
+<     myHttpClient = createHttpClient(solrCore, connTimeout, readTimeout, httpBasicAuthUser, httpBasicAuthPassword, useExternalCompression);
+---
+>     myHttpClient = createHttpClient(solrCore, httpBasicAuthUser, httpBasicAuthPassword, useExternalCompression);
+>   }
+>   
+>   protected <T> T getParameter(NamedList initArgs, String configKey, T defaultValue, StringBuilder sb) {
+>     T toReturn = defaultValue;
+>     if (initArgs != null) {
+>       T temp = (T) initArgs.get(configKey);
+>       toReturn = (temp != null) ? temp : defaultValue;
+>     }
+>     if(sb!=null && toReturn != null) sb.append(configKey).append(" : ").append(toReturn).append(",");
+>     return toReturn;
+222,223c235,236
+<       client.setSoTimeout(60000);
+<       client.setConnectionTimeout(15000);
+---
+>       client.setSoTimeout(soTimeout);
+>       client.setConnectionTimeout(connTimeout);
+244,245c257,258
+<       client.setSoTimeout(60000);
+<       client.setConnectionTimeout(15000);
+---
+>       client.setSoTimeout(soTimeout);
+>       client.setConnectionTimeout(connTimeout);
+1610,1611c1623,1624
+<         client.setSoTimeout(60000);
+<         client.setConnectionTimeout(15000);
+---
+>         client.setSoTimeout(soTimeout);
+>         client.setConnectionTimeout(connTimeout);
+1719,1720c1732,1733
+<       client.setSoTimeout(60000);
+<       client.setConnectionTimeout(15000);
+---
+>       client.setSoTimeout(soTimeout);
+>       client.setConnectionTimeout(connTimeout);
+1727a1741
+>     HttpClientUtil.close(myHttpClient);

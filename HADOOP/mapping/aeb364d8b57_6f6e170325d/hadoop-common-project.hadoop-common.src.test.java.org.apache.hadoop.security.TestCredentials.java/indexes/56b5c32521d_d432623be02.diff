@@ -1,0 +1,21 @@
+216c216,233
+<  }
+---
+>   }
+>   
+>   @Test
+>   public void testAddTokensToUGI() {
+>     UserGroupInformation ugi = UserGroupInformation.createRemoteUser("someone");
+>     Credentials creds = new Credentials();
+>     
+>     for (int i=0; i < service.length; i++) {
+>       creds.addToken(service[i], token[i]);
+>     }
+>     creds.addTokensToUGI(ugi);
+> 
+>     creds = ugi.getCredentials();
+>     for (int i=0; i < service.length; i++) {
+>       assertSame(token[i], creds.getToken(service[i]));
+>     }
+>     assertEquals(service.length, creds.numberOfTokens());
+>   }

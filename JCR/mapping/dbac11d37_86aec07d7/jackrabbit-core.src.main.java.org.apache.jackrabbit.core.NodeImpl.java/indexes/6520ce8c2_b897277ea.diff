@@ -1,0 +1,242 @@
+74,77d73
+< import org.apache.jackrabbit.core.nodetype.ItemDef;
+< import org.apache.jackrabbit.core.nodetype.NodeDef;
+< import org.apache.jackrabbit.core.nodetype.NodeDefId;
+< import org.apache.jackrabbit.core.nodetype.NodeDefinitionImpl;
+82,83d77
+< import org.apache.jackrabbit.core.nodetype.PropDef;
+< import org.apache.jackrabbit.core.nodetype.PropertyDefinitionImpl;
+94a89,91
+> import org.apache.jackrabbit.spi.QItemDefinition;
+> import org.apache.jackrabbit.spi.QPropertyDefinition;
+> import org.apache.jackrabbit.spi.QNodeDefinition;
+110a108,109
+> import org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl;
+> import org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl;
+146a146,162
+>         List<Name> unknown = null;
+>         for (Name mixinName : state.getMixinTypeNames()) {
+>             if (!ntReg.isRegistered(mixinName)) {
+>                 if (unknown == null) {
+>                     unknown = new ArrayList<Name>();
+>                 }
+>                 unknown.add(mixinName);
+>                 log.warn("Ignoring unknown mixin type '" + mixinName +
+>                         "' of " + this);
+>             }
+>         }
+>         if (unknown != null) {
+>             
+>             Set<Name> known = new HashSet<Name>(state.getMixinTypeNames());
+>             known.removeAll(unknown);
+>             state.setMixinTypeNames(known);
+>         }
+362c378
+<             PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+---
+>             org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+399c415
+<             PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+---
+>             org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+408c424
+<                                                             PropertyDefinitionImpl def)
+---
+>                                                             org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl def)
+414c430
+<             PropDef propDef = def.unwrap();
+---
+>             QPropertyDefinition propDef = def.unwrap();
+420d435
+<             propState.setDefinitionId(propDef.getId());
+425c440
+<                 genValues = propDef.getDefaultValues();
+---
+>                 genValues = InternalValue.create(propDef.getDefaultValues());
+453d467
+<                                                     NodeDefinitionImpl def,
+466d479
+<             nodeState.setDefinitionId(def.unwrap().getId());
+498c511
+<             node.createChildProperty(pd.getQName(), pd.getRequiredType(), pd);
+---
+>             node.createChildProperty(pd.unwrap().getName(), pd.getRequiredType(), pd);
+505,506c518
+<             node.createChildNode(nd.getQName(), nd,
+<                     (NodeTypeImpl) nd.getDefaultPrimaryType(), null);
+---
+>             node.createChildNode(nd.unwrap().getName(), (NodeTypeImpl) nd.getDefaultPrimaryType(), null);
+573,575c585,587
+<     protected void onRedefine(NodeDefId defId) throws RepositoryException {
+<         NodeDefinitionImpl newDef =
+<                 session.getNodeTypeManager().getNodeDefinition(defId);
+---
+>     protected void onRedefine(QNodeDefinition def) throws RepositoryException {
+>         org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl newDef =
+>                 session.getNodeTypeManager().getNodeDefinition(def);
+577c589
+<         NodeState thisState = (NodeState) getOrCreateTransientItemState();
+---
+>         getOrCreateTransientItemState();
+579d590
+<         thisState.setDefinitionId(defId);
+644c655
+<             PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+---
+>             org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+707c718
+<     protected NodeDefinitionImpl getApplicableChildNodeDefinition(Name nodeName,
+---
+>     protected org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl getApplicableChildNodeDefinition(Name nodeName,
+711c722
+<         NodeDef cnd = getEffectiveNodeType().getApplicableChildNodeDef(
+---
+>         QNodeDefinition cnd = getEffectiveNodeType().getApplicableChildNodeDef(
+713c724
+<         return ntMgr.getNodeDefinition(cnd.getId());
+---
+>         return ntMgr.getNodeDefinition(cnd);
+729c740
+<     protected PropertyDefinitionImpl getApplicablePropertyDefinition(Name propertyName,
+---
+>     protected org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl getApplicablePropertyDefinition(Name propertyName,
+734c745
+<         PropDef pd;
+---
+>         QPropertyDefinition pd;
+749c760
+<         return session.getNodeTypeManager().getPropertyDefinition(pd.getId());
+---
+>         return session.getNodeTypeManager().getPropertyDefinition(pd);
+783,784d793
+<             persistentState.setDefinitionId(transientState.getDefinitionId());
+<             
+819d827
+<         thisState.setDefinitionId(transientState.getDefinitionId());
+905c913
+<                     createChildProperty(pd.getQName(), pd.getRequiredType(), pd);
+---
+>                     createChildProperty(pd.unwrap().getName(), pd.getRequiredType(), pd);
+917c925
+<                     createChildNode(nd.getQName(), nd, (NodeTypeImpl) nd.getDefaultPrimaryType(), null);
+---
+>                     createChildNode(nd.unwrap().getName(), (NodeTypeImpl) nd.getDefaultPrimaryType(), null);
+1024c1032
+<                 PropertyDefinition def = ntMgr.getPropertyDefinition(propState.getDefinitionId());
+---
+>                 PropertyDefinition def = itemMgr.getDefinition(propState);
+1039c1047
+<                         PropertyDefinitionImpl pdi = getApplicablePropertyDefinition(
+---
+>                         org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl pdi = getApplicablePropertyDefinition(
+1053c1061
+<                                 prop.onRedefine(pdi.unwrap().getId());
+---
+>                                 prop.onRedefine(pdi.unwrap());
+1064c1072
+<                                 prop.onRedefine(pdi.unwrap().getId());
+---
+>                                 prop.onRedefine(pdi.unwrap());
+1070c1078
+<                             prop.onRedefine(pdi.unwrap().getId());
+---
+>                             prop.onRedefine(pdi.unwrap());
+1088c1096
+<                 NodeDefinition def = ntMgr.getNodeDefinition(nodeState.getDefinitionId());
+---
+>                 NodeDefinition def = itemMgr.getDefinition(nodeState);
+1102c1110
+<                         NodeDefinitionImpl ndi = getApplicableChildNodeDefinition(
+---
+>                         org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl ndi = getApplicableChildNodeDefinition(
+1106c1114
+<                         node.onRedefine(ndi.unwrap().getId());
+---
+>                         node.onRedefine(ndi.unwrap());
+1454c1462
+<         NodeDefinitionImpl def;
+---
+>         org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl def;
+1496c1504
+<         return createChildNode(nodeName, def, nt, id);
+---
+>         return createChildNode(nodeName, nt, id);
+1893c1901
+<         NodeDefinitionImpl def;
+---
+>         org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl def;
+3680c3688
+<         NodeDefId defId;
+---
+>         QNodeDefinition nodeDef;
+3683c3691
+<             defId = parent.getApplicableChildNodeDefinition(getQName(), ntName).unwrap().getId();
+---
+>             nodeDef = parent.getApplicableChildNodeDefinition(getQName(), ntName).unwrap();
+3690,3691c3698,3699
+<         if (!defId.equals(state.getDefinitionId())) {
+<             onRedefine(defId);
+---
+>         if (!nodeDef.equals(itemMgr.getDefinition(state).unwrap())) {
+>             onRedefine(nodeDef);
+3694,3696c3702,3704
+<         Set<ItemDef> oldDefs = new HashSet<ItemDef>(Arrays.asList(entOld.getAllItemDefs()));
+<         Set<ItemDef> newDefs = new HashSet<ItemDef>(Arrays.asList(entNew.getAllItemDefs()));
+<         Set<ItemDef> allDefs = new HashSet<ItemDef>(Arrays.asList(entAll.getAllItemDefs()));
+---
+>         Set<QItemDefinition> oldDefs = new HashSet<QItemDefinition>(Arrays.asList(entOld.getAllItemDefs()));
+>         Set<QItemDefinition> newDefs = new HashSet<QItemDefinition>(Arrays.asList(entNew.getAllItemDefs()));
+>         Set<QItemDefinition> allDefs = new HashSet<QItemDefinition>(Arrays.asList(entAll.getAllItemDefs()));
+3699c3707
+<         Set<ItemDef> addedDefs = new HashSet<ItemDef>(newDefs);
+---
+>         Set<QItemDefinition> addedDefs = new HashSet<QItemDefinition>(newDefs);
+3735c3743
+<                 if (!allDefs.contains(ntReg.getPropDef(propState.getDefinitionId()))) {
+---
+>                 if (!allDefs.contains(itemMgr.getDefinition(propState).unwrap())) {
+3745c3753
+<                         PropertyDefinitionImpl pdi = getApplicablePropertyDefinition(
+---
+>                         org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl pdi = getApplicablePropertyDefinition(
+3759c3767
+<                                 prop.onRedefine(pdi.unwrap().getId());
+---
+>                                 prop.onRedefine(pdi.unwrap());
+3770c3778
+<                                 prop.onRedefine(pdi.unwrap().getId());
+---
+>                                 prop.onRedefine(pdi.unwrap());
+3776c3784
+<                             prop.onRedefine(pdi.unwrap().getId());
+---
+>                             prop.onRedefine(pdi.unwrap());
+3803c3811
+<                 if (!allDefs.contains(ntReg.getNodeDef(nodeState.getDefinitionId()))) {
+---
+>                 if (!allDefs.contains(itemMgr.getDefinition(nodeState).unwrap())) {
+3813c3821
+<                         NodeDefinitionImpl ndi = getApplicableChildNodeDefinition(
+---
+>                         org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl ndi = getApplicableChildNodeDefinition(
+3817c3825
+<                         node.onRedefine(ndi.unwrap().getId());
+---
+>                         node.onRedefine(ndi.unwrap());
+3835,3836c3843
+<         for (Iterator<ItemDef> iter = addedDefs.iterator(); iter.hasNext();) {
+<             ItemDef def = iter.next();
+---
+>         for (QItemDefinition def : addedDefs) {
+3839,3840c3846,3847
+<                     NodeDefinitionImpl ndi = ntMgr.getNodeDefinition(((NodeDef) def).getId());
+<                     createChildNode(ndi.getQName(), ndi, (NodeTypeImpl) ndi.getDefaultPrimaryType(), null);
+---
+>                     NodeDefinitionImpl ndi = ntMgr.getNodeDefinition((QNodeDefinition) def);
+>                     createChildNode(def.getName(), (NodeTypeImpl) ndi.getDefaultPrimaryType(), null);
+3842,3843c3849,3850
+<                     PropertyDefinitionImpl pdi = ntMgr.getPropertyDefinition(((PropDef) def).getId());
+<                     createChildProperty(pdi.getQName(), pdi.getRequiredType(), pdi);
+---
+>                     PropertyDefinitionImpl pdi = ntMgr.getPropertyDefinition((QPropertyDefinition) def);
+>                     createChildProperty(pdi.unwrap().getName(), pdi.getRequiredType(), pdi);

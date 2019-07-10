@@ -1,0 +1,54 @@
+19a20
+> import java.util.List;
+57a59,61
+>     private static final int DEFAULT_LOG_STATS_INTERVAL = 60 * 1000;
+> 
+>     
+80c84,89
+<         
+---
+>     
+>     private long minLogStatsInterval = Long.getLong(
+>             "org.apache.jackrabbit.cacheLogStatsInterval",
+>             DEFAULT_LOG_STATS_INTERVAL);
+> 
+>     
+84a94,98
+>     
+>     private volatile long nextLogStats =
+>             System.currentTimeMillis() + DEFAULT_LOG_STATS_INTERVAL;
+> 
+> 
+121c135,138
+<     public void cacheAccessed() {
+---
+>     public void cacheAccessed(long accessCount) {
+> 
+>         logCacheStats();
+> 
+140a158,172
+>     private void logCacheStats() {
+>         if (log.isDebugEnabled()) {
+>             long now = System.currentTimeMillis();
+>             if (now < nextLogStats) {
+>                 return;
+>             }
+>             for (Cache cache : caches.keySet()) {
+>                 log.debug(cache.getCacheInfoAsString());
+>             }
+>             nextLogStats = now + minLogStatsInterval;
+>         }
+>     }
+>     
+> 
+> 
+149c181
+<         ArrayList<Cache> list = new ArrayList<Cache>();
+---
+>         List<Cache> list = new ArrayList<Cache>();
+151,153c183
+<             for (Cache c: caches.keySet()) {
+<                 list.add(c);
+<             }
+---
+>             list.addAll(caches.keySet());

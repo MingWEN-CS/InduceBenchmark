@@ -1,0 +1,58 @@
+74a75
+> import org.apache.solr.common.util.SuppressForbidden;
+89a91
+> import org.apache.solr.util.RTimer;
+135c137,138
+<   private volatile long replicationStartTime;
+---
+>   private volatile Date replicationStartTimeStamp;
+>   private RTimer replicationTimer;
+278c281
+<     replicationStartTime = System.currentTimeMillis();
+---
+>     markReplicationStart();
+341a345
+>       
+437,439c441
+<           LOG.info("Total time taken for download : "
+<               + ((System.currentTimeMillis() - replicationStartTime) / 1000)
+<               + " secs");
+---
+>           LOG.info("Total time taken for download: {} secs", getReplicationTimeElapsed());
+518c520
+<         replicationStartTime = 0;
+---
+>         markReplicationStop();
+551c553
+<       replicationStartTime = 0;
+---
+>       markReplicationStop();
+612a615
+>   @SuppressForbidden(reason = "Need currentTimeMillis for debugging/stats")
+621c624
+<     long replicationTimeTaken = (replicationTime - getReplicationStartTime()) / 1000;
+---
+>     long replicationTimeTaken = getReplicationTimeElapsed();
+1222,1223c1225,1237
+<   long getReplicationStartTime() {
+<     return replicationStartTime;
+---
+>   @SuppressForbidden(reason = "Need currentTimeMillis for debugging/stats")
+>   private void markReplicationStart() {
+>     replicationTimer = new RTimer();
+>     replicationStartTimeStamp = new Date();
+>   }
+> 
+>   private void markReplicationStop() {
+>     replicationStartTimeStamp = null;
+>     replicationTimer = null;
+>   }
+> 
+>   Date getReplicationStartTimeStamp() {
+>     return replicationStartTimeStamp;
+1228,1229c1242,1243
+<     if (getReplicationStartTime() > 0)
+<       timeElapsed = TimeUnit.SECONDS.convert(System.currentTimeMillis() - getReplicationStartTime(), TimeUnit.MILLISECONDS);
+---
+>     if (replicationStartTimeStamp != null)
+>       timeElapsed = TimeUnit.SECONDS.convert((long) replicationTimer.getTime(), TimeUnit.MILLISECONDS);

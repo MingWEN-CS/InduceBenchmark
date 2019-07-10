@@ -1,0 +1,90 @@
+111c111
+<   private static final String view_xml1 = "<view>\n" +
+---
+>   private static final String VIEW_XML_1 = "<view>\n" +
+117c117
+<   private static final String view_xml2 = "<view>\n" +
+---
+>   private static final String VIEW_XML_2 = "<view>\n" +
+123c123
+<   private static final String xml_valid_instance = "<view>\n" +
+---
+>   private static final String XML_VALID_INSTANCE = "<view>\n" +
+152c152
+<   private static final String xml_invalid_instance = "<view>\n" +
+---
+>   private static final String XML_INVALID_INSTANCE = "<view>\n" +
+600c600
+<     EventImpl event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), view_xml1);
+---
+>     EventImpl event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), VIEW_XML_1);
+609c609
+<     event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), view_xml2);
+---
+>     event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), VIEW_XML_2);
+618c618
+<     event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), view_xml1);
+---
+>     event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), VIEW_XML_1);
+632c632
+<     EventImpl event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), view_xml1);
+---
+>     EventImpl event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), VIEW_XML_1);
+641c641
+<     event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), view_xml2);
+---
+>     event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), VIEW_XML_2);
+652c652
+<     event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), view_xml1);
+---
+>     event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), VIEW_XML_1);
+658c658
+<     event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), view_xml2);
+---
+>     event = EventImplTest.getEvent("MyEvent", Collections.<String, String>emptyMap(), VIEW_XML_2);
+815c815
+<     ViewConfig config = ViewConfigTest.getConfig(xml_valid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_VALID_INSTANCE);
+853c853
+<     ViewConfig config = ViewConfigTest.getConfig(xml_invalid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_INVALID_INSTANCE);
+881c881
+<     ViewConfig config = ViewConfigTest.getConfig(xml_valid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_VALID_INSTANCE);
+923c923
+<     ViewConfig config = ViewConfigTest.getConfig(xml_valid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_VALID_INSTANCE);
+960c960
+<     ViewConfig config = ViewConfigTest.getConfig(xml_valid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_VALID_INSTANCE);
+987c987
+<     ViewConfig config = ViewConfigTest.getConfig(xml_valid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_VALID_INSTANCE);
+1033c1033
+<     ViewConfig config = ViewConfigTest.getConfig(xml_valid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_VALID_INSTANCE);
+1055c1055
+<     ViewConfig config = ViewConfigTest.getConfig(xml_valid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_VALID_INSTANCE);
+1103,1104c1103,1104
+<     ViewConfig config = ViewConfigTest.getConfig(xml_valid_instance);
+<     ViewConfig invalidConfig = ViewConfigTest.getConfig(xml_invalid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_VALID_INSTANCE);
+>     ViewConfig invalidConfig = ViewConfigTest.getConfig(XML_INVALID_INSTANCE);
+1137c1137
+<     ViewConfig config = ViewConfigTest.getConfig(xml_valid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_VALID_INSTANCE);
+1180c1180
+<     ViewConfig config = ViewConfigTest.getConfig(xml_valid_instance);
+---
+>     ViewConfig config = ViewConfigTest.getConfig(XML_VALID_INSTANCE);

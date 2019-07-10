@@ -1,0 +1,1641 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.ipc;
+
+import static org.apache.hadoop.ipc.RpcConstants.CONNECTION_CONTEXT_CALL_ID;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.security.PrivilegedExceptionAction;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
+import javax.net.SocketFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.CommonConfigurationKeys;
+import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
+import org.apache.hadoop.io.DataOutputBuffer;
+import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.retry.RetryPolicies;
+import org.apache.hadoop.io.retry.RetryPolicy;
+import org.apache.hadoop.io.retry.RetryPolicy.RetryAction;
+import org.apache.hadoop.ipc.ProtobufRpcEngine.RpcRequestMessageWrapper;
+import org.apache.hadoop.ipc.RPC.RpcKind;
+import org.apache.hadoop.ipc.Server.AuthProtocol;
+import org.apache.hadoop.ipc.protobuf.IpcConnectionContextProtos.IpcConnectionContextProto;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcRequestHeaderProto;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcRequestHeaderProto.OperationProto;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcResponseHeaderProto;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcResponseHeaderProto.RpcErrorCodeProto;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcResponseHeaderProto.RpcStatusProto;
+import org.apache.hadoop.net.ConnectTimeoutException;
+import org.apache.hadoop.net.NetUtils;
+import org.apache.hadoop.security.KerberosInfo;
+import org.apache.hadoop.security.SaslRpcClient;
+import org.apache.hadoop.security.SaslRpcServer.AuthMethod;
+import org.apache.hadoop.security.SecurityUtil;
+import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod;
+import org.apache.hadoop.security.token.Token;
+import org.apache.hadoop.security.token.TokenIdentifier;
+import org.apache.hadoop.security.token.TokenInfo;
+import org.apache.hadoop.security.token.TokenSelector;
+import org.apache.hadoop.util.ProtoUtil;
+import org.apache.hadoop.util.ReflectionUtils;
+import org.apache.hadoop.util.StringUtils;
+import org.apache.hadoop.util.Time;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.protobuf.CodedOutputStream;
+
+
+
+
+
+
+
+@InterfaceAudience.LimitedPrivate(value = { "Common", "HDFS", "MapReduce", "Yarn" })
+@InterfaceStability.Evolving
+public class Client {
+  
+  public static final Log LOG = LogFactory.getLog(Client.class);
+
+  private Hashtable<ConnectionId, Connection> connections =
+    new Hashtable<ConnectionId, Connection>();
+
+  private Class<? extends Writable> valueClass;   
+  private final AtomicInteger counter = new AtomicInteger(); 
+  private AtomicBoolean running = new AtomicBoolean(true); 
+  final private Configuration conf;
+
+  private SocketFactory socketFactory;           
+  private int refCount = 1;
+
+  private final int connectionTimeout;
+
+  private final boolean fallbackAllowed;
+  private final byte[] clientId;
+  
+  
+
+
+
+
+
+  private final ExecutorService sendParamsExecutor;
+  private final static ClientExecutorServiceFactory clientExcecutorFactory =
+      new ClientExecutorServiceFactory();
+
+  private static class ClientExecutorServiceFactory {
+    private int executorRefCount = 0;
+    private ExecutorService clientExecutor = null;
+    
+    
+
+
+
+
+
+
+
+    synchronized ExecutorService refAndGetInstance() {
+      if (executorRefCount == 0) {
+        clientExecutor = Executors.newCachedThreadPool(
+            new ThreadFactoryBuilder()
+            .setDaemon(true)
+            .setNameFormat("IPC Parameter Sending Thread #%d")
+            .build());
+      }
+      executorRefCount++;
+      
+      return clientExecutor;
+    }
+    
+    
+
+
+
+
+
+
+
+
+    synchronized ExecutorService unrefAndCleanup() {
+      executorRefCount--;
+      assert(executorRefCount >= 0);
+      
+      if (executorRefCount == 0) {
+        clientExecutor.shutdown();
+        try {
+          if (!clientExecutor.awaitTermination(1, TimeUnit.MINUTES)) {
+            clientExecutor.shutdownNow();
+          }
+        } catch (InterruptedException e) {
+          LOG.error("Interrupted while waiting for clientExecutor" +
+              "to stop", e);
+          clientExecutor.shutdownNow();
+        }
+        clientExecutor = null;
+      }
+      
+      return clientExecutor;
+    }
+  };
+  
+  
+
+
+
+
+
+  final public static void setPingInterval(Configuration conf, int pingInterval) {
+    conf.setInt(CommonConfigurationKeys.IPC_PING_INTERVAL_KEY, pingInterval);
+  }
+
+  
+
+
+
+
+
+
+  final static int getPingInterval(Configuration conf) {
+    return conf.getInt(CommonConfigurationKeys.IPC_PING_INTERVAL_KEY,
+        CommonConfigurationKeys.IPC_PING_INTERVAL_DEFAULT);
+  }
+
+  
+
+
+
+
+
+
+
+
+  final public static int getTimeout(Configuration conf) {
+    if (!conf.getBoolean(CommonConfigurationKeys.IPC_CLIENT_PING_KEY, true)) {
+      return getPingInterval(conf);
+    }
+    return -1;
+  }
+  
+
+
+
+
+
+  public static final void setConnectTimeout(Configuration conf, int timeout) {
+    conf.setInt(CommonConfigurationKeys.IPC_CLIENT_CONNECT_TIMEOUT_KEY, timeout);
+  }
+
+  
+
+
+
+  synchronized void incCount() {
+    refCount++;
+  }
+  
+  
+
+
+
+  synchronized void decCount() {
+    refCount--;
+  }
+  
+  
+
+
+
+
+  synchronized boolean isZeroReference() {
+    return refCount==0;
+  }
+  
+  
+
+
+  private class Call {
+    final int id;               
+    final Writable rpcRequest;  
+    Writable rpcResponse;       
+    IOException error;          
+    final RPC.RpcKind rpcKind;      
+    boolean done;               
+
+    protected Call(RPC.RpcKind rpcKind, Writable param) {
+      this.rpcKind = rpcKind;
+      this.rpcRequest = param;
+      this.id = nextCallId();
+    }
+
+    
+
+    protected synchronized void callComplete() {
+      this.done = true;
+      notify();                                 
+    }
+
+    
+
+
+
+
+    public synchronized void setException(IOException error) {
+      this.error = error;
+      callComplete();
+    }
+    
+    
+
+
+
+
+    public synchronized void setRpcResponse(Writable rpcResponse) {
+      this.rpcResponse = rpcResponse;
+      callComplete();
+    }
+    
+    public synchronized Writable getRpcResponse() {
+      return rpcResponse;
+    }
+  }
+
+  
+
+
+  private class Connection extends Thread {
+    private InetSocketAddress server;             
+    private String serverPrincipal;  
+    private final ConnectionId remoteId;                
+    private AuthMethod authMethod; 
+    private Token<? extends TokenIdentifier> token;
+    private int serviceClass;
+    private SaslRpcClient saslRpcClient;
+    
+    private Socket socket = null;                 
+    private DataInputStream in;
+    private DataOutputStream out;
+    private int rpcTimeout;
+    private int maxIdleTime; 
+    
+    private final RetryPolicy connectionRetryPolicy;
+    private int maxRetriesOnSocketTimeouts;
+    private boolean tcpNoDelay; 
+    private boolean doPing; 
+    private int pingInterval; 
+    
+    
+    private Hashtable<Integer, Call> calls = new Hashtable<Integer, Call>();
+    private AtomicLong lastActivity = new AtomicLong();
+    private AtomicBoolean shouldCloseConnection = new AtomicBoolean();  
+    private IOException closeException; 
+    
+    private final Object sendRpcRequestLock = new Object();
+
+    public Connection(ConnectionId remoteId, int serviceClass) throws IOException {
+      this.remoteId = remoteId;
+      this.server = remoteId.getAddress();
+      if (server.isUnresolved()) {
+        throw NetUtils.wrapException(server.getHostName(),
+            server.getPort(),
+            null,
+            0,
+            new UnknownHostException());
+      }
+      this.rpcTimeout = remoteId.getRpcTimeout();
+      this.maxIdleTime = remoteId.getMaxIdleTime();
+      this.connectionRetryPolicy = remoteId.connectionRetryPolicy;
+      this.maxRetriesOnSocketTimeouts = remoteId.getMaxRetriesOnSocketTimeouts();
+      this.tcpNoDelay = remoteId.getTcpNoDelay();
+      this.doPing = remoteId.getDoPing();
+      this.pingInterval = remoteId.getPingInterval();
+      this.serviceClass = serviceClass;
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("The ping interval is " + this.pingInterval + " ms.");
+      }
+
+      UserGroupInformation ticket = remoteId.getTicket();
+      Class<?> protocol = remoteId.getProtocol();
+      if (protocol != null) {
+        TokenInfo tokenInfo = SecurityUtil.getTokenInfo(protocol, conf);
+        if (tokenInfo != null) {
+          TokenSelector<? extends TokenIdentifier> tokenSelector = null;
+          try {
+            tokenSelector = tokenInfo.value().newInstance();
+          } catch (InstantiationException e) {
+            throw new IOException(e.toString());
+          } catch (IllegalAccessException e) {
+            throw new IOException(e.toString());
+          }
+          token = tokenSelector.selectToken(
+              SecurityUtil.buildTokenService(server),
+              ticket.getTokens());
+        }
+        KerberosInfo krbInfo = SecurityUtil.getKerberosInfo(protocol, conf);
+        if (krbInfo != null) {
+          serverPrincipal = remoteId.getServerPrincipal();
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("RPC Server's Kerberos principal name for protocol="
+                + protocol.getCanonicalName() + " is " + serverPrincipal);
+          }
+        }
+      }
+      
+      AuthenticationMethod authentication;
+      if (token != null) {
+        authentication = AuthenticationMethod.TOKEN;
+      } else if (ticket != null) {
+        authentication = ticket.getRealAuthenticationMethod();
+      } else { 
+        authentication = AuthenticationMethod.SIMPLE;
+      }
+      authMethod = authentication.getAuthMethod();
+      
+      if (LOG.isDebugEnabled())
+        LOG.debug("Use " + authMethod + " authentication for protocol "
+            + protocol.getSimpleName());
+      
+      this.setName("IPC Client (" + socketFactory.hashCode() +") connection to " +
+          server.toString() +
+          " from " + ((ticket==null)?"an unknown user":ticket.getUserName()));
+      this.setDaemon(true);
+    }
+
+    
+    private void touch() {
+      lastActivity.set(Time.now());
+    }
+
+    
+
+
+
+
+
+
+    private synchronized boolean addCall(Call call) {
+      if (shouldCloseConnection.get())
+        return false;
+      calls.put(call.id, call);
+      notify();
+      return true;
+    }
+
+    
+
+
+
+    private class PingInputStream extends FilterInputStream {
+      
+      protected PingInputStream(InputStream in) {
+        super(in);
+      }
+
+      
+
+
+
+
+
+      private void handleTimeout(SocketTimeoutException e) throws IOException {
+        if (shouldCloseConnection.get() || !running.get() || rpcTimeout > 0) {
+          throw e;
+        } else {
+          sendPing();
+        }
+      }
+      
+      
+
+
+
+
+      @Override
+      public int read() throws IOException {
+        do {
+          try {
+            return super.read();
+          } catch (SocketTimeoutException e) {
+            handleTimeout(e);
+          }
+        } while (true);
+      }
+
+      
+
+
+
+
+
+      @Override
+      public int read(byte[] buf, int off, int len) throws IOException {
+        do {
+          try {
+            return super.read(buf, off, len);
+          } catch (SocketTimeoutException e) {
+            handleTimeout(e);
+          }
+        } while (true);
+      }
+    }
+    
+    private synchronized void disposeSasl() {
+      if (saslRpcClient != null) {
+        try {
+          saslRpcClient.dispose();
+          saslRpcClient = null;
+        } catch (IOException ignored) {
+        }
+      }
+    }
+    
+    private synchronized boolean shouldAuthenticateOverKrb() throws IOException {
+      UserGroupInformation loginUser = UserGroupInformation.getLoginUser();
+      UserGroupInformation currentUser = UserGroupInformation.getCurrentUser();
+      UserGroupInformation realUser = currentUser.getRealUser();
+      if (authMethod == AuthMethod.KERBEROS && loginUser != null &&
+      
+          loginUser.hasKerberosCredentials() &&
+          
+          
+          (loginUser.equals(currentUser) || loginUser.equals(realUser))) {
+        return true;
+      }
+      return false;
+    }
+    
+    private synchronized boolean setupSaslConnection(final InputStream in2, 
+        final OutputStream out2) 
+        throws IOException {
+      saslRpcClient = new SaslRpcClient(authMethod, token, serverPrincipal,
+          fallbackAllowed);
+      return saslRpcClient.saslConnect(in2, out2);
+    }
+
+    
+
+
+
+
+
+
+    private synchronized boolean updateAddress() throws IOException {
+      
+      InetSocketAddress currentAddr = NetUtils.createSocketAddrForHost(
+                               server.getHostName(), server.getPort());
+
+      if (!server.equals(currentAddr)) {
+        LOG.warn("Address change detected. Old: " + server.toString() +
+                                 " New: " + currentAddr.toString());
+        server = currentAddr;
+        return true;
+      }
+      return false;
+    }
+    
+    private synchronized void setupConnection() throws IOException {
+      short ioFailures = 0;
+      short timeoutFailures = 0;
+      while (true) {
+        try {
+          this.socket = socketFactory.createSocket();
+          this.socket.setTcpNoDelay(tcpNoDelay);
+          
+          
+
+
+
+
+          if (UserGroupInformation.isSecurityEnabled()) {
+            KerberosInfo krbInfo = 
+              remoteId.getProtocol().getAnnotation(KerberosInfo.class);
+            if (krbInfo != null && krbInfo.clientPrincipal() != null) {
+              String host = 
+                SecurityUtil.getHostFromPrincipal(remoteId.getTicket().getUserName());
+              
+              
+              InetAddress localAddr = NetUtils.getLocalInetAddress(host);
+              if (localAddr != null) {
+                this.socket.bind(new InetSocketAddress(localAddr, 0));
+              }
+            }
+          }
+          
+          NetUtils.connect(this.socket, server, connectionTimeout);
+          if (rpcTimeout > 0) {
+            pingInterval = rpcTimeout;  
+          }
+          this.socket.setSoTimeout(pingInterval);
+          return;
+        } catch (ConnectTimeoutException toe) {
+          
+
+
+          if (updateAddress()) {
+            timeoutFailures = ioFailures = 0;
+          }
+          handleConnectionTimeout(timeoutFailures++,
+              maxRetriesOnSocketTimeouts, toe);
+        } catch (IOException ie) {
+          if (updateAddress()) {
+            timeoutFailures = ioFailures = 0;
+          }
+          handleConnectionFailure(ioFailures++, ie);
+        }
+      }
+    }
+
+    
+
+
+
+
+
+
+
+    private synchronized void handleSaslConnectionFailure(
+        final int currRetries, final int maxRetries, final Exception ex,
+        final Random rand, final UserGroupInformation ugi) throws IOException,
+        InterruptedException {
+      ugi.doAs(new PrivilegedExceptionAction<Object>() {
+        @Override
+        public Object run() throws IOException, InterruptedException {
+          final short MAX_BACKOFF = 5000;
+          closeConnection();
+          disposeSasl();
+          if (shouldAuthenticateOverKrb()) {
+            if (currRetries < maxRetries) {
+              if(LOG.isDebugEnabled()) {
+                LOG.debug("Exception encountered while connecting to "
+                    + "the server : " + ex);
+              }
+              
+              if (UserGroupInformation.isLoginKeytabBased()) {
+                UserGroupInformation.getLoginUser().reloginFromKeytab();
+              } else {
+                UserGroupInformation.getLoginUser().reloginFromTicketCache();
+              }
+              
+              
+              
+              
+              Thread.sleep((rand.nextInt(MAX_BACKOFF) + 1));
+              return null;
+            } else {
+              String msg = "Couldn't setup connection for "
+                  + UserGroupInformation.getLoginUser().getUserName() + " to "
+                  + serverPrincipal;
+              LOG.warn(msg);
+              throw (IOException) new IOException(msg).initCause(ex);
+            }
+          } else {
+            LOG.warn("Exception encountered while connecting to "
+                + "the server : " + ex);
+          }
+          if (ex instanceof RemoteException)
+            throw (RemoteException) ex;
+          throw new IOException(ex);
+        }
+      });
+    }
+
+    
+    
+
+
+
+    private synchronized void setupIOstreams() throws InterruptedException {
+      if (socket != null || shouldCloseConnection.get()) {
+        return;
+      } 
+      try {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Connecting to "+server);
+        }
+        short numRetries = 0;
+        final short MAX_RETRIES = 5;
+        Random rand = null;
+        while (true) {
+          setupConnection();
+          InputStream inStream = NetUtils.getInputStream(socket);
+          OutputStream outStream = NetUtils.getOutputStream(socket);
+          writeConnectionHeader(outStream);
+          if (authMethod != AuthMethod.SIMPLE) {
+            final InputStream in2 = inStream;
+            final OutputStream out2 = outStream;
+            UserGroupInformation ticket = remoteId.getTicket();
+            if (ticket.getRealUser() != null) {
+              ticket = ticket.getRealUser();
+            }
+            boolean continueSasl = false;
+            try {
+              continueSasl = ticket
+                  .doAs(new PrivilegedExceptionAction<Boolean>() {
+                    @Override
+                    public Boolean run() throws IOException {
+                      return setupSaslConnection(in2, out2);
+                    }
+                  });
+            } catch (Exception ex) {
+              if (rand == null) {
+                rand = new Random();
+              }
+              handleSaslConnectionFailure(numRetries++, MAX_RETRIES, ex, rand,
+                  ticket);
+              continue;
+            }
+            if (continueSasl) {
+              
+              inStream = saslRpcClient.getInputStream(inStream);
+              outStream = saslRpcClient.getOutputStream(outStream);
+            } else {
+              
+              authMethod = AuthMethod.SIMPLE;
+            }
+          }
+        
+          if (doPing) {
+            this.in = new DataInputStream(new BufferedInputStream(
+                new PingInputStream(inStream)));
+          } else {
+            this.in = new DataInputStream(new BufferedInputStream(inStream));
+          }
+          this.out = new DataOutputStream(new BufferedOutputStream(outStream));
+          writeConnectionContext(remoteId, authMethod);
+
+          
+          touch();
+
+          
+          
+          start();
+          return;
+        }
+      } catch (Throwable t) {
+        if (t instanceof IOException) {
+          markClosed((IOException)t);
+        } else {
+          markClosed(new IOException("Couldn't set up IO streams", t));
+        }
+        close();
+      }
+    }
+    
+    private void closeConnection() {
+      if (socket == null) {
+        return;
+      }
+      
+      try {
+        socket.close();
+      } catch (IOException e) {
+        LOG.warn("Not able to close a socket", e);
+      }
+      
+      
+      socket = null;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void handleConnectionTimeout(
+        int curRetries, int maxRetries, IOException ioe) throws IOException {
+
+      closeConnection();
+
+      
+      if (curRetries >= maxRetries) {
+        throw ioe;
+      }
+      LOG.info("Retrying connect to server: " + server + ". Already tried "
+          + curRetries + " time(s); maxRetries=" + maxRetries);
+    }
+
+    private void handleConnectionFailure(int curRetries, IOException ioe
+        ) throws IOException {
+      closeConnection();
+
+      final RetryAction action;
+      try {
+        action = connectionRetryPolicy.shouldRetry(ioe, curRetries, 0, true);
+      } catch(Exception e) {
+        throw e instanceof IOException? (IOException)e: new IOException(e);
+      }
+      if (action.action == RetryAction.RetryDecision.FAIL) {
+        if (action.reason != null) {
+          LOG.warn("Failed to connect to server: " + server + ": "
+              + action.reason, ioe);
+        }
+        throw ioe;
+      }
+
+      try {
+        Thread.sleep(action.delayMillis);
+      } catch (InterruptedException e) {
+        throw (IOException)new InterruptedIOException("Interrupted: action="
+            + action + ", retry policy=" + connectionRetryPolicy).initCause(e);
+      }
+      LOG.info("Retrying connect to server: " + server + ". Already tried "
+          + curRetries + " time(s); retry policy is " + connectionRetryPolicy);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    private void writeConnectionHeader(OutputStream outStream)
+        throws IOException {
+      DataOutputStream out = new DataOutputStream(new BufferedOutputStream(outStream));
+      
+      out.write(RpcConstants.HEADER.array());
+      out.write(RpcConstants.CURRENT_VERSION);
+      out.write(serviceClass);
+      final AuthProtocol authProtocol;
+      switch (authMethod) {
+        case SIMPLE:
+          authProtocol = AuthProtocol.NONE;
+          break;
+        default:
+          authProtocol = AuthProtocol.SASL;
+      }
+      out.write(authProtocol.callId);
+      out.flush();
+    }
+    
+    
+
+
+    private void writeConnectionContext(ConnectionId remoteId,
+                                        AuthMethod authMethod)
+                                            throws IOException {
+      
+      IpcConnectionContextProto message = ProtoUtil.makeIpcConnectionContext(
+          RPC.getProtocolName(remoteId.getProtocol()),
+          remoteId.getTicket(),
+          authMethod);
+      RpcRequestHeaderProto connectionContextHeader =
+          ProtoUtil.makeRpcRequestHeader(RpcKind.RPC_PROTOCOL_BUFFER,
+              OperationProto.RPC_FINAL_PACKET, CONNECTION_CONTEXT_CALL_ID,
+              clientId);
+      RpcRequestMessageWrapper request =
+          new RpcRequestMessageWrapper(connectionContextHeader, message);
+      
+      
+      out.writeInt(request.getLength());
+      request.write(out);
+    }
+    
+    
+
+
+
+
+
+    private synchronized boolean waitForWork() {
+      if (calls.isEmpty() && !shouldCloseConnection.get()  && running.get())  {
+        long timeout = maxIdleTime-
+              (Time.now()-lastActivity.get());
+        if (timeout>0) {
+          try {
+            wait(timeout);
+          } catch (InterruptedException e) {}
+        }
+      }
+      
+      if (!calls.isEmpty() && !shouldCloseConnection.get() && running.get()) {
+        return true;
+      } else if (shouldCloseConnection.get()) {
+        return false;
+      } else if (calls.isEmpty()) { 
+        markClosed(null);
+        return false;
+      } else { 
+        markClosed((IOException)new IOException().initCause(
+            new InterruptedException()));
+        return false;
+      }
+    }
+
+    public InetSocketAddress getRemoteAddress() {
+      return server;
+    }
+
+    
+
+
+    private synchronized void sendPing() throws IOException {
+      long curTime = Time.now();
+      if ( curTime - lastActivity.get() >= pingInterval) {
+        lastActivity.set(curTime);
+        synchronized (out) {
+          out.writeInt(RpcConstants.PING_CALL_ID);
+          out.flush();
+        }
+      }
+    }
+
+    @Override
+    public void run() {
+      if (LOG.isDebugEnabled())
+        LOG.debug(getName() + ": starting, having connections " 
+            + connections.size());
+
+      try {
+        while (waitForWork()) {
+          receiveRpcResponse();
+        }
+      } catch (Throwable t) {
+        
+        
+        
+        LOG.warn("Unexpected error reading responses on connection " + this, t);
+        markClosed(new IOException("Error reading responses", t));
+      }
+      
+      close();
+      
+      if (LOG.isDebugEnabled())
+        LOG.debug(getName() + ": stopped, remaining connections "
+            + connections.size());
+    }
+
+    
+
+
+
+
+    public void sendRpcRequest(final Call call)
+        throws InterruptedException, IOException {
+      if (shouldCloseConnection.get()) {
+        return;
+      }
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      final DataOutputBuffer d = new DataOutputBuffer();
+      RpcRequestHeaderProto header = ProtoUtil.makeRpcRequestHeader(
+         call.rpcKind, OperationProto.RPC_FINAL_PACKET, call.id, clientId);
+      header.writeDelimitedTo(d);
+      call.rpcRequest.write(d);
+
+      synchronized (sendRpcRequestLock) {
+        Future<?> senderFuture = sendParamsExecutor.submit(new Runnable() {
+          @Override
+          public void run() {
+            try {
+              synchronized (Connection.this.out) {
+                if (shouldCloseConnection.get()) {
+                  return;
+                }
+                
+                if (LOG.isDebugEnabled())
+                  LOG.debug(getName() + " sending #" + call.id);
+         
+                byte[] data = d.getData();
+                int totalLength = d.getLength();
+                out.writeInt(totalLength); 
+                out.write(data, 0, totalLength);
+                out.flush();
+              }
+            } catch (IOException e) {
+              
+              
+              
+              markClosed(e);
+            } finally {
+              
+              
+              IOUtils.closeStream(d);
+            }
+          }
+        });
+      
+        try {
+          senderFuture.get();
+        } catch (ExecutionException e) {
+          Throwable cause = e.getCause();
+          
+          
+          
+          if (cause instanceof RuntimeException) {
+            throw (RuntimeException) cause;
+          } else {
+            throw new RuntimeException("unexpected checked exception", cause);
+          }
+        }
+      }
+    }
+
+    
+
+
+    private void receiveRpcResponse() {
+      if (shouldCloseConnection.get()) {
+        return;
+      }
+      touch();
+      
+      try {
+        int totalLen = in.readInt();
+        RpcResponseHeaderProto header = 
+            RpcResponseHeaderProto.parseDelimitedFrom(in);
+        if (header == null) {
+          throw new IOException("Response is null.");
+        }
+        int headerLen = header.getSerializedSize();
+        headerLen += CodedOutputStream.computeRawVarint32Size(headerLen);
+
+        int callId = header.getCallId();
+        if (LOG.isDebugEnabled())
+          LOG.debug(getName() + " got value #" + callId);
+
+        Call call = calls.get(callId);
+        RpcStatusProto status = header.getStatus();
+        if (status == RpcStatusProto.SUCCESS) {
+          Writable value = ReflectionUtils.newInstance(valueClass, conf);
+          value.readFields(in);                 
+          call.setRpcResponse(value);
+          calls.remove(callId);
+          
+          
+          
+          if (call.getRpcResponse() instanceof ProtobufRpcEngine.RpcWrapper) {
+            ProtobufRpcEngine.RpcWrapper resWrapper = 
+                (ProtobufRpcEngine.RpcWrapper) call.getRpcResponse();
+            if (totalLen != headerLen + resWrapper.getLength()) { 
+              throw new RpcClientException(
+                  "RPC response length mismatch on rpc success");
+            }
+          }
+        } else { 
+          
+          if (totalLen != headerLen) {
+            throw new RpcClientException(
+                "RPC response length mismatch on rpc error");
+          }
+          
+          final String exceptionClassName = header.hasExceptionClassName() ?
+                header.getExceptionClassName() : 
+                  "ServerDidNotSetExceptionClassName";
+          final String errorMsg = header.hasErrorMsg() ? 
+                header.getErrorMsg() : "ServerDidNotSetErrorMsg" ;
+          final RpcErrorCodeProto erCode = 
+                    (header.hasErrorDetail() ? header.getErrorDetail() : null);
+          if (erCode == null) {
+             LOG.warn("Detailed error code not set by server on rpc error");
+          }
+          RemoteException re = 
+              ( (erCode == null) ? 
+                  new RemoteException(exceptionClassName, errorMsg) :
+              new RemoteException(exceptionClassName, errorMsg, erCode));
+          if (status == RpcStatusProto.ERROR) {
+            call.setException(re);
+            calls.remove(callId);
+          } else if (status == RpcStatusProto.FATAL) {
+            
+            markClosed(re);
+          }
+        }
+      } catch (IOException e) {
+        markClosed(e);
+      }
+    }
+    
+    private synchronized void markClosed(IOException e) {
+      if (shouldCloseConnection.compareAndSet(false, true)) {
+        closeException = e;
+        notifyAll();
+      }
+    }
+    
+    
+    private synchronized void close() {
+      if (!shouldCloseConnection.get()) {
+        LOG.error("The connection is not in the closed state");
+        return;
+      }
+
+      
+      
+      synchronized (connections) {
+        if (connections.get(remoteId) == this) {
+          connections.remove(remoteId);
+        }
+      }
+
+      
+      IOUtils.closeStream(out);
+      IOUtils.closeStream(in);
+      disposeSasl();
+
+      
+      if (closeException == null) {
+        if (!calls.isEmpty()) {
+          LOG.warn(
+              "A connection is closed for no cause and calls are not empty");
+
+          
+          closeException = new IOException("Unexpected closed connection");
+          cleanupCalls();
+        }
+      } else {
+        
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("closing ipc connection to " + server + ": " +
+              closeException.getMessage(),closeException);
+        }
+
+        
+        cleanupCalls();
+      }
+      if (LOG.isDebugEnabled())
+        LOG.debug(getName() + ": closed");
+    }
+    
+    
+    private void cleanupCalls() {
+      Iterator<Entry<Integer, Call>> itor = calls.entrySet().iterator() ;
+      while (itor.hasNext()) {
+        Call c = itor.next().getValue(); 
+        c.setException(closeException); 
+        itor.remove();         
+      }
+    }
+  }
+
+  
+
+  public Client(Class<? extends Writable> valueClass, Configuration conf, 
+      SocketFactory factory) {
+    this.valueClass = valueClass;
+    this.conf = conf;
+    this.socketFactory = factory;
+    this.connectionTimeout = conf.getInt(CommonConfigurationKeys.IPC_CLIENT_CONNECT_TIMEOUT_KEY,
+        CommonConfigurationKeys.IPC_CLIENT_CONNECT_TIMEOUT_DEFAULT);
+    this.fallbackAllowed = conf.getBoolean(CommonConfigurationKeys.IPC_CLIENT_FALLBACK_TO_SIMPLE_AUTH_ALLOWED_KEY,
+        CommonConfigurationKeys.IPC_CLIENT_FALLBACK_TO_SIMPLE_AUTH_ALLOWED_DEFAULT);
+    this.clientId = StringUtils.getUuidBytes();
+    this.sendParamsExecutor = clientExcecutorFactory.refAndGetInstance();
+  }
+
+  
+
+
+
+
+  public Client(Class<? extends Writable> valueClass, Configuration conf) {
+    this(valueClass, conf, NetUtils.getDefaultSocketFactory(conf));
+  }
+ 
+  
+
+
+
+  SocketFactory getSocketFactory() {
+    return socketFactory;
+  }
+
+  
+
+  public void stop() {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Stopping client");
+    }
+
+    if (!running.compareAndSet(true, false)) {
+      return;
+    }
+    
+    
+    synchronized (connections) {
+      for (Connection conn : connections.values()) {
+        conn.interrupt();
+      }
+    }
+    
+    
+    while (!connections.isEmpty()) {
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+      }
+    }
+    
+    clientExcecutorFactory.unrefAndCleanup();
+  }
+
+  
+
+
+
+  public Writable call(Writable param, InetSocketAddress address)
+  throws InterruptedException, IOException {
+    return call(RPC.RpcKind.RPC_BUILTIN, param, address);
+    
+  }
+  
+
+
+
+
+
+  @Deprecated
+  public Writable call(RPC.RpcKind rpcKind, Writable param, InetSocketAddress address)
+  throws InterruptedException, IOException {
+      return call(rpcKind, param, address, null);
+  }
+  
+  
+
+
+
+
+
+
+
+  @Deprecated
+  public Writable call(RPC.RpcKind rpcKind, Writable param, InetSocketAddress addr, 
+      UserGroupInformation ticket)  
+      throws InterruptedException, IOException {
+    ConnectionId remoteId = ConnectionId.getConnectionId(addr, null, ticket, 0,
+        conf);
+    return call(rpcKind, param, remoteId);
+  }
+  
+  
+
+
+
+
+
+
+
+
+  @Deprecated
+  public Writable call(RPC.RpcKind rpcKind, Writable param, InetSocketAddress addr, 
+                       Class<?> protocol, UserGroupInformation ticket,
+                       int rpcTimeout)  
+                       throws InterruptedException, IOException {
+    ConnectionId remoteId = ConnectionId.getConnectionId(addr, protocol,
+        ticket, rpcTimeout, conf);
+    return call(rpcKind, param, remoteId);
+  }
+
+  
+  
+
+
+
+
+  public Writable call(Writable param, InetSocketAddress addr,
+      Class<?> protocol, UserGroupInformation ticket,
+      int rpcTimeout, Configuration conf)
+      throws InterruptedException, IOException {
+    ConnectionId remoteId = ConnectionId.getConnectionId(addr, protocol,
+        ticket, rpcTimeout, conf);
+    return call(RPC.RpcKind.RPC_BUILTIN, param, remoteId);
+  }
+  
+  
+
+
+
+
+  public Writable call(Writable param, InetSocketAddress addr,
+      Class<?> protocol, UserGroupInformation ticket,
+      int rpcTimeout, int serviceClass, Configuration conf)
+      throws InterruptedException, IOException {
+    ConnectionId remoteId = ConnectionId.getConnectionId(addr, protocol,
+        ticket, rpcTimeout, conf);
+    return call(RPC.RpcKind.RPC_BUILTIN, param, remoteId, serviceClass);
+  }
+
+  
+
+
+
+
+
+
+
+  public Writable call(RPC.RpcKind rpcKind, Writable param, InetSocketAddress addr, 
+                       Class<?> protocol, UserGroupInformation ticket,
+                       int rpcTimeout, Configuration conf)  
+                       throws InterruptedException, IOException {
+    ConnectionId remoteId = ConnectionId.getConnectionId(addr, protocol,
+        ticket, rpcTimeout, conf);
+    return call(rpcKind, param, remoteId);
+  }
+  
+  
+
+
+
+  public Writable call(Writable param, ConnectionId remoteId)  
+      throws InterruptedException, IOException {
+     return call(RPC.RpcKind.RPC_BUILTIN, param, remoteId);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+  public Writable call(RPC.RpcKind rpcKind, Writable rpcRequest,
+      ConnectionId remoteId) throws InterruptedException, IOException {
+    return call(rpcKind, rpcRequest, remoteId, RPC.RPC_SERVICE_CLASS_DEFAULT);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public Writable call(RPC.RpcKind rpcKind, Writable rpcRequest,
+      ConnectionId remoteId, int serviceClass)
+      throws InterruptedException, IOException {
+    Call call = new Call(rpcKind, rpcRequest);
+    Connection connection = getConnection(remoteId, call, serviceClass);
+    try {
+      connection.sendRpcRequest(call);                 
+    } catch (RejectedExecutionException e) {
+      throw new IOException("connection has been closed", e);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      LOG.warn("interrupted waiting to send rpc request to server", e);
+      throw new IOException(e);
+    }
+
+    boolean interrupted = false;
+    synchronized (call) {
+      while (!call.done) {
+        try {
+          call.wait();                           
+        } catch (InterruptedException ie) {
+          
+          interrupted = true;
+        }
+      }
+
+      if (interrupted) {
+        
+        Thread.currentThread().interrupt();
+      }
+
+      if (call.error != null) {
+        if (call.error instanceof RemoteException) {
+          call.error.fillInStackTrace();
+          throw call.error;
+        } else { 
+          InetSocketAddress address = connection.getRemoteAddress();
+          throw NetUtils.wrapException(address.getHostName(),
+                  address.getPort(),
+                  NetUtils.getHostname(),
+                  0,
+                  call.error);
+        }
+      } else {
+        return call.getRpcResponse();
+      }
+    }
+  }
+
+  
+  @InterfaceAudience.Private
+  @InterfaceStability.Unstable
+  Set<ConnectionId> getConnectionIds() {
+    synchronized (connections) {
+      return connections.keySet();
+    }
+  }
+  
+  
+
+  private Connection getConnection(ConnectionId remoteId,
+                                   Call call, int serviceClass)
+                                   throws IOException, InterruptedException {
+    if (!running.get()) {
+      
+      throw new IOException("The client is stopped");
+    }
+    Connection connection;
+    
+
+
+
+    do {
+      synchronized (connections) {
+        connection = connections.get(remoteId);
+        if (connection == null) {
+          connection = new Connection(remoteId, serviceClass);
+          connections.put(remoteId, connection);
+        }
+      }
+    } while (!connection.addCall(call));
+    
+    
+    
+    
+    
+    connection.setupIOstreams();
+    return connection;
+  }
+  
+  
+
+
+
+  @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
+  @InterfaceStability.Evolving
+  public static class ConnectionId {
+    InetSocketAddress address;
+    UserGroupInformation ticket;
+    final Class<?> protocol;
+    private static final int PRIME = 16777619;
+    private final int rpcTimeout;
+    private final String serverPrincipal;
+    private final int maxIdleTime; 
+    
+    private final RetryPolicy connectionRetryPolicy;
+    
+    private final int maxRetriesOnSocketTimeouts;
+    private final boolean tcpNoDelay; 
+    private final boolean doPing; 
+    private final int pingInterval; 
+    
+    ConnectionId(InetSocketAddress address, Class<?> protocol, 
+                 UserGroupInformation ticket, int rpcTimeout,
+                 String serverPrincipal, int maxIdleTime, 
+                 RetryPolicy connectionRetryPolicy, int maxRetriesOnSocketTimeouts,
+                 boolean tcpNoDelay, boolean doPing, int pingInterval) {
+      this.protocol = protocol;
+      this.address = address;
+      this.ticket = ticket;
+      this.rpcTimeout = rpcTimeout;
+      this.serverPrincipal = serverPrincipal;
+      this.maxIdleTime = maxIdleTime;
+      this.connectionRetryPolicy = connectionRetryPolicy;
+      this.maxRetriesOnSocketTimeouts = maxRetriesOnSocketTimeouts;
+      this.tcpNoDelay = tcpNoDelay;
+      this.doPing = doPing;
+      this.pingInterval = pingInterval;
+    }
+    
+    InetSocketAddress getAddress() {
+      return address;
+    }
+    
+    Class<?> getProtocol() {
+      return protocol;
+    }
+    
+    UserGroupInformation getTicket() {
+      return ticket;
+    }
+    
+    private int getRpcTimeout() {
+      return rpcTimeout;
+    }
+    
+    String getServerPrincipal() {
+      return serverPrincipal;
+    }
+    
+    int getMaxIdleTime() {
+      return maxIdleTime;
+    }
+    
+    
+    public int getMaxRetriesOnSocketTimeouts() {
+      return maxRetriesOnSocketTimeouts;
+    }
+    
+    boolean getTcpNoDelay() {
+      return tcpNoDelay;
+    }
+    
+    boolean getDoPing() {
+      return doPing;
+    }
+    
+    int getPingInterval() {
+      return pingInterval;
+    }
+    
+    static ConnectionId getConnectionId(InetSocketAddress addr,
+        Class<?> protocol, UserGroupInformation ticket, int rpcTimeout,
+        Configuration conf) throws IOException {
+      return getConnectionId(addr, protocol, ticket, rpcTimeout, null, conf);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    static ConnectionId getConnectionId(InetSocketAddress addr,
+        Class<?> protocol, UserGroupInformation ticket, int rpcTimeout,
+        RetryPolicy connectionRetryPolicy, Configuration conf) throws IOException {
+
+      if (connectionRetryPolicy == null) {
+        final int max = conf.getInt(
+            CommonConfigurationKeysPublic.IPC_CLIENT_CONNECT_MAX_RETRIES_KEY,
+            CommonConfigurationKeysPublic.IPC_CLIENT_CONNECT_MAX_RETRIES_DEFAULT);
+        connectionRetryPolicy = RetryPolicies.retryUpToMaximumCountWithFixedSleep(
+            max, 1, TimeUnit.SECONDS);
+      }
+
+      String remotePrincipal = getRemotePrincipal(conf, addr, protocol);
+      boolean doPing =
+        conf.getBoolean(CommonConfigurationKeys.IPC_CLIENT_PING_KEY, true);
+      return new ConnectionId(addr, protocol, ticket,
+          rpcTimeout, remotePrincipal,
+          conf.getInt(CommonConfigurationKeysPublic.IPC_CLIENT_CONNECTION_MAXIDLETIME_KEY,
+              CommonConfigurationKeysPublic.IPC_CLIENT_CONNECTION_MAXIDLETIME_DEFAULT),
+          connectionRetryPolicy,
+          conf.getInt(
+            CommonConfigurationKeysPublic.IPC_CLIENT_CONNECT_MAX_RETRIES_ON_SOCKET_TIMEOUTS_KEY,
+            CommonConfigurationKeysPublic.IPC_CLIENT_CONNECT_MAX_RETRIES_ON_SOCKET_TIMEOUTS_DEFAULT),
+          conf.getBoolean(CommonConfigurationKeysPublic.IPC_CLIENT_TCPNODELAY_KEY,
+              CommonConfigurationKeysPublic.IPC_CLIENT_TCPNODELAY_DEFAULT),
+          doPing, 
+          (doPing ? Client.getPingInterval(conf) : 0));
+    }
+    
+    private static String getRemotePrincipal(Configuration conf,
+        InetSocketAddress address, Class<?> protocol) throws IOException {
+      if (!UserGroupInformation.isSecurityEnabled() || protocol == null) {
+        return null;
+      }
+      KerberosInfo krbInfo = SecurityUtil.getKerberosInfo(protocol, conf);
+      if (krbInfo != null) {
+        String serverKey = krbInfo.serverPrincipal();
+        if (serverKey == null) {
+          throw new IOException(
+              "Can't obtain server Kerberos config key from protocol="
+                  + protocol.getCanonicalName());
+        }
+        return SecurityUtil.getServerPrincipal(conf.get(serverKey), address
+            .getAddress());
+      }
+      return null;
+    }
+    
+    static boolean isEqual(Object a, Object b) {
+      return a == null ? b == null : a.equals(b);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (obj instanceof ConnectionId) {
+        ConnectionId that = (ConnectionId) obj;
+        return isEqual(this.address, that.address)
+            && this.doPing == that.doPing
+            && this.maxIdleTime == that.maxIdleTime
+            && isEqual(this.connectionRetryPolicy, that.connectionRetryPolicy)
+            && this.pingInterval == that.pingInterval
+            && isEqual(this.protocol, that.protocol)
+            && this.rpcTimeout == that.rpcTimeout
+            && isEqual(this.serverPrincipal, that.serverPrincipal)
+            && this.tcpNoDelay == that.tcpNoDelay
+            && isEqual(this.ticket, that.ticket);
+      }
+      return false;
+    }
+    
+    @Override
+    public int hashCode() {
+      int result = connectionRetryPolicy.hashCode();
+      result = PRIME * result + ((address == null) ? 0 : address.hashCode());
+      result = PRIME * result + (doPing ? 1231 : 1237);
+      result = PRIME * result + maxIdleTime;
+      result = PRIME * result + pingInterval;
+      result = PRIME * result + ((protocol == null) ? 0 : protocol.hashCode());
+      result = PRIME * result + rpcTimeout;
+      result = PRIME * result
+          + ((serverPrincipal == null) ? 0 : serverPrincipal.hashCode());
+      result = PRIME * result + (tcpNoDelay ? 1231 : 1237);
+      result = PRIME * result + ((ticket == null) ? 0 : ticket.hashCode());
+      return result;
+    }
+    
+    @Override
+    public String toString() {
+      return serverPrincipal + "@" + address;
+    }
+  }  
+
+  
+
+
+
+
+
+
+
+
+
+  private int nextCallId() {
+    return counter.getAndIncrement() & 0x7FFFFFFF;
+  }
+}

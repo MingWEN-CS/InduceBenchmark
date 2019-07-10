@@ -1,0 +1,12 @@
+138,139c138
+<           Assert.assertEquals(entry.getValue(), doc.getFieldValue(entry
+<                   .getKey()));
+---
+>           Assert.assertEquals(entry.getValue(), doc.getFieldValue(entry.getKey()));
+140a140
+>         Assert.assertEquals(map.get("desc"), doc.getFieldValue("desc_s"));
+185c185,186
+<           + "          <field column=\"desc\"/>\n" + "        </entity>\n"
+---
+>           + "          <field column=\"desc\"/>\n"
+>           + "          <field column=\"desc\" name=\"desc_s\" />" + "        </entity>\n"

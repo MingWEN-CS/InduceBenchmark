@@ -1,0 +1,4 @@
+159c159
+<       ExecutorUtil.shutdownNowAndAwaitTermination(commExecutor);
+---
+>       ExecutorUtil.shutdownAndAwaitTermination(commExecutor);

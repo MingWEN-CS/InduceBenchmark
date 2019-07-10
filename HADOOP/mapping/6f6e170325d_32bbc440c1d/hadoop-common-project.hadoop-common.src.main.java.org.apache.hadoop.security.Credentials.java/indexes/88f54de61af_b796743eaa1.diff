@@ -1,0 +1,35 @@
+31a32
+> import java.util.List;
+32a34
+> import java.util.Map.Entry;
+81,89d82
+<   public byte[] getSecretKey(Text alias) {
+<     return secretKeysMap.get(alias);
+<   }
+<   
+<   
+< 
+< 
+< 
+< 
+119a113,121
+> 
+>   
+> 
+> 
+> 
+> 
+>   public byte[] getSecretKey(Text alias) {
+>     return secretKeysMap.get(alias);
+>   }
+147a150,159
+>   public List<Text> getAllSecretKeys() {
+>     List<Text> list = new java.util.ArrayList<Text>();
+>     list.addAll(secretKeysMap.keySet());
+> 
+>     return list;
+>   }
+> 
+>   
+> 
+> 

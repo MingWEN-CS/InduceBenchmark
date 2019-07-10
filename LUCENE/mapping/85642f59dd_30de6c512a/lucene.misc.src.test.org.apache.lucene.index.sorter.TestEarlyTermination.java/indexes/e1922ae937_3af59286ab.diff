@@ -1,0 +1,120 @@
+35a36
+> import org.apache.lucene.index.SerialMergeScheduler;
+38a40,41
+> import org.apache.lucene.search.MatchAllDocsQuery;
+> import org.apache.lucene.search.Query;
+73c76
+<   private void createRandomIndexes(int maxSegments) throws IOException {
+---
+>   private void createRandomIndex() throws IOException {
+83a87
+>     iwc.setMergeScheduler(new SerialMergeScheduler()); 
+85a90
+>     iw.setDoRandomForceMerge(false); 
+96a102,104
+>     if (random().nextBoolean()) {
+>       iw.forceMerge(5);
+>     }
+99,101c107,108
+< 
+<   @Override
+<   public void tearDown() throws Exception {
+---
+>   
+>   private void closeIndex() throws IOException {
+105d111
+<     super.tearDown();
+109,120c115
+<     createRandomIndexes(5);
+<     final int numHits = TestUtil.nextInt(random(), 1, numDocs / 10);
+<     final Sort sort = new Sort(new SortField("ndv1", SortField.Type.LONG, false));
+<     final boolean fillFields = random().nextBoolean();
+<     final boolean trackDocScores = random().nextBoolean();
+<     final boolean trackMaxScore = random().nextBoolean();
+<     final boolean inOrder = random().nextBoolean();
+<     final TopFieldCollector collector1 = TopFieldCollector.create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+<     final TopFieldCollector collector2 = TopFieldCollector.create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+< 
+<     final IndexSearcher searcher = newSearcher(reader);
+<     final int iters = atLeast(5);
+---
+>     final int iters = atLeast(8);
+122,124c117,140
+<       final TermQuery query = new TermQuery(new Term("s", RandomPicks.randomFrom(random(), terms)));
+<       searcher.search(query, collector1);
+<       searcher.search(query, new EarlyTerminatingSortingCollector(collector2, sort, numHits));
+---
+>       createRandomIndex();
+>       for (int j = 0; j < iters; ++j) {
+>         final IndexSearcher searcher = newSearcher(reader);
+>         final int numHits = TestUtil.nextInt(random(), 1, numDocs);
+>         final Sort sort = new Sort(new SortField("ndv1", SortField.Type.LONG, false));
+>         final boolean fillFields = random().nextBoolean();
+>         final boolean trackDocScores = random().nextBoolean();
+>         final boolean trackMaxScore = random().nextBoolean();
+>         final boolean inOrder = random().nextBoolean();
+>         final TopFieldCollector collector1 = TopFieldCollector.create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+>         final TopFieldCollector collector2 = TopFieldCollector.create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+> 
+>         final Query query;
+>         if (random().nextBoolean()) {
+>           query = new TermQuery(new Term("s", RandomPicks.randomFrom(random(), terms)));
+>         } else {
+>           query = new MatchAllDocsQuery();
+>         }
+>         searcher.search(query, collector1);
+>         searcher.search(query, new EarlyTerminatingSortingCollector(collector2, sort, numHits));
+>         assertTrue(collector1.getTotalHits() >= collector2.getTotalHits());
+>         assertTopDocsEquals(collector1.topDocs().scoreDocs, collector2.topDocs().scoreDocs);
+>       }
+>       closeIndex();
+126,127d141
+<     assertTrue(collector1.getTotalHits() >= collector2.getTotalHits());
+<     assertTopDocsEquals(collector1.topDocs().scoreDocs, collector2.topDocs().scoreDocs);
+131,144c145,146
+<     
+<     
+<     createRandomIndexes(5);
+<     final int numHits = TestUtil.nextInt(random(), 1, numDocs / 10);
+<     final Sort sort = new Sort(new SortField("ndv2", SortField.Type.LONG, false));
+<     final boolean fillFields = random().nextBoolean();
+<     final boolean trackDocScores = random().nextBoolean();
+<     final boolean trackMaxScore = random().nextBoolean();
+<     final boolean inOrder = random().nextBoolean();
+<     final TopFieldCollector collector1 = TopFieldCollector.create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+<     final TopFieldCollector collector2 = TopFieldCollector.create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+<     
+<     final IndexSearcher searcher = newSearcher(reader);
+<     final int iters = atLeast(5);
+---
+>     createRandomIndex();
+>     final int iters = atLeast(3);
+146c148,165
+<       final TermQuery query = new TermQuery(new Term("s", RandomPicks.randomFrom(random(), terms)));
+---
+>       final IndexSearcher searcher = newSearcher(reader);
+>       
+>       
+>       final int numHits = TestUtil.nextInt(random(), 1, numDocs);
+>       final Sort sort = new Sort(new SortField("ndv2", SortField.Type.LONG, false));
+>       final boolean fillFields = random().nextBoolean();
+>       final boolean trackDocScores = random().nextBoolean();
+>       final boolean trackMaxScore = random().nextBoolean();
+>       final boolean inOrder = random().nextBoolean();
+>       final TopFieldCollector collector1 = TopFieldCollector.create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+>       final TopFieldCollector collector2 = TopFieldCollector.create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+>       
+>       final Query query;
+>       if (random().nextBoolean()) {
+>         query = new TermQuery(new Term("s", RandomPicks.randomFrom(random(), terms)));
+>       } else {
+>         query = new MatchAllDocsQuery();
+>       }
+156a176,177
+>       assertTrue(collector1.getTotalHits() >= collector2.getTotalHits());
+>       assertTopDocsEquals(collector1.topDocs().scoreDocs, collector2.topDocs().scoreDocs);
+158,159c179
+<     assertTrue(collector1.getTotalHits() >= collector2.getTotalHits());
+<     assertTopDocsEquals(collector1.topDocs().scoreDocs, collector2.topDocs().scoreDocs);
+---
+>     closeIndex();

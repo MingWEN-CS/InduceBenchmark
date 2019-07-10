@@ -1,0 +1,1926 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.commons;
+
+import static java.net.URLDecoder.decode;
+
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.imageio.spi.ServiceRegistry;
+import javax.jcr.Binary;
+import javax.jcr.Item;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.RepositoryFactory;
+import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
+import javax.jcr.observation.EventListenerIterator;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
+import javax.jcr.security.AccessControlPolicyIterator;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionIterator;
+
+
+
+
+
+
+public class JcrUtils {
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    public static final String REPOSITORY_URI = "org.apache.jackrabbit.repository.uri";
+
+    
+
+
+
+
+    public static final Value[] NO_VALUES = new Value[0];
+
+    
+
+
+    private JcrUtils() {
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public static Repository getRepository() throws RepositoryException {
+        return getRepository((Map<String, String>) null);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Repository getRepository(Map<String, String> parameters)
+            throws RepositoryException {
+        String newline = System.getProperty("line.separator");
+
+        
+        StringBuilder log = new StringBuilder("Unable to access a repository");
+        if (parameters != null) {
+            log.append(" with the following settings:");
+            for (Map.Entry<String, String> entry : parameters.entrySet()) {
+                log.append(newline);
+                log.append("    ");
+                log.append(entry.getKey());
+                log.append(": ");
+                log.append(entry.getValue());
+            }
+        } else {
+            log.append(" with the default settings.");
+        }
+
+        
+        if (parameters != null
+                && parameters.containsKey(JcrUtils.REPOSITORY_URI)) {
+            String uri = parameters.get(JcrUtils.REPOSITORY_URI);
+            try {
+                URI u = new URI(uri);
+                String query = u.getRawQuery();
+                if (query != null) {
+                   Map<String, String> copy = new HashMap<String, String>(parameters);
+                   for (String entry : query.split("&")) {
+                        int i = entry.indexOf('=');
+                        if (i != -1) {
+                            copy.put(
+                                    decode(entry.substring(0, i), "UTF-8"),
+                                    decode(entry.substring(i + 1), "UTF-8"));
+                        } else {
+                            copy.put(
+                                    decode(entry, "UTF-8"),
+                                    Boolean.TRUE.toString());
+                        }
+                    }
+                    copy.put(
+                            JcrUtils.REPOSITORY_URI,
+                            new URI(u.getScheme(), u.getRawAuthority(),
+                                    u.getRawPath(), null, u.getRawFragment()
+                            ).toASCIIString());
+                    parameters = copy;
+                }
+            } catch (URISyntaxException e) {
+                log.append(newline);
+                log.append("Note that the given repository URI was invalid:");
+                log.append(newline);
+                log.append("        ").append(uri);
+                log.append(newline);
+                log.append("        ").append(e.getMessage());
+            } catch (UnsupportedEncodingException e) {
+                throw new RepositoryException("UTF-8 is not supported!", e);
+            }
+        }
+
+        
+        log.append(newline);
+        log.append("The following RepositoryFactory classes were consulted:");
+        Iterator<RepositoryFactory> iterator =
+                ServiceRegistry.lookupProviders(RepositoryFactory.class);
+        while (iterator.hasNext()) {
+            RepositoryFactory factory = iterator.next();
+            log.append(newline);
+            log.append("    ");
+            log.append(factory.getClass().getName());
+            try {
+                Repository repository = factory.getRepository(parameters);
+                if (repository != null) {
+                    
+                    
+                    return repository;
+                } else {
+                    log.append(": declined");
+                }
+            } catch (Exception e) {
+                log.append(": failed");
+                for (Throwable c = e; c != null; c = c.getCause()) {
+                    log.append(newline);
+                    log.append("        because of ");
+                    log.append(c.getClass().getSimpleName());
+                    log.append(": ");
+                    log.append(c.getMessage());
+                }
+            }
+        }
+        log.append(newline);
+        log.append(
+                "Perhaps the repository you are trying"
+                        + " to access is not available at the moment.");
+
+        
+        
+        throw new RepositoryException(log.toString());
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Repository getRepository(String uri)
+            throws RepositoryException {
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put(JcrUtils.REPOSITORY_URI, uri);
+        return getRepository(parameters);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Node> getSharedSet(final Node node)
+            throws RepositoryException {
+        final NodeIterator iterator = node.getSharedSet();
+        return new Iterable<Node>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Node> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getSharedSet();
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Node> getChildNodes(final Node node)
+            throws RepositoryException {
+        final NodeIterator iterator = node.getNodes();
+        return new Iterable<Node>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Node> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getNodes();
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Node> getChildNodes(
+            final Node node, final String pattern) throws RepositoryException {
+        final NodeIterator iterator = node.getNodes(pattern);
+        return new Iterable<Node>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Node> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getNodes(pattern);
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Node> getChildNodes(
+            final Node node, final String[] globs) throws RepositoryException {
+        final NodeIterator iterator = node.getNodes(globs);
+        return new Iterable<Node>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Node> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getNodes(globs);
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Property> getProperties(final Node node)
+            throws RepositoryException {
+        final PropertyIterator iterator = node.getProperties();
+        return new Iterable<Property>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Property> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getProperties();
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Property> getProperties(
+            final Node node, final String pattern) throws RepositoryException {
+        final PropertyIterator iterator = node.getProperties(pattern);
+        return new Iterable<Property>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Property> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getProperties(pattern);
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Property> getProperties(
+            final Node node, final String[] globs) throws RepositoryException {
+        final PropertyIterator iterator = node.getProperties(globs);
+        return new Iterable<Property>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Property> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getProperties(globs);
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Property> getReferences(final Node node)
+            throws RepositoryException {
+        final PropertyIterator iterator = node.getReferences();
+        return new Iterable<Property>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Property> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getReferences();
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Property> getReferences(
+            final Node node, final String name) throws RepositoryException {
+        final PropertyIterator iterator = node.getReferences(name);
+        return new Iterable<Property>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Property> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getReferences(name);
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Property> getWeakReferences(final Node node)
+            throws RepositoryException {
+        final PropertyIterator iterator = node.getWeakReferences();
+        return new Iterable<Property>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Property> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getWeakReferences();
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Property> getWeakReferences(
+            final Node node, final String name) throws RepositoryException {
+        final PropertyIterator iterator = node.getWeakReferences(name);
+        return new Iterable<Property>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Property> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return node.getWeakReferences(name);
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Node> getNodes(final QueryResult result)
+            throws RepositoryException {
+        final NodeIterator iterator = result.getNodes();
+        return new Iterable<Node>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Node> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return result.getNodes();
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Iterable<Row> getRows(final QueryResult result)
+            throws RepositoryException {
+        final RowIterator iterator = result.getRows();
+        return new Iterable<Row>() {
+            private boolean first = true;
+            @Override @SuppressWarnings("unchecked")
+            public synchronized Iterator<Row> iterator() {
+                if (first) {
+                    first = false;
+                    return iterator;
+                } else {
+                    try {
+                        return result.getRows();
+                    } catch (RepositoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static <I> Iterable<I> in(final Iterator<I> iterator) {
+        return new Iterable<I>() {
+            private boolean stale = false;
+
+            @Override
+            public synchronized Iterator<I> iterator() {
+                if (stale) {
+                    throw new IllegalStateException("Cannot reuse Iterable intended for single use");
+                }
+
+                stale = true;
+                return iterator;
+            }
+        };
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @SuppressWarnings("unchecked")
+    public static Iterable<AccessControlPolicyIterator> in(AccessControlPolicyIterator iterator) {
+        return in((Iterator<AccessControlPolicyIterator>) iterator);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @SuppressWarnings("unchecked")
+    public static Iterable<Event> in(EventIterator iterator) {
+        return in((Iterator<Event>) iterator);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @SuppressWarnings("unchecked")
+    public static Iterable<EventListener> in(EventListenerIterator iterator) {
+        return in((Iterator<EventListener>) iterator);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @SuppressWarnings("unchecked")
+    public static Iterable<Node> in(NodeIterator iterator) {
+        return in((Iterator<Node>) iterator);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @SuppressWarnings("unchecked")
+    public static Iterable<NodeType> in(NodeTypeIterator iterator) {
+        return in((Iterator<NodeType>) iterator);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @SuppressWarnings("unchecked")
+    public static Iterable<Property> in(PropertyIterator iterator) {
+        return in((Iterator<Property>) iterator);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @SuppressWarnings("unchecked")
+    public static Iterable<Row> in(RowIterator iterator) {
+        return in((Iterator<Row>) iterator);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @SuppressWarnings("unchecked")
+    public static Iterable<Version> in(VersionIterator iterator) {
+        return in((Iterator<Version>) iterator);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node getOrAddNode(Node parent, String name)
+            throws RepositoryException {
+        return getOrAddNode(parent, name, null);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node getOrAddNode(Node parent, String name, String type)
+            throws RepositoryException {
+        if (parent.hasNode(name)) {
+            return parent.getNode(name);
+        } else if (type != null) {
+            return parent.addNode(name, type);
+        } else {
+            return parent.addNode(name);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node getOrAddFolder(Node parent, String name)
+            throws RepositoryException {
+        return getOrAddNode(parent, name, NodeType.NT_FOLDER);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node putFile(
+            Node parent, String name, String mime, InputStream data)
+            throws RepositoryException {
+        return putFile(parent, name, mime, data, Calendar.getInstance());
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node putFile(
+            Node parent, String name, String mime,
+            InputStream data, Calendar date) throws RepositoryException {
+        Binary binary = parent.getSession().getValueFactory().createBinary(data);
+        try {
+            Node file = getOrAddNode(parent, name, NodeType.NT_FILE);
+            Node content = getOrAddNode(file, Node.JCR_CONTENT, NodeType.NT_RESOURCE);
+
+            content.setProperty(Property.JCR_MIMETYPE, mime);
+            String[] parameters = mime.split(";");
+            for (int i = 1; i < parameters.length; i++) {
+                int equals = parameters[i].indexOf('=');
+                if (equals != -1) {
+                    String parameter = parameters[i].substring(0, equals);
+                    if ("charset".equalsIgnoreCase(parameter.trim())) {
+                        content.setProperty(
+                                Property.JCR_ENCODING,
+                                parameters[i].substring(equals + 1).trim());
+                    }
+                }
+            }
+
+            content.setProperty(Property.JCR_LAST_MODIFIED, date);
+            content.setProperty(Property.JCR_DATA, binary);
+            return file;
+        } finally {
+            binary.dispose();
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static InputStream readFile(Node node) throws RepositoryException {
+        if (node.hasProperty(Property.JCR_DATA)) {
+            Property data = node.getProperty(Property.JCR_DATA);
+            final Binary binary = data.getBinary();
+            return new FilterInputStream(binary.getStream()) {
+                @Override
+                public void close() throws IOException {
+                    super.close();
+                    binary.dispose();
+                }
+            };
+        } else if (node.hasNode(Node.JCR_CONTENT)) {
+            return readFile(node.getNode(Node.JCR_CONTENT));
+        } else {
+            throw new RepositoryException(
+                    "Unable to read file node: " + node.getPath());
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static void readFile(Node node, OutputStream output)
+            throws RepositoryException, IOException {
+        InputStream input = readFile(node);
+        try {
+            byte[] buffer = new byte[16 * 1024];
+            int n = input.read(buffer);
+            while (n != -1) {
+                output.write(buffer, 0, n);
+                n = input.read(buffer);
+            }
+        } finally {
+            input.close();
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public static Calendar getLastModified(Node node) throws RepositoryException {
+        if (node.hasProperty(Property.JCR_LAST_MODIFIED)) {
+            return node.getProperty(Property.JCR_LAST_MODIFIED).getDate();
+        } else if (node.hasNode(Node.JCR_CONTENT)) {
+            return getLastModified(node.getNode(Node.JCR_CONTENT));
+        } else {
+            return null;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public static void setLastModified(Node node, Calendar date) throws RepositoryException {
+        if (node.hasNode(Node.JCR_CONTENT)) {
+            setLastModified(node.getNode(Node.JCR_CONTENT), date);
+        } else {
+            node.setProperty(Property.JCR_LAST_MODIFIED, date);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static String toString(Item item) {
+        StringBuilder builder = new StringBuilder();
+        try {
+            if (item.isNode()) {
+                builder.append(item.getPath());
+                builder.append(" [");
+                builder.append(((Node) item).getPrimaryNodeType().getName());
+                builder.append("]");
+            } else {
+                builder.append("@");
+                builder.append(item.getName());
+                builder.append(" = ");
+                Property property = (Property) item;
+                if (property.isMultiple()) {
+                    builder.append("[ ");
+                    Value[] values = property.getValues();
+                    for (int i = 0; i < values.length && i < 3; i++) {
+                        if (i > 0) {
+                            builder.append(", ");
+                        }
+                        append(builder, values[i]);
+                    }
+                    if (values.length >= 3) {
+                        builder.append(", ...");
+                    }
+                    builder.append(" ]");
+                } else {
+                    append(builder, property.getValue());
+                }
+            }
+        } catch (RepositoryException e) {
+            builder.append("!!! ");
+            builder.append(e.getMessage());
+            builder.append(" !!!");
+        }
+        return builder.toString();
+    }
+
+    
+
+
+
+
+    private static void append(StringBuilder builder, Value value)
+            throws RepositoryException {
+        if (value.getType() == PropertyType.BINARY) {
+            Binary binary = value.getBinary();
+            try {
+                builder.append("<");
+                builder.append(binary.getSize());
+                builder.append(" bytes>");
+            } finally {
+                binary.dispose();
+            }
+        } else {
+            String string = value.getString();
+            if (string.length() > 40) {
+                builder.append(string.substring(0, 37));
+                builder.append("...");
+            } else {
+                builder.append(string);
+            }
+        }
+    }
+
+    private static final List<String> PROPERTY_TYPES_NAMES = new ArrayList<String>();
+    private static final Map<String, Integer> PROPERTY_TYPES = new HashMap<String, Integer>();
+    static {
+        for (int i = PropertyType.UNDEFINED; i <= PropertyType.DECIMAL; i++) {
+            String typeName = PropertyType.nameFromValue(i);
+            PROPERTY_TYPES_NAMES.add(typeName);
+            PROPERTY_TYPES.put(typeName.toLowerCase(), i);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    public static int getPropertyType(String name)
+            throws IllegalArgumentException {
+        Integer type = PROPERTY_TYPES.get(name.toLowerCase());
+        if (type != null) {
+            return type;
+        } else {
+            throw new IllegalArgumentException("Unknown property type: " + name);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    public static String[] getPropertyTypeNames(boolean includeUndefined) {
+        if (includeUndefined) {
+            return PROPERTY_TYPES_NAMES.toArray(new String[PROPERTY_TYPES_NAMES.size()]);
+        } else {
+            String[] typeNames = new String[PROPERTY_TYPES_NAMES.size()-1];
+            int i = 0;
+            for (String name : PROPERTY_TYPES_NAMES) {
+                if (!PropertyType.TYPENAME_UNDEFINED.equals(name)) {
+                    typeNames[i++] = name;
+                }
+            }
+            return typeNames;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node getOrCreateByPath(String absolutePath, String nodeType, Session session)
+            throws RepositoryException {
+        return getOrCreateByPath(absolutePath, false, nodeType, nodeType, session, false);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node getOrCreateByPath(String absolutePath,
+                                         String intermediateNodeType,
+                                         String nodeType, Session session,
+                                         boolean autoSave)
+            throws RepositoryException {
+        return getOrCreateByPath(absolutePath, false, intermediateNodeType, nodeType, session, autoSave);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node getOrCreateUniqueByPath(String pathHint, String nodeType, Session session)
+            throws RepositoryException {
+        return getOrCreateByPath(pathHint, true, nodeType, nodeType, session, false);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node getOrCreateByPath(String absolutePath,
+                                         boolean createUniqueLeaf,
+                                         String intermediateNodeType,
+                                         String nodeType, Session session,
+                                         boolean autoSave)
+            throws RepositoryException {
+        if (absolutePath == null || absolutePath.length() == 0 || "/".equals(absolutePath)) {
+            
+            return session.getRootNode();
+        }
+        
+        return getOrCreateByPath(session.getRootNode(), absolutePath.substring(1),
+                createUniqueLeaf, intermediateNodeType, nodeType, autoSave);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node getOrCreateUniqueByPath(Node parent,
+                                               String nodeNameHint,
+                                               String nodeType)
+            throws RepositoryException {
+        return getOrCreateByPath(parent, nodeNameHint, true, nodeType, nodeType, false);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static Node getOrCreateByPath(Node baseNode,
+                                         String path,
+                                         boolean createUniqueLeaf,
+                                         String intermediateNodeType,
+                                         String nodeType,
+                                         boolean autoSave)
+            throws RepositoryException {
+
+        if (!createUniqueLeaf && baseNode.hasNode(path)) {
+            
+            return baseNode.getNode(path);
+        }
+
+        
+        
+        String fullPath = baseNode.getPath().equals("/") ? "/" + path : baseNode.getPath() + "/" + path;
+        int currentIndex = fullPath.lastIndexOf('/');
+        String temp = fullPath;
+        String existingPath = null;
+        while (currentIndex > 0) {
+            temp = temp.substring(0, currentIndex);
+            
+            if (baseNode.getSession().itemExists(temp)) {
+                existingPath = temp;
+                break;
+            }
+            currentIndex = temp.lastIndexOf('/');
+        }
+
+        if (existingPath != null) {
+            baseNode = baseNode.getSession().getNode(existingPath);
+            path = fullPath.substring(existingPath.length() + 1);
+        }
+
+        Node node = baseNode;
+        int pos = path.lastIndexOf('/');
+
+        
+        if (pos != -1) {
+            final StringTokenizer st = new StringTokenizer(path.substring(0, pos), "/");
+            while (st.hasMoreTokens()) {
+                final String token = st.nextToken();
+                if (!node.hasNode(token)) {
+                    try {
+                        if (intermediateNodeType != null) {
+                            node.addNode(token, intermediateNodeType);
+                        } else {
+                            node.addNode(token);
+                        }
+                        if (autoSave) {
+                            node.getSession().save();
+                        }
+                    } catch (RepositoryException e) {
+                        
+                        node.refresh(false);
+                    }
+                }
+                node = node.getNode(token);
+            }
+            path = path.substring(pos + 1);
+        }
+
+        
+        if (!node.hasNode(path)) {
+            if (nodeType != null) {
+                node.addNode(path, nodeType);
+            } else {
+                node.addNode(path);
+            }
+            if (autoSave) {
+                node.getSession().save();
+            }
+        } else if (createUniqueLeaf) {
+            
+            String leafNodeName;
+            int i = 0;
+            do {
+                leafNodeName = path + String.valueOf(i);
+                i++;
+            } while (node.hasNode(leafNodeName));
+
+            Node leaf;
+            if (nodeType != null) {
+                leaf = node.addNode(leafNodeName, nodeType);
+            } else {
+                leaf = node.addNode(leafNodeName);
+            }
+            if (autoSave) {
+                node.getSession().save();
+            }
+            return leaf;
+        }
+
+        return node.getNode(path);
+    }
+
+    
+
+
+
+
+
+
+
+    public static Node getNodeIfExists(Node baseNode, String relPath) throws RepositoryException {
+        try {
+            return baseNode.getNode(relPath);
+        } catch (PathNotFoundException e) {
+            return null;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    public static Node getNodeIfExists(String absPath, Session session) throws RepositoryException {
+        try {
+            return session.getNode(absPath);
+        } catch (PathNotFoundException e) {
+            return null;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static String getStringProperty(Node baseNode, String relPath, String defaultValue) throws RepositoryException {
+        try {
+            return baseNode.getProperty(relPath).getString();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static long getLongProperty(Node baseNode, String relPath, long defaultValue) throws RepositoryException {
+        try {
+            return baseNode.getProperty(relPath).getLong();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static double getDoubleProperty(Node baseNode, String relPath, double defaultValue) throws RepositoryException {
+        try {
+            return baseNode.getProperty(relPath).getDouble();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static boolean getBooleanProperty(Node baseNode, String relPath, boolean defaultValue) throws RepositoryException {
+        try {
+            return baseNode.getProperty(relPath).getBoolean();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static Calendar getDateProperty(Node baseNode, String relPath, Calendar defaultValue) throws RepositoryException {
+        try {
+            return baseNode.getProperty(relPath).getDate();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static BigDecimal getDecimalProperty(Node baseNode, String relPath, BigDecimal defaultValue) throws RepositoryException {
+        try {
+            return baseNode.getProperty(relPath).getDecimal();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static Binary getBinaryProperty(Node baseNode, String relPath, Binary defaultValue) throws RepositoryException {
+        try {
+            return baseNode.getProperty(relPath).getBinary();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static String getStringProperty(Session session, String absPath, String defaultValue) throws RepositoryException {
+        try {
+            return session.getProperty(absPath).getString();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static long getLongProperty(Session session, String absPath, long defaultValue) throws RepositoryException {
+        try {
+            return session.getProperty(absPath).getLong();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static double getDoubleProperty(Session session, String absPath, double defaultValue) throws RepositoryException {
+        try {
+            return session.getProperty(absPath).getDouble();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static boolean getBooleanProperty(Session session, String absPath, boolean defaultValue) throws RepositoryException {
+        try {
+            return session.getProperty(absPath).getBoolean();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static Calendar getDateProperty(Session session, String absPath, Calendar defaultValue) throws RepositoryException {
+        try {
+            return session.getProperty(absPath).getDate();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static BigDecimal getDecimalProperty(Session session, String absPath, BigDecimal defaultValue) throws RepositoryException {
+        try {
+            return session.getProperty(absPath).getDecimal();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public static Binary getBinaryProperty(Session session, String absPath, Binary defaultValue) throws RepositoryException {
+        try {
+            return session.getProperty(absPath).getBinary();
+        } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+}

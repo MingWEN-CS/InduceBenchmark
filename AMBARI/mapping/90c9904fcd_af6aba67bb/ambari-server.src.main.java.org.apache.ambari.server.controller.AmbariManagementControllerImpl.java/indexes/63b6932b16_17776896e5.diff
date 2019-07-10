@@ -1,0 +1,15 @@
+343a344,345
+>   private Map<String, Map<String, Map<String, String>>> configCredentialsForService = new HashMap<>();
+> 
+2118a2121,2131
+>     Map<String, Map<String, String>> configCredentials;
+>     configCredentials = configCredentialsForService.get(clusterService.getName());
+>     if (configCredentials == null) {
+>       configCredentials = configHelper.getPropertiesWithPropertyType(stackId, clusterService,
+>               PropertyType.PASSWORD);
+>       configCredentialsForService.put(clusterService.getName(), configCredentials);
+>     }
+> 
+>     execCmd.setConfigurationCredentials(configCredentials);
+> 
+>     

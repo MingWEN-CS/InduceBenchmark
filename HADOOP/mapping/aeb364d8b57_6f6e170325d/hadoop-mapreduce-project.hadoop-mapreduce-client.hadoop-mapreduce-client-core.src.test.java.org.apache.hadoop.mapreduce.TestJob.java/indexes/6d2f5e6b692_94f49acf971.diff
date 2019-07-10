@@ -1,0 +1,23 @@
+29a30
+> import org.apache.hadoop.security.Credentials;
+57a59
+>     Credentials creds = new Credentials();
+59,62c61,67
+<     Text service = new Text("service");
+<     
+<     UserGroupInformation ugi = UserGroupInformation.getCurrentUser();
+<     ugi.addToken(service, token);
+---
+>     Text tokenService = new Text("service");
+>     Text secretName = new Text("secret");
+>     byte secret[] = new byte[]{};
+>         
+>     creds.addToken(tokenService,  token);
+>     creds.addSecretKey(secretName, secret);
+>     UserGroupInformation.getLoginUser().addCredentials(creds);
+66c71,73
+<     assertSame(token, job.getCredentials().getToken(service));
+---
+> 
+>     assertSame(token, job.getCredentials().getToken(tokenService));
+>     assertSame(secret, job.getCredentials().getSecretKey(secretName));

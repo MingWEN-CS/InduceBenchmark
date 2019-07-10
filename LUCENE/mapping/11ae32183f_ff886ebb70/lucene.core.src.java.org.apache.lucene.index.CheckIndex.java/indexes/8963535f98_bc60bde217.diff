@@ -1,0 +1,82 @@
+885,887c885,887
+<     DocsEnum docs = null;
+<     DocsEnum docsAndFreqs = null;
+<     DocsAndPositionsEnum postings = null;
+---
+>     PostingsEnum docs = null;
+>     PostingsEnum docsAndFreqs = null;
+>     PostingsEnum postings = null;
+1029,1030c1029,1030
+<         docs = termsEnum.docs(liveDocs, docs);
+<         postings = termsEnum.docsAndPositions(liveDocs, postings);
+---
+>         docs = termsEnum.postings(liveDocs, docs);
+>         postings = termsEnum.postings(liveDocs, postings, PostingsEnum.FLAG_ALL);
+1054c1054
+<         final DocsEnum docs2;
+---
+>         final PostingsEnum docs2;
+1155c1155
+<             final DocsEnum docsNoDel = termsEnum.docs(null, docsAndFreqs);
+---
+>             final PostingsEnum docsNoDel = termsEnum.postings(null, docsAndFreqs);
+1164c1164
+<             final DocsEnum docsNoDel = termsEnum.docs(null, docs, DocsEnum.FLAG_NONE);
+---
+>             final PostingsEnum docsNoDel = termsEnum.postings(null, docs, PostingsEnum.FLAG_NONE);
+1191c1191
+<             postings = termsEnum.docsAndPositions(liveDocs, postings);
+---
+>             postings = termsEnum.postings(liveDocs, postings, PostingsEnum.FLAG_ALL);
+1250c1250
+<             docs = termsEnum.docs(liveDocs, docs, DocsEnum.FLAG_NONE);
+---
+>             docs = termsEnum.postings(liveDocs, docs, PostingsEnum.FLAG_NONE);
+1318c1318
+<           DocsEnum d = termsEnum.docs(null, null, DocsEnum.FLAG_NONE);
+---
+>           PostingsEnum d = termsEnum.postings(null, null, PostingsEnum.FLAG_NONE);
+1359c1359
+<               docs = termsEnum.docs(liveDocs, docs, DocsEnum.FLAG_NONE);
+---
+>               docs = termsEnum.postings(liveDocs, docs, PostingsEnum.FLAG_NONE);
+1377c1377
+<               docs = termsEnum.docs(null, docs, DocsEnum.FLAG_NONE);
+---
+>               docs = termsEnum.postings(null, docs, PostingsEnum.FLAG_NONE);
+1809,1810c1809,1810
+<       DocsEnum docs = null;
+<       DocsAndPositionsEnum postings = null;
+---
+>       PostingsEnum docs = null;
+>       PostingsEnum postings = null;
+1813,1814c1813,1814
+<       DocsEnum postingsDocs = null;
+<       DocsAndPositionsEnum postingsPostings = null;
+---
+>       PostingsEnum postingsDocs = null;
+>       PostingsEnum postingsPostings = null;
+1881c1881
+<                   postings = termsEnum.docsAndPositions(null, postings);
+---
+>                   postings = termsEnum.postings(null, postings, PostingsEnum.FLAG_ALL);
+1885c1885
+<                   docs = termsEnum.docs(null, docs);
+---
+>                   docs = termsEnum.postings(null, docs);
+1890c1890
+<                 final DocsEnum docs2;
+---
+>                 final PostingsEnum docs2;
+1899c1899
+<                 final DocsEnum postingsDocs2;
+---
+>                 final PostingsEnum postingsDocs2;
+1903c1903
+<                 postingsPostings = postingsTermsEnum.docsAndPositions(null, postingsPostings);
+---
+>                 postingsPostings = postingsTermsEnum.postings(null, postingsPostings, PostingsEnum.FLAG_ALL);
+1906c1906
+<                   postingsDocs = postingsTermsEnum.docs(null, postingsDocs);
+---
+>                   postingsDocs = postingsTermsEnum.postings(null, postingsDocs);

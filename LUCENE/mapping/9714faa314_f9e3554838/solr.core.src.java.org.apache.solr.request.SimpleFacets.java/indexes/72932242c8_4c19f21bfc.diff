@@ -1,0 +1,65 @@
+334a335,348
+>   
+> 
+> 
+> 
+>   public NamedList<Integer> getTermCountsForPivots(String field, DocSet docs) throws IOException {
+>     Integer mincount = params.getFieldInt(field, FacetParams.FACET_PIVOT_MINCOUNT, 1);
+>     return getTermCounts(field, mincount, docs);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+338a353,357
+>   
+> 
+> 
+> 
+> 
+339a359,370
+>     Integer mincount = params.getFieldInt(field, FacetParams.FACET_MINCOUNT);
+>     return getTermCounts(field, mincount, base);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   private NamedList<Integer> getTermCounts(String field, Integer mincount, DocSet base) throws IOException {
+343d373
+<     Integer mincount = params.getFieldInt(field, FacetParams.FACET_MINCOUNT);
+557c587,588
+<                 result.add(workerKey, getListedTermCounts(workerFacetValue, termList, workerBase));
+---
+>                 List<String> terms = StrUtils.splitSmart(termList, ",", true);
+>                 result.add(workerKey, getListedTermCounts(workerFacetValue, workerBase, terms));
+599a631,636
+>   
+> 
+> 
+> 
+> 
+> 
+601c638,639
+<     return getListedTermCounts(field, termList, this.docs);
+---
+>     List<String> terms = StrUtils.splitSmart(termList, ",", true);
+>     return getListedTermCounts(field, this.docs, terms);
+604c642,648
+<   private NamedList getListedTermCounts(String field, String termList, DocSet base) throws IOException {
+---
+>   
+> 
+> 
+> 
+> 
+> 
+>   protected NamedList<Integer> getListedTermCounts(String field, DocSet base, List<String> terms) throws IOException {
+606d649
+<     List<String> terms = StrUtils.splitSmart(termList, ",", true);

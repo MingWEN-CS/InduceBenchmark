@@ -1,0 +1,12 @@
+790a791,801
+>                 
+>                 
+>                 
+>                 
+>                 
+>                 for (ItemState state : shared.addedStates()) {
+>                     state.setStatus(ItemState.STATUS_EXISTING);
+>                     cache.cache(state);
+>                 }
+> 
+>                 

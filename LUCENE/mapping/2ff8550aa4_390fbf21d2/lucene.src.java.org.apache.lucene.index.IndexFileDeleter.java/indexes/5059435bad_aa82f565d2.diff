@@ -1,0 +1,42 @@
+33a34
+> import org.apache.lucene.store.NoSuchDirectoryException;
+147,148d147
+<     String[] files = directory.listAll();
+< 
+149a149,156
+>     boolean seenIndexFiles = false;
+>     String[] files = null;
+>     try {
+>       files = directory.listAll();
+>     } catch (NoSuchDirectoryException e) {  
+>       
+>       files = new String[0];
+>     }
+151,153c158
+<     for(int i=0;i<files.length;i++) {
+< 
+<       String fileName = files[i];
+---
+>     for (String fileName : files) {
+156c161,162
+< 
+---
+>         seenIndexFiles = true;
+>         
+198c204,207
+<     if (currentCommitPoint == null) {
+---
+>     
+>     
+>     
+>     if (currentCommitPoint == null && seenIndexFiles) {
+238c247,249
+<     policy.onInit(commits);
+---
+>     if (seenIndexFiles) {
+>       policy.onInit(commits);
+>     }
+244c255
+<     startingCommitDeleted = currentCommitPoint.isDeleted();
+---
+>     startingCommitDeleted = currentCommitPoint == null ? false : currentCommitPoint.isDeleted();

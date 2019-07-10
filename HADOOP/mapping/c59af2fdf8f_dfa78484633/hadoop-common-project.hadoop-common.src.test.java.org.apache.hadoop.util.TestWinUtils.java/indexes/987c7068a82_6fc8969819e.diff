@@ -1,0 +1,223 @@
+48c48,50
+<       "/tmp"), TestWinUtils.class.getSimpleName());
+---
+>       "target"+File.pathSeparator + "tmp"), TestWinUtils.class.getSimpleName());
+> 
+>   String winutils;
+51c53
+<   public void setUp() {
+---
+>   public void setUp() throws IOException {
+54a57,59
+>     assertTrue("Failed to create Test directory " + TEST_DIR,
+>         TEST_DIR.isDirectory() );
+>     winutils = Shell.getWinutilsPath();
+61a67,70
+>   private void requireWinutils() throws IOException {
+>     Shell.getWinutilsPath();
+>   }
+> 
+65,67c74,77
+<     FileOutputStream os = new FileOutputStream(file);
+<     os.write(data);
+<     os.close();
+---
+>     try (FileOutputStream os = new FileOutputStream(file)) {
+>       os.write(data);
+>       os.close();
+>     }
+72,75c82,88
+<     FileInputStream fos = new FileInputStream(file);
+<     byte[] b = new byte[100];
+<     fos.read(b);
+<     return b.toString();
+---
+>     byte[] b;
+>     try (FileInputStream fos = new FileInputStream(file)) {
+>       b = new byte[100];
+>       int count = fos.read(b);
+>       assertEquals(100, count);
+>     }
+>     return new String(b);
+79a93
+>     requireWinutils();
+85a100
+>     String testPath = testFile.getCanonicalPath();
+87c102
+<         Shell.WINUTILS, "ls", testFile.getCanonicalPath());
+---
+>         winutils, "ls", testPath);
+89,91c104,105
+<     assertTrue(outputArgs[0].equals("-rwx------"));
+<     assertTrue(outputArgs[outputArgs.length - 1]
+<         .equals(testFile.getCanonicalPath()));
+---
+>     assertEquals("-rwx------", outputArgs[0]);
+>     assertEquals(outputArgs[outputArgs.length - 1], testPath);
+96c110
+<         Shell.WINUTILS, "ls", "-F", testFile.getCanonicalPath());
+---
+>         winutils, "ls", "-F", testPath);
+99c113
+<     assertTrue(outputArgs[0].equals("-rwx------"));
+---
+>     assertEquals("-rwx------", outputArgs[0]);
+101c115
+<     assertTrue(outputArgs[8].equals(testFile.getCanonicalPath()));
+---
+>     assertEquals(outputArgs[8], testPath);
+108a123
+>     requireWinutils();
+114c129
+<         Shell.WINUTILS, "groups").trim();
+---
+>         winutils, "groups").trim();
+116c131
+<         Shell.WINUTILS, "groups", currentUser).trim();
+---
+>         winutils, "groups", currentUser).trim();
+121c136
+<         Shell.WINUTILS, "groups", "-F", currentUser).trim();
+---
+>         winutils, "groups", "-F", currentUser).trim();
+128c143
+<         Shell.WINUTILS, "chmod", mask, file.getCanonicalPath());
+---
+>         winutils, "chmod", mask, file.getCanonicalPath());
+133c148
+<         Shell.WINUTILS, "chmod", "-R", mask, file.getCanonicalPath());
+---
+>         winutils, "chmod", "-R", mask, file.getCanonicalPath());
+138c153
+<         Shell.WINUTILS, "ls", file.getCanonicalPath());
+---
+>         winutils, "ls", file.getCanonicalPath());
+143c158
+<         Shell.WINUTILS, "ls", "-F", file.getCanonicalPath());
+---
+>         winutils, "ls", "-F", file.getCanonicalPath());
+153a169
+>     requireWinutils();
+170a187
+>     requireWinutils();
+192a210
+>     requireWinutils();
+228a247
+>     requireWinutils();
+252c271
+<       assertFalse("writeFile should have failed!", true);
+---
+>       fail("writeFile should have failed!");
+264c283
+<     File winutilsFile = new File(Shell.WINUTILS);
+---
+>     File winutilsFile = Shell.getWinutilsFile();
+271c290
+<       assertFalse("executing " + aExe + " should have failed!", true);
+---
+>       fail("executing " + aExe + " should have failed!");
+280a300
+>     requireWinutils();
+290,291c310
+<     assertTrue("Listing a directory without read permission should fail",
+<         null == files);
+---
+>     assertNull("Listing a directory without read permission should fail", files);
+309c328
+<       assertFalse("writeFile should have failed!", true);
+---
+>       fail("writeFile should have failed!");
+358a378
+>     requireWinutils();
+379c399
+<         Shell.WINUTILS, "chown", userGroup, file.getCanonicalPath());
+---
+>         winutils, "chown", userGroup, file.getCanonicalPath());
+392a413
+>     requireWinutils();
+417a439
+>     requireWinutils();
+423c445
+<       Shell.execCommand(Shell.WINUTILS, "symlink", link, target);
+---
+>       Shell.execCommand(winutils, "symlink", link, target);
+433a456
+>     requireWinutils();
+439c462
+<       Shell.execCommand(Shell.WINUTILS, "symlink", link, target);
+---
+>       Shell.execCommand(winutils, "symlink", link, target);
+449a473
+>     requireWinutils();
+465c489
+<         Shell.WINUTILS, "symlink", dirLink.toString(), dir1.toString());
+---
+>         winutils, "symlink", dirLink.toString(), dir1.toString());
+467c491
+<         Shell.WINUTILS, "symlink", fileLink.toString(), file1.toString());
+---
+>         winutils, "symlink", fileLink.toString(), file1.toString());
+471c495
+<     String readLinkOutput = Shell.execCommand(Shell.WINUTILS,
+---
+>     String readLinkOutput = Shell.execCommand(winutils,
+476c500
+<     readLinkOutput = Shell.execCommand(Shell.WINUTILS,
+---
+>     readLinkOutput = Shell.execCommand(winutils,
+486c510
+<       Shell.execCommand(Shell.WINUTILS, "readlink", "");
+---
+>       Shell.execCommand(winutils, "readlink", "");
+495c519
+<       Shell.execCommand(Shell.WINUTILS, "readlink", "ThereIsNoSuchLink");
+---
+>       Shell.execCommand(winutils, "readlink", "ThereIsNoSuchLink");
+504c528
+<       Shell.execCommand(Shell.WINUTILS, "readlink", dir1.toString());
+---
+>       Shell.execCommand(winutils, "readlink", dir1.toString());
+513c537
+<       Shell.execCommand(Shell.WINUTILS, "readlink", file1.toString());
+---
+>       Shell.execCommand(winutils, "readlink", file1.toString());
+522c546
+<       Shell.execCommand(Shell.WINUTILS, "readlink", "a", "b");
+---
+>       Shell.execCommand(winutils, "readlink", "a", "b");
+531a556
+>     requireWinutils();
+541c566
+<     Shell.execCommand(Shell.WINUTILS, "task", "create", "testTaskCreate" + testNumber, 
+---
+>     Shell.execCommand(winutils, "task", "create", "testTaskCreate" + testNumber,
+552a578
+>     requireWinutils();
+557c583
+<     String out = Shell.execCommand(Shell.WINUTILS, "task", "create",
+---
+>     String out = Shell.execCommand(winutils, "task", "create",
+563c589
+<     out = Shell.execCommand(Shell.WINUTILS, "task", "create", "-c", "-1", "-m",
+---
+>     out = Shell.execCommand(winutils, "task", "create", "-c", "-1", "-m",
+569c595
+<     out = Shell.execCommand(Shell.WINUTILS, "task", "create", "-c", "10000", "-m",
+---
+>     out = Shell.execCommand(winutils, "task", "create", "-c", "10000", "-m",
+576c602
+<       out = Shell.execCommand(Shell.WINUTILS, "task", "create", "-m", "128", "job"
+---
+>       out = Shell.execCommand(winutils, "task", "create", "-m", "128", "job"
+587c613
+<       Shell.execCommand(Shell.WINUTILS, "task", "create", "-c", "-1", "-m",
+---
+>       Shell.execCommand(winutils, "task", "create", "-c", "-1", "-m",
+596c622
+<       Shell.execCommand(Shell.WINUTILS, "task", "create", "-c", "-m", "-1",
+---
+>       Shell.execCommand(winutils, "task", "create", "-c", "-m", "-1",
+605c631
+<       Shell.execCommand(Shell.WINUTILS, "task", "create", "-c", "foo",
+---
+>       Shell.execCommand(winutils, "task", "create", "-c", "foo",

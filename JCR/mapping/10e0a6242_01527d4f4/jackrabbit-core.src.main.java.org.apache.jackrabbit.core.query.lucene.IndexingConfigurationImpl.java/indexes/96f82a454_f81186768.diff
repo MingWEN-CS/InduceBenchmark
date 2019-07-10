@@ -1,0 +1,5 @@
+154c154,155
+<                         Class clazz = Class.forName(analyzerClassName);
+---
+>                             @SuppressWarnings("rawtypes")
+>                             Class clazz = Class.forName(analyzerClassName);

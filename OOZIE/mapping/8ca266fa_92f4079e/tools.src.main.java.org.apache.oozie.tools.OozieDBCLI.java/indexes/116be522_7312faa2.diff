@@ -1,0 +1,19 @@
+328a329,331
+>     private final static String UPDATE_DELIMITER_VER_TWO_MSSQL=
+>             "UPDATE COORD_ACTIONS SET MISSING_DEPENDENCIES = REPLACE(CAST(MISSING_DEPENDENCIES AS varchar(MAX)),';','!!')";
+> 
+376c379,386
+<                 writer.println(UPDATE_DELIMITER_VER_TWO + ";");
+---
+>                 String  updateMissingDependenciesQuery;
+>                 if (getDBVendor().equals("sqlserver")){
+>                     updateMissingDependenciesQuery = UPDATE_DELIMITER_VER_TWO_MSSQL;
+>                 } else {
+>                     updateMissingDependenciesQuery = UPDATE_DELIMITER_VER_TWO;
+>                 }
+> 
+>                 writer.println(updateMissingDependenciesQuery + ";");
+380c390
+<                     st.executeUpdate(UPDATE_DELIMITER_VER_TWO);
+---
+>                     st.executeUpdate(updateMissingDependenciesQuery);

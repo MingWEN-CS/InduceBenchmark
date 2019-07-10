@@ -1,0 +1,105 @@
+27c27,32
+< import static org.mockito.Matchers.*;
+---
+> import static org.mockito.Matchers.any;
+> import static org.mockito.Matchers.anyBoolean;
+> import static org.mockito.Matchers.anyCollectionOf;
+> import static org.mockito.Matchers.anyLong;
+> import static org.mockito.Matchers.anyString;
+> import static org.mockito.Matchers.eq;
+575c580
+<     final Stage s = getStageWithServerAction(1, 977, payload, "test", 1200);
+---
+>     final Stage s = getStageWithServerAction(1, 977, payload, "test", 1200, false, false);
+730c735
+<     final Stage s = getStageWithServerAction(1, 977, payload, "test", 2);
+---
+>     final Stage s = getStageWithServerAction(1, 977, payload, "test", 2, false, false);
+801c806
+<     Stage s = getStageWithServerAction(1, 977, null, "test", 2);
+---
+>     Stage s = getStageWithServerAction(1, 977, null, "test", 2, false, false);
+820c825
+<     testTimeoutRequest(RoleCommand.EXECUTE);
+---
+>     testTimeoutRequest(RoleCommand.EXECUTE, false, false);
+825c830
+<     testTimeoutRequest(RoleCommand.CUSTOM_COMMAND);
+---
+>     testTimeoutRequest(RoleCommand.CUSTOM_COMMAND, false, false);
+830c835
+<     testTimeoutRequest(RoleCommand.ACTIONEXECUTE);
+---
+>     testTimeoutRequest(RoleCommand.ACTIONEXECUTE, false, false);
+835c840
+<     testTimeoutRequest(RoleCommand.SERVICE_CHECK);
+---
+>     testTimeoutRequest(RoleCommand.SERVICE_CHECK, false, false);
+838c843,865
+<   private void testTimeoutRequest(RoleCommand roleCommand) throws AmbariException, InvalidStateTransitionException {
+---
+>   
+> 
+> 
+> 
+> 
+> 
+>   @Test
+>   public void testTimeoutWithSkippableStageButNotCommand() throws Exception {
+>     testTimeoutRequest(RoleCommand.EXECUTE, true, false);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+>   @Test
+>   public void testTimeoutWithSkippableCommand() throws Exception {
+>     testTimeoutRequest(RoleCommand.EXECUTE, true, true);
+>   }
+> 
+>   private void testTimeoutRequest(RoleCommand roleCommand, boolean stageSupportsAutoSkip,
+>       boolean autoSkipFailedTask) throws AmbariException, InvalidStateTransitionException {
+875c902
+<     Stage s = getStageWithServerAction(1, 977, null, "test", 2);
+---
+>     Stage s = getStageWithServerAction(1, 977, null, "test", 2, stageSupportsAutoSkip, autoSkipFailedTask);
+884c911,914
+<     db.timeoutHostRole(EasyMock.anyString(), EasyMock.anyLong(), EasyMock.anyLong(), EasyMock.anyString(), EasyMock.anyBoolean());
+---
+>     boolean taskShouldBeSkipped = stageSupportsAutoSkip && autoSkipFailedTask;
+>     db.timeoutHostRole(EasyMock.anyString(), EasyMock.anyLong(), EasyMock.anyLong(),
+>         EasyMock.anyString(), EasyMock.eq(taskShouldBeSkipped));
+> 
+913c943
+<     final Stage s = getStageWithServerAction(1, 977, payload, "test", 300);
+---
+>     final Stage s = getStageWithServerAction(1, 977, payload, "test", 300, false, false);
+981,983c1011,1013
+<   private Stage getStageWithServerAction(long requestId, long stageId,
+<                                                 Map<String, String> payload, String requestContext,
+<                                                 int timeout) {
+---
+>   private Stage getStageWithServerAction(long requestId, long stageId, Map<String, String> payload,
+>       String requestContext, int timeout, boolean stageSupportsAutoSkip,
+>       boolean autoSkipFailedTask) {
+986a1017
+> 
+987a1019,1020
+>     stage.setSkippable(stageSupportsAutoSkip);
+>     stage.setAutoSkipFailureSupported(stageSupportsAutoSkip);
+994c1027,1031
+<         null, null, timeout, false, false);
+---
+>         null, null, timeout, false, autoSkipFailedTask);
+> 
+>     
+>     stage.getExecutionCommands(null).get(0).getExecutionCommand().setTaskId(
+>         stage.getOrderedHostRoleCommands().get(0).getTaskId());
+1755d1791
+<     
+2037c2073
+<     final Stage s = getStageWithServerAction(1, 977, payload, "test", 300);
+---
+>     final Stage s = getStageWithServerAction(1, 977, payload, "test", 300, false, false);

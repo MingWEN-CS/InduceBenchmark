@@ -1,0 +1,42 @@
+23a24,25
+> import org.apache.ambari.server.orm.dao.UserDAO;
+> import org.apache.ambari.server.orm.entities.UserEntity;
+24a27
+> import org.apache.commons.lang.StringUtils;
+29a33
+> import org.springframework.security.authentication.DisabledException;
+46a51
+>   private UserDAO userDAO;
+53c58,59
+<   public AmbariLdapAuthenticationProvider(Configuration configuration, AmbariLdapAuthoritiesPopulator authoritiesPopulator) {
+---
+>   public AmbariLdapAuthenticationProvider(Configuration configuration,
+>                                           AmbariLdapAuthoritiesPopulator authoritiesPopulator, UserDAO userDAO) {
+55a62
+>     this.userDAO = userDAO;
+64a72
+>         Integer userId = getUserId(auth);
+66c74
+<         return new AmbariAuthentication(auth);
+---
+>         return new AmbariAuthentication(auth, userId);
+184a193,211
+>   private Integer getUserId(Authentication authentication) {
+>     String userName = authentication.getName();
+> 
+>     UserEntity userEntity = userDAO.findLdapUserByName(userName);
+> 
+>     if (userEntity == null || !StringUtils.equals(userEntity.getUserName(), userName)) {
+>       LOG.info("user not found ");
+>       throw new UsernameNotFoundException("Username " + userName + " not found");
+>     }
+> 
+>     if (!userEntity.getActive()) {
+>       LOG.debug("User account is disabled");
+> 
+>       throw new DisabledException("Username " + userName + " is disabled");
+>     }
+> 
+>     return userEntity.getUserId();
+>   }
+> 

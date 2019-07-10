@@ -1,0 +1,7 @@
+304,305c304,306
+<       assertEquals("slave has fetch error count",
+<                    null, timesFailed);
+---
+>       
+>       
+>       assertTrue("slave has fetch error count: " + (String)timesFailed, timesFailed == null || ((String) timesFailed).equals("1"));

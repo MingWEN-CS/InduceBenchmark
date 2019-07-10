@@ -1,0 +1,27 @@
+292a293,318
+>         InternalVersion v = getCachedVersion(id);
+> 
+>         
+>         
+>         
+>         if (v == null) {
+>             try {
+>                 reload();
+>             } catch (RepositoryException e) {
+> 
+>                 
+>                 
+>                 
+>                 throw new RuntimeException(e);
+>             }
+>             v = getCachedVersion(id);
+>         }
+> 
+>         return v;
+>     }
+> 
+>     
+> 
+> 
+> 
+>     private InternalVersion getCachedVersion(NodeId id) {

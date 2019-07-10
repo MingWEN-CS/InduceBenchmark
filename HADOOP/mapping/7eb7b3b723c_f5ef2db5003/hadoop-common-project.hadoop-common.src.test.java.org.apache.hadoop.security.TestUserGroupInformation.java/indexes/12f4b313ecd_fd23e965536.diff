@@ -1,0 +1,162 @@
+40a41
+> import org.apache.hadoop.security.authentication.util.KerberosName;
+44a46
+> import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_SECURITY_AUTH_TO_LOCAL;
+75a78,82
+>     
+>     System.setProperty("hadoop.home.dir", "/tmp");
+>     
+>     System.setProperty("java.security.krb5.kdc", "");
+>     System.setProperty("java.security.krb5.realm", "DEFAULT.REALM");
+81,84c88
+<     conf.set(CommonConfigurationKeysPublic.HADOOP_SECURITY_AUTH_TO_LOCAL,
+<         "RULE:[2:$1@$0](.*@HADOOP.APACHE.ORG)s/@.*
+<         "RULE:[1:$1@$0](.*@HADOOP.APACHE.ORG)s/@.*
+<         + "DEFAULT");
+---
+>     UserGroupInformation.reset();
+86d89
+<     UserGroupInformation.setLoginUser(null);
+233,235d235
+<     UserGroupInformation ugi = 
+<       UserGroupInformation.createUserForTesting("user2/cron@HADOOP.APACHE.ORG", 
+<                                                 GROUP_NAMES);
+237,240c237,266
+<     assertEquals("user2/cron@HADOOP.APACHE.ORG", ugi.getUserName());
+<     assertEquals("user2", ugi.getShortUserName());
+<     ugi = UserGroupInformation.createUserForTesting(USER_NAME, GROUP_NAMES);
+<     assertEquals("user1", ugi.getShortUserName());
+---
+>     testConstructorSuccess("user1", "user1");
+>     testConstructorSuccess("user2@DEFAULT.REALM", "user2");
+>     testConstructorSuccess("user3/cron@DEFAULT.REALM", "user3");    
+>     testConstructorSuccess("user4@OTHER.REALM", "user4");
+>     testConstructorSuccess("user5/cron@OTHER.REALM", "user5");
+>     
+>     testConstructorFailures(null);
+>     testConstructorFailures("");
+>   }
+>   
+>   
+>   @Test (timeout = 30000)
+>   public void testConstructorWithRules() throws Exception {
+>     
+>     conf.set(HADOOP_SECURITY_AUTH_TO_LOCAL,
+>         "RULE:[1:$1@$0](.*@OTHER.REALM)s/(.*)@.*/other-$1/");
+>     UserGroupInformation.setConfiguration(conf);
+>     testConstructorSuccess("user1", "user1");
+>     testConstructorSuccess("user4@OTHER.REALM", "other-user4");
+>     
+>     testConstructorFailures("user2@DEFAULT.REALM");
+>     testConstructorFailures("user3/cron@DEFAULT.REALM");
+>     testConstructorFailures("user5/cron@OTHER.REALM");
+>     testConstructorFailures(null);
+>     testConstructorFailures("");
+>   }
+>   
+>   
+>   @Test (timeout = 30000)
+>   public void testConstructorWithKerberos() throws Exception {
+241a268,273
+>     SecurityUtil.setAuthenticationMethod(AuthenticationMethod.KERBEROS, conf);
+>     UserGroupInformation.setConfiguration(conf);
+> 
+>     testConstructorSuccess("user1", "user1");
+>     testConstructorSuccess("user2@DEFAULT.REALM", "user2");
+>     testConstructorSuccess("user3/cron@DEFAULT.REALM", "user3");    
+242a275,276
+>     testConstructorFailures("user4@OTHER.REALM");
+>     testConstructorFailures("user5/cron@OTHER.REALM");
+246a281,309
+>   
+>   @Test (timeout = 30000)
+>   public void testConstructorWithKerberosRules() throws Exception {
+>     
+>     SecurityUtil.setAuthenticationMethod(AuthenticationMethod.KERBEROS, conf);
+>     conf.set(HADOOP_SECURITY_AUTH_TO_LOCAL,
+>         "RULE:[2:$1@$0](.*@OTHER.REALM)s/(.*)@.*/other-$1/" +
+>         "RULE:[1:$1@$0](.*@OTHER.REALM)s/(.*)@.*/other-$1/" +
+>         "DEFAULT");
+>     UserGroupInformation.setConfiguration(conf);
+>     
+>     testConstructorSuccess("user1", "user1");
+>     testConstructorSuccess("user2@DEFAULT.REALM", "user2");
+>     testConstructorSuccess("user3/cron@DEFAULT.REALM", "user3");    
+>     testConstructorSuccess("user4@OTHER.REALM", "other-user4");
+>     testConstructorSuccess("user5/cron@OTHER.REALM", "other-user5");
+>     
+>     testConstructorFailures(null);
+>     testConstructorFailures("");
+>   }
+> 
+>   private void testConstructorSuccess(String principal, String shortName) {
+>     UserGroupInformation ugi = 
+>         UserGroupInformation.createUserForTesting(principal, GROUP_NAMES);
+>     
+>     assertEquals(principal, ugi.getUserName());
+>     assertEquals(shortName, ugi.getShortUserName());
+>   }
+>   
+248d310
+<     boolean gotException = false;
+251,252c313,317
+<     } catch (Exception e) {
+<       gotException = true;
+---
+>       fail("user:"+userName+" wasn't invalid");
+>     } catch (IllegalArgumentException e) {
+>       String expect = (userName == null || userName.isEmpty())
+>           ? "Null user" : "Illegal principal name "+userName;
+>       assertEquals(expect, e.getMessage());
+254c319,367
+<     assertTrue(gotException);
+---
+>   }
+> 
+>   @Test (timeout = 30000)
+>   public void testSetConfigWithRules() {
+>     String[] rules = { "RULE:[1:TEST1]", "RULE:[1:TEST2]", "RULE:[1:TEST3]" };
+> 
+>     
+>     UserGroupInformation.reset();
+>     assertFalse(KerberosName.hasRulesBeenSet());
+>     KerberosName.setRules(rules[0]);
+>     assertTrue(KerberosName.hasRulesBeenSet());
+>     assertEquals(rules[0], KerberosName.getRules());
+> 
+>     
+>     UserGroupInformation.createUserForTesting("someone", new String[0]);
+>     assertEquals(rules[0], KerberosName.getRules());
+> 
+>     
+>     conf.set(HADOOP_SECURITY_AUTH_TO_LOCAL, rules[1]);
+>     UserGroupInformation.setConfiguration(conf);
+>     assertEquals(rules[1], KerberosName.getRules());
+> 
+>     
+>     conf.set(HADOOP_SECURITY_AUTH_TO_LOCAL, rules[2]);
+>     UserGroupInformation.setConfiguration(conf);
+>     assertEquals(rules[2], KerberosName.getRules());
+>     
+>     
+>     UserGroupInformation.createUserForTesting("someone", new String[0]);
+>     assertEquals(rules[2], KerberosName.getRules());
+>   }
+> 
+>   @Test (timeout = 30000)
+>   public void testEnsureInitWithRules() throws IOException {
+>     String rules = "RULE:[1:RULE1]";
+> 
+>     
+>     UserGroupInformation.reset();
+>     assertFalse(KerberosName.hasRulesBeenSet());
+>     UserGroupInformation.createUserForTesting("someone", new String[0]);
+>     assertTrue(KerberosName.hasRulesBeenSet());
+>     
+>     
+>     UserGroupInformation.reset();
+>     KerberosName.setRules(rules);
+>     assertTrue(KerberosName.hasRulesBeenSet());
+>     assertEquals(rules, KerberosName.getRules());
+>     UserGroupInformation.createUserForTesting("someone", new String[0]);
+>     assertEquals(rules, KerberosName.getRules());

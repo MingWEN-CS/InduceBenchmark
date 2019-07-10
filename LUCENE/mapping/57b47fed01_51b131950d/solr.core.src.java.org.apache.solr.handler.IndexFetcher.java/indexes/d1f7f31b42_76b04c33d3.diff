@@ -1,0 +1,165 @@
+29a30
+> import java.nio.file.FileSystems;
+31a33,34
+> import java.nio.file.Path;
+> import java.nio.file.StandardCopyOption;
+286a290
+>     File tmpTlogDir = null;
+382a387,391
+>       if (tlogFilesToDownload != null) {
+>         tmpTlogDir = new File(solrCore.getUpdateHandler().getUpdateLog().getLogDir(), "tlog." + timestamp);
+>       }
+> 
+>       
+438c447,448
+<             bytesDownloaded += downloadTlogFiles(timestamp, latestGeneration);
+---
+>             bytesDownloaded += downloadTlogFiles(tmpTlogDir, latestGeneration);
+>             reloadCore = true; 
+454a465,468
+>             if (tlogFilesToDownload != null) {
+>               
+>               successfulInstall &= moveTlogFiles(tmpTlogDir);
+>             }
+478a493,496
+>             if (tlogFilesToDownload != null) {
+>               
+>               successfulInstall &= moveTlogFiles(tmpTlogDir);
+>             }
+492c510
+<           LOG.info("Reloading SolrCore {}", solrCore.getName());
+---
+>          LOG.info("Reloading SolrCore {}", solrCore.getName());
+514c532
+<           cleanup(solrCore, tmpIndexDir, indexDir, deleteTmpIdxDir, successfulInstall);
+---
+>           cleanup(solrCore, tmpIndexDir, indexDir, deleteTmpIdxDir, tmpTlogDir, successfulInstall);
+537c555
+<         cleanup(solrCore, tmpIndexDir, indexDir, deleteTmpIdxDir, successfulInstall);
+---
+>         cleanup(solrCore, tmpIndexDir, indexDir, deleteTmpIdxDir, tmpTlogDir, successfulInstall);
+543c561
+<       Directory indexDir, boolean deleteTmpIdxDir, boolean successfulInstall) throws IOException {
+---
+>       Directory indexDir, boolean deleteTmpIdxDir, File tmpTlogDir, boolean successfulInstall) throws IOException {
+555c573
+<       filesToDownload = filesDownloaded = confFilesDownloaded = confFilesToDownload = null;
+---
+>       filesToDownload = filesDownloaded = confFilesDownloaded = confFilesToDownload = tlogFilesToDownload = tlogFilesDownloaded = null;
+579a598,601
+> 
+>       if (tmpTlogDir != null) {
+>         delTree(tmpTlogDir);
+>       }
+795,796c817,818
+<   private long downloadTlogFiles(String timestamp, long latestGeneration) throws Exception {
+<     UpdateLog ulog = solrCore.getUpdateHandler().getUpdateLog();
+---
+>   
+> 
+797a820
+>   private long downloadTlogFiles(File tmpTlogDir, long latestGeneration) throws Exception {
+799c822
+<     tlogFilesDownloaded = Collections.synchronizedList(new ArrayList<Map<String, Object>>());
+---
+>     tlogFilesDownloaded = Collections.synchronizedList(new ArrayList<>());
+801,823c824,836
+<     File tmpTlogDir = new File(ulog.getLogDir(), "tlog." + getDateAsStr(new Date()));
+<     try {
+<       boolean status = tmpTlogDir.mkdirs();
+<       if (!status) {
+<         throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,
+<             "Failed to create temporary tlog folder: " + tmpTlogDir.getName());
+<       }
+<       for (Map<String, Object> file : tlogFilesToDownload) {
+<         String saveAs = (String) (file.get(ALIAS) == null ? file.get(NAME) : file.get(ALIAS));
+<         localFileFetcher = new LocalFsFileFetcher(tmpTlogDir, file, saveAs, TLOG_FILE, latestGeneration);
+<         currentFile = file;
+<         localFileFetcher.fetchFile();
+<         bytesDownloaded += localFileFetcher.getBytesDownloaded();
+<         tlogFilesDownloaded.add(new HashMap<>(file));
+<       }
+<       
+<       
+<       terminateAndWaitFsyncService();
+<       ((CdcrUpdateLog) ulog).reset(); 
+<       copyTmpTlogFiles2Tlog(tmpTlogDir, timestamp);
+<       ulog.init(solrCore.getUpdateHandler(), solrCore); 
+<     } finally {
+<       delTree(tmpTlogDir);
+---
+> 
+>     boolean status = tmpTlogDir.mkdirs();
+>     if (!status) {
+>       throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,
+>           "Failed to create temporary tlog folder: " + tmpTlogDir.getName());
+>     }
+>     for (Map<String, Object> file : tlogFilesToDownload) {
+>       String saveAs = (String) (file.get(ALIAS) == null ? file.get(NAME) : file.get(ALIAS));
+>       localFileFetcher = new LocalFsFileFetcher(tmpTlogDir, file, saveAs, TLOG_FILE, latestGeneration);
+>       currentFile = file;
+>       localFileFetcher.fetchFile();
+>       bytesDownloaded += localFileFetcher.getBytesDownloaded();
+>       tlogFilesDownloaded.add(new HashMap<>(file));
+1036a1050,1065
+> 
+> 
+>   private boolean moveTlogFiles(File tmpTlogDir) {
+>     UpdateLog ulog = solrCore.getUpdateHandler().getUpdateLog();
+> 
+>     
+>     
+>     ((CdcrUpdateLog) ulog).reset();
+>     
+>     if (!copyTmpTlogFiles2Tlog(tmpTlogDir)) return false;
+>     return true;
+>   }
+> 
+>   
+> 
+> 
+1091,1093c1120,1123
+<   private void copyTmpTlogFiles2Tlog(File tmpTlogDir, String timestamp) {
+<     File tlogDir = new File(solrCore.getUpdateHandler().getUpdateLog().getLogDir());
+<     File backupTlogDir = new File(tlogDir.getParent(), UpdateLog.TLOG_NAME + "." + timestamp);
+---
+> 
+>   private boolean copyTmpTlogFiles2Tlog(File tmpTlogDir) {
+>     Path tlogDir = FileSystems.getDefault().getPath(solrCore.getUpdateHandler().getUpdateLog().getLogDir());
+>     Path backupTlogDir = FileSystems.getDefault().getPath(tlogDir.getParent().toAbsolutePath().toString(), tmpTlogDir.getName());
+1096c1126
+<       org.apache.commons.io.FileUtils.moveDirectory(tlogDir, backupTlogDir);
+---
+>       Files.move(tlogDir, backupTlogDir, StandardCopyOption.ATOMIC_MOVE);
+1098,1099c1128,1129
+<       throw new SolrException(ErrorCode.SERVER_ERROR,
+<           "Unable to rename: " + tlogDir + " to: " + backupTlogDir, e);
+---
+>       SolrException.log(LOG, "Unable to rename: " + tlogDir + " to: " + backupTlogDir, e);
+>       return false;
+1101a1132
+>     Path src = FileSystems.getDefault().getPath(backupTlogDir.toAbsolutePath().toString(), tmpTlogDir.getName());
+1103,1104c1134
+<       tmpTlogDir = new File(backupTlogDir, tmpTlogDir.getName());
+<       org.apache.commons.io.FileUtils.moveDirectory(tmpTlogDir, tlogDir);
+---
+>       Files.move(src, tlogDir, StandardCopyOption.ATOMIC_MOVE);
+1106,1107c1136,1147
+<       throw new SolrException(ErrorCode.SERVER_ERROR,
+<           "Unable to rename: " + tmpTlogDir + " to: " + tlogDir, e);
+---
+>       SolrException.log(LOG, "Unable to rename: " + src + " to: " + tlogDir, e);
+> 
+>       
+>       try {
+>         Files.move(backupTlogDir, tlogDir, StandardCopyOption.ATOMIC_MOVE);
+>       } catch (IOException e2) {
+>         
+>         throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,
+>             "Unable to rename: " + backupTlogDir + " to: " + tlogDir);
+>       }
+> 
+>       return false;
+1108a1149,1150
+> 
+>     return true;

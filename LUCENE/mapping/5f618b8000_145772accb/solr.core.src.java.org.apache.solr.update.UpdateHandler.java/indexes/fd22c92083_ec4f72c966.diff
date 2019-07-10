@@ -1,0 +1,13 @@
+124a125,128
+>     this(core, null);
+>   }
+>   
+>   public UpdateHandler(SolrCore core, UpdateLog updateLog)  {
+134c138,142
+<     initLog(ulogPluginInfo);
+---
+>     if (updateLog == null) {
+>       initLog(ulogPluginInfo);
+>     } else {
+>       this.ulog = updateLog;
+>     }

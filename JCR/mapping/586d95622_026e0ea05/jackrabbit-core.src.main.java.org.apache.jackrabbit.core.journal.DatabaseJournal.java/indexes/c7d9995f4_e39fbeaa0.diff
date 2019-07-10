@@ -1,0 +1,27 @@
+444a445,470
+> 
+>     @Override
+>     protected void doSync(long startRevision) throws JournalException {
+>         try {
+>             conHelper.startBatch();
+>             super.doSync(startRevision);
+>         } catch (SQLException e) {
+>             
+>             log.error("couldn't sync the cluster node", e);
+>         } finally {
+>             try {
+>                 conHelper.endBatch(true);
+>             } catch (SQLException e) {
+>                 log.warn("couldn't close connection", e);
+>             }
+>         }
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 

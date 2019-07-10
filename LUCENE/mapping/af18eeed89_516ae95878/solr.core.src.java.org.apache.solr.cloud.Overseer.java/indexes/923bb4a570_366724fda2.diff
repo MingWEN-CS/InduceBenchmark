@@ -1,0 +1,12 @@
+126c126
+<   public static final Set<String> sliceUniqueBooleanProperties = ImmutableSet.of("preferredleader");
+---
+>   public static final Set<String> sliceUniqueBooleanProperties = ImmutableSet.of("property.preferredleader");
+534a535,537
+>       if (property.startsWith(OverseerCollectionProcessor.COLL_PROP_PREFIX) == false) {
+>         property = OverseerCollectionProcessor.COLL_PROP_PREFIX + property;
+>       }
+592a596,598
+>       if (property.startsWith(OverseerCollectionProcessor.COLL_PROP_PREFIX) == false) {
+>         property = OverseerCollectionProcessor.COLL_PROP_PREFIX + property;
+>       }

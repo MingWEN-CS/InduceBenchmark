@@ -1,0 +1,82 @@
+18a19,36
+> import java.io.IOException;
+> import java.util.ArrayList;
+> import java.util.Collection;
+> import java.util.Collections;
+> import java.util.HashMap;
+> import java.util.IdentityHashMap;
+> import java.util.List;
+> import java.util.Map;
+> import java.util.concurrent.Callable;
+> import java.util.concurrent.ExecutionException;
+> import java.util.concurrent.Executor;
+> import java.util.concurrent.Future;
+> import java.util.concurrent.FutureTask;
+> import java.util.concurrent.RunnableFuture;
+> import java.util.concurrent.Semaphore;
+> import java.util.concurrent.SynchronousQueue;
+> import java.util.concurrent.TimeUnit;
+> 
+52d69
+< import org.apache.solr.handler.component.FacetComponent;
+71a89
+> import org.apache.solr.search.facet.FacetDebugInfo;
+76,93c94
+< 
+< import java.io.IOException;
+< import java.util.ArrayList;
+< import java.util.Collection;
+< import java.util.Collections;
+< import java.util.HashMap;
+< import java.util.IdentityHashMap;
+< import java.util.List;
+< import java.util.Map;
+< import java.util.concurrent.Callable;
+< import java.util.concurrent.ExecutionException;
+< import java.util.concurrent.Executor;
+< import java.util.concurrent.Future;
+< import java.util.concurrent.FutureTask;
+< import java.util.concurrent.RunnableFuture;
+< import java.util.concurrent.Semaphore;
+< import java.util.concurrent.SynchronousQueue;
+< import java.util.concurrent.TimeUnit;
+---
+> import org.apache.solr.util.RTimer;
+111a113,115
+>   protected FacetDebugInfo fdebugParent;
+>   protected FacetDebugInfo fdebug;
+> 
+162a167,170
+>   public void setFacetDebugInfo(FacetDebugInfo fdebugParent) {
+>     this.fdebugParent = fdebugParent;
+>   }
+> 
+452a461,468
+>     RTimer timer = null;
+>     if (fdebug != null) {
+>        fdebug.putInfoItem("method", method.name());
+>        fdebug.putInfoItem("inputDocSetSize", docs.size());
+>        fdebug.putInfoItem("field", field);
+>        timer = new RTimer();
+>     }
+> 
+538c554
+<           counts = DocValuesFacets.getCounts(searcher, docs, field, offset,limit, mincount, missing, sort, prefix, contains, ignoreCase);
+---
+>           counts = DocValuesFacets.getCounts(searcher, docs, field, offset,limit, mincount, missing, sort, prefix, contains, ignoreCase, fdebug);
+544a561,565
+>     if (fdebug != null) {
+>       long timeElapsed = (long) timer.getTime();
+>       fdebug.setElapse(timeElapsed);
+>     }
+> 
+656a678,681
+>     if (fdebugParent != null) {
+>       fdebugParent.putInfoItem("maxThreads", maxThreads);
+>     }
+> 
+659a685,688
+>         if (fdebugParent != null) {
+>           fdebug = new FacetDebugInfo();
+>           fdebugParent.addChild(fdebug);
+>         }

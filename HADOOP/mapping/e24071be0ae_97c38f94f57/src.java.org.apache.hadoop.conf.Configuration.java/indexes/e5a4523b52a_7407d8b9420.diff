@@ -1,0 +1,131 @@
+29a30
+> import java.io.OutputStreamWriter;
+55a57
+> import javax.xml.transform.TransformerException;
+70a73
+> import org.w3c.dom.Comment;
+158a162,167
+> 
+>   static final String UNKNOWN_RESOURCE = "Unknown";
+> 
+>   
+> 
+> 
+178,180d186
+<   
+<   
+< 
+182,184d187
+< 
+<   private boolean storeResource;
+<   
+387a391
+>     updatingResource = new HashMap<String, String>();
+391,407d394
+<     this.storeResource = false;
+<   }
+<   
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   private Configuration(Configuration other, boolean storeResource) {
+<     this(other);
+<     this.storeResource = storeResource;
+<     if (storeResource) {
+<       updatingResource = new HashMap<String, String>();
+<     }
+425a413,414
+> 
+>      this.updatingResource = new HashMap<String, String>(other.updatingResource);
+606a596
+>       updatingResource.put(name, UNKNOWN_RESOURCE);
+1355,1358c1345,1346
+<         if (storeResource) {
+<           for (Map.Entry<Object,Object> item: overlay.entrySet()) {
+<             updatingResource.put((String) item.getKey(), "Unknown");
+<           }
+---
+>         for (Map.Entry<Object,Object> item: overlay.entrySet()) {
+>           updatingResource.put((String) item.getKey(), UNKNOWN_RESOURCE);
+1441,1443c1429
+<       if (storeResource) {
+<         updatingResource.remove(oldKey);
+<       }
+---
+>       updatingResource.remove(oldKey);
+1467,1469c1453
+<       if (storeResource) {
+<         updatingResource.put(key, updatingResource.get(attr));
+<       }
+---
+>       updatingResource.put(key, updatingResource.get(attr));
+1584,1586c1568
+<               if (storeResource) {
+<                 updatingResource.put(attr, name.toString());
+<               }
+---
+>               updatingResource.put(attr, name.toString());
+1619a1602,1611
+>     writeXml(new OutputStreamWriter(out));
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   public synchronized void writeXml(Writer out) throws IOException {
+1638c1630,1635
+<       
+---
+> 
+>         if (updatingResource != null) {
+>           Comment commentNode = doc.createComment(
+>             "Loaded from " + updatingResource.get(name));
+>           propNode.appendChild(commentNode);
+>         }
+1655,1656c1652,1655
+<     } catch (Exception e) {
+<       throw new RuntimeException(e);
+---
+>     } catch (TransformerException te) {
+>       throw new IOException(te);
+>     } catch (ParserConfigurationException pe) {
+>       throw new IOException(pe);
+1671c1670
+<   public static void dumpConfiguration(Configuration conf, 
+---
+>   public static void dumpConfiguration(Configuration config,
+1673,1674d1671
+<     Configuration config = new Configuration(conf,true);
+<     config.reloadConfiguration();
+1681,1690c1678,1689
+<     for (Map.Entry<Object,Object> item: config.getProps().entrySet()) {
+<       dumpGenerator.writeStartObject();
+<       dumpGenerator.writeStringField("key", (String) item.getKey());
+<       dumpGenerator.writeStringField("value", 
+<           config.get((String) item.getKey()));
+<       dumpGenerator.writeBooleanField("isFinal",
+<           config.finalParameters.contains(item.getKey()));
+<       dumpGenerator.writeStringField("resource",
+<           config.updatingResource.get(item.getKey()));
+<       dumpGenerator.writeEndObject();
+---
+>     synchronized (config) {
+>       for (Map.Entry<Object,Object> item: config.getProps().entrySet()) {
+>         dumpGenerator.writeStartObject();
+>         dumpGenerator.writeStringField("key", (String) item.getKey());
+>         dumpGenerator.writeStringField("value", 
+>                                        config.get((String) item.getKey()));
+>         dumpGenerator.writeBooleanField("isFinal",
+>                                         config.finalParameters.contains(item.getKey()));
+>         dumpGenerator.writeStringField("resource",
+>                                        config.updatingResource.get(item.getKey()));
+>         dumpGenerator.writeEndObject();
+>       }

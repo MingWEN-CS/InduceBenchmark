@@ -1,0 +1,32 @@
+52a53
+> import org.apache.solr.SolrTestCaseJ4;
+248c249
+<     
+---
+> 
+413c414
+<     
+---
+> 
+1165,1185d1165
+<   private void checkForMissingCollection(String collectionName)
+<       throws Exception {
+<     
+<     long timeoutAt = System.currentTimeMillis() + 45000;
+<     boolean found = true;
+<     while (System.currentTimeMillis() < timeoutAt) {
+<       getCommonCloudSolrServer().getZkStateReader().updateClusterState(true);
+<       ClusterState clusterState = getCommonCloudSolrServer().getZkStateReader().getClusterState();
+< 
+< 
+<       if (! clusterState.hasCollection(collectionName)) {
+<         found = false;
+<         break;
+<       }
+<       Thread.sleep(100);
+<     }
+<     if (found) {
+<       fail("Found collection that should be gone " + collectionName);
+<     }
+<   }
+< 

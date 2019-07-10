@@ -1,0 +1,35 @@
+234a235
+>     InetAddress addr = InetAddress.getByName("localhost");
+236c237
+<     ServerSocket s = new ServerSocket(port);
+---
+>     ServerSocket s = new ServerSocket(port, 50, addr);
+250c251,252
+<     ServerSocket s = new ServerSocket(port[0]);
+---
+>     InetAddress addr = InetAddress.getByName("localhost");
+>     ServerSocket s = new ServerSocket(port[0], 50, addr);
+288a291
+>     InetAddress addr = InetAddress.getByName("localhost");
+292c295
+<     ServerSocket s = new ServerSocket(port[0]);
+---
+>     ServerSocket s = new ServerSocket(port[0], 50, addr);
+308c311
+<   private int[] findTwoFreeSequentialPorts(int startingAddress) {
+---
+>   private int[] findTwoFreeSequentialPorts(int startingAddress) throws UnknownHostException {
+320c323,324
+<   private int getFreePort(int startingAddress) {
+---
+>   private int getFreePort(int startingAddress) throws UnknownHostException {
+>     final InetAddress addr = InetAddress.getByName("localhost");
+323c327
+<         ServerSocket s = new ServerSocket(i);
+---
+>         ServerSocket s = new ServerSocket(i, 50, addr);
+339c343,344
+<     String hostname = InetAddress.getLocalHost().getHostName();
+---
+>     
+>     String hostname = "localhost";

@@ -1,0 +1,57 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.accumulo.server.rpc;
+
+import java.net.Socket;
+import java.nio.channels.SelectionKey;
+
+import org.apache.thrift.server.THsHaServer;
+import org.apache.thrift.transport.TNonblockingSocket;
+import org.apache.thrift.transport.TNonblockingTransport;
+
+
+
+
+
+public class CustomNonBlockingServer extends THsHaServer {
+
+  public CustomNonBlockingServer(Args args) {
+    super(args);
+  }
+
+  protected FrameBuffer createFrameBuffer(final TNonblockingTransport trans, final SelectionKey selectionKey, final AbstractSelectThread selectThread) {
+    return new CustomAsyncFrameBuffer(trans, selectionKey, selectThread);
+  }
+
+  private class CustomAsyncFrameBuffer extends AsyncFrameBuffer {
+
+    public CustomAsyncFrameBuffer(TNonblockingTransport trans, SelectionKey selectionKey, AbstractSelectThread selectThread) {
+      super(trans, selectionKey, selectThread);
+    }
+
+    @Override
+    public void invoke() {
+      if (trans_ instanceof TNonblockingSocket) {
+        TNonblockingSocket tsock = (TNonblockingSocket) trans_;
+        Socket sock = tsock.getSocketChannel().socket();
+        TServerUtils.clientAddress.set(sock.getInetAddress().getHostAddress() + ":" + sock.getPort());
+      }
+      super.invoke();
+    }
+  }
+
+}

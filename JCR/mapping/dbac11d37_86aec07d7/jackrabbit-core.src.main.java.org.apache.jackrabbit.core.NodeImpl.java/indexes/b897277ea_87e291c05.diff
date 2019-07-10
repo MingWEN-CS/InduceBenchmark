@@ -1,0 +1,698 @@
+378c378
+<             org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+---
+>             PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+415c415
+<             org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+---
+>             PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+422a423,434
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+424c436
+<                                                             org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl def)
+---
+>                                                             PropertyDefinitionImpl def)
+430a443,445
+>             if (def.getRequiredType() != PropertyType.UNDEFINED) {
+>                 type = def.getRequiredType();
+>             }
+586c601
+<         org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl newDef =
+---
+>         NodeDefinitionImpl newDef =
+655c670
+<             org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+---
+>             PropertyDefinitionImpl def = getApplicablePropertyDefinition(
+718c733
+<     protected org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl getApplicableChildNodeDefinition(Name nodeName,
+---
+>     protected NodeDefinitionImpl getApplicableChildNodeDefinition(Name nodeName,
+740c755
+<     protected org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl getApplicablePropertyDefinition(Name propertyName,
+---
+>     protected PropertyDefinitionImpl getApplicablePropertyDefinition(Name propertyName,
+1047c1062
+<                         org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl pdi = getApplicablePropertyDefinition(
+---
+>                         PropertyDefinitionImpl pdi = getApplicablePropertyDefinition(
+1110c1125
+<                         org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl ndi = getApplicableChildNodeDefinition(
+---
+>                         NodeDefinitionImpl ndi = getApplicableChildNodeDefinition(
+1462c1477
+<         org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl def;
+---
+>         NodeDefinitionImpl def;
+1524,1544c1539,1541
+< 
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         int type;
+<         if (values == null || values.length == 0
+<                 || values[0] == null) {
+<             type = PropertyType.UNDEFINED;
+<         } else {
+<             type = values[0].getType();
+<         }
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(name, type, true, false, status);
+<         try {
+<             prop.setValue(values);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+---
+>         int type = PropertyType.UNDEFINED;
+>         if (values != null) {
+>             for (Value v : values) {
+1546c1543,1546
+<                 removeChildProperty(name);
+---
+>                 if (v != null) {
+>                     type = v.getType();
+>                     break;
+>                 }
+1548,1549d1547
+<             
+<             throw re;
+1551c1549,1550
+<         return prop;
+---
+> 
+>         return setProperty(name, values, type, false);
+1572,1595c1571
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(name, type, true, true, status);
+<         try {
+<             if (prop.getDefinition().getRequiredType() == PropertyType.UNDEFINED
+<                     && type != PropertyType.UNDEFINED) {
+<                 prop.setValue(ValueHelper.convert(values, type, session.getValueFactory()));
+<             } else {
+<                 prop.setValue(values);
+<             }
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+<         }
+<         return prop;
+---
+>         return setProperty(name, values, type, true);
+1615,1638c1591
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         int type = PropertyType.UNDEFINED;
+<         if (value != null) {
+<             type = value.getType();
+<         }
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(name, type, false, false, status);
+<         try {
+<             prop.setValue(value);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+<         }
+<         return prop;
+---
+>         return setProperty(name, value, false);
+1901c1854
+<         org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl def;
+---
+>         NodeDefinitionImpl def;
+2158,2189c2111
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         int type;
+<         if (values == null || values.length == 0
+<                 || values[0] == null) {
+<             type = PropertyType.UNDEFINED;
+<         } else {
+<             type = values[0].getType();
+<         }
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(name, type, true, false, status);
+<         try {
+<             if (prop.getDefinition().getRequiredType() == PropertyType.UNDEFINED
+<                     && type != PropertyType.UNDEFINED) {
+<                 prop.setValue(ValueHelper.convert(values, type, session.getValueFactory()));
+<             } else {
+<                 prop.setValue(values);
+<             }
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+<         }
+<         return prop;
+---
+>         return setProperty(session.getQName(name), values);
+2198,2216c2120
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(name, type, true, true, status);
+<         try {
+<             prop.setValue(values, type);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+<         }
+<         return prop;
+---
+>         return setProperty(session.getQName(name), values, type);
+2225,2246c2129,2131
+<         
+< 
+< 
+< 
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(
+<                 name, PropertyType.STRING, true, false, status);
+<         try {
+<             prop.setValue(values);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+---
+>         Value[] v = null;
+>         if (values != null) {
+>             v = ValueHelper.convert(values, PropertyType.STRING, session.getValueFactory());
+2248c2133
+<         return prop;
+---
+>         return setProperty(name, v);
+2257,2278c2142,2144
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(name, type, true, true, status);
+<         try {
+<             if (prop.getDefinition().getRequiredType() == PropertyType.UNDEFINED
+<                     && type != PropertyType.UNDEFINED) {
+<                 prop.setValue(ValueHelper.convert(values, type, session.getValueFactory()));
+<             } else {
+<                 prop.setValue(values);
+<             }
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+---
+>         Value[] v = null;
+>         if (values != null) {
+>             v = ValueHelper.convert(values, type, session.getValueFactory());
+2280c2146
+<         return prop;
+---
+>         return setProperty(session.getQName(name), v, type, true);
+2289,2306c2155,2157
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(
+<                 name, PropertyType.STRING, false, false, status);
+<         try {
+<             prop.setValue(value);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+---
+>         Value v = null;
+>         if (value != null) {
+>             v = session.getValueFactory().createValue(value);
+2308c2159
+<         return prop;
+---
+>         return setProperty(name, v);
+2317,2338c2168,2170
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(name, type, false, true, status);
+<         try {
+<             if (prop.getDefinition().getRequiredType() == PropertyType.UNDEFINED
+<                     && type != PropertyType.UNDEFINED) {
+<                 prop.setValue(ValueHelper.convert(value, type, session.getValueFactory()));
+<             } else {
+<                 prop.setValue(value);
+<             }
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+---
+>         Value v = null;
+>         if (value != null) {
+>             v = session.getValueFactory().createValue(value, type);
+2340c2172
+<         return prop;
+---
+>         return setProperty(session.getQName(name), v, true);
+2349,2370c2181,2182
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(name, type, false, true, status);
+<         try {
+<             if (prop.getDefinition().getRequiredType() == PropertyType.UNDEFINED
+<                     && type != PropertyType.UNDEFINED) {
+<                 prop.setValue(ValueHelper.convert(value, type, session.getValueFactory()));
+<             } else {
+<                 prop.setValue(value);
+<             }
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+---
+>         if (value != null) {
+>             value = ValueHelper.convert(value, type, session.getValueFactory());
+2372c2184
+<         return prop;
+---
+>         return setProperty(session.getQName(name), value, true);
+2381,2409c2193
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         int type = PropertyType.UNDEFINED;
+<         if (value != null) {
+<             type = value.getType();
+<         }
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(name, type, false, false, status);
+<         try {
+<             if (prop.getDefinition().getRequiredType() == PropertyType.UNDEFINED
+<                     && type != PropertyType.UNDEFINED) {
+<                 prop.setValue(ValueHelper.convert(value, type, session.getValueFactory()));
+<             } else {
+<                 prop.setValue(value);
+<             }
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+<         }
+<         return prop;
+---
+>         return setProperty(session.getQName(name), value);
+2418,2435c2202,2204
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(
+<                 name, PropertyType.BINARY, false, false, status);
+<         try {
+<             prop.setValue(value);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+---
+>         Value v = null;
+>         if (value != null) {
+>             v = session.getValueFactory().createValue(value);
+2437c2206
+<         return prop;
+---
+>         return setProperty(name, v);
+2446,2447c2215,2217
+<         
+<         sanityCheck();
+---
+>         Value v = session.getValueFactory().createValue(value);
+>         return setProperty(name, v);
+>     }
+2449,2450c2219
+<         
+<         checkSetProperty();
+---
+>     
+2452,2465c2221,2226
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(
+<                 name, PropertyType.BOOLEAN, false, false, status);
+<         try {
+<             prop.setValue(value);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+<         }
+<         return prop;
+---
+> 
+>     public Property setProperty(String name, double value)
+>             throws ValueFormatException, VersionException, LockException,
+>             ConstraintViolationException, RepositoryException {
+>         Value v = session.getValueFactory().createValue(value);
+>         return setProperty(name, v);
+2471c2232
+<     public Property setProperty(String name, double value)
+---
+>     public Property setProperty(String name, long value)
+2474,2475c2235,2237
+<         
+<         sanityCheck();
+---
+>         Value v = session.getValueFactory().createValue(value);
+>         return setProperty(name, v);
+>     }
+2477,2478c2239
+<         
+<         checkSetProperty();
+---
+>     
+2480,2486c2241,2249
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(
+<                 name, PropertyType.DOUBLE, false, false, status);
+<         try {
+<             prop.setValue(value);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+---
+> 
+>     public Property setProperty(String name, Calendar value)
+>             throws ValueFormatException, VersionException, LockException,
+>             ConstraintViolationException, RepositoryException {
+>         Value v = null;
+>         if (value != null) {
+>             try {
+>                 v = session.getValueFactory().createValue(value);
+>             } catch (IllegalArgumentException e) {
+2488c2251
+<                 removeChildProperty(name);
+---
+>                 throw new ValueFormatException(e.getMessage());
+2490,2491d2252
+<             
+<             throw re;
+2493c2254
+<         return prop;
+---
+>         return setProperty(name, v);
+2499c2260
+<     public Property setProperty(String name, long value)
+---
+>     public Property setProperty(String name, Node value)
+2502,2514c2263,2267
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(
+<                 name, PropertyType.LONG, false, false, status);
+<         try {
+<             prop.setValue(value);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+---
+>         Value v = null;
+>         if (value != null) {
+>             try {
+>                 v = session.getValueFactory().createValue(value);
+>             } catch (UnsupportedRepositoryOperationException e) {
+2516c2269
+<                 removeChildProperty(name);
+---
+>                 throw new ValueFormatException("node is not of type mix:referenceable");
+2518,2519d2270
+<             
+<             throw re;
+2521c2272
+<         return prop;
+---
+>         return setProperty(name, v);
+2527,2528c2278,2312
+<     public Property setProperty(String name, Calendar value)
+<             throws ValueFormatException, VersionException, LockException,
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     protected PropertyImpl setProperty(Name name,
+>                                        Value value,
+>                                        boolean enforceType) throws
+>             ValueFormatException, VersionException, LockException,
+2535a2320,2324
+>         int type = PropertyType.UNDEFINED;
+>         if (value != null) {
+>             type = value.getType();
+>         }
+> 
+2537,2538c2326
+<         PropertyImpl prop = getOrCreateProperty(
+<                 name, PropertyType.DATE, false, false, status);
+---
+>         PropertyImpl prop = getOrCreateProperty(name, type, false, enforceType, status);
+2555,2556c2343,2379
+<     public Property setProperty(String name, Node value)
+<             throws ValueFormatException, VersionException, LockException,
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     protected PropertyImpl setProperty(Name name,
+>                                        Value[] values,
+>                                        int type,
+>                                        boolean enforceType) throws
+>             ValueFormatException, VersionException, LockException,
+2565,2566c2388
+<         PropertyImpl prop = getOrCreateProperty(
+<                 name, PropertyType.REFERENCE, false, true, status);
+---
+>         PropertyImpl prop = getOrCreateProperty(name, type, true, enforceType, status);
+2568c2390
+<             prop.setValue(value);
+---
+>             prop.setValue(values, type);
+3753c3575
+<                         org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl pdi = getApplicablePropertyDefinition(
+---
+>                         PropertyDefinitionImpl pdi = getApplicablePropertyDefinition(
+3821c3643
+<                         org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl ndi = getApplicableChildNodeDefinition(
+---
+>                         NodeDefinitionImpl ndi = getApplicableChildNodeDefinition(
+3862,3879c3684,3686
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(
+<                 name, PropertyType.DECIMAL, false, false, status);
+<         try {
+<             prop.setValue(value);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+---
+>         Value v = null;
+>         if (value != null) {
+>             v = session.getValueFactory().createValue(value);
+3881c3688
+<         return prop;
+---
+>         return setProperty(name, v);
+3890,3907c3697,3699
+<         
+<         sanityCheck();
+< 
+<         
+<         checkSetProperty();
+< 
+<         BitSet status = new BitSet();
+<         PropertyImpl prop = getOrCreateProperty(
+<                 name, PropertyType.BINARY, false, false, status);
+<         try {
+<             prop.setValue(value);
+<         } catch (RepositoryException re) {
+<             if (status.get(CREATED)) {
+<                 
+<                 removeChildProperty(name);
+<             }
+<             
+<             throw re;
+---
+>         Value v = null;
+>         if (value != null) {
+>             v = session.getValueFactory().createValue(value);
+3909c3701
+<         return prop;
+---
+>         return setProperty(name, v);

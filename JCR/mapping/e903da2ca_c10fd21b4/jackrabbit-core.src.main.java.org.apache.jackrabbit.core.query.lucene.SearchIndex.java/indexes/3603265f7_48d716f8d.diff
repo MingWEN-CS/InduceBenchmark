@@ -1,0 +1,10 @@
+34d33
+< import org.apache.jackrabbit.core.state.NodeStateIterator;
+595c594
+<     public void updateNodes(Iterator<NodeId> remove, NodeStateIterator add)
+---
+>     public void updateNodes(Iterator<NodeId> remove, Iterator<NodeState> add)
+612c611
+<             NodeState state = add.nextNodeState();
+---
+>             NodeState state = add.next();

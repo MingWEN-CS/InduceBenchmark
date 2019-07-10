@@ -1,0 +1,4 @@
+265c265
+<       if(clusterState.getCollections().contains(collection) ){
+---
+>       if(clusterState.hasCollection(collection) ){

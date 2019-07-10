@@ -1,0 +1,74 @@
+package org.apache.lucene.analysis;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public abstract class TokenStream {
+
+  
+
+
+
+  public Token next() throws IOException {
+    Token result = next(new Token());
+    return result;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public Token next(Token result) throws IOException {
+    return next();
+  }
+
+  
+
+
+
+
+
+
+  public void reset() throws IOException {}
+  
+  
+  public void close() throws IOException {}
+}

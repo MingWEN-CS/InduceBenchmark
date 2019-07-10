@@ -1,0 +1,8 @@
+47c47
+<     userEntity.setUserName("username"); 
+---
+>     userEntity.setUserName("userName");
+53c53
+<     Assert.assertEquals("username", SecurityHelperImpl.getInstance().getCurrentUserName());
+---
+>     Assert.assertEquals("userName", SecurityHelperImpl.getInstance().getCurrentUserName());

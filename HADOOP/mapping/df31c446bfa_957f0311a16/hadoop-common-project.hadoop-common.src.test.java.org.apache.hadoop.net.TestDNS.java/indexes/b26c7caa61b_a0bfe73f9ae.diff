@@ -1,0 +1,14 @@
+32a33
+> import org.apache.hadoop.util.Shell;
+39a41
+> import static org.junit.Assume.assumeTrue;
+192a195,197
+> 
+> 
+> 
+194a200
+>     assumeTrue(!Shell.WINDOWS);
+234c240
+<         InetAddress.getLoopbackAddress()).getDisplayName();
+---
+>         InetAddress.getLoopbackAddress()).getName();

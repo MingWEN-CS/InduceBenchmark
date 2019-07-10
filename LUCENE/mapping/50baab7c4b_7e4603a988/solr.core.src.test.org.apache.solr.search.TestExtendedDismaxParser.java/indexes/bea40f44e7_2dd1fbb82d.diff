@@ -1,0 +1,42 @@
+23a24
+> import org.junit.Test;
+703a705,743
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   @Test
+>   public void testEscapingOfReservedCharacters() throws Exception {
+>     
+>     String allReservedCharacters = "!():^[]{}~*?\"+-\\|&/";
+> 
+>     assertU(adoc("id", "reservedChars",
+>                  "name", allReservedCharacters,
+>                  "cat_s", "foo/"));
+>     assertU(commit());
+> 
+>     
+>     
+>     String query = allReservedCharacters.replace("\\", "\\\\");
+> 
+>     
+>     
+>     assertQ("Escaping reserved characters",
+>         req("q", query,
+>             "qf", "name",
+>             "mm", "100%",
+>             "defType", "edismax")
+>         , "*[count(
+>     
+>     
+>     assertQ("Escaping string with reserved / character",
+>         req("q", "foo/",
+>             "qf", "cat_s",
+>             "mm", "100%",
+>             "defType", "edismax")
+>         , "*[count(
+>     
+>   }

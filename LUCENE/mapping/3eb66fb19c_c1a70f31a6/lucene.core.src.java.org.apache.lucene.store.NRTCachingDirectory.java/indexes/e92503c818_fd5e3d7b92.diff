@@ -1,0 +1,6 @@
+243c243
+<     List<String> toDelete = new ArrayList<>();
+---
+>     Set<String> toDelete = new HashSet<>();
+266a267
+>           toDelete.remove(name);

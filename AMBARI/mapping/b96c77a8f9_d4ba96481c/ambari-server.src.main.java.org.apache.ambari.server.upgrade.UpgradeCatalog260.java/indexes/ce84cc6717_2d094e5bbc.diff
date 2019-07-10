@@ -1,0 +1,54 @@
+94a95,98
+>   public static final String SERVICE_CONFIG_MAPPING_TABLE = "serviceconfigmapping";
+>   public static final String SERVICE_COMPONENT_DESIRED_STATE = "servicecomponentdesiredstate";
+>   public static final String HOST_COMPONENT_DESIRED_STATE = "hostcomponentdesiredstate";
+>   public static final String HOST_COMPONENT_STATE = "hostcomponentstate";
+120c124,125
+<   public String getSourceVersion() {
+---
+>   public String getSourceVersion()
+>   {
+127d131
+<   @Override
+314a319
+>     removeSupersetFromDruid();
+324a330,368
+> 
+>   
+>   
+>   protected void removeSupersetFromDruid() throws SQLException {
+>     removeComponent("DRUID_SUPERSET", "druid-superset");
+>   }
+> 
+>   private void removeComponent(String componentName, String configPrefix) throws SQLException {
+>     String supersetConfigMappingRemoveSQL = String.format(
+>         "DELETE FROM %s WHERE type_name like '%s%%'",
+>         CLUSTER_CONFIG_MAPPING_TABLE, configPrefix);
+> 
+>     String serviceConfigMappingRemoveSQL = String.format(
+>         "DELETE FROM %s WHERE config_id IN (SELECT config_id from %s where type_name like '%s%%')",
+>         SERVICE_CONFIG_MAPPING_TABLE, CLUSTER_CONFIG_TABLE, configPrefix);
+> 
+>     String supersetConfigRemoveSQL = String.format(
+>         "DELETE FROM %s WHERE type_name like '%s%%'",
+>         CLUSTER_CONFIG_TABLE, configPrefix);
+> 
+>     String hostComponentDesiredStateRemoveSQL = String.format(
+>         "DELETE FROM %s WHERE component_name = '%s'",
+>         HOST_COMPONENT_DESIRED_STATE, componentName);
+> 
+>     String hostComponentStateRemoveSQL = String.format(
+>         "DELETE FROM %s WHERE component_name = '%s'",
+>         HOST_COMPONENT_STATE, componentName);
+> 
+>     String serviceComponentDesiredStateRemoveSQL = String.format(
+>         "DELETE FROM %s WHERE component_name = '%s'",
+>         SERVICE_COMPONENT_DESIRED_STATE, componentName);
+> 
+>     dbAccessor.executeQuery(supersetConfigMappingRemoveSQL);
+>     dbAccessor.executeQuery(serviceConfigMappingRemoveSQL);
+>     dbAccessor.executeQuery(supersetConfigRemoveSQL);
+>     dbAccessor.executeQuery(hostComponentDesiredStateRemoveSQL);
+>     dbAccessor.executeQuery(hostComponentStateRemoveSQL);
+>     dbAccessor.executeQuery(serviceComponentDesiredStateRemoveSQL);
+>   }

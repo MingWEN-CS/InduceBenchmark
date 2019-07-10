@@ -1,0 +1,4 @@
+968c968
+<                                         return def != null ? def.allowsSameNameSiblings() : false;
+---
+>                                         return def != null && def.allowsSameNameSiblings();

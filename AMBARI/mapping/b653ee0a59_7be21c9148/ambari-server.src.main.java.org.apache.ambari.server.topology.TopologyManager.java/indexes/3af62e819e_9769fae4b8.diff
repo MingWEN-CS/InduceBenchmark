@@ -1,0 +1,108 @@
+32d31
+< import java.util.concurrent.Executor;
+34a34,35
+> import java.util.concurrent.LinkedBlockingQueue;
+> import java.util.concurrent.TimeUnit;
+75a77
+> import org.apache.ambari.server.utils.ManagedThreadPoolExecutor;
+104a107,110
+> 
+>   
+> 
+> 
+106,107c112,123
+<   private final Executor taskExecutor; 
+<   private final boolean parallelTaskCreationEnabled;
+---
+> 
+>   
+> 
+> 
+>   private int topologyTaskExecutorThreadPoolSize;
+>   
+> 
+> 
+> 
+> 
+>   private final Map<Long, ManagedThreadPoolExecutor> topologyTaskExecutorServiceMap = new HashMap<>();
+> 
+161,162c177
+<     parallelTaskCreationEnabled = false;
+<     taskExecutor = executor;
+---
+>     topologyTaskExecutorThreadPoolSize = 1;
+167,171c182,185
+<     int threadPoolSize = configuration.getParallelTopologyTaskCreationThreadPoolSize();
+<     parallelTaskCreationEnabled = configuration.isParallelTopologyTaskCreationEnabled() && threadPoolSize > 1;
+<     taskExecutor = parallelTaskCreationEnabled
+<       ? Executors.newFixedThreadPool(threadPoolSize)
+<       : executor;
+---
+>     topologyTaskExecutorThreadPoolSize = configuration.getParallelTopologyTaskCreationThreadPoolSize();
+>     if (!configuration.isParallelTopologyTaskCreationEnabled()) {
+>       topologyTaskExecutorThreadPoolSize = 1;
+>     }
+312a327,330
+> 
+>     
+>     getOrCreateTopologyTaskExecutor(clusterId);
+> 
+329,337d346
+<     executor.submit(new Callable<Boolean>() {
+<       @Override
+<       public Boolean call() throws Exception {
+<         ambariEventPublisher.publish(new ClusterConfigFinishedEvent(clusterName));
+<         return Boolean.TRUE;
+<       }
+<     });
+< 
+<     
+347a357,367
+>   @Subscribe
+>   public void onClusterConfigFinishedEvent(ClusterConfigFinishedEvent event) {
+>     ManagedThreadPoolExecutor taskExecutor = topologyTaskExecutorServiceMap.get(event.getClusterId());
+>     if (taskExecutor == null) {
+>       LOG.error("Can't find executor service taskQueue not found for cluster: {} ", event.getClusterName());
+>     } else {
+>       LOG.info("Starting topology task ExecutorService for cluster: {}", event.getClusterName());
+>       taskExecutor.start();
+>     }
+>   }
+> 
+944,953c964,965
+<     if (parallelTaskCreationEnabled) {
+<       executor.execute(new Runnable() { 
+<         @Override
+<         public void run() {
+<           queueHostTasks(topology, response, hostName);
+<         }
+<       });
+<     } else {
+<       queueHostTasks(topology, response, hostName);
+<     }
+---
+>     queueHostTasks(topology, response, hostName);
+> 
+961a974,986
+>   private ExecutorService getOrCreateTopologyTaskExecutor(Long clusterId) {
+>     ManagedThreadPoolExecutor topologyTaskExecutor = this.topologyTaskExecutorServiceMap.get(clusterId);
+>     if (topologyTaskExecutor == null) {
+>       LOG.info("Creating TopologyTaskExecutorService for clusterId: {}", clusterId);
+> 
+>       topologyTaskExecutor = new ManagedThreadPoolExecutor(topologyTaskExecutorThreadPoolSize,
+>               topologyTaskExecutorThreadPoolSize, 0L, TimeUnit.MILLISECONDS,
+>               new LinkedBlockingQueue<Runnable>());
+>       topologyTaskExecutorServiceMap.put(clusterId, topologyTaskExecutor);
+>     }
+>     return topologyTaskExecutor;
+>   }
+> 
+964c989,990
+<     response.executeTasks(taskExecutor, hostName, topology, ambariContext);
+---
+>     ExecutorService executorService = getOrCreateTopologyTaskExecutor(topology.getClusterId());
+>     response.executeTasks(executorService, hostName, topology, ambariContext);
+1111c1137
+<       configurationRequest);
+---
+>       configurationRequest, ambariEventPublisher);

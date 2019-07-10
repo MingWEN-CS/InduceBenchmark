@@ -1,0 +1,120 @@
+27d26
+< import org.apache.jackrabbit.uuid.UUID;
+404c403
+<             Collection<UUID> remove, Collection<Document> add)
+---
+>             Collection<NodeId> remove, Collection<Document> add)
+420,421c419,420
+<             for (UUID uuid : remove) {
+<                 executeAndLog(new DeleteNode(transactionId, uuid));
+---
+>             for (NodeId id : remove) {
+>                 executeAndLog(new DeleteNode(transactionId, id));
+454c453
+<         Collection<UUID> empty = Collections.emptyList();
+---
+>         Collection<NodeId> empty = Collections.emptyList();
+464c463
+<     void removeDocument(UUID uuid) throws IOException {
+---
+>     void removeDocument(NodeId id) throws IOException {
+466c465
+<         update(Collections.singleton(uuid), empty);
+---
+>         update(Collections.singleton(id), empty);
+476c475
+<     synchronized int removeAllDocuments(UUID uuid) throws IOException {
+---
+>     synchronized int removeAllDocuments(NodeId id) throws IOException {
+482c481
+<             Term idTerm = new Term(FieldNames.UUID, uuid.toString());
+---
+>             Term idTerm = new Term(FieldNames.UUID, id.toString());
+486c485
+<                 redoLog.append(new DeleteNode(getTransactionId(), uuid));
+---
+>                 redoLog.append(new DeleteNode(getTransactionId(), id));
+494c493
+<                         redoLog.append(new DeleteNode(getTransactionId(), uuid));
+---
+>                         redoLog.append(new DeleteNode(getTransactionId(), id));
+1071c1070
+<         executeAndLog(new AddNode(getTransactionId(), id.getUUID()));
+---
+>         executeAndLog(new AddNode(getTransactionId(), id));
+1185c1184
+<         Map<UUID, Document> finished = new HashMap<UUID, Document>();
+---
+>         Map<NodeId, Document> finished = new HashMap<NodeId, Document>();
+1187,1188c1186,1187
+<             UUID uuid = UUID.fromString(document.get(FieldNames.UUID));
+<             finished.put(uuid, document);
+---
+>             NodeId id = new NodeId(document.get(FieldNames.UUID));
+>             finished.put(id, document);
+1197,1198c1196,1197
+<             for (UUID uuid : finished.keySet()) {
+<                 indexingQueue.removeDocument(uuid.toString());
+---
+>             for (NodeId id : finished.keySet()) {
+>                 indexingQueue.removeDocument(id.toString());
+1203,1204c1202,1203
+<                     for (UUID uuid : finished.keySet()) {
+<                         executeAndLog(new DeleteNode(getTransactionId(), uuid));
+---
+>                     for (NodeId id : finished.keySet()) {
+>                         executeAndLog(new DeleteNode(getTransactionId(), id));
+1517c1516
+<         private final UUID uuid;
+---
+>         private final NodeId id;
+1530c1529
+<         AddNode(long transactionId, UUID uuid) {
+---
+>         AddNode(long transactionId, NodeId id) {
+1532c1531
+<             this.uuid = uuid;
+---
+>             this.id = id;
+1542c1541
+<             this(transactionId, UUID.fromString(doc.get(FieldNames.UUID)));
+---
+>             this(transactionId, new NodeId(doc.get(FieldNames.UUID)));
+1556d1554
+< 
+1563c1561
+<             return new AddNode(transactionId, UUID.fromString(arguments));
+---
+>             return new AddNode(transactionId, new NodeId(arguments));
+1574c1572
+<                     doc = index.createDocument(new NodeId(uuid));
+---
+>                     doc = index.createDocument(id);
+1594c1592
+<             logLine.append(uuid);
+---
+>             logLine.append(id);
+1806c1804
+<         private final UUID uuid;
+---
+>         private final NodeId id;
+1814c1812
+<         DeleteNode(long transactionId, UUID uuid) {
+---
+>         DeleteNode(long transactionId, NodeId id) {
+1816c1814
+<             this.uuid = uuid;
+---
+>             this.id = id;
+1834c1832
+<             return new DeleteNode(transactionId, UUID.fromString(arguments));
+---
+>             return new DeleteNode(transactionId, new NodeId(arguments));
+1843c1841
+<             String uuidString = uuid.toString();
+---
+>             String uuidString = id.toString();
+1877c1875
+<             logLine.append(uuid);
+---
+>             logLine.append(id);

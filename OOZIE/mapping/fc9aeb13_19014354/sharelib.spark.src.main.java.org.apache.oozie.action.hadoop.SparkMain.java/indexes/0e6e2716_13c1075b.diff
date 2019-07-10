@@ -1,0 +1,36 @@
+52a53,54
+>     private static final Pattern SPARK_DEFAULTS_FILE_PATTERN = Pattern.compile("spark-defaults.conf");
+> 
+200a203,207
+>         File defaultConfFile = getMatchingFile(SPARK_DEFAULTS_FILE_PATTERN);
+>         if (defaultConfFile != null) {
+>             sparkArgs.add("--properties-file");
+>             sparkArgs.add(SPARK_DEFAULTS_FILE_PATTERN.toString());
+>         }
+245c252
+<             File file = getMatchingFile(fileNamePattern);
+---
+>             File file = getMatchingPyFile(fileNamePattern);
+258a266,282
+>     private File getMatchingPyFile(Pattern fileNamePattern) throws OozieActionConfiguratorException {
+>         File f = getMatchingFile(fileNamePattern);
+>         if (f != null) {
+>             return f;
+>         }
+>         throw new OozieActionConfiguratorException("Missing py4j and/or pyspark zip files. Please add them to "
+>                 + "the lib folder or to the Spark sharelib.");
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+266,267c290
+<         throw new OozieActionConfiguratorException("Missing py4j and/or pyspark zip files. Please add them to " +
+<                 "the lib folder or to the Spark sharelib.");
+---
+>         return null;

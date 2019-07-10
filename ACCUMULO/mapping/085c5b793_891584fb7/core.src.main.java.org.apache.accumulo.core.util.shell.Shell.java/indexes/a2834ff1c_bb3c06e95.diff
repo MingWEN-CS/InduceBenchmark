@@ -1,0 +1,23 @@
+38a39
+> import java.util.concurrent.TimeUnit;
+199c200
+<   private long lastUserActivity = System.currentTimeMillis();
+---
+>   private long lastUserActivity = System.nanoTime();
+232c233
+<       authTimeout = Integer.parseInt(cl.getOptionValue(authTimeoutOpt.getLongOpt(), DEFAULT_AUTH_TIMEOUT)) * 60 * 1000l;
+---
+>       authTimeout = TimeUnit.MINUTES.toNanos(Integer.parseInt(cl.getOptionValue(authTimeoutOpt.getLongOpt(), DEFAULT_AUTH_TIMEOUT)));
+495c496
+<       sb.append("- Authorization timeout: ").append(String.format("%.2fs%n", authTimeout / 1000.0));
+---
+>       sb.append("- Authorization timeout: ").append(String.format("%.2fs%n", TimeUnit.NANOSECONDS.toSeconds(authTimeout)));
+551c552,553
+<         if (!(sc instanceof ExitCommand) && !ignoreAuthTimeout && System.currentTimeMillis() - lastUserActivity > authTimeout) {
+---
+>         long duration = System.nanoTime() - lastUserActivity;
+>         if (!(sc instanceof ExitCommand) && !ignoreAuthTimeout && (duration < 0 || duration > authTimeout)) {
+571c573
+<           lastUserActivity = System.currentTimeMillis();
+---
+>           lastUserActivity = System.nanoTime();

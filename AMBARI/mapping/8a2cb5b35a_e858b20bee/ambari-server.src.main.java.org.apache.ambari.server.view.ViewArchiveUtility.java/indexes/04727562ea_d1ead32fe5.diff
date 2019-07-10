@@ -1,0 +1,63 @@
+37d36
+< import java.net.MalformedURLException;
+67,70c66
+<       throws MalformedURLException, JAXBException, IOException {
+<     ViewConfig res = null;
+<     InputStream configStream = null;
+<     try {
+---
+>       throws JAXBException, IOException {
+73c69
+<     configStream = cl.getResourceAsStream(VIEW_XML);
+---
+>     InputStream configStream = cl.getResourceAsStream(VIEW_XML);
+75a72,75
+>       if (configStream == null) {
+>         throw new IllegalStateException(
+>             String.format("Archive %s doesn't contain a view descriptor.", archiveFile.getAbsolutePath()));
+>       }
+78,80c78,83
+<     JAXBContext jaxbContext       = JAXBContext.newInstance(ViewConfig.class);
+<     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+<     res = (ViewConfig) jaxbUnmarshaller.unmarshal(configStream);
+---
+>     try {
+> 
+>       JAXBContext jaxbContext       = JAXBContext.newInstance(ViewConfig.class);
+>       Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+> 
+>       return (ViewConfig) jaxbUnmarshaller.unmarshal(configStream);
+82,84c85
+<       if (configStream != null) {
+<         configStream.close();
+<       }
+---
+>       configStream.close();
+86d86
+<     return res;
+103,105d102
+<     ViewConfig res = null;
+<     InputStream  configStream = null;
+<     try {
+116,119c113,119
+<     configStream     = new FileInputStream(configFile);
+<     JAXBContext  jaxbContext      = JAXBContext.newInstance(ViewConfig.class);
+<     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+<     res = (ViewConfig) jaxbUnmarshaller.unmarshal(configStream);
+---
+>     InputStream  configStream = new FileInputStream(configFile);
+>     try {
+> 
+>       JAXBContext  jaxbContext      = JAXBContext.newInstance(ViewConfig.class);
+>       Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+> 
+>       return (ViewConfig) jaxbUnmarshaller.unmarshal(configStream);
+121,123c121
+<       if (configStream != null) {
+<         configStream.close();
+<       }
+---
+>       configStream.close();
+125,126d122
+< 
+<     return res;

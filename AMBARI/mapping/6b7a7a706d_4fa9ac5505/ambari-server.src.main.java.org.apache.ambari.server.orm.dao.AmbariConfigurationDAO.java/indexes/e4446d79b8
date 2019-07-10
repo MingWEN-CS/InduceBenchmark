@@ -1,0 +1,179 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.orm.dao;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.TypedQuery;
+
+import org.apache.ambari.server.orm.RequiresSession;
+import org.apache.ambari.server.orm.entities.AmbariConfigurationEntity;
+import org.apache.ambari.server.orm.entities.AmbariConfigurationEntityPK;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.inject.persist.Transactional;
+
+
+
+
+
+
+@Singleton
+public class AmbariConfigurationDAO extends CrudDAO<AmbariConfigurationEntity, AmbariConfigurationEntityPK> {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(AmbariConfigurationDAO.class);
+
+  @Inject
+  public AmbariConfigurationDAO() {
+    super(AmbariConfigurationEntity.class);
+  }
+
+  
+
+
+
+
+
+  @RequiresSession
+  public List<AmbariConfigurationEntity> findByCategory(String categoryName) {
+    TypedQuery<AmbariConfigurationEntity> query = entityManagerProvider.get().createNamedQuery(
+        "AmbariConfigurationEntity.findByCategory", AmbariConfigurationEntity.class);
+    query.setParameter("categoryName", categoryName);
+    return daoUtils.selectList(query);
+  }
+
+  
+
+
+
+
+
+  @Transactional
+  public int removeByCategory(String categoryName) {
+    TypedQuery<AmbariConfigurationEntity> query = entityManagerProvider.get().createNamedQuery(
+        "AmbariConfigurationEntity.deleteByCategory", AmbariConfigurationEntity.class);
+    query.setParameter("categoryName", categoryName);
+    return query.executeUpdate();
+  }
+
+  @Transactional
+  public void create(AmbariConfigurationEntity entity) {
+    
+    AmbariConfigurationEntity foundEntity = findByPK(new AmbariConfigurationEntityPK(entity.getCategoryName(), entity.getPropertyName()));
+    if (foundEntity != null) {
+      String message = String.format("Only one configuration entry can exist for the category %s and name %s", entity.getCategoryName(), entity.getPropertyName());
+      LOGGER.error(message);
+      throw new EntityExistsException(message);
+    }
+
+    super.create(entity);
+  }
+
+  @Override
+  public AmbariConfigurationEntity merge(AmbariConfigurationEntity entity) {
+    AmbariConfigurationEntity foundEntity = findByPK(new AmbariConfigurationEntityPK(entity.getCategoryName(), entity.getPropertyName()));
+    if (foundEntity == null) {
+      String message = String.format("The configuration entry for the category %s and name %s does not exist", entity.getCategoryName(), entity.getPropertyName());
+      LOGGER.debug(message);
+      throw new EntityNotFoundException(message);
+    }
+
+    AmbariConfigurationEntity updatedEntity = entity;
+
+    if (!StringUtils.equals(foundEntity.getPropertyValue(), entity.getPropertyValue())) {
+      
+      updatedEntity = super.merge(entity);
+      entityManagerProvider.get().flush();
+    }
+
+    return updatedEntity;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Transactional
+  public boolean reconcileCategory(String categoryName, Map<String, String> properties, boolean removeIfNotProvided) {
+    boolean changesDetected = false;
+    List<AmbariConfigurationEntity> existingEntities = findByCategory(categoryName);
+    Map<String, String> propertiesToProcess = new HashMap<>();
+
+    if (properties != null) {
+      propertiesToProcess.putAll(properties);
+    }
+
+    if (existingEntities != null) {
+      for (AmbariConfigurationEntity entity : existingEntities) {
+        String propertyName = entity.getPropertyName();
+
+        if (propertiesToProcess.containsKey(propertyName)) {
+          String newPropertyValue = propertiesToProcess.get(propertyName);
+          if (!StringUtils.equals(newPropertyValue, entity.getPropertyValue())) {
+            
+            entity.setPropertyValue(newPropertyValue);
+            merge(entity);
+            changesDetected = true;
+          }
+        } else if (removeIfNotProvided) {
+          
+          remove(entity);
+          changesDetected = true;
+        }
+
+        
+        propertiesToProcess.remove(propertyName);
+      }
+    }
+
+    
+    if (!propertiesToProcess.isEmpty()) {
+      for (Map.Entry<String, String> property : propertiesToProcess.entrySet()) {
+        AmbariConfigurationEntity entity = new AmbariConfigurationEntity();
+        entity.setCategoryName(categoryName);
+        entity.setPropertyName(property.getKey());
+        entity.setPropertyValue(property.getValue());
+        create(entity);
+      }
+
+      changesDetected = true;
+    }
+
+    if (changesDetected) {
+      entityManagerProvider.get().flush();
+    }
+
+    return changesDetected;
+  }
+}

@@ -1,0 +1,136 @@
+88a89
+> import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcSaslProto.SaslAuth;
+798a800,802
+>         
+>         
+>         
+1167d1170
+<     private boolean skipInitialSaslHandshake;
+1341a1345,1349
+>           
+>           
+>           if (saslResponse.getState() == SaslState.SUCCESS) {
+>             switchToSimple();
+>           }
+1348,1350c1356,1358
+<           String authMethodName = saslMessage.getAuths(0).getMethod();
+<           authMethod = createSaslServer(authMethodName);
+<           if (authMethod == null) { 
+---
+>           
+>           SaslAuth clientSaslAuth = saslMessage.getAuths(0);
+>           if (!negotiateResponse.getAuthsList().contains(clientSaslAuth)) {
+1353c1361
+<                   authMethodName + " authentication is not enabled."
+---
+>                   clientSaslAuth.getMethod() + " authentication is not enabled."
+1358a1367,1377
+>           authMethod = AuthMethod.valueOf(clientSaslAuth.getMethod());
+>           
+>           
+>           if (authMethod == AuthMethod.SIMPLE) {
+>             switchToSimple();
+>             break;
+>           }
+>           
+>           if (saslServer == null || authMethod != AuthMethod.TOKEN) {
+>             saslServer = createSaslServer(authMethod);
+>           }
+1380a1400,1405
+> 
+>     private void switchToSimple() {
+>       
+>       authProtocol = AuthProtocol.NONE;
+>       saslServer = null;
+>     }
+1437c1462,1463
+<     public int readAndProcess() throws IOException, InterruptedException {
+---
+>     public int readAndProcess()
+>         throws WrappedRpcServerException, IOException, InterruptedException {
+1540,1548c1566
+<         case SASL: {
+<           
+<           
+<           if (isSimpleEnabled && enabledAuthMethods.size() == 1) {
+<             authProtocol = AuthProtocol.NONE;
+<             skipInitialSaslHandshake = true;
+<             doSaslReply(buildSaslResponse(SaslState.SUCCESS, null));
+<           }
+<           
+---
+>         default: {
+1573,1591d1590
+<     private AuthMethod createSaslServer(String authMethodName)
+<         throws IOException, InterruptedException {
+<       AuthMethod authMethod;
+<       try {
+<         authMethod = AuthMethod.valueOf(authMethodName);
+<         if (!enabledAuthMethods.contains(authMethod)) {
+<           authMethod = null;
+<         }
+<       } catch (IllegalArgumentException iae) {
+<         authMethod = null;
+<       }
+<       if (authMethod != null &&
+<           
+<           (saslServer == null || authMethod != AuthMethod.TOKEN)) {
+<         saslServer = createSaslServer(authMethod);
+<       }
+<       return authMethod;
+<     }
+< 
+1706,1707c1705,1706
+<     private void processRpcRequestPacket(byte[] buf) throws IOException,
+<         InterruptedException {
+---
+>     private void processRpcRequestPacket(byte[] buf)
+>         throws WrappedRpcServerException, IOException, InterruptedException {
+1720,1721c1719,1720
+<     private void unwrapPacketAndProcessRpcs(byte[] inBuf) throws IOException,
+<         InterruptedException {
+---
+>     private void unwrapPacketAndProcessRpcs(byte[] inBuf)
+>         throws WrappedRpcServerException, IOException, InterruptedException {
+1906,1912c1905,1907
+<           if (!skipInitialSaslHandshake) {
+<             throw new WrappedRpcServerException(
+<                 RpcErrorCodeProto.FATAL_INVALID_RPC_HEADER,
+<                 "SASL protocol not requested by client");
+<           }
+<           skipInitialSaslHandshake = false;
+<           return;
+---
+>           throw new WrappedRpcServerException(
+>               RpcErrorCodeProto.FATAL_INVALID_RPC_HEADER,
+>               "SASL protocol not requested by client");
+2223,2233c2218,2234
+<     negotiateBuilder.setState(SaslState.NEGOTIATE);
+<     for (AuthMethod authMethod : authMethods) {
+<       if (authMethod == AuthMethod.SIMPLE) { 
+<         continue;
+<       }
+<       SaslRpcServer saslRpcServer = new SaslRpcServer(authMethod);      
+<       negotiateBuilder.addAuthsBuilder()
+<           .setMethod(authMethod.toString())
+<           .setMechanism(saslRpcServer.mechanism)
+<           .setProtocol(saslRpcServer.protocol)
+<           .setServerId(saslRpcServer.serverId);
+---
+>     if (authMethods.contains(AuthMethod.SIMPLE) && authMethods.size() == 1) {
+>       
+>       negotiateBuilder.setState(SaslState.SUCCESS);
+>     } else {
+>       negotiateBuilder.setState(SaslState.NEGOTIATE);
+>       for (AuthMethod authMethod : authMethods) {
+>         SaslRpcServer saslRpcServer = new SaslRpcServer(authMethod);      
+>         SaslAuth.Builder builder = negotiateBuilder.addAuthsBuilder()
+>             .setMethod(authMethod.toString())
+>             .setMechanism(saslRpcServer.mechanism);
+>         if (saslRpcServer.protocol != null) {
+>           builder.setProtocol(saslRpcServer.protocol);
+>         }
+>         if (saslRpcServer.serverId != null) {
+>           builder.setServerId(saslRpcServer.serverId);
+>         }
+>       }

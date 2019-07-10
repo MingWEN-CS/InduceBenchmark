@@ -1,0 +1,26 @@
+29a30
+> import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+732,735d732
+<       
+<       final boolean checkOffsets = indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+< 
+<       
+745a743
+>         CharTermAttribute termAtt = tokenStream.getAttribute(CharTermAttribute.class);
+774,781c772,776
+<           if (checkOffsets) {
+<             int startOffset = invertState.offset + invertState.offsetAttribute.startOffset();
+<             int endOffset = invertState.offset + invertState.offsetAttribute.endOffset();
+<             if (startOffset < invertState.lastStartOffset || endOffset < startOffset) {
+<               throw new IllegalArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, and offsets must not go backwards "
+<                                                  + "startOffset=" + startOffset + ",endOffset=" + endOffset + ",lastStartOffset=" + invertState.lastStartOffset + " for field '" + field.name() + "'");
+<             }
+<             invertState.lastStartOffset = startOffset;
+---
+>           int startOffset = invertState.offset + invertState.offsetAttribute.startOffset();
+>           int endOffset = invertState.offset + invertState.offsetAttribute.endOffset();
+>           if (startOffset < invertState.lastStartOffset || endOffset < startOffset) {
+>             throw new IllegalArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, and offsets must not go backwards "
+>                                                + "startOffset=" + startOffset + ",endOffset=" + endOffset + ",lastStartOffset=" + invertState.lastStartOffset + " for field '" + field.name() + "'");
+782a778
+>           invertState.lastStartOffset = startOffset;

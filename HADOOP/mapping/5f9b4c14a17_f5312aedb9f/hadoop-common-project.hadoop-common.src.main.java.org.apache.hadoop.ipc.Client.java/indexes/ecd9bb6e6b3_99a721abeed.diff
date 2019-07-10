@@ -1,0 +1,36 @@
+113a114
+>   private static final ThreadLocal<Integer> retryCount = new ThreadLocal<Integer>();
+116c117
+<   public static void setCallId(int cid) {
+---
+>   public static void setCallIdAndRetryCount(int cid, int rc) {
+118a120,121
+>     Preconditions.checkArgument(rc != RpcConstants.INVALID_RETRY_COUNT);
+> 
+119a123
+>     retryCount.set(rc);
+283a288
+>     final int retry;           
+300a306,312
+>       
+>       final Integer rc = retryCount.get();
+>       if (rc == null) {
+>         this.retry = 0;
+>       } else {
+>         this.retry = rc;
+>       }
+868,869c880,881
+<       RpcRequestHeaderProto connectionContextHeader =
+<           ProtoUtil.makeRpcRequestHeader(RpcKind.RPC_PROTOCOL_BUFFER,
+---
+>       RpcRequestHeaderProto connectionContextHeader = ProtoUtil
+>           .makeRpcRequestHeader(RpcKind.RPC_PROTOCOL_BUFFER,
+871c883
+<               clientId);
+---
+>               RpcConstants.INVALID_RETRY_COUNT, clientId);
+979c991,992
+<          call.rpcKind, OperationProto.RPC_FINAL_PACKET, call.id, clientId);
+---
+>           call.rpcKind, OperationProto.RPC_FINAL_PACKET, call.id, call.retry,
+>           clientId);

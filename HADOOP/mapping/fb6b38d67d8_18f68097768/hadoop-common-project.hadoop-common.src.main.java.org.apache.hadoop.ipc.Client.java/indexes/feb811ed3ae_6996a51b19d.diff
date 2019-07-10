@@ -1,0 +1,10 @@
+1487c1487,1493
+<         throw new IOException(e);
+---
+>         Throwable cause = e.getCause();
+>         
+>         if (cause instanceof IOException) {
+>           throw (IOException) cause;
+>         } else {
+>           throw new IOException(cause);
+>         }

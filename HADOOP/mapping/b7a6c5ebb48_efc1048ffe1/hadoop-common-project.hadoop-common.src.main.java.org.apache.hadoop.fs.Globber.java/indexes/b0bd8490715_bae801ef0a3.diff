@@ -1,0 +1,60 @@
+65,76d64
+<   private FileStatus getFileLinkStatus(Path path) {
+<     try {
+<       if (fs != null) {
+<         return fs.getFileLinkStatus(path);
+<       } else {
+<         return fc.getFileLinkStatus(path);
+<       }
+<     } catch (IOException e) {
+<       return null;
+<     }
+<   }
+< 
+137,148d124
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   private static String unquotePathComponent(String name) {
+<     return name.replaceAll("\\\\(.)", "$1");
+<   }
+< 
+213,236c189,196
+<           
+<           
+<           
+<           
+<           
+<           
+<           
+<           if (globFilter.hasPattern()) {
+<             FileStatus[] children = listStatus(candidate.getPath());
+<             for (FileStatus child : children) {
+<               
+<               
+<               child.setPath(new Path(candidate.getPath(),
+<                       child.getPath().getName()));
+<               if (globFilter.accept(child.getPath())) {
+<                 newCandidates.add(child);
+<               }
+<             }
+<           } else {
+<             Path p = new Path(candidate.getPath(), unquotePathComponent(component));
+<             FileStatus s = getFileLinkStatus(p);
+<             if (s != null) {
+<               s.setPath(p);
+<               newCandidates.add(s);
+---
+>           FileStatus[] children = listStatus(candidate.getPath());
+>           for (FileStatus child : children) {
+>             
+>             
+>             child.setPath(new Path(candidate.getPath(),
+>                     child.getPath().getName()));
+>             if (globFilter.accept(child.getPath())) {
+>               newCandidates.add(child);

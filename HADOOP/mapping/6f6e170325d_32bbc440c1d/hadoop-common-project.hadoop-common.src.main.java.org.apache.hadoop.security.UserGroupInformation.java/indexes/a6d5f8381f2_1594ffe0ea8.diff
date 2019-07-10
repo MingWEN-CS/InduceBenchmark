@@ -1,0 +1,25 @@
+442d441
+<         USER_KERBEROS_OPTIONS.put("renewTGT", "true");
+452a452
+>       USER_KERBEROS_OPTIONS.put("renewTGT", "true");
+468d467
+<         KEYTAB_KERBEROS_OPTIONS.put("refreshKrb5Config", "true");
+469a469
+>       KEYTAB_KERBEROS_OPTIONS.put("refreshKrb5Config", "true");
+630,632c630,639
+<       krbOptions.put("doNotPrompt", "true");
+<       krbOptions.put("useTicketCache", "true");
+<       krbOptions.put("useKeyTab", "false");
+---
+>       if (IBM_JAVA) {
+>         krbOptions.put("useDefaultCcache", "true");
+>         
+>         System.setProperty("KRB5CCNAME", ticketCache);
+>       } else {
+>         krbOptions.put("doNotPrompt", "true");
+>         krbOptions.put("useTicketCache", "true");
+>         krbOptions.put("useKeyTab", "false");
+>         krbOptions.put("ticketCache", ticketCache);
+>       }
+634d640
+<       krbOptions.put("ticketCache", ticketCache);

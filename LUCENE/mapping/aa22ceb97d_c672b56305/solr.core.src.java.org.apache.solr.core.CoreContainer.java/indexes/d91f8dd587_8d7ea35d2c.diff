@@ -1,0 +1,65 @@
+33a34
+> import java.util.Iterator;
+924c925,926
+<       File schemaFile = new File(dcore.getSchemaName());
+---
+>       final String resourceNameToBeUsed = IndexSchemaFactory.getResourceNameToBeUsed(dcore.getSchemaName(), config);
+>       File schemaFile = new File(resourceNameToBeUsed);
+926,927c928
+<         schemaFile = new File(solrLoader.getInstanceDir() + "conf"
+<             + File.separator + dcore.getSchemaName());
+---
+>         schemaFile = new File(solrLoader.getConfigDir(), schemaFile.getPath());
+963a965,1012
+> 
+> 
+> 
+>   public void replaceSchema(SolrCore initiatingCore, IndexSchema oldSchema, IndexSchema newSchema) {
+>     if (null != indexSchemaCache) { 
+>       
+>       for (Iterator<Map.Entry<String,IndexSchema>> iter = indexSchemaCache.entrySet().iterator() ; iter.hasNext() ; ) {
+>         Map.Entry<String,IndexSchema> entry = iter.next();
+>         if (oldSchema == entry.getValue()) {
+>           iter.remove();
+>         }
+>       }
+> 
+>       
+>       final String newSchemaResourceName
+>           = IndexSchemaFactory.getResourceNameToBeUsed(newSchema.getResourceName(), initiatingCore.getSolrConfig());
+>       File schemaFile = new File(newSchemaResourceName);
+>       if ( ! schemaFile.isAbsolute()) {
+>         schemaFile = new File(initiatingCore.getResourceLoader().getConfigDir(), schemaFile.getPath());
+>       }
+>       if (schemaFile.exists()) {
+>         String key = schemaFile.getAbsolutePath()
+>             + ":"
+>             + new SimpleDateFormat("yyyyMMddHHmmss", Locale.ROOT).format(new Date(
+>             schemaFile.lastModified()));
+>         indexSchemaCache.put(key, newSchema);
+>       }
+> 
+>       
+>       for (String coreName : coreMaps.getAllCoreNames()) {
+>         SolrCore activeCore = coreMaps.getCoreFromAnyList(coreName);
+>         if (null != activeCore) {
+>           if (initiatingCore != activeCore) {
+>             if (oldSchema == activeCore.getLatestSchema()) {
+>               activeCore.setLatestSchema(newSchema);
+>             }
+>           }
+>         }
+>       }
+>     }
+>   }
+> 
+>  
+> 
+> 
+> 
+> 
+> 
+1742c1791
+<   protected SolrCore getCoreFromAnyList(String name) {
+---
+>   public SolrCore getCoreFromAnyList(String name) {

@@ -1,0 +1,123 @@
+package org.apache.lucene.index;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.lucene.codecs.FieldsConsumer;
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.CollectionUtil;
+import org.apache.lucene.util.IOUtils;
+
+final class FreqProxTermsWriter extends TermsHashConsumer {
+
+  @Override
+  void abort() {}
+
+  
+  
+  
+  
+
+  @Override
+  public void flush(Map<String,TermsHashConsumerPerField> fieldsToFlush, final SegmentWriteState state) throws IOException {
+
+    
+    
+    List<FreqProxTermsWriterPerField> allFields = new ArrayList<FreqProxTermsWriterPerField>();
+
+    for (TermsHashConsumerPerField f : fieldsToFlush.values()) {
+      final FreqProxTermsWriterPerField perField = (FreqProxTermsWriterPerField) f;
+      if (perField.termsHashPerField.bytesHash.size() > 0) {
+        allFields.add(perField);
+      }
+    }
+
+    final int numAllFields = allFields.size();
+
+    
+    CollectionUtil.introSort(allFields);
+
+    final FieldsConsumer consumer = state.segmentInfo.getCodec().postingsFormat().fieldsConsumer(state);
+
+    boolean success = false;
+
+    try {
+      TermsHash termsHash = null;
+      
+      
+
+
+
+
+
+
+
+
+
+
+      
+      for (int fieldNumber = 0; fieldNumber < numAllFields; fieldNumber++) {
+        final FieldInfo fieldInfo = allFields.get(fieldNumber).fieldInfo;
+        
+        final FreqProxTermsWriterPerField fieldWriter = allFields.get(fieldNumber);
+
+        
+        
+        fieldWriter.flush(fieldInfo.name, consumer, state);
+        
+        TermsHashPerField perField = fieldWriter.termsHashPerField;
+        assert termsHash == null || termsHash == perField.termsHash;
+        termsHash = perField.termsHash;
+        int numPostings = perField.bytesHash.size();
+        perField.reset();
+        perField.shrinkHash(numPostings);
+        fieldWriter.reset();
+      }
+      
+      if (termsHash != null) {
+        termsHash.reset();
+      }
+      success = true;
+    } finally {
+      if (success) {
+        IOUtils.close(consumer);
+      } else {
+        IOUtils.closeWhileHandlingException(consumer);
+      }
+    }
+  }
+
+  BytesRef payload;
+
+  @Override
+  public TermsHashConsumerPerField addField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo) {
+    return new FreqProxTermsWriterPerField(termsHashPerField, this, fieldInfo);
+  }
+
+  @Override
+  void finishDocument(TermsHash termsHash) {
+  }
+
+  @Override
+  void startDocument() {
+  }
+}

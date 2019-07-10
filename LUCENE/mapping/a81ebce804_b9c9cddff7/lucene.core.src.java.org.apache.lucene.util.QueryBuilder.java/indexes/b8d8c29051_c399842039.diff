@@ -1,0 +1,21 @@
+59a60
+>   protected boolean enableGraphQueries = true;
+245a247,260
+>   public void setEnableGraphQueries(boolean v) {
+>     enableGraphQueries = v;
+>   }
+> 
+>   
+> 
+> 
+>   public boolean getEnableGraphQueries() {
+>     return enableGraphQueries;
+>   }
+> 
+>   
+> 
+> 
+285c300
+<         if (!isGraph && positionLength > 1) {
+---
+>         if (enableGraphQueries && positionLength > 1) {

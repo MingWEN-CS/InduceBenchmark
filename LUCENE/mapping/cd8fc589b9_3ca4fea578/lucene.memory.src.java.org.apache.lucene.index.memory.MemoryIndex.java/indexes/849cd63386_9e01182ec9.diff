@@ -1,0 +1,12 @@
+268c268
+<   public static MemoryIndex fromDocument(Document document, Analyzer analyzer) {
+---
+>   public static MemoryIndex fromDocument(Iterable<? extends IndexableField> document, Analyzer analyzer) {
+280c280
+<   public static MemoryIndex fromDocument(Document document, Analyzer analyzer, boolean storeOffsets, boolean storePayloads) {
+---
+>   public static MemoryIndex fromDocument(Iterable<? extends IndexableField> document, Analyzer analyzer, boolean storeOffsets, boolean storePayloads) {
+293c293
+<   public static MemoryIndex fromDocument(Document document, Analyzer analyzer, boolean storeOffsets, boolean storePayloads, long maxReusedBytes) {
+---
+>   public static MemoryIndex fromDocument(Iterable<? extends IndexableField> document, Analyzer analyzer, boolean storeOffsets, boolean storePayloads, long maxReusedBytes) {

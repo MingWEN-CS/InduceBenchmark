@@ -1,0 +1,46 @@
+260a261
+>         lock.lock();
+262d262
+<             lock.lock();
+343,344c343,344
+<         if (queueElement.getPriority() < 0 && queueElement.getPriority() >= priorities) {
+<             throw new IllegalArgumentException("priority out of range");
+---
+>         if (queueElement.getPriority() < 0 || queueElement.getPriority() >= priorities) {
+>             throw new IllegalArgumentException("priority out of range: " + queueElement);
+347c347
+<             throw new IllegalStateException("queueElement already in a queue");
+---
+>             throw new IllegalStateException("queueElement already in a queue: " + queueElement);
+352,357c352,362
+<         boolean accepted = queues[queueElement.getPriority()].offer(queueElement);
+<         debug("offer([{0}]), to P[{1}] delay[{2}ms] accepted[{3}]", queueElement.getElement().toString(),
+<               queueElement.getPriority(), queueElement.getDelay(TimeUnit.MILLISECONDS), accepted);
+<         if (accepted) {
+<             if (currentSize != null) {
+<                 currentSize.incrementAndGet();
+---
+>         boolean accepted;
+>         lock.lock();
+>         try {
+>             accepted = queues[queueElement.getPriority()].offer(queueElement);
+>             debug("offer([{0}]), to P[{1}] delay[{2}ms] accepted[{3}]", queueElement.getElement().toString(),
+>                   queueElement.getPriority(), queueElement.getDelay(TimeUnit.MILLISECONDS), accepted);
+>             if (accepted) {
+>                 if (currentSize != null) {
+>                     currentSize.incrementAndGet();
+>                 }
+>                 queueElement.inQueue = true;
+359c364,365
+<             queueElement.inQueue = true;
+---
+>         } finally {
+>             lock.unlock();
+392a399
+>         lock.lock();
+394d400
+<             lock.lock();
+423a430
+>         lock.lock();
+425d431
+<             lock.lock();

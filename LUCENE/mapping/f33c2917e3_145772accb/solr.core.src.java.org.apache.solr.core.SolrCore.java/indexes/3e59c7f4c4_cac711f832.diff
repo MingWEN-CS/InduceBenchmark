@@ -1,0 +1,9 @@
+64a65
+> import org.apache.solr.common.cloud.Slice;
+847a849,854
+>     CoreContainer cc = cd.getCoreContainer();
+>     
+>     if (cc != null && cc.isZooKeeperAware() && Slice.CONSTRUCTION.equals(cd.getCloudDescriptor().getShardState())) {
+>       
+>       getUpdateHandler().getUpdateLog().bufferUpdates();
+>     }

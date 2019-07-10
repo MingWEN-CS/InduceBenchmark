@@ -1,0 +1,16 @@
+98a99
+> import org.apache.solr.schema.IndexSchemaFactory;
+396,397c397
+<     SolrConfig config = new SolrConfig(resourceLoader,
+<         getSolrConfig().getName(), null);
+---
+>     SolrConfig config = new SolrConfig(resourceLoader, getSolrConfig().getName(), null);
+399,400c399
+<     IndexSchema schema = new IndexSchema(config,
+<         getSchema().getResourceName(), null);
+---
+>     IndexSchema schema = IndexSchemaFactory.buildIndexSchema(getSchema().getResourceName(), config);
+684c683
+<       schema = new IndexSchema(config, IndexSchema.DEFAULT_SCHEMA_FILE, null);
+---
+>       schema = IndexSchemaFactory.buildIndexSchema(IndexSchema.DEFAULT_SCHEMA_FILE, config);

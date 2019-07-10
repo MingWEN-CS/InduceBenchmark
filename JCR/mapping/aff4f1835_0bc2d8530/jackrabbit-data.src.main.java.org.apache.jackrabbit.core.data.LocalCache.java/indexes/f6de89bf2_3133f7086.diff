@@ -1,0 +1,76 @@
+31a32
+> import java.util.List;
+35,36d35
+< import javax.jcr.RepositoryException;
+< 
+99,100d97
+< 
+< 
+102,103c99
+<             double cachePurgeResizeFactor, AsyncUploadCache asyncUploadCache) throws IOException,
+<             ClassNotFoundException {
+---
+>             double cachePurgeResizeFactor, AsyncUploadCache asyncUploadCache) {
+107c103,104
+<             "cachePurgeTrigFactor =[{}], cachePurgeResizeFactor =[{}],  cachePurgeTrigFactorSize =[{}], cachePurgeResizeFactorSize =[{}]",
+---
+>             "cachePurgeTrigFactor =[{}], cachePurgeResizeFactor =[{}],  " +
+>             "cachePurgeTrigFactorSize =[{}], cachePurgeResizeFactorSize =[{}]",
+109c106,107
+<                 (cachePurgeTrigFactor * maxSizeInBytes), (cachePurgeResizeFactor * maxSizeInBytes) });
+---
+>                 (cachePurgeTrigFactor * maxSizeInBytes), 
+>                 (cachePurgeResizeFactor * maxSizeInBytes) });
+112,113c110,129
+< 
+<         new Thread(new CacheBuildJob()).start();
+---
+>         long startTime = System.currentTimeMillis();
+>         ArrayList<File> allFiles = new ArrayList<File>();
+>         Iterator<File> it = FileUtils.iterateFiles(directory, null, true);
+>         while (it.hasNext()) {
+>             File f = it.next();
+>             allFiles.add(f);
+>         }
+>         long t1 = System.currentTimeMillis();
+>         LOG.debug("Time taken to recursive [{}] took [{}] sec",
+>             allFiles.size(), ((t1 - startTime) / 1000));
+>         Collections.sort(allFiles, new Comparator<File>() {
+>             public int compare(File o1, File o2) {
+>                 long l1 = o1.lastModified(), l2 = o2.lastModified();
+>                 return l1 < l2 ? -1 : l1 > l2 ? 1 : 0;
+>             }
+>         });
+>         long t2 = System.currentTimeMillis();
+>         LOG.debug("Time taken to sort [{}] took [{}] sec",
+>             allFiles.size(), ((t2 - t1) / 1000));
+>         new Thread(new CacheBuildJob(allFiles)).start();
+546a563,568
+> 
+>         List<File> allFiles ;
+>         
+>         private CacheBuildJob(List<File> allFiles) {
+>             this.allFiles = allFiles;
+>         }
+549,566d570
+<             ArrayList<File> allFiles = new ArrayList<File>();
+<             Iterator<File> it = FileUtils.iterateFiles(directory, null, true);
+<             while (it.hasNext()) {
+<                 File f = it.next();
+<                 allFiles.add(f);
+<             }
+<             long t1 = System.currentTimeMillis();
+<             LOG.debug("Time taken to recursive [{}] took [{}] sec",
+<                 allFiles.size(), ((t1 - startTime) / 1000));
+<             Collections.sort(allFiles, new Comparator<File>() {
+<                 public int compare(File o1, File o2) {
+<                     long l1 = o1.lastModified(), l2 = o2.lastModified();
+<                     return l1 < l2 ? -1 : l1 > l2 ? 1 : 0;
+<                 }
+<             });
+<             long t2 = System.currentTimeMillis();
+<             LOG.debug("Time taken to sort [{}] took [{}] sec",
+<                 allFiles.size(), ((t2 - t1) / 1000));
+567a572,573
+>             LOG.info("directoryPath = " + dataStorePath);
+>             dataStorePath = dataStorePath.replace("\\", "/");

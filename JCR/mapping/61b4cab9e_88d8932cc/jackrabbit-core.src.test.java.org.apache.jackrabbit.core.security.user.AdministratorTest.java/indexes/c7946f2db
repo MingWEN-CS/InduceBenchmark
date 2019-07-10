@@ -1,0 +1,183 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.security.user;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.apache.jackrabbit.api.security.user.AbstractUserTest;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.core.NodeImpl;
+import org.apache.jackrabbit.core.security.principal.AdminPrincipal;
+import org.apache.jackrabbit.test.NotExecutableException;
+
+
+
+
+public class AdministratorTest extends AbstractUserTest {
+
+    private String adminId;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        if (!(userMgr instanceof UserManagerImpl)) {
+            throw new NotExecutableException();
+        }
+        adminId = superuser.getUserID();
+        if (!((UserManagerImpl) userMgr).isAdminId(adminId)) {
+            throw new NotExecutableException();
+        }
+    }
+
+    public void testGetPrincipal() throws RepositoryException {
+        Authorizable admin = userMgr.getAuthorizable(adminId);
+        assertNotNull(admin);
+        assertFalse(admin.isGroup());
+        assertTrue(admin.getPrincipal() instanceof AdminPrincipal);
+    }
+
+    public void testRemoveSelf() throws RepositoryException, NotExecutableException {
+        Authorizable admin = userMgr.getAuthorizable(adminId);
+        if (admin == null) {
+            throw new NotExecutableException();
+        }
+        try {
+            admin.remove();
+            fail("The Administrator should not be allowed to remove the own authorizable.");
+        } catch (RepositoryException e) {
+            
+        }
+    }
+
+    public void testRemoveAdminNode() throws RepositoryException, NotExecutableException {
+        Authorizable admin = userMgr.getAuthorizable(adminId);
+
+        if (admin == null || !(admin instanceof AuthorizableImpl)) {
+            throw new NotExecutableException();
+        }
+
+        Session s = null;
+        try {
+            NodeImpl adminNode = ((AuthorizableImpl) admin).getNode();
+            s = adminNode.getSession();
+            adminNode.remove();
+            
+            
+            s.save();
+            fail();
+        } catch (RepositoryException e) {
+            
+        } finally {
+            if (s != null) {
+                s.refresh(false);
+            }
+        }
+    }
+
+    public void testSessionRemoveItem()  throws RepositoryException, NotExecutableException {
+        Authorizable admin = userMgr.getAuthorizable(adminId);
+
+        if (admin == null || !(admin instanceof AuthorizableImpl)) {
+            throw new NotExecutableException();
+        }
+
+        Session s = null;
+        try {
+            NodeImpl parent = (NodeImpl) ((AuthorizableImpl) admin).getNode().getParent();
+            s = parent.getSession();
+            s.removeItem(parent.getPath());
+            s.save();
+            fail();
+        } catch (RepositoryException e) {
+            
+        } finally {
+            if (s != null) {
+                s.refresh(false);
+            }
+        }
+    }
+
+    public void testSessionMoveAdminNode()  throws RepositoryException, NotExecutableException {
+        Authorizable admin = userMgr.getAuthorizable(adminId);
+
+        if (admin == null || !(admin instanceof AuthorizableImpl)) {
+            throw new NotExecutableException();
+        }
+
+        Session s = null;
+        try {
+            NodeImpl adminNode = ((AuthorizableImpl) admin).getNode();
+            s = adminNode.getSession();
+            s.move(adminNode.getPath(), "/somewhereelse");
+            
+            
+            s.save();
+            fail();
+        } catch (RepositoryException e) {
+            
+        }  finally {
+            if (s != null) {
+                s.refresh(false);
+            }
+        }
+    }
+
+    public void testSessionMoveParentNode()  throws RepositoryException, NotExecutableException {
+        Authorizable admin = userMgr.getAuthorizable(adminId);
+
+        if (admin == null || !(admin instanceof AuthorizableImpl)) {
+            throw new NotExecutableException();
+        }
+
+        Session s = null;
+        try {
+            NodeImpl parent = (NodeImpl) ((AuthorizableImpl) admin).getNode().getParent();
+            s = parent.getSession();
+            s.move(parent.getPath(), "/somewhereelse");
+            
+            
+            s.save();
+            fail();
+        } catch (RepositoryException e) {
+            
+        } finally {
+            if (s != null) {
+                s.refresh(false);
+            }
+        }
+    }
+
+    public void testWorkspaceMoveAdminNode()  throws RepositoryException, NotExecutableException {
+        Authorizable admin = userMgr.getAuthorizable(adminId);
+
+        if (admin == null || !(admin instanceof AuthorizableImpl)) {
+            throw new NotExecutableException();
+        }
+
+        
+        try {
+            NodeImpl adminNode = ((AuthorizableImpl) admin).getNode();
+            Session s = adminNode.getSession();
+            s.getWorkspace().move(adminNode.getPath(), "/somewhereelse");
+            fail();
+        } catch (RepositoryException e) {
+            
+        }
+    }
+}

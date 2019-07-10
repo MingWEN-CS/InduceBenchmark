@@ -1,0 +1,120 @@
+1a2,120
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> package org.apache.ambari.server.ldap.service;
+> 
+> import java.util.Map;
+> import java.util.Set;
+> 
+> import javax.inject.Inject;
+> import javax.inject.Provider;
+> import javax.inject.Singleton;
+> 
+> import org.apache.ambari.server.events.AmbariLdapConfigChangedEvent;
+> import org.apache.ambari.server.events.publishers.AmbariEventPublisher;
+> import org.apache.ambari.server.ldap.domain.AmbariLdapConfiguration;
+> import org.apache.ambari.server.ldap.domain.AmbariLdapConfigurationFactory;
+> import org.apache.ambari.server.orm.dao.AmbariConfigurationDAO;
+> import org.apache.ambari.server.orm.entities.AmbariConfigurationEntity;
+> import org.apache.ambari.server.security.authorization.AmbariLdapAuthenticationProvider;
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+> 
+> import com.google.common.eventbus.Subscribe;
+> import com.google.gson.Gson;
+> import com.google.gson.GsonBuilder;
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> @Singleton
+> public class AmbariLdapConfigurationProvider implements Provider<AmbariLdapConfiguration> {
+> 
+>   private static final Logger LOGGER = LoggerFactory.getLogger(AmbariLdapAuthenticationProvider.class);
+>   private AmbariLdapConfiguration instance;
+> 
+>   @Inject
+>   private AmbariEventPublisher publisher;
+> 
+>   @Inject
+>   private Provider<AmbariConfigurationDAO> ambariConfigurationDAOProvider;
+> 
+>   @Inject
+>   private AmbariLdapConfigurationFactory ldapConfigurationFactory;
+> 
+>   private Gson gson = new GsonBuilder().create();
+> 
+>   @Inject
+>   public AmbariLdapConfigurationProvider() {
+>   }
+> 
+>   @Inject
+>   void register() {
+>     publisher.register(this);
+>   }
+> 
+>   @Override
+>   public AmbariLdapConfiguration get() {
+>     return instance != null ? instance : loadInstance(null);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   private AmbariLdapConfiguration loadInstance(Long configurationId) {
+>     AmbariConfigurationEntity configEntity = null;
+> 
+>     LOGGER.info("Loading LDAP configuration ...");
+>     if (null == configurationId) {
+> 
+>       LOGGER.debug("Initial loading of the ldap configuration ...");
+>       configEntity = ambariConfigurationDAOProvider.get().getLdapConfiguration();
+> 
+>     } else {
+> 
+>       LOGGER.debug("Reloading configuration based on the provied id: {}", configurationId);
+>       configEntity = ambariConfigurationDAOProvider.get().findByPK(configurationId);
+> 
+>     }
+> 
+>     if (configEntity != null) {
+>       Set propertyMaps = gson.fromJson(configEntity.getConfigurationBaseEntity().getConfigurationData(), Set.class);
+>       instance = ldapConfigurationFactory.createLdapConfiguration((Map<String, Object>) propertyMaps.iterator().next());
+>     }
+> 
+>     LOGGER.info("Loaded LDAP configuration instance: [ {} ]", instance);
+> 
+>     return instance;
+>   }
+> 
+>   
+>   @Subscribe
+>   public void ambariLdapConfigChanged(AmbariLdapConfigChangedEvent event) {
+>     LOGGER.info("LDAP config changed event received: {}", event);
+>     loadInstance(event.getConfigurationId());
+>     LOGGER.info("Refreshed LDAP config instance.");
+>   }
+> 
+> 
+> }

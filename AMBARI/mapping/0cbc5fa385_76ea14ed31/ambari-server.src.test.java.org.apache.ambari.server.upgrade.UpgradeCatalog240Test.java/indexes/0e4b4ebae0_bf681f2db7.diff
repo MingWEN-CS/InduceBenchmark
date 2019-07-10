@@ -1,0 +1,19 @@
+323c323
+<     dbAccessor.dropColumn(UpgradeCatalog240.VIEWINSTANCE_TABLE,UpgradeCatalog240.CLUSTER_HANDLE_COLUMN);
+---
+>     dbAccessor.dropColumn(UpgradeCatalog240.VIEWINSTANCE_TABLE, UpgradeCatalog240.CLUSTER_HANDLE_COLUMN);
+326c326
+<     dbAccessor.renameColumn(eq(UpgradeCatalog240.VIEWINSTANCE_TABLE), anyString() , capture(capturedClusterHandleColumn));
+---
+>     dbAccessor.renameColumn(eq(UpgradeCatalog240.VIEWINSTANCE_TABLE), anyString(), capture(capturedClusterHandleColumn));
+329a330,332
+>     Capture<DBAccessor.DBColumnInfo> provisionActionColumnInfo = newCapture();
+>     dbAccessor.addColumn(eq(UpgradeCatalog240.TOPOLOGY_REQUEST_TABLE), capture(provisionActionColumnInfo));
+> 
+539a543,548
+>     DBAccessor.DBColumnInfo provisionActionColumnInfoValue = provisionActionColumnInfo.getValue();
+>     Assert.assertNotNull(provisionActionColumnInfoValue);
+>     Assert.assertEquals(UpgradeCatalog240.PROVISION_ACTION_COL, provisionActionColumnInfoValue.getName());
+>     Assert.assertEquals(String.class, provisionActionColumnInfoValue.getType());
+>     Assert.assertEquals(true, provisionActionColumnInfoValue.isNullable());
+> 

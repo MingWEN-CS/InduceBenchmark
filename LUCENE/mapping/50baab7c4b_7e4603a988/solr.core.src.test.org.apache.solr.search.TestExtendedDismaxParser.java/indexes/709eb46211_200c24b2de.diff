@@ -1,0 +1,95 @@
+20a21
+> import java.util.Random;
+28a30
+> import org.apache.solr.SolrTestCaseJ4;
+38c40
+< public class TestExtendedDismaxParser extends AbstractSolrTestCase {
+---
+> public class TestExtendedDismaxParser extends SolrTestCaseJ4 {
+42a45
+>     index();
+45,51c48
+<   
+< 
+<   @Override
+<   public void setUp() throws Exception {
+<     
+<     
+<     super.setUp();
+---
+>    public static void index() throws Exception {
+85,86c82,84
+<   @Override
+<   public void tearDown() throws Exception {
+---
+> 
+> 
+>   public void testTrailingOperators() throws Exception {
+89c87,121
+<     super.tearDown();
+---
+> 
+>     assertJQ(req("defType","edismax", "q","-")
+>         ,"/response==");
+> 
+>     assertJQ(req("defType","edismax", "q","+")
+>         ,"/response==");
+> 
+>     assertJQ(req("defType","edismax", "q","+ - +")
+>         ,"/response==");
+> 
+>     assertJQ(req("defType","edismax", "q","- + -")
+>         ,"/response==");
+> 
+>     assertJQ(req("defType","edismax", "q","id:47 +")
+>         ,"/response/numFound==1");
+> 
+>     assertJQ(req("defType","edismax", "q","id:47 -")
+>         ,"/response/numFound==1");
+> 
+>     Random r = random();
+>     for (int i=0; i<100; i++) {
+>       StringBuilder sb = new StringBuilder();
+>       for (int j=0; j<r.nextInt(10); j++) {
+>         switch (r.nextInt(3)) {
+>           case 0: sb.append(' '); break;
+>           case 1: sb.append('+'); break;
+>           case 2: sb.append('-'); break;
+>           case 3: sb.append((char)r.nextInt(127)); break;
+>         }
+>       }
+> 
+>       String q = sb.toString();
+>       assertJQ(req("defType","edismax", "q",q)
+>           ,"/response==");
+>     }
+91c123
+<   
+---
+> 
+640,643c672,675
+<         req("q",   "foo bar", 
+<             "qf",  "phrase_sw",
+<             "bf",  "boost_d",
+<             "fl",  "score,*",
+---
+>         req("q", "foo bar",
+>             "qf", "phrase_sw",
+>             "bf", "boost_d",
+>             "fl", "score,*",
+651,657c683,689
+<           req("q",   "foo bar", 
+<               "qf",  "phrase_sw",
+<               "pf",  "phrase_sw^10",
+<               "bf",  "boost_d",
+<               "fl",  "score,*",
+<               "defType", "edismax"),
+<           "
+---
+>         req("q", "foo bar",
+>             "qf", "phrase_sw",
+>             "pf", "phrase_sw^10",
+>             "bf", "boost_d",
+>             "fl", "score,*",
+>             "defType", "edismax"),
+>         "

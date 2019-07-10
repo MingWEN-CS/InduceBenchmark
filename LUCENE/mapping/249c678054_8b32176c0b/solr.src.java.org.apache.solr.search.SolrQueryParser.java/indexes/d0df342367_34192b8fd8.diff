@@ -1,0 +1,6 @@
+126,127c126,127
+<       if (ft instanceof TextField) {
+<         return super.getFieldQuery(field, queryText, quoted || ((TextField)ft).getAutoGeneratePhraseQueries());
+---
+>       if (ft.isTokenized()) {
+>         return super.getFieldQuery(field, queryText, quoted || (ft instanceof TextField && ((TextField)ft).getAutoGeneratePhraseQueries()));

@@ -1,0 +1,448 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.journal;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.jackrabbit.core.version.InternalVersionManagerImpl;
+import org.apache.jackrabbit.core.version.VersioningLock;
+import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
+import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
+
+
+
+
+public abstract class AbstractJournal implements Journal {
+
+    
+
+
+    private static Logger log = LoggerFactory.getLogger(AbstractJournal.class);
+
+    
+
+
+    private String id;
+
+    
+
+
+    private NamespaceResolver resolver;
+
+    
+
+
+    private NamePathResolver npResolver;
+
+    
+
+
+    private final Map<String, RecordConsumer> consumers = new HashMap<String, RecordConsumer>();
+
+    
+
+
+    private final Map<String, RecordProducer> producers = new HashMap<String, RecordProducer>();
+
+    
+
+
+
+    private final ReadWriteLock rwLock = new JournalLock();
+
+    
+
+
+
+
+
+
+    private String revision;
+
+    
+
+
+    private File repHome;
+
+    
+
+
+    private InternalVersionManagerImpl internalVersionManager;
+
+    
+
+
+    public void init(String id, NamespaceResolver resolver) throws JournalException {
+        this.id = id;
+        this.resolver = resolver;
+        this.npResolver = new DefaultNamePathResolver(resolver, true);
+    }
+
+    
+
+
+    public void register(RecordConsumer consumer) throws JournalException {
+        synchronized (consumers) {
+            String consumerId = consumer.getId();
+            if (consumers.containsKey(consumerId)) {
+                String msg = "Record consumer with identifier '"
+                    + consumerId + "' already registered.";
+                throw new JournalException(msg);
+            }
+            consumers.put(consumerId, consumer);
+        }
+    }
+
+    
+
+
+    public boolean unregister(RecordConsumer consumer) {
+        synchronized (consumers) {
+            String consumerId = consumer.getId();
+            return consumers.remove(consumerId) != null;
+        }
+    }
+
+    
+
+
+
+
+
+
+    public RecordConsumer getConsumer(String identifier) {
+        synchronized (consumers) {
+            return consumers.get(identifier);
+        }
+    }
+
+    
+
+
+    public RecordProducer getProducer(String identifier) {
+        synchronized (producers) {
+            RecordProducer producer = producers.get(identifier);
+            if (producer == null) {
+                producer = createProducer(identifier);
+                producers.put(identifier, producer);
+            }
+            return producer;
+        }
+    }
+
+    
+
+
+
+
+
+    protected RecordProducer createProducer(String identifier) {
+        return new DefaultRecordProducer(this, identifier);
+    }
+
+    
+
+
+    private long getMinimalRevision() {
+        long minimalRevision = Long.MAX_VALUE;
+
+        synchronized (consumers) {
+            for (RecordConsumer consumer : consumers.values()) {
+                if (consumer.getRevision() < minimalRevision) {
+                    minimalRevision = consumer.getRevision();
+                }
+            }
+        }
+        return minimalRevision;
+    }
+
+    
+
+
+    public void sync() throws JournalException {
+        if (internalVersionManager != null) {
+            VersioningLock.ReadLock lock =
+                internalVersionManager.acquireReadLock();
+            try {
+                internalSync();
+            } finally {
+                lock.release();
+            }
+        } else {
+            internalSync();
+        }
+    }
+
+    private void internalSync() throws JournalException {
+        try {
+            rwLock.readLock().acquire();
+        } catch (InterruptedException e) {
+            String msg = "Unable to acquire read lock.";
+            throw new JournalException(msg, e);
+        }
+        try {
+            doSync(getMinimalRevision());
+        } finally {
+            rwLock.readLock().release();
+        }
+    }
+
+    
+
+
+
+
+
+    protected void doSync(long startRevision) throws JournalException {
+        for (;;) {
+            RecordIterator iterator = getRecords(startRevision);
+            long stopRevision = Long.MIN_VALUE;
+    
+            try {
+                while (iterator.hasNext()) {
+                    Record record = iterator.nextRecord();
+                    if (record.getJournalId().equals(id)) {
+                        log.info("Record with revision '" + record.getRevision()
+                                + "' created by this journal, skipped.");
+                    } else {
+                        RecordConsumer consumer = getConsumer(record.getProducerId());
+                        if (consumer != null) {
+                            try {
+                                consumer.consume(record);
+                            } catch (IllegalStateException e) {
+                                log.error("Could not synchronize to revision: " + record.getRevision() + " due illegal state of RecordConsumer.");
+                                return;
+                            }
+                        }
+                    }
+                    stopRevision = record.getRevision();
+                }
+            } finally {
+                iterator.close();
+            }
+    
+            if (stopRevision > 0) {
+                for (RecordConsumer consumer : consumers.values()) {
+                    consumer.setRevision(stopRevision);
+                }
+                log.info("Synchronized to revision: " + stopRevision);
+
+                if (syncAgainOnNewRecords()) {
+                    
+                    startRevision = stopRevision;
+                    continue;
+                }
+            }
+            break;
+        }
+    }
+    
+    
+
+
+
+
+
+
+    protected boolean syncAgainOnNewRecords() {
+        return false;
+    }
+
+    
+
+
+
+
+
+    public void lockAndSync() throws JournalException {
+        if (internalVersionManager != null) {
+            VersioningLock.ReadLock lock =
+                internalVersionManager.acquireReadLock();
+            try {
+                internalLockAndSync();
+            } finally {
+                lock.release();
+            }
+        } else {
+            internalLockAndSync();
+        }
+    }
+
+    private void internalLockAndSync() throws JournalException {
+        try {
+            rwLock.writeLock().acquire();
+        } catch (InterruptedException e) {
+            String msg = "Unable to acquire write lock.";
+            throw new JournalException(msg, e);
+        }
+
+        boolean succeeded = false;
+
+        try {
+            
+            doLock();
+            try {
+                
+                doSync(getMinimalRevision());
+                succeeded = true;
+            } finally {
+                if (!succeeded) {
+                    doUnlock(false);
+                }
+            }
+        } finally {
+            if (!succeeded) {
+                rwLock.writeLock().release();
+            }
+        }
+    }
+
+    
+
+
+
+
+
+    public void unlock(boolean successful) {
+    	try {
+    		doUnlock(successful);
+    	} finally {
+    		
+    		
+            rwLock.writeLock().release();
+    	}
+    }
+
+    
+
+
+
+
+    protected abstract void doLock() throws JournalException;
+
+    
+
+
+
+
+
+
+    protected void appending(AppendRecord record) {
+        
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    protected abstract void append(AppendRecord record, InputStream in, int length)
+            throws JournalException;
+
+    
+
+
+
+
+
+    protected abstract void doUnlock(boolean successful);
+
+    
+
+
+
+
+    public String getId() {
+        return id;
+    }
+
+    
+
+
+
+
+    public NamespaceResolver getResolver() {
+        return resolver;
+    }
+
+    
+
+
+
+
+    public NamePathResolver getNamePathResolver() {
+        return npResolver;
+    }
+
+    
+
+
+
+
+
+    public void setRepositoryHome(File repHome) {
+        this.repHome = repHome;
+    }
+
+    
+
+
+    public void setInternalVersionManager(InternalVersionManagerImpl internalVersionManager) {
+        this.internalVersionManager = internalVersionManager;
+    }
+
+    
+
+
+
+
+
+    public File getRepositoryHome() {
+        return repHome;
+    }
+
+    
+
+
+
+     
+
+
+     public String getRevision() {
+         return revision;
+     }
+
+     
+
+
+     public void setRevision(String revision) {
+         this.revision = revision;
+     }
+}

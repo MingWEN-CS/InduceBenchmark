@@ -1,0 +1,29 @@
+48c48
+< import org.apache.solr.common.cloud.DocCollection;
+---
+> import org.apache.solr.common.cloud.Replica;
+125,130c125,127
+<     if (zkController != null) {
+<       DocCollection dc = zkController.getClusterState().getCollection(core.getCoreDescriptor().getCollectionName());
+<       if (dc.getRealtimeReplicas() == 1) {
+<         commitWithinSoftCommit = false;
+<         commitTracker.setOpenSearcher(true);
+<       }
+---
+>     if (zkController != null && core.getCoreDescriptor().getCloudDescriptor().getReplicaType() == Replica.Type.TLOG) {
+>       commitWithinSoftCommit = false;
+>       commitTracker.setOpenSearcher(true);
+252c249
+<       if ( (cmd.getFlags() & UpdateCommand.IGNORE_INDEXWRITER) != 0) {
+---
+>       if ((cmd.getFlags() & UpdateCommand.IGNORE_INDEXWRITER) != 0) {
+428c425
+<     if ( (cmd.getFlags() & UpdateCommand.IGNORE_INDEXWRITER) != 0 ) {
+---
+>     if ((cmd.getFlags() & UpdateCommand.IGNORE_INDEXWRITER) != 0 ) {
+492c489
+<       if ( (cmd.getFlags() & UpdateCommand.IGNORE_INDEXWRITER) != 0) {
+---
+>       if ((cmd.getFlags() & UpdateCommand.IGNORE_INDEXWRITER) != 0) {
+551d547
+< 

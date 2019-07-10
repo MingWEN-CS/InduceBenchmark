@@ -1,0 +1,278 @@
+21a22,24
+> import java.util.concurrent.CountDownLatch;
+> import java.util.concurrent.TimeUnit;
+> 
+28a32
+>     private static final int LATCH_TIMEOUT = 10;
+43c47,70
+<     public abstract class Locker implements Runnable {
+---
+>     public abstract class LatchHandler {
+>         protected CountDownLatch startLatch = new CountDownLatch(1);
+>         protected CountDownLatch acquireLockLatch = new CountDownLatch(1);
+>         protected CountDownLatch proceedingLatch = new CountDownLatch(1);
+>         protected CountDownLatch terminationLatch = new CountDownLatch(1);
+> 
+>         public void awaitStart() throws InterruptedException {
+>             startLatch.await(LATCH_TIMEOUT, TimeUnit.SECONDS);
+>         }
+> 
+>         public void awaitTermination() throws InterruptedException {
+>             terminationLatch.await(LATCH_TIMEOUT, TimeUnit.SECONDS);
+>         }
+> 
+>         public void awaitLockAcquire() throws InterruptedException {
+>             acquireLockLatch.await(LATCH_TIMEOUT, TimeUnit.SECONDS);
+>         }
+> 
+>         public void proceed() {
+>             proceedingLatch.countDown();
+>         }
+>     }
+> 
+>     public abstract class Locker extends LatchHandler implements Runnable {
+49d75
+< 
+59a86
+>                 startLatch.countDown();
+64,66c91,94
+<                     synchronized (this) {
+<                         wait();
+<                     }
+---
+> 
+>                     acquireLockLatch.countDown();
+>                     proceedingLatch.await(LATCH_TIMEOUT, TimeUnit.SECONDS);
+> 
+71a100
+>                     proceedingLatch.await(LATCH_TIMEOUT, TimeUnit.SECONDS);
+74a104
+>                 terminationLatch.countDown();
+81,86d110
+<         public void finish() {
+<             synchronized (this) {
+<                 notify();
+<             }
+<         }
+< 
+88,89d111
+< 
+< 
+120c142,143
+<         Thread.sleep(500);
+---
+>         l1.awaitLockAcquire();
+> 
+122,126c145,152
+<         Thread.sleep(500);
+<         l1.finish();
+<         Thread.sleep(500);
+<         l2.finish();
+<         Thread.sleep(500);
+---
+>         l2.awaitStart();
+> 
+>         l1.proceed();
+>         l2.proceed();
+> 
+>         l1.awaitTermination();
+>         l2.awaitTermination();
+> 
+136c162,163
+<         Thread.sleep(500);
+---
+>         l1.awaitLockAcquire();
+> 
+138,142c165,172
+<         Thread.sleep(500);
+<         l1.finish();
+<         Thread.sleep(500);
+<         l2.finish();
+<         Thread.sleep(500);
+---
+>         l2.awaitStart();
+> 
+>         l2.proceed();
+>         l2.awaitTermination();
+> 
+>         l1.proceed();
+>         l1.awaitTermination();
+> 
+149c179
+<         Locker l2 = new WriteLocker("a", 2, 1000, sb);
+---
+>         Locker l2 = new WriteLocker("a", 2, 10000, sb);
+152c182,183
+<         Thread.sleep(500);
+---
+>         l1.awaitLockAcquire();
+> 
+154,158c185,192
+<         Thread.sleep(500);
+<         l1.finish();
+<         Thread.sleep(500);
+<         l2.finish();
+<         Thread.sleep(500);
+---
+>         l2.awaitStart();
+> 
+>         l1.proceed();
+>         l1.awaitTermination();
+> 
+>         l2.proceed();
+>         l2.awaitTermination();
+> 
+168c202,203
+<         Thread.sleep(500);
+---
+>         l1.awaitLockAcquire();
+> 
+170,174c205,212
+<         Thread.sleep(500);
+<         l1.finish();
+<         Thread.sleep(500);
+<         l2.finish();
+<         Thread.sleep(500);
+---
+>         l2.awaitStart();
+> 
+>         l2.proceed();
+>         l2.awaitTermination();  
+> 
+>         l1.proceed();
+>         l1.awaitTermination();
+> 
+184c222,223
+<         Thread.sleep(500);
+---
+>         l1.awaitLockAcquire();  
+> 
+186,190c225,232
+<         Thread.sleep(500);
+<         l1.finish();
+<         Thread.sleep(500);
+<         l2.finish();
+<         Thread.sleep(500);
+---
+>         l2.awaitLockAcquire();  
+> 
+>         l1.proceed();
+>         l1.awaitTermination();
+> 
+>         l2.proceed();
+>         l2.awaitTermination();
+> 
+200c242,243
+<         Thread.sleep(500);
+---
+>         l1.awaitLockAcquire();
+> 
+202,206c245,252
+<         Thread.sleep(500);
+<         l1.finish();
+<         Thread.sleep(500);
+<         l2.finish();
+<         Thread.sleep(500);
+---
+>         l2.awaitStart();
+> 
+>         l1.proceed();
+>         l1.awaitTermination();
+> 
+>         l2.proceed();
+>         l2.awaitTermination();
+> 
+216c262,263
+<         Thread.sleep(500);
+---
+>         l1.awaitLockAcquire();
+> 
+218,222c265,272
+<         Thread.sleep(500);
+<         l1.finish();
+<         Thread.sleep(500);
+<         l2.finish();
+<         Thread.sleep(500);
+---
+>         l2.awaitStart();
+> 
+>         l1.proceed();
+>         l1.awaitTermination();
+> 
+>         l2.proceed();
+>         l2.awaitTermination();
+> 
+226c276
+<     public class SameThreadWriteLocker implements Runnable {
+---
+>     public class SameThreadWriteLocker extends LatchHandler implements Runnable {
+240a291
+>                 startLatch.countDown();
+245a297,298
+>                     acquireLockLatch.countDown();
+> 
+251a305,307
+> 
+>                     proceedingLatch.await(LATCH_TIMEOUT, TimeUnit.SECONDS);
+> 
+253,255d308
+<                     synchronized (this) {
+<                         wait();
+<                     }
+260a314
+>                     proceedingLatch.await(LATCH_TIMEOUT, TimeUnit.SECONDS);
+263a318
+>                 terminationLatch.countDown();
+270,275d324
+<         public void finish() {
+<             synchronized (this) {
+<                 notify();
+<             }
+<         }
+< 
+279d327
+< 
+288c336,337
+<         Thread.sleep(500);
+---
+>         l1.awaitLockAcquire();
+> 
+290,294c339,346
+<         Thread.sleep(500);
+<         l1.finish();
+<         Thread.sleep(500);
+<         l2.finish();
+<         Thread.sleep(500);
+---
+>         l1.awaitStart();
+> 
+>         l2.proceed();
+>         l2.awaitTermination();
+> 
+>         l1.proceed();
+>         l1.awaitTermination();
+> 
+301c353
+<         Locker l2 = new WriteLocker("a", 2, 1000, sb);
+---
+>         Locker l2 = new WriteLocker("a", 2, 10000, sb);
+304c356,357
+<         Thread.sleep(500);
+---
+>         l1.awaitLockAcquire();
+> 
+306,310c359,366
+<         Thread.sleep(500);
+<         l1.finish();
+<         Thread.sleep(500);
+<         l2.finish();
+<         Thread.sleep(500);
+---
+>         l1.awaitStart();
+> 
+>         l1.proceed();
+>         l1.awaitTermination();
+> 
+>         l2.proceed();
+>         l2.awaitTermination();
+> 

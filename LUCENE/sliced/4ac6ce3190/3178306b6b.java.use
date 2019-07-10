@@ -1,0 +1,31 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+14	input	TokenStream	param	68	define	org.apache.solr.analysis.StopFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	68	72
+14	input	TokenStream	param	69	use	org.apache.solr.analysis.StopFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	68	72
+15	stopFilter	StopFilter	variable	69	define	org.apache.solr.analysis.StopFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	68	72
+15	stopFilter	StopFilter	variable	69	set	org.apache.solr.analysis.StopFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	68	72
+32	StopFilterFactory.stopWords	Set	variable	69	use	org.apache.solr.analysis.StopFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	68	72
+31	StopFilterFactory.ignoreCase	boolean	variable	69	use	org.apache.solr.analysis.StopFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	68	72
+15	stopFilter	StopFilter	variable	70	use	org.apache.solr.analysis.StopFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	68	72
+30	StopFilterFactory.enablePositionIncrements	boolean	variable	70	use	org.apache.solr.analysis.StopFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	68	72
+15	stopFilter	StopFilter	variable	71	use	org.apache.solr.analysis.StopFilterFactory.create	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	68	72
+32	StopFilterFactory.stopWords	Set	variable	65	use	org.apache.solr.analysis.StopFilterFactory.getStopWords	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	64	66
+25	loader	ResourceLoader	param	35	define	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+23	e	IOException	param	44	define	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+25	loader	ResourceLoader	param	42	use	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+23	e	IOException	param	45	use	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+26	stopWordFile	String	variable	36	define	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+27	wlist	List<String>	variable	42	define	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+26	stopWordFile	String	variable	36	set	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+31	StopFilterFactory.ignoreCase	boolean	variable	37	set	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+30	StopFilterFactory.enablePositionIncrements	boolean	variable	38	set	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+27	wlist	List<String>	variable	42	set	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+32	StopFilterFactory.stopWords	Set	variable	43	set	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+32	StopFilterFactory.stopWords	Set	variable	48	set	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+26	stopWordFile	String	variable	40	use	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+26	stopWordFile	String	variable	42	use	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+27	wlist	List<String>	variable	43	use	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+31	StopFilterFactory.ignoreCase	boolean	variable	43	use	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+24	ENGLISH_STOP_WORDS		variable	48	use	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+31	StopFilterFactory.ignoreCase	boolean	variable	48	use	org.apache.solr.analysis.StopFilterFactory.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	35	49
+30	StopFilterFactory.enablePositionIncrements	boolean	variable	57	use	org.apache.solr.analysis.StopFilterFactory.isEnablePositionIncrements	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	56	58
+31	StopFilterFactory.ignoreCase	boolean	variable	61	use	org.apache.solr.analysis.StopFilterFactory.isIgnoreCase	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/4ac6ce3190/3178306b6b.java	60	62

@@ -1,0 +1,10 @@
+214,222d213
+<   public void resetLoggers() throws IOException {
+<     logSetLock.writeLock().lock();
+<     try {
+<       close();
+<     } finally {
+<       logSetLock.writeLock().unlock();
+<     }
+<   }
+< 

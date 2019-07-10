@@ -1,0 +1,27 @@
+29d28
+< import com.codahale.metrics.Gauge;
+167,170c166,167
+<     Gauge<Integer> autoCommits = () -> commitTracker.getCommitCount();
+<     manager.register(registry, autoCommits, true, "autoCommits", getCategory().toString(), scope);
+<     Gauge<Integer> softAutoCommits = () -> softCommitTracker.getCommitCount();
+<     manager.register(registry, softAutoCommits, true, "softAutoCommits", getCategory().toString(), scope);
+---
+>     manager.registerGauge(registry, () -> commitTracker.getCommitCount(), true, "autoCommits", getCategory().toString(), scope);
+>     manager.registerGauge(registry, () -> softCommitTracker.getCommitCount(), true, "softAutoCommits", getCategory().toString(), scope);
+176,185c173,177
+<     Gauge<Long> docsPending = () -> numDocsPending.longValue();
+<     manager.register(registry, docsPending, true, "docsPending", getCategory().toString(), scope);
+<     Gauge<Long> adds = () -> addCommands.longValue();
+<     manager.register(registry, adds, true, "adds", getCategory().toString(), scope);
+<     Gauge<Long> deletesById = () -> deleteByIdCommands.longValue();
+<     manager.register(registry, deletesById, true, "deletesById", getCategory().toString(), scope);
+<     Gauge<Long> deletesByQuery = () -> deleteByQueryCommands.longValue();
+<     manager.register(registry, deletesByQuery, true, "deletesByQuery", getCategory().toString(), scope);
+<     Gauge<Long> errors = () -> numErrors.longValue();
+<     manager.register(registry, errors, true, "errors", getCategory().toString(), scope);
+---
+>     manager.registerGauge(registry, () -> numDocsPending.longValue(), true, "docsPending", getCategory().toString(), scope);
+>     manager.registerGauge(registry, () -> addCommands.longValue(), true, "adds", getCategory().toString(), scope);
+>     manager.registerGauge(registry, () -> deleteByIdCommands.longValue(), true, "deletesById", getCategory().toString(), scope);
+>     manager.registerGauge(registry, () -> deleteByQueryCommands.longValue(), true, "deletesByQuery", getCategory().toString(), scope);
+>     manager.registerGauge(registry, () -> numErrors.longValue(), true, "errors", getCategory().toString(), scope);

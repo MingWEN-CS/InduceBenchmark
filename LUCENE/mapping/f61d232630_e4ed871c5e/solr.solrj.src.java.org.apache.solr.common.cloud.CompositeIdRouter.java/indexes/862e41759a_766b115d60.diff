@@ -1,0 +1,16 @@
+205d204
+< 
+209c208,209
+<         int commaIdx = parts[i].indexOf(bitsSeparator);
+---
+>         if (i < pieces - 1) {
+>           int commaIdx = parts[i].indexOf(bitsSeparator);
+211,213c211,214
+<         if (commaIdx > 0) {
+<           numBits[i] = getNumBits(parts[i], commaIdx);
+<           parts[i] = parts[i].substring(0, commaIdx);
+---
+>           if (commaIdx > 0) {
+>             numBits[i] = getNumBits(parts[i], commaIdx);
+>             parts[i] = parts[i].substring(0, commaIdx);
+>           }

@@ -1,0 +1,9 @@
+53c53,54
+< import org.apache.log4j.Logger;
+---
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+67c68
+<   private static final Logger log = Logger.getLogger(TabletServerLogger.class);
+---
+>   private static final Logger log = LoggerFactory.getLogger(TabletServerLogger.class);

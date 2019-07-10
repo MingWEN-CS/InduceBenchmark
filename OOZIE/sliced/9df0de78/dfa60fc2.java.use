@@ -1,0 +1,209 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+6	actionId	String	param	74	define	org.apache.oozie.command.wf.ActionEndXCommand.ActionEndXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	74	78
+8	type	String	param	74	define	org.apache.oozie.command.wf.ActionEndXCommand.ActionEndXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	74	78
+8	type	String	param	75	use	org.apache.oozie.command.wf.ActionEndXCommand.ActionEndXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	74	78
+6	actionId	String	param	76	use	org.apache.oozie.command.wf.ActionEndXCommand.ActionEndXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	74	78
+6	actionId	String	param	77	use	org.apache.oozie.command.wf.ActionEndXCommand.ActionEndXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	74	78
+104	ActionEndXCommand.actionId	String	variable	76	set	org.apache.oozie.command.wf.ActionEndXCommand.ActionEndXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	74	78
+107	ActionEndXCommand.jobId	String	variable	77	set	org.apache.oozie.command.wf.ActionEndXCommand.ActionEndXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	74	78
+7	class		variable	77	use	org.apache.oozie.command.wf.ActionEndXCommand.ActionEndXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	74	78
+61	ex	ActionExecutorException	param	228	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+63	e	JPAExecutorException	param	272	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+61	ex	ActionExecutorException	param	231	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+61	ex	ActionExecutorException	param	231	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+61	ex	ActionExecutorException	param	231	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+61	ex	ActionExecutorException	param	232	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+61	ex	ActionExecutorException	param	232	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+61	ex	ActionExecutorException	param	235	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+63	e	JPAExecutorException	param	273	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+73	conf	Configuration	variable	144	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+78	maxRetries	int	variable	146	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+79	retryInterval	long	variable	147	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+76	isRetry	boolean	variable	157	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+77	isUserRetry	boolean	variable	162	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+74	context	ActionExecutorContext	variable	163	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+75	cron	Instrumentation.Cron	variable	171	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+83	wfInstance	WorkflowInstance	variable	177	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+80	shouldHandleUserRetry	boolean	variable	191	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+82	slaStatus	Status	variable	192	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+81	slaEvent	SLAEventBean	variable	215	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+62	wfInstance	WorkflowInstance	variable	257	define	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+73	conf	Configuration	variable	144	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+78	maxRetries	int	variable	146	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+79	retryInterval	long	variable	147	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+78	maxRetries	int	variable	150	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+79	retryInterval	long	variable	151	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+76	isRetry	boolean	variable	157	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+76	isRetry	boolean	variable	160	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+77	isUserRetry	boolean	variable	162	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+74	context	ActionExecutorContext	variable	163	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+75	cron	Instrumentation.Cron	variable	171	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+83	wfInstance	WorkflowInstance	variable	177	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+80	shouldHandleUserRetry	boolean	variable	191	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+82	slaStatus	Status	variable	192	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+82	slaStatus	Status	variable	195	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+82	slaStatus	Status	variable	198	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+82	slaStatus	Status	variable	201	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+80	shouldHandleUserRetry	boolean	variable	202	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+82	slaStatus	Status	variable	206	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+80	shouldHandleUserRetry	boolean	variable	207	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+82	slaStatus	Status	variable	210	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+80	shouldHandleUserRetry	boolean	variable	211	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+81	slaEvent	SLAEventBean	variable	215	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+62	wfInstance	WorkflowInstance	variable	257	set	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+104	ActionEndXCommand.actionId	String	variable	142	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	144	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	149	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+73	conf	Configuration	variable	150	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+64	ACTION_MAX_RETRIES		variable	150	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	150	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+73	conf	Configuration	variable	151	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+65	ACTION_RETRY_INTERVAL		variable	151	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	151	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	154	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+78	maxRetries	int	variable	154	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	155	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+79	retryInterval	long	variable	155	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	158	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	159	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	163	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	163	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+76	isRetry	boolean	variable	163	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+77	isUserRetry	boolean	variable	163	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	168	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	168	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	168	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	168	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	169	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+75	cron	Instrumentation.Cron	variable	172	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	173	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+74	context	ActionExecutorContext	variable	173	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	173	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+75	cron	Instrumentation.Cron	variable	174	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	175	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+75	cron	Instrumentation.Cron	variable	175	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	177	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+83	wfInstance	WorkflowInstance	variable	178	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	178	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	179	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+83	wfInstance	WorkflowInstance	variable	179	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	180	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+74	context	ActionExecutorContext	variable	182	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+70	OPS		variable	183	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	184	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	185	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+103	ActionEndXCommand.END_DATA_MISSING	String	variable	185	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+74	context	ActionExecutorContext	variable	186	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	188	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	189	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	193	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+69	OK		variable	194	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+71	SUCCEEDED		variable	195	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+68	KILLED		variable	197	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+68	KILLED		variable	198	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+67	FAILED		variable	200	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+67	FAILED		variable	201	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+66	ERROR		variable	204	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+68	KILLED		variable	206	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+67	FAILED		variable	210	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+80	shouldHandleUserRetry	boolean	variable	214	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	214	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	215	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	215	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+82	slaStatus	Status	variable	215	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+72	WORKFLOW_ACTION		variable	215	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+104	ActionEndXCommand.actionId	String	variable	216	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	216	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	217	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+81	slaEvent	SLAEventBean	variable	218	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+106	ActionEndXCommand.insertList	List<JsonBean>	variable	219	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+81	slaEvent	SLAEventBean	variable	219	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+107	ActionEndXCommand.jobId	String	variable	221	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+104	ActionEndXCommand.actionId	String	variable	221	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+109	ActionEndXCommand.updateList	List<UpdateEntry>	variable	224	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+59	UPDATE_ACTION_END		variable	224	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	224	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	225	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+109	ActionEndXCommand.updateList	List<UpdateEntry>	variable	226	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+60	UPDATE_WORKFLOW_STATUS_INSTANCE_MODIFIED		variable	226	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	226	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	231	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	232	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	233	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+58	TRANSIENT		variable	236	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+74	context	ActionExecutorContext	variable	237	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	237	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+74	context	ActionExecutorContext	variable	238	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	238	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	239	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	240	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	242	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+57	NON_TRANSIENT		variable	244	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+74	context	ActionExecutorContext	variable	245	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	245	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	246	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+66	ERROR		variable	248	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+74	context	ActionExecutorContext	variable	249	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	249	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+102	ActionEndXCommand.COULD_NOT_END	String	variable	249	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+107	ActionEndXCommand.jobId	String	variable	250	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+104	ActionEndXCommand.actionId	String	variable	250	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+67	FAILED		variable	252	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+74	context	ActionExecutorContext	variable	253	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	257	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+62	wfInstance	WorkflowInstance	variable	258	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	258	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	259	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+62	wfInstance	WorkflowInstance	variable	259	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+109	ActionEndXCommand.updateList	List<UpdateEntry>	variable	261	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+59	UPDATE_ACTION_END		variable	261	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	261	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	262	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+109	ActionEndXCommand.updateList	List<UpdateEntry>	variable	263	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+60	UPDATE_WORKFLOW_STATUS_INSTANCE_MODIFIED		variable	263	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	263	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+106	ActionEndXCommand.insertList	List<JsonBean>	variable	267	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+109	ActionEndXCommand.updateList	List<UpdateEntry>	variable	267	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+105	ActionEndXCommand.executor	ActionExecutor	variable	268	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	269	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	269	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+104	ActionEndXCommand.actionId	String	variable	277	use	org.apache.oozie.command.wf.ActionEndXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	141	278
+107	ActionEndXCommand.jobId	String	variable	87	use	org.apache.oozie.command.wf.ActionEndXCommand.getEntityKey	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	86	88
+104	ActionEndXCommand.actionId	String	variable	92	use	org.apache.oozie.command.wf.ActionEndXCommand.getKey	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	91	93
+90	ex	XException	param	109	define	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+90	ex	XException	param	110	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+108	ActionEndXCommand.jpaService	JPAService	variable	98	set	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	100	set	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	101	set	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+7	class		variable	98	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+108	ActionEndXCommand.jpaService	JPAService	variable	99	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+108	ActionEndXCommand.jpaService	JPAService	variable	100	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+107	ActionEndXCommand.jobId	String	variable	100	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+108	ActionEndXCommand.jpaService	JPAService	variable	101	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+104	ActionEndXCommand.actionId	String	variable	101	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	102	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+92	logInfo		variable	102	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	103	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+92	logInfo		variable	103	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+91	E0610		variable	106	use	org.apache.oozie.command.wf.ActionEndXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	96	112
+105	ActionEndXCommand.executor	ActionExecutor	variable	134	set	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	116	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+97	E0604		variable	117	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+107	ActionEndXCommand.jobId	String	variable	117	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	119	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+98	E0605		variable	120	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+104	ActionEndXCommand.actionId	String	variable	120	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	122	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	123	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	124	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	124	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+111	ActionEndXCommand.wfJob	WorkflowJobBean	variable	126	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+100	E0811		variable	127	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+101	E0812		variable	131	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	131	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	131	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+7	class		variable	134	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	134	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+105	ActionEndXCommand.executor	ActionExecutor	variable	135	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+99	E0802		variable	136	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136
+110	ActionEndXCommand.wfAction	WorkflowActionBean	variable	136	use	org.apache.oozie.command.wf.ActionEndXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/9df0de78/dfa60fc2.java	115	136

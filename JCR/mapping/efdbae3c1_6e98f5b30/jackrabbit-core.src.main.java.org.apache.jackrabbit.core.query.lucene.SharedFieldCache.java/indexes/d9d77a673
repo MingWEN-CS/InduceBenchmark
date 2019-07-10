@@ -1,0 +1,395 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.query.lucene;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import javax.jcr.PropertyType;
+
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.index.TermPositions;
+
+
+
+
+
+
+
+public class SharedFieldCache {
+
+    
+
+
+    public static class ValueIndex {
+
+        
+
+
+
+
+        private static final int SPARSE_FACTOR = 100;
+
+        
+
+
+        private final Comparable<?>[] values;
+
+        
+
+
+        public final Map<Integer, Comparable<?>> valuesMap;
+
+        
+
+
+        public final boolean sparse;
+
+        
+
+
+        public ValueIndex(Comparable<?>[] values, int setValues) {
+            if (isSparse(values, setValues)) {
+                this.sparse = true;
+                this.values = null;
+                if (setValues == 0) {
+                    this.valuesMap = null;
+                } else {
+                    this.valuesMap = getValuesMap(values, setValues);
+                }
+            } else {
+                this.sparse = false;
+                this.values = values;
+                this.valuesMap = null;
+            }
+        }
+
+        public Comparable<?> getValue(int i) {
+            if (sparse) {
+                return valuesMap == null ? null : valuesMap.get(i);
+            } else {
+                return values[i];
+            }
+        }
+
+        private static Map<Integer, Comparable<?>> getValuesMap(Comparable<?>[] values, int setValues) {
+            Map<Integer, Comparable<?>> map = new HashMap<Integer, Comparable<?>>(setValues);
+            for (int i = 0; i < values.length && setValues > 0; i++) {
+                if (values[i] != null) {
+                    map.put(i, values[i]);
+                    setValues--;
+                }
+            }
+            return map;
+        }
+
+        private static boolean isSparse(Comparable<?>[] values, int setValues) {
+            
+            
+            if (setValues * SPARSE_FACTOR < values.length) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    static class ComparableArray implements Comparable<ComparableArray> {
+
+        private int offset = 0;
+
+        private Comparable<?>[] c = new Comparable[0];
+
+        public ComparableArray(Comparable<?> item, int index) {
+            insert(item, index);
+        }
+
+        public int compareTo(ComparableArray o) {
+            return Util.compare(c, o.c);
+        }
+
+        
+
+
+
+
+        int getOffset() {
+            return offset;
+        }
+
+        public ComparableArray insert(Comparable<?> item, int index) {
+            
+            if (c.length == 0) {
+                offset = index;
+                c = new Comparable<?>[] { item };
+                return this;
+            }
+
+            
+            if (index >= offset && index < offset + c.length) {
+                c[index - offset] = item;
+                return this;
+            }
+
+            
+            if (index < offset) {
+                int relativeOffset = offset - index;
+                Comparable<?>[] newC = new Comparable[relativeOffset + c.length];
+                newC[0] = item;
+                System.arraycopy(c, 0, newC, relativeOffset, c.length);
+                c = newC;
+                offset = index;
+                return this;
+            }
+
+            
+            if (index >= offset + c.length) {
+                c = Arrays.copyOf(c, index - offset + 1);
+                c[index - offset] = item;
+                return this;
+            }
+            return this;
+        }
+
+        
+
+
+        @Override
+        public String toString() {
+            if (c == null) {
+                return null;
+            }
+            if (c.length == 1) {
+                return c[0].toString();
+            }
+            return Arrays.toString(c);
+        }
+    }
+
+    
+
+
+    public static final SharedFieldCache INSTANCE = new SharedFieldCache();
+
+    
+
+
+    private final Map<IndexReader, Map<Key, ValueIndex>> cache = new WeakHashMap<IndexReader, Map<Key, ValueIndex>>();
+
+    
+
+
+    private SharedFieldCache() {
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public ValueIndex getValueIndex(IndexReader reader, String field,
+            String prefix) throws IOException {
+
+        if (reader instanceof ReadOnlyIndexReader) {
+            reader = ((ReadOnlyIndexReader) reader).getBase();
+        }
+
+        field = field.intern();
+        ValueIndex ret = lookup(reader, field, prefix);
+        if (ret == null) {
+            final int maxDocs = reader.maxDoc();
+            ComparableArray[] retArray = new ComparableArray[maxDocs];
+            int setValues = 0;
+            if (maxDocs > 0) {
+                IndexFormatVersion version = IndexFormatVersion.getVersion(reader);
+                boolean hasPayloads = version.isAtLeast(IndexFormatVersion.V3);
+                TermDocs termDocs;
+                byte[] payload = null;
+                int type;
+                if (hasPayloads) {
+                    termDocs = reader.termPositions();
+                    payload = new byte[1];
+                } else {
+                    termDocs = reader.termDocs();
+                }
+                TermEnum termEnum = reader.terms(new Term(field, prefix));
+                try {
+                    if (termEnum.term() == null) {
+                        throw new RuntimeException("no terms in field " + field);
+                    }
+                    do {
+                        Term term = termEnum.term();
+                        if (term.field() != field || !term.text().startsWith(prefix)) {
+                            break;
+                        }
+                        final String value = termValueAsString(term, prefix);
+                        termDocs.seek(term);
+                        while (termDocs.next()) {
+                            int termPosition = 0;
+                            type = PropertyType.UNDEFINED;
+                            if (hasPayloads) {
+                                TermPositions termPos = (TermPositions) termDocs;
+                                termPosition = termPos.nextPosition();
+                                if (termPos.isPayloadAvailable()) {
+                                    payload = termPos.getPayload(payload, 0);
+                                    type = PropertyMetaData.fromByteArray(payload).getPropertyType();
+                                }
+                            }
+                            setValues++;
+                            Comparable<?> v = getValue(value, type);
+                            int doc = termDocs.doc();
+                            ComparableArray ca = retArray[doc];
+                            if (ca == null) {
+                                retArray[doc] = new ComparableArray(v, termPosition);
+                            } else {
+                                retArray[doc] = ca.insert(v, termPosition);
+                            }
+                        }
+                    } while (termEnum.next());
+                } finally {
+                    termDocs.close();
+                    termEnum.close();
+                }
+            }
+            ValueIndex value = new ValueIndex(retArray, setValues);
+            store(reader, field, prefix, value);
+            return value;
+        }
+        return ret;
+    }
+
+    
+
+
+
+
+
+
+    private static String termValueAsString(Term term, String prefix) {
+        
+        String text = term.text();
+        int length = text.length() - prefix.length();
+        char[] tmp = new char[length];
+        text.getChars(prefix.length(), text.length(), tmp, 0);
+        return new String(tmp, 0, length);
+    }
+
+    
+
+
+    ValueIndex lookup(IndexReader reader, String field, String prefix) {
+        synchronized (cache) {
+            Map<Key, ValueIndex> readerCache = cache.get(reader);
+            if (readerCache == null) {
+                return null;
+            }
+            return readerCache.get(new Key(field, prefix));
+        }
+    }
+
+    
+
+
+    void store(IndexReader reader, String field, String prefix, ValueIndex value) {
+        synchronized (cache) {
+            Map<Key, ValueIndex> readerCache = cache.get(reader);
+            if (readerCache == null) {
+                readerCache = new HashMap<Key, ValueIndex>();
+                cache.put(reader, readerCache);
+            }
+            readerCache.put(new Key(field, prefix), value);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    private Comparable<?> getValue(String value, int type) {
+        switch (type) {
+            case PropertyType.BOOLEAN:
+                return Boolean.valueOf(value);
+            case PropertyType.DATE:
+                return DateField.stringToTime(value);
+            case PropertyType.LONG:
+                return LongField.stringToLong(value);
+            case PropertyType.DOUBLE:
+                return DoubleField.stringToDouble(value);
+            case PropertyType.DECIMAL:
+                return DecimalField.stringToDecimal(value);
+            default:
+                return value;
+        }
+    }
+
+    
+
+
+
+    static class Key {
+
+        private final String field;
+        private final String prefix;
+
+        
+
+
+        Key(String field, String prefix) { 
+            this.field = field.intern();
+            this.prefix = prefix.intern();
+        }
+
+        
+
+
+
+        public boolean equals(Object o) {
+            if (o instanceof Key) {
+                Key other = (Key) o;
+                return other.field == field
+                        && other.prefix == prefix;
+            }
+            return false;
+        }
+
+        
+
+
+        public int hashCode() {
+            return field.hashCode() ^ prefix.hashCode();
+        }
+    }
+
+}

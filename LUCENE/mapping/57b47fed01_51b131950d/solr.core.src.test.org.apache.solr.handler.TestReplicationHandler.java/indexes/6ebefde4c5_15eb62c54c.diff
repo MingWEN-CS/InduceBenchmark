@@ -1,0 +1,9 @@
+1316,1320c1316,1317
+<     boolean isElapsed = false;
+<     if(timeTakenInSeconds - approximateTimeInSeconds > 0) {
+<       isElapsed = true;
+<     }
+<     assertTrue(isElapsed);
+---
+>     log.info("approximateTimeInSeconds = " + approximateTimeInSeconds + " timeTakenInSeconds = " + timeTakenInSeconds);
+>     assertTrue(timeTakenInSeconds - approximateTimeInSeconds > 0);

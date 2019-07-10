@@ -1,0 +1,5 @@
+649c649,650
+<       Replica replica = clusterState.getLeader(collection, shard);
+---
+>       DocCollection docCollection = clusterState.getCollectionOrNull(collection);
+>       Replica replica = docCollection != null ? docCollection.getLeader(shard) : null;

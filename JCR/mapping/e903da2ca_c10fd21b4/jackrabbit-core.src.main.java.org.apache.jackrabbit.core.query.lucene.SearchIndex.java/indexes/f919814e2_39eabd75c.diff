@@ -1,0 +1,8 @@
+1413c1413
+<         public int getParent(int n) throws IOException {
+---
+>         public int[] getParents(int n, int[] docNumbers) throws IOException {
+1417c1417
+<             return id.getDocumentNumber(this);
+---
+>             return id.getDocumentNumbers(this, docNumbers);

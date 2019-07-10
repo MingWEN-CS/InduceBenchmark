@@ -1,0 +1,61 @@
+981c981
+<     assertEquals(8191, Shell.WINDOWS_MAX_SHELL_LENGHT);
+---
+>     assertEquals(8191, Shell.WINDOWS_MAX_SHELL_LENGTH);
+990c990
+<             "E", Shell.WINDOWS_MAX_SHELL_LENGHT - callCmd.length())));
+---
+>             "E", Shell.WINDOWS_MAX_SHELL_LENGTH - callCmd.length())));
+994c994
+<               "X", Shell.WINDOWS_MAX_SHELL_LENGHT -callCmd.length() + 1)));
+---
+>               "X", Shell.WINDOWS_MAX_SHELL_LENGTH -callCmd.length() + 1)));
+1029c1029
+<     assertEquals(8191, Shell.WINDOWS_MAX_SHELL_LENGHT);
+---
+>     assertEquals(8191, Shell.WINDOWS_MAX_SHELL_LENGTH);
+1036c1036
+<         "A", Shell.WINDOWS_MAX_SHELL_LENGHT - ("@set somekey=").length()));
+---
+>         "A", Shell.WINDOWS_MAX_SHELL_LENGTH - ("@set somekey=").length()));
+1039c1039
+<           "A", Shell.WINDOWS_MAX_SHELL_LENGHT - ("@set somekey=").length()) + 1);
+---
+>           "A", Shell.WINDOWS_MAX_SHELL_LENGTH - ("@set somekey=").length()) + 1);
+1054c1054
+<     assertEquals(8191, Shell.WINDOWS_MAX_SHELL_LENGHT);
+---
+>     assertEquals(8191, Shell.WINDOWS_MAX_SHELL_LENGTH);
+1061c1061
+<         "E", (Shell.WINDOWS_MAX_SHELL_LENGHT - mkDirCmd.length())/2)));
+---
+>         "E", (Shell.WINDOWS_MAX_SHELL_LENGTH - mkDirCmd.length())/2)));
+1064c1064
+<           "X", (Shell.WINDOWS_MAX_SHELL_LENGHT - mkDirCmd.length())/2 +1)));
+---
+>           "X", (Shell.WINDOWS_MAX_SHELL_LENGTH - mkDirCmd.length())/2 +1)));
+1075,1076c1075
+< 
+<     String linkCmd = "@" +Shell.WINUTILS + " symlink \"\" \"\"";
+---
+>     String linkCmd = "@" + Shell.getWinutilsPath() + " symlink \"\" \"\"";
+1079c1078
+<     assertEquals(8191, Shell.WINDOWS_MAX_SHELL_LENGHT);
+---
+>     assertEquals(8191, Shell.WINDOWS_MAX_SHELL_LENGTH);
+1088c1087
+<             "E", (Shell.WINDOWS_MAX_SHELL_LENGHT - linkCmd.length())/2)),
+---
+>             "E", (Shell.WINDOWS_MAX_SHELL_LENGTH - linkCmd.length())/2)),
+1090c1089
+<             "F", (Shell.WINDOWS_MAX_SHELL_LENGHT - linkCmd.length())/2)));
+---
+>             "F", (Shell.WINDOWS_MAX_SHELL_LENGTH - linkCmd.length())/2)));
+1094c1093
+<               "X", (Shell.WINDOWS_MAX_SHELL_LENGHT - linkCmd.length())/2 + 1)),
+---
+>               "X", (Shell.WINDOWS_MAX_SHELL_LENGTH - linkCmd.length())/2 + 1)),
+1096c1095
+<               "Y", (Shell.WINDOWS_MAX_SHELL_LENGHT - linkCmd.length())/2) + 1));
+---
+>               "Y", (Shell.WINDOWS_MAX_SHELL_LENGTH - linkCmd.length())/2) + 1));

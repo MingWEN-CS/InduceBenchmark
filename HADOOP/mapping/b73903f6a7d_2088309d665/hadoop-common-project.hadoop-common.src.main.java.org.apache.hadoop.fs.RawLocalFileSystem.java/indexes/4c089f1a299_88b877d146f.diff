@@ -1,0 +1,15 @@
+32a33
+> import java.util.EnumSet;
+283a285,296
+>   
+>   @Override
+>   @Deprecated
+>   public FSDataOutputStream createNonRecursive(Path f, FsPermission permission,
+>       EnumSet<CreateFlag> flags, int bufferSize, short replication, long blockSize,
+>       Progressable progress) throws IOException {
+>     if (exists(f) && !flags.contains(CreateFlag.OVERWRITE)) {
+>       throw new IOException("File already exists: "+f);
+>     }
+>     return new FSDataOutputStream(new BufferedOutputStream(
+>         new LocalFSFileOutputStream(f, false), bufferSize), statistics);
+>   }

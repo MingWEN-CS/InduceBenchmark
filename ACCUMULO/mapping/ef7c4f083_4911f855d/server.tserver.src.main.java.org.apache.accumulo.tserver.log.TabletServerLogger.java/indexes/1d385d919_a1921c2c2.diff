@@ -1,0 +1,19 @@
+95,97c95,96
+<   private final static int HALT_AFTER_ERROR_COUNT = 5;
+<   
+<   private final Cache<Long,Object> walErrors = CacheBuilder.newBuilder().maximumSize(HALT_AFTER_ERROR_COUNT).expireAfterWrite(10, TimeUnit.SECONDS).build();
+---
+>   private final long toleratedFailures;
+>   private final Cache<Long,Object> walErrors;
+142c141,142
+<   public TabletServerLogger(TabletServer tserver, long maxSize, AtomicLong syncCounter, AtomicLong flushCounter) {
+---
+>   public TabletServerLogger(TabletServer tserver, long maxSize, AtomicLong syncCounter, AtomicLong flushCounter, long toleratedWalCreationFailures,
+>       long toleratedFailuresPeriodMillis) {
+146a147,148
+>     this.toleratedFailures = toleratedWalCreationFailures;
+>     this.walErrors = CacheBuilder.newBuilder().maximumSize(toleratedFailures).expireAfterWrite(toleratedFailuresPeriodMillis, TimeUnit.MILLISECONDS).build();
+207c209
+<       if (walErrors.size() >= HALT_AFTER_ERROR_COUNT) {
+---
+>       if (walErrors.size() > toleratedFailures) {

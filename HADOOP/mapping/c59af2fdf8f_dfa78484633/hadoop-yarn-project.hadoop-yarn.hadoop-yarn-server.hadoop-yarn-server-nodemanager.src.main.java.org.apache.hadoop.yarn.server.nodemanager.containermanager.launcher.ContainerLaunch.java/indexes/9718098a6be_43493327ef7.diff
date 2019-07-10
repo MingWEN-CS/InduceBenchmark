@@ -1,0 +1,17 @@
+27d26
+< import java.io.OutputStream;
+750,759c749,751
+<       
+<       
+<       if (!Shell.isJava7OrAbove() && srcFile.isFile()) {
+<         lineWithLenCheck(String.format("@copy \"%s\" \"%s\"", srcFileStr, dstFileStr));
+<         errorCheck();
+<       } else {
+<         lineWithLenCheck(String.format("@%s symlink \"%s\" \"%s\"", Shell.WINUTILS,
+<           dstFileStr, srcFileStr));
+<         errorCheck();
+<       }
+---
+>       lineWithLenCheck(String.format("@%s symlink \"%s\" \"%s\"",
+>           Shell.getWinutilsPath(), dstFileStr, srcFileStr));
+>       errorCheck();

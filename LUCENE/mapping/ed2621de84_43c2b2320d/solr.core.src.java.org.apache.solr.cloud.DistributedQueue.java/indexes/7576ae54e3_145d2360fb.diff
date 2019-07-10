@@ -1,0 +1,8 @@
+27a28
+> import java.util.function.Predicate;
+31d31
+< import com.google.common.base.Predicate;
+333c333
+<           if (acceptFilter.apply(child)) {
+---
+>           if (acceptFilter.test(child)) {

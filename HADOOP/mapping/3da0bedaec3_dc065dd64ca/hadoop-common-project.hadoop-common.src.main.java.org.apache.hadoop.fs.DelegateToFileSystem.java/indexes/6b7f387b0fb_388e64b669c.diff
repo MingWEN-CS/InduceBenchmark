@@ -1,0 +1,20 @@
+49c49
+<         theFsImpl.getDefaultPort());
+---
+>         getDefaultPortIfDefined(theFsImpl));
+54a55,69
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private static int getDefaultPortIfDefined(FileSystem theFsImpl) {
+>     int defaultPort = theFsImpl.getDefaultPort();
+>     return defaultPort != 0 ? defaultPort : -1;
+>   }
+> 

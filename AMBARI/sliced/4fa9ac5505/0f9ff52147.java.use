@@ -1,0 +1,12 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+32	eventType	AmbariEventType	param	162	define	org.apache.ambari.server.events.AmbariEvent.AmbariEvent	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	162	164
+32	eventType	AmbariEventType	param	163	use	org.apache.ambari.server.events.AmbariEvent.AmbariEvent	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	162	164
+40	AmbariEvent.m_eventType	AmbariEventType	variable	163	set	org.apache.ambari.server.events.AmbariEvent.AmbariEvent	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	162	164
+40	AmbariEvent.m_eventType	AmbariEventType	variable	172	use	org.apache.ambari.server.events.AmbariEvent.getType	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	171	173
+39	buffer	StringBuilder	variable	180	define	org.apache.ambari.server.events.AmbariEvent.toString	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	179	184
+39	buffer	StringBuilder	variable	180	set	org.apache.ambari.server.events.AmbariEvent.toString	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	179	184
+39	buffer	StringBuilder	variable	181	use	org.apache.ambari.server.events.AmbariEvent.toString	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	179	184
+40	AmbariEvent.m_eventType	AmbariEventType	variable	181	use	org.apache.ambari.server.events.AmbariEvent.toString	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	179	184
+39	buffer	StringBuilder	variable	182	use	org.apache.ambari.server.events.AmbariEvent.toString	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	179	184
+39	buffer	StringBuilder	variable	183	use	org.apache.ambari.server.events.AmbariEvent.toString	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	179	184
+5	s		param	29	define	org.apache.ambari.server.events.AmbariEvent.AmbariEventType.valueOf	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/0f9ff52147.java	29	29

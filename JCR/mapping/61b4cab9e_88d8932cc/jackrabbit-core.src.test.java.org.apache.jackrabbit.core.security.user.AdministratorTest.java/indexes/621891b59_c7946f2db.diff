@@ -1,0 +1,252 @@
+18a19,21
+> import javax.jcr.RepositoryException;
+> import javax.jcr.Session;
+> 
+21,22d23
+< import org.apache.jackrabbit.api.security.user.UserManager;
+< import org.apache.jackrabbit.api.security.user.User;
+24,25d24
+< import org.apache.jackrabbit.core.SessionImpl;
+< import org.apache.jackrabbit.core.id.NodeId;
+28,33d26
+< import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
+< 
+< import javax.jcr.Node;
+< import javax.jcr.RepositoryException;
+< import javax.jcr.Session;
+< import java.util.Properties;
+75,81d67
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+89,101c75
+<         
+<         NodeImpl adminNode = ((AuthorizableImpl) admin).getNode();
+<         Session s = adminNode.getSession();
+<         adminNode.remove();
+<         
+<         
+<         s.save();
+< 
+<         
+<         assertNull(userMgr.getAuthorizable(adminId));
+< 
+<         
+<         Session s2 = getHelper().getSuperuserSession();
+---
+>         Session s = null;
+103,105c77,85
+<             admin = userMgr.getAuthorizable(adminId);
+<             assertNotNull(admin);
+<             assertNotNull(getUserManager(s2).getAuthorizable(adminId));
+---
+>             NodeImpl adminNode = ((AuthorizableImpl) admin).getNode();
+>             s = adminNode.getSession();
+>             adminNode.remove();
+>             
+>             
+>             s.save();
+>             fail();
+>         } catch (RepositoryException e) {
+>             
+107c87,89
+<             s2.logout();
+---
+>             if (s != null) {
+>                 s.refresh(false);
+>             }
+111,115c93
+<     
+< 
+< 
+< 
+<     public void testAdminNodeCollidingWithAuthorizableFolder() throws RepositoryException, NotExecutableException {
+---
+>     public void testSessionRemoveItem()  throws RepositoryException, NotExecutableException {
+122,135c100
+<         
+<         NodeImpl adminNode = ((AuthorizableImpl) admin).getNode();
+<         String adminPath = adminNode.getPath();
+<         String adminNodeName = adminNode.getName();
+<         Node parentNode = adminNode.getParent();
+< 
+<         Session s = adminNode.getSession();
+<         adminNode.remove();
+<         
+<         
+<         s.save();
+< 
+<         Session s2 = null;
+<         String collidingPath = null;
+---
+>         Session s = null;
+137,139c102,104
+<             
+<             Node n = parentNode.addNode(adminNodeName, "rep:AuthorizableFolder");
+<             collidingPath = n.getPath();
+---
+>             NodeImpl parent = (NodeImpl) ((AuthorizableImpl) admin).getNode().getParent();
+>             s = parent.getSession();
+>             s.removeItem(parent.getPath());
+141c106,107
+< 
+---
+>             fail();
+>         } catch (RepositoryException e) {
+143,149d108
+<             s2 = getHelper().getSuperuserSession();
+< 
+<             admin = userMgr.getAuthorizable(adminId);
+<             assertNotNull(admin);
+<             assertEquals(adminNodeName, ((AuthorizableImpl) admin).getNode().getName());
+<             assertFalse(adminPath.equals(((AuthorizableImpl) admin).getNode().getPath()));
+< 
+151,157c110,111
+<             if (s2 != null) {
+<                 s2.logout();
+<             }
+<             
+<             if (collidingPath != null) {
+<                 s.getNode(collidingPath).remove();
+<                 s.save();
+---
+>             if (s != null) {
+>                 s.refresh(false);
+162,166c116,117
+<     
+< 
+< 
+< 
+< 
+---
+>     public void testSessionMoveAdminNode()  throws RepositoryException, NotExecutableException {
+>         Authorizable admin = userMgr.getAuthorizable(adminId);
+167a119,121
+>         if (admin == null || !(admin instanceof AuthorizableImpl)) {
+>             throw new NotExecutableException();
+>         }
+168a123,139
+>         Session s = null;
+>         try {
+>             NodeImpl adminNode = ((AuthorizableImpl) admin).getNode();
+>             s = adminNode.getSession();
+>             s.move(adminNode.getPath(), "/somewhereelse");
+>             
+>             
+>             s.save();
+>             fail();
+>         } catch (RepositoryException e) {
+>             
+>         }  finally {
+>             if (s != null) {
+>                 s.refresh(false);
+>             }
+>         }
+>     }
+170c141
+<     public void testAdminNodeCollidingWithRandomNode() throws RepositoryException, NotExecutableException {
+---
+>     public void testSessionMoveParentNode()  throws RepositoryException, NotExecutableException {
+177,188c148
+<         
+<         NodeImpl adminNode = ((AuthorizableImpl) admin).getNode();
+<         NodeId nid = adminNode.getNodeId();
+< 
+<         Session s = adminNode.getSession();
+<         adminNode.remove();
+<         
+<         
+<         s.save();
+< 
+<         Session s2 = null;
+<         String collidingPath = null;
+---
+>         Session s = null;
+190,191c150,152
+<             
+<             NameResolver nr = (SessionImpl) s;
+---
+>             NodeImpl parent = (NodeImpl) ((AuthorizableImpl) admin).getNode().getParent();
+>             s = parent.getSession();
+>             s.move(parent.getPath(), "/somewhereelse");
+194,196d154
+<             NodeImpl tr = (NodeImpl) s.getRootNode();
+<             Node n = tr.addNode(nr.getQName("tmpNode"), nr.getQName(testNodeType), nid);
+<             collidingPath = n.getPath();
+198,203c156,157
+< 
+<             
+<             s2 = getHelper().getSuperuserSession();
+< 
+<             admin = userMgr.getAuthorizable(adminId);
+<             assertNotNull(admin);
+---
+>             fail();
+>         } catch (RepositoryException e) {
+205,206d158
+<             assertFalse(s2.nodeExists(collidingPath));
+< 
+208,213c160,161
+<             if (s2 != null) {
+<                 s2.logout();
+<             }
+<             if (collidingPath != null && s.nodeExists(collidingPath)) {
+<                 s.getNode(collidingPath).remove();
+<                 s.save();
+---
+>             if (s != null) {
+>                 s.refresh(false);
+218,223c166
+<     
+< 
+< 
+< 
+< 
+<     public void testChangeUserRootPath() throws RepositoryException, NotExecutableException {
+---
+>     public void testWorkspaceMoveAdminNode()  throws RepositoryException, NotExecutableException {
+231,240d173
+<         NodeImpl adminNode = ((AuthorizableImpl) admin).getNode();
+< 
+<         Session s = adminNode.getSession();
+<         adminNode.remove();
+<         
+<         
+<         s.save();
+< 
+<         Session s2 = null;
+<         String collidingPath = null;
+241a175,179
+>             NodeImpl adminNode = ((AuthorizableImpl) admin).getNode();
+>             Session s = adminNode.getSession();
+>             s.getWorkspace().move(adminNode.getPath(), "/somewhereelse");
+>             fail();
+>         } catch (RepositoryException e) {
+243,265d180
+<             Properties props = new Properties();
+<             props.setProperty("usersPath", "/testPath");
+<             UserManager um = new UserManagerImpl((SessionImpl) s, adminId, props);
+<             User collidingUser = um.createUser(adminId, adminId);
+<             collidingPath = ((AuthorizableImpl) collidingUser).getNode().getPath();
+<             s.save();
+< 
+<             
+<             s2 = getHelper().getSuperuserSession();
+< 
+<             admin = userMgr.getAuthorizable(adminId);
+<             assertNotNull(admin);
+<             
+<             assertFalse(s2.nodeExists(collidingPath));
+< 
+<         } finally {
+<             if (s2 != null) {
+<                 s2.logout();
+<             }
+<             if (collidingPath != null && s.nodeExists(collidingPath)) {
+<                 s.getNode(collidingPath).remove();
+<                 s.save();
+<             }

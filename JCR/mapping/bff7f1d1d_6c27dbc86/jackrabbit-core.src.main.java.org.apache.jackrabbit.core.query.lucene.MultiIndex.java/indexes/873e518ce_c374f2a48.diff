@@ -1,0 +1,26 @@
+407c407,412
+<             getIndexReader().release();
+---
+>             try {
+>                 getIndexReader().release();
+>             } catch (IOException e) {
+>                 
+>                 log.warn("unable to prepare index reader for queries during update", e);
+>             }
+577,579c582,593
+<         PersistentIndex index = new PersistentIndex(indexName,
+<                 handler.getTextAnalyzer(), handler.getSimilarity(),
+<                 cache, indexingQueue, directoryManager);
+---
+>         PersistentIndex index;
+>         try {
+>             index = new PersistentIndex(indexName,
+>                     handler.getTextAnalyzer(), handler.getSimilarity(),
+>                     cache, indexingQueue, directoryManager);
+>         } catch (IOException e) {
+>             
+>             if (!directoryManager.delete(indexName)) {
+>                 deletable.add(indexName);
+>             }
+>             throw e;
+>         }

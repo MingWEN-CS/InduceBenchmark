@@ -1,0 +1,1306 @@
+29a30
+> import org.apache.lucene.util.Constants;
+34a36
+> import java.util.Collection;
+185a188,199
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+252a267
+> 
+253a269,280
+> 
+> 
+> 
+> 
+>   public final static double DEFAULT_MAX_SYNC_PAUSE_SECONDS;
+>   static {
+>     if (Constants.WINDOWS)
+>       DEFAULT_MAX_SYNC_PAUSE_SECONDS = 10.0;
+>     else
+>       DEFAULT_MAX_SYNC_PAUSE_SECONDS = 0.0;
+>   }
+> 
+272c299
+<   private boolean commitPending; 
+---
+>   private volatile boolean commitPending; 
+273a301
+>   private HashMap rollbackSegments;
+279a308,310
+>   private int syncCount;
+>   private int syncCountSaved = -1;
+> 
+304a336,341
+>   private int flushCount;
+>   private double maxSyncPauseSeconds = DEFAULT_MAX_SYNC_PAUSE_SECONDS;
+> 
+>   
+>   private SegmentInfo lastMergeInfo;
+> 
+452a490,491
+> 
+> 
+506a546,547
+> 
+> 
+560a602,603
+> 
+> 
+610a654,655
+> 
+> 
+656a702,703
+> 
+> 
+702a750,751
+> 
+> 
+749a799,802
+> 
+> 
+> 
+> 
+801a855,858
+> 
+> 
+> 
+> 
+854a912,940
+>   public IndexWriter(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
+>     throws CorruptIndexException, LockObtainFailedException, IOException {
+>     init(d, a, false, deletionPolicy, true, mfl.getLimit());
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+910a997,1031
+>   public IndexWriter(Directory d, Analyzer a, boolean create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
+>        throws CorruptIndexException, LockObtainFailedException, IOException {
+>     init(d, a, create, false, deletionPolicy, true, mfl.getLimit());
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+987c1108
+<         segmentInfos.write(directory);
+---
+>         segmentInfos.commit(directory);
+989a1111,1119
+> 
+>         
+>         
+>         for(int i=0;i<segmentInfos.size();i++) {
+>           final SegmentInfo info = segmentInfos.info(i);
+>           List files = info.files();
+>           for(int j=0;j<files.size();j++)
+>             synced.add(files.get(j));
+>         }
+993,995c1123
+<       if (!autoCommit) {
+<         rollbackSegmentInfos = (SegmentInfos) segmentInfos.clone();
+<       }
+---
+>       setRollbackSegmentInfos();
+1019a1148,1155
+>   private void setRollbackSegmentInfos() {
+>     rollbackSegmentInfos = (SegmentInfos) segmentInfos.clone();
+>     rollbackSegments = new HashMap();
+>     final int size = rollbackSegmentInfos.size();
+>     for(int i=0;i<size;i++)
+>       rollbackSegments.put(rollbackSegmentInfos.info(i), new Integer(i));
+>   }
+> 
+1315a1452,1476
+> 
+> 
+> 
+> 
+> 
+> 
+>   public double getMaxSyncPauseSeconds() {
+>     return maxSyncPauseSeconds;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   public void setMaxSyncPauseSeconds(double seconds) {
+>     maxSyncPauseSeconds = seconds;
+>   }
+> 
+>   
+> 
+> 
+> 
+1432a1594,1596
+> 
+> 
+> 
+1493,1509c1657,1658
+<       synchronized(this) {
+<         if (commitPending) {
+<           boolean success = false;
+<           try {
+<             segmentInfos.write(directory);         
+<             success = true;
+<           } finally {
+<             if (!success) {
+<               if (infoStream != null)
+<                 message("hit exception committing segments file during close");
+<               deletePartialSegmentsFile();
+<             }
+<           }
+<           if (infoStream != null)
+<             message("close: wrote segments file \"" + segmentInfos.getCurrentSegmentFileName() + "\"");
+< 
+<           deleter.checkpoint(segmentInfos, true);
+---
+>       if (infoStream != null)
+>         message("now call final sync()");
+1511,1513c1660
+<           commitPending = false;
+<           rollbackSegmentInfos = null;
+<         }
+---
+>       sync(true, 0);
+1515,1516c1662,1663
+<         if (infoStream != null)
+<           message("at close: " + segString());
+---
+>       if (infoStream != null)
+>         message("at close: " + segString());
+1517a1665
+>       synchronized(this) {
+1519d1666
+< 
+1530c1677,1679
+<       closed = true;
+---
+>       synchronized(this) {
+>         closed = true;
+>       }
+1584,1591d1732
+< 
+<           for(int i=0;i<numSegments;i++) {
+<             SegmentInfo si = segmentInfos.info(i);
+<             if (si.getDocStoreOffset() != -1 &&
+<                 si.getDocStoreSegment().equals(docStoreSegment))
+<               si.setDocStoreIsCompoundFile(true);
+<           }
+<           checkpoint();
+1592a1734
+> 
+1595d1736
+< 
+1598,1605d1738
+<             
+<             
+<             for(int i=0;i<numSegments;i++) {
+<               SegmentInfo si = segmentInfos.info(i);
+<               if (si.getDocStoreOffset() != -1 &&
+<                   si.getDocStoreSegment().equals(docStoreSegment))
+<                 si.setDocStoreIsCompoundFile(false);
+<             }
+1607d1739
+<             deletePartialSegmentsFile();
+1611c1743,1750
+<         deleter.checkpoint(segmentInfos, false);
+---
+>         for(int i=0;i<numSegments;i++) {
+>           SegmentInfo si = segmentInfos.info(i);
+>           if (si.getDocStoreOffset() != -1 &&
+>               si.getDocStoreSegment().equals(docStoreSegment))
+>             si.setDocStoreIsCompoundFile(true);
+>         }
+> 
+>         checkpoint();
+1853a1993,1997
+>   
+>   final synchronized int getFlushCount() {
+>     return flushCount;
+>   }
+> 
+1988c2132
+<     flush();
+---
+>     flush(true, false);
+2032c2176,2178
+<                 err.initCause(merge.getException());
+---
+>                 final Throwable t = merge.getException();
+>                 if (t != null)
+>                   err.initCause(t);
+2160c2306,2307
+<       flush();
+---
+>       flush(true, false);
+> 
+2198a2346
+>     lastMergeInfo = null;
+2215,2222c2363,2364
+<     boolean success = false;
+<     try {
+<       checkpoint();
+<       success = true;
+<     } finally {
+<       if (!success) {
+<         if (infoStream != null)
+<           message("hit exception committing transaction");
+---
+>     
+>     checkpoint();
+2224c2366,2376
+<         rollbackTransaction();
+---
+>     if (autoCommit) {
+>       boolean success = false;
+>       try {
+>         sync(true, 0);
+>         success = true;
+>       } finally {
+>         if (!success) {
+>           if (infoStream != null)
+>             message("hit exception committing transaction");
+>           rollbackTransaction();
+>         }
+2226,2228c2378
+<     }
+< 
+<     if (!autoCommit)
+---
+>     } else
+2233,2235d2382
+< 
+<     
+<     deleter.checkpoint(segmentInfos, autoCommit);
+2358,2359d2504
+< 
+< 
+2361,2368c2506,2507
+<     if (autoCommit) {
+<       segmentInfos.write(directory);
+<       commitPending = false;
+<       if (infoStream != null)
+<         message("checkpoint: wrote segments file \"" + segmentInfos.getCurrentSegmentFileName() + "\"");
+<     } else {
+<       commitPending = true;
+<     }
+---
+>     commitPending = true;
+>     deleter.checkpoint(segmentInfos, false);
+2429c2568
+<     flush();
+---
+>     flush(true, false);
+2491c2630
+<     flush();
+---
+>     flush(true, false);
+2664a2804,2805
+> 
+> 
+2676a2818,2847
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public final void commit() throws CorruptIndexException, IOException {
+>     commit(true);
+>   }
+> 
+>   private final void commit(boolean triggerMerges) throws CorruptIndexException, IOException {
+>     flush(triggerMerges, true);
+>     sync(true, 0);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+2683a2855,2857
+>   
+>   
+>   
+2687a2862,2863
+>     flushCount++;
+> 
+2719a2896,2903
+>       int docStoreOffset = docWriter.getDocStoreOffset();
+> 
+>       
+>       
+>       assert !autoCommit || 0 == docStoreOffset;
+> 
+>       boolean docStoreIsCompoundFile = false;
+> 
+2723c2907
+<                 " docStoreOffset=" + docWriter.getDocStoreOffset() +
+---
+>                 " docStoreOffset=" + docStoreOffset +
+2732,2739d2915
+<       int docStoreOffset = docWriter.getDocStoreOffset();
+< 
+<       
+<       
+<       assert !autoCommit || 0 == docStoreOffset;
+< 
+<       boolean docStoreIsCompoundFile = false;
+< 
+2757,2762c2933
+<       if (flushDocs || flushDeletes) {
+< 
+<         SegmentInfos rollback = null;
+< 
+<         if (flushDeletes)
+<           rollback = (SegmentInfos) segmentInfos.clone();
+---
+>       if (flushDocs) {
+2764a2936
+>         final int flushedDocCount;
+2767,2787c2939,2946
+<           if (flushDocs) {
+< 
+<             if (0 == docStoreOffset && flushDocStores) {
+<               
+<               
+<               
+<               assert docStoreSegment != null;
+<               assert docStoreSegment.equals(segment);
+<               docStoreOffset = -1;
+<               docStoreIsCompoundFile = false;
+<               docStoreSegment = null;
+<             }
+< 
+<             int flushedDocCount = docWriter.flush(flushDocStores);
+<           
+<             newSegment = new SegmentInfo(segment,
+<                                          flushedDocCount,
+<                                          directory, false, true,
+<                                          docStoreOffset, docStoreSegment,
+<                                          docStoreIsCompoundFile);
+<             segmentInfos.addElement(newSegment);
+---
+>           flushedDocCount = docWriter.flush(flushDocStores);
+>           success = true;
+>         } finally {
+>           if (!success) {
+>             if (infoStream != null)
+>               message("hit exception flushing segment " + segment);
+>             docWriter.abort(null);
+>             deleter.refresh(segment);
+2788a2948,2959
+>         }
+>         
+>         if (0 == docStoreOffset && flushDocStores) {
+>           
+>           
+>           
+>           assert docStoreSegment != null;
+>           assert docStoreSegment.equals(segment);
+>           docStoreOffset = -1;
+>           docStoreIsCompoundFile = false;
+>           docStoreSegment = null;
+>         }
+2790c2961,2976
+<           if (flushDeletes) {
+---
+>         
+>         
+>         
+>         newSegment = new SegmentInfo(segment,
+>                                      flushedDocCount,
+>                                      directory, false, true,
+>                                      docStoreOffset, docStoreSegment,
+>                                      docStoreIsCompoundFile);
+>       }
+> 
+>       if (flushDeletes) {
+>         try {
+>           SegmentInfos rollback = (SegmentInfos) segmentInfos.clone();
+> 
+>           boolean success = false;
+>           try {
+2795,2805c2981,2986
+<             applyDeletes(flushDocs);
+<             doAfterFlush();
+<           }
+< 
+<           checkpoint();
+<           success = true;
+<         } finally {
+<           if (!success) {
+< 
+<             if (infoStream != null)
+<               message("hit exception flushing segment " + segment);
+---
+>             applyDeletes(newSegment);
+>             success = true;
+>           } finally {
+>             if (!success) {
+>               if (infoStream != null)
+>                 message("hit exception flushing deletes");
+2807,2808d2987
+<             if (flushDeletes) {
+< 
+2819a2999,3001
+>               deleter.refresh(segment);
+> 
+>               
+2824,2838c3006
+<               
+<             } else {
+<               
+<               if (newSegment != null && 
+<                   segmentInfos.size() > 0 && 
+<                   segmentInfos.info(segmentInfos.size()-1) == newSegment)
+<                 segmentInfos.remove(segmentInfos.size()-1);
+<             }
+<             if (flushDocs)
+<               docWriter.abort(null);
+<             deletePartialSegmentsFile();
+<             deleter.checkpoint(segmentInfos, false);
+< 
+<             if (segment != null)
+<               deleter.refresh(segment);
+---
+>             }              
+2839a3008,3011
+>         } finally {
+>           
+>           
+>           docWriter.clearBufferedDeletes();
+2840a3013
+>       }
+2842c3015,3016
+<         deleter.checkpoint(segmentInfos, autoCommit);
+---
+>       if (flushDocs)
+>         segmentInfos.addElement(newSegment);
+2844,2860c3018,3021
+<         if (flushDocs && mergePolicy.useCompoundFile(segmentInfos,
+<                                                      newSegment)) {
+<           success = false;
+<           try {
+<             docWriter.createCompoundFile(segment);
+<             newSegment.setUseCompoundFile(true);
+<             checkpoint();
+<             success = true;
+<           } finally {
+<             if (!success) {
+<               if (infoStream != null)
+<                 message("hit exception creating compound file for newly flushed segment " + segment);
+<               newSegment.setUseCompoundFile(false);
+<               deleter.deleteFile(segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
+<               deletePartialSegmentsFile();
+<             }
+<           }
+---
+>       if (flushDocs || flushDeletes)
+>         checkpoint();
+> 
+>       doAfterFlush();
+2862c3023,3034
+<           deleter.checkpoint(segmentInfos, autoCommit);
+---
+>       if (flushDocs && mergePolicy.useCompoundFile(segmentInfos, newSegment)) {
+>         
+>         boolean success = false;
+>         try {
+>           docWriter.createCompoundFile(segment);
+>           success = true;
+>         } finally {
+>           if (!success) {
+>             if (infoStream != null)
+>               message("hit exception creating compound file for newly flushed segment " + segment);
+>             deleter.deleteFile(segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
+>           }
+2864,2867c3036,3038
+<       
+<         return true;
+<       } else {
+<         return false;
+---
+> 
+>         newSegment.setUseCompoundFile(true);
+>         checkpoint();
+2868a3040,3041
+>       
+>       return flushDocs || flushDeletes;
+2917d3089
+<   synchronized private boolean commitMerge(MergePolicy.OneMerge merge) throws IOException {
+2919d3090
+<     assert merge.registerDone;
+2921,2929d3091
+<     
+<     
+<     
+<     
+<     
+<     
+<     if (merge.isAborted()) {
+<       if (infoStream != null)
+<         message("commitMerge: skipping merge " + merge.segString(directory) + ": it was aborted");
+2931,2935d3092
+<       assert merge.increfDone;
+<       decrefMergeSegments(merge);
+<       deleter.refresh(merge.info.name);
+<       return false;
+<     }
+2937d3093
+<     boolean success = false;
+2939d3094
+<     int start;
+2941,2943d3095
+<     try {
+<       SegmentInfos sourceSegmentsClone = merge.segmentsClone;
+<       SegmentInfos sourceSegments = merge.segments;
+2945,2947d3096
+<       start = ensureContiguousMerge(merge);
+<       if (infoStream != null)
+<         message("commitMerge " + merge.segString(directory));
+2949,2950c3098,3100
+<       
+<       
+---
+>   synchronized private void commitMergedDeletes(MergePolicy.OneMerge merge) throws IOException {
+>     final SegmentInfos sourceSegmentsClone = merge.segmentsClone;
+>     final SegmentInfos sourceSegments = merge.segments;
+2952,2953c3102,3103
+<       BitVector deletes = null;
+<       int docUpto = 0;
+---
+>     if (infoStream != null)
+>       message("commitMerge " + merge.segString(directory));
+2955,2958c3105,3106
+<       final int numSegmentsToMerge = sourceSegments.size();
+<       for(int i=0;i<numSegmentsToMerge;i++) {
+<         final SegmentInfo previousInfo = sourceSegmentsClone.info(i);
+<         final SegmentInfo currentInfo = sourceSegments.info(i);
+---
+>     
+>     
+2960c3108,3109
+<         assert currentInfo.docCount == previousInfo.docCount;
+---
+>     BitVector deletes = null;
+>     int docUpto = 0;
+2962c3111,3114
+<         final int docCount = currentInfo.docCount;
+---
+>     final int numSegmentsToMerge = sourceSegments.size();
+>     for(int i=0;i<numSegmentsToMerge;i++) {
+>       final SegmentInfo previousInfo = sourceSegmentsClone.info(i);
+>       final SegmentInfo currentInfo = sourceSegments.info(i);
+2964c3116
+<         if (previousInfo.hasDeletions()) {
+---
+>       assert currentInfo.docCount == previousInfo.docCount;
+2966,2971c3118
+<           
+<           
+<           
+<           
+<           
+<           
+---
+>       final int docCount = currentInfo.docCount;
+2973c3120
+<           assert currentInfo.hasDeletions();
+---
+>       if (previousInfo.hasDeletions()) {
+2975,2976c3122,3127
+<           
+<           BitVector previousDeletes = new BitVector(previousInfo.dir, previousInfo.getDelFileName());
+---
+>         
+>         
+>         
+>         
+>         
+>         
+2978,2983c3129
+<           if (!currentInfo.getDelFileName().equals(previousInfo.getDelFileName())) {
+<             
+<             
+<             
+<             if (deletes == null)
+<               deletes = new BitVector(merge.info.docCount);
+---
+>         assert currentInfo.hasDeletions();
+2985,2996d3130
+<             BitVector currentDeletes = new BitVector(currentInfo.dir, currentInfo.getDelFileName());
+<             for(int j=0;j<docCount;j++) {
+<               if (previousDeletes.get(j))
+<                 assert currentDeletes.get(j);
+<               else {
+<                 if (currentDeletes.get(j))
+<                   deletes.set(docUpto);
+<                 docUpto++;
+<               }
+<             }
+<           } else
+<             docUpto += docCount - previousDeletes.count();
+2998c3132,3135
+<         } else if (currentInfo.hasDeletions()) {
+---
+>         BitVector previousDeletes = new BitVector(previousInfo.dir, previousInfo.getDelFileName());
+> 
+>         if (!currentInfo.getDelFileName().equals(previousInfo.getDelFileName())) {
+>           
+3003d3139
+<           BitVector currentDeletes = new BitVector(directory, currentInfo.getDelFileName());
+3004a3141
+>           BitVector currentDeletes = new BitVector(currentInfo.dir, currentInfo.getDelFileName());
+3006,3008c3143,3149
+<             if (currentDeletes.get(j))
+<               deletes.set(docUpto);
+<             docUpto++;
+---
+>             if (previousDeletes.get(j))
+>               assert currentDeletes.get(j);
+>             else {
+>               if (currentDeletes.get(j))
+>                 deletes.set(docUpto);
+>               docUpto++;
+>             }
+3010d3150
+< 
+3012,3013c3152,3159
+<           
+<           docUpto += currentInfo.docCount;
+---
+>           docUpto += docCount - previousDeletes.count();
+>         
+>       } else if (currentInfo.hasDeletions()) {
+>         
+>         
+>         if (deletes == null)
+>           deletes = new BitVector(merge.info.docCount);
+>         BitVector currentDeletes = new BitVector(directory, currentInfo.getDelFileName());
+3015,3016c3161,3170
+<         merge.checkAborted(directory);
+<       }
+---
+>         for(int j=0;j<docCount;j++) {
+>           if (currentDeletes.get(j))
+>             deletes.set(docUpto);
+>           docUpto++;
+>         }
+>             
+>       } else
+>         
+>         docUpto += currentInfo.docCount;
+>     }
+3018,3028c3172,3174
+<       if (deletes != null) {
+<         merge.info.advanceDelGen();
+<         deletes.write(directory, merge.info.getDelFileName());
+<       }
+<       success = true;
+<     } finally {
+<       if (!success) {
+<         if (infoStream != null)
+<           message("hit exception creating merged deletes file");
+<         deleter.refresh(merge.info.name);
+<       }
+---
+>     if (deletes != null) {
+>       merge.info.advanceDelGen();
+>       deletes.write(directory, merge.info.getDelFileName());
+3029a3176,3202
+>   }
+> 
+>   
+>   synchronized private boolean commitMerge(MergePolicy.OneMerge merge) throws IOException {
+> 
+>     if (infoStream != null)
+>       message("commitMerge: " + merge.segString(directory));
+> 
+>     assert merge.registerDone;
+> 
+>     
+>     
+>     
+>     
+>     
+>     
+>     if (merge.isAborted()) {
+>       if (infoStream != null)
+>         message("commitMerge: skipping merge " + merge.segString(directory) + ": it was aborted");
+> 
+>       deleter.refresh(merge.info.name);
+>       return false;
+>     }
+> 
+>     final int start = ensureContiguousMerge(merge);
+> 
+>     commitMergedDeletes(merge);
+3050,3067c3223,3226
+<     success = false;
+<     SegmentInfos rollback = null;
+<     try {
+<       rollback = (SegmentInfos) segmentInfos.clone();
+<       segmentInfos.subList(start, start + merge.segments.size()).clear();
+<       segmentInfos.add(start, merge.info);
+<       checkpoint();
+<       success = true;
+<     } finally {
+<       if (!success && rollback != null) {
+<         if (infoStream != null)
+<           message("hit exception when checkpointing after merge");
+<         segmentInfos.clear();
+<         segmentInfos.addAll(rollback);
+<         deletePartialSegmentsFile();
+<         deleter.refresh(merge.info.name);
+<       }
+<     }
+---
+>     segmentInfos.subList(start, start + merge.segments.size()).clear();
+>     segmentInfos.add(start, merge.info);
+>     if (lastMergeInfo == null || segmentInfos.indexOf(lastMergeInfo) < start)
+>       lastMergeInfo = merge.info;
+3075c3234
+<     deleter.checkpoint(segmentInfos, autoCommit);
+---
+>     checkpoint();
+3104,3106d3262
+<     assert merge.registerDone;
+<     assert !merge.optimize || merge.maxNumSegmentsOptimize > 0;
+< 
+3112,3113c3268
+<         if (merge.info == null)
+<           mergeInit(merge);
+---
+>         mergeInit(merge);
+3134,3135d3288
+<           if (!success && infoStream != null)
+<             message("hit exception during merge");
+3138a3292,3299
+>           if (!success) {
+>             if (infoStream != null)
+>               message("hit exception during merge");
+>             addMergeException(merge);
+>             if (merge.info != null && !segmentInfos.contains(merge.info))
+>               deleter.refresh(merge.info.name);
+>           }
+> 
+3202a3364,3368
+>     assert !merge.optimize || merge.maxNumSegmentsOptimize > 0;
+> 
+>     if (merge.info != null)
+>       
+>       return;
+3325a3492,3535
+> 
+>     
+>     
+>     
+>     
+>     mergingSegments.add(merge.info);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private synchronized boolean doCommitBeforeMergeCFS(MergePolicy.OneMerge merge) throws IOException {
+>     long freeableBytes = 0;
+>     final int size = merge.segments.size();
+>     for(int i=0;i<size;i++) {
+>       final SegmentInfo info = merge.segments.info(i);
+>       
+>       
+>       
+>       
+>       Integer loc = (Integer) rollbackSegments.get(info);
+>       if (loc != null) {
+>         final SegmentInfo oldInfo = rollbackSegmentInfos.info(loc.intValue());
+>         if (oldInfo.getUseCompoundFile() != info.getUseCompoundFile())
+>           freeableBytes += info.sizeInBytes();
+>       }
+>     }
+>     
+>     
+>     long totalBytes = 0;
+>     final int numSegments = segmentInfos.size();
+>     for(int i=0;i<numSegments;i++)
+>       totalBytes += segmentInfos.info(i).sizeInBytes();
+>     if (3*freeableBytes > totalBytes)
+>       return true;
+>     else
+>       return false;
+3340a3551
+>     mergingSegments.remove(merge.info);
+3367,3369d3577
+<     
+<     
+< 
+3371a3580,3581
+>     
+>     
+3386a3597
+>       
+3399,3406d3609
+<       if (!success) {
+<         if (infoStream != null)
+<           message("hit exception during merge; now refresh deleter on segment " + mergedName);
+<         synchronized(this) {
+<           addMergeException(merge);
+<           deleter.refresh(mergedName);
+<         }
+<       }
+3413a3617,3621
+> 
+>       
+>       
+>       if (autoCommit && doCommitBeforeMergeCFS(merge))
+>         sync(false, merge.info.sizeInBytes());
+3416d3623
+<       boolean skip = false;
+3420,3442c3627,3628
+<         try {
+<           merger.createCompoundFile(compoundFileName);
+<           success = true;
+<         } catch (IOException ioe) {
+<           synchronized(this) {
+<             if (segmentInfos.indexOf(merge.info) == -1) {
+<               
+<               
+<               
+<               
+<               
+<               
+<               
+<               
+<               
+<               
+<               if (infoStream != null)
+<                 message("hit exception creating compound file; ignoring it because our info (segment " + merge.info.name + ") has been merged away");
+<               skip = true;
+<             } else
+<               throw ioe;
+<           }
+<         }
+---
+>         merger.createCompoundFile(compoundFileName);
+>         success = true;
+3446,3447c3632
+<             message("hit exception creating compound file during merge: skip=" + skip);
+< 
+---
+>             message("hit exception creating compound file during merge");
+3449,3450c3634
+<             if (!skip)
+<               addMergeException(merge);
+---
+>             addMergeException(merge);
+3456,3473c3640,3645
+<       if (!skip) {
+< 
+<         synchronized(this) {
+<           if (skip || segmentInfos.indexOf(merge.info) == -1 || merge.isAborted()) {
+<             
+<             
+<             
+<             deleter.deleteFile(compoundFileName);
+<           } else {
+<             success = false;
+<             try {
+<               merge.info.setUseCompoundFile(true);
+<               checkpoint();
+<               success = true;
+<             } finally {
+<               if (!success) {  
+<                 if (infoStream != null)
+<                   message("hit exception checkpointing compound file during merge");
+---
+>       if (merge.isAborted()) {
+>         if (infoStream != null)
+>           message("abort merge after building CFS");
+>         deleter.deleteFile(compoundFileName);
+>         return 0;
+>       }
+3475,3485c3647,3655
+<                 
+<                 addMergeException(merge);
+<                 merge.info.setUseCompoundFile(false);
+<                 deletePartialSegmentsFile();
+<                 deleter.deleteFile(compoundFileName);
+<               }
+<             }
+<       
+<             
+<             deleter.checkpoint(segmentInfos, autoCommit);
+<           }
+---
+>       synchronized(this) {
+>         if (segmentInfos.indexOf(merge.info) == -1 || merge.isAborted()) {
+>           
+>           
+>           
+>           deleter.deleteFile(compoundFileName);
+>         } else {
+>           merge.info.setUseCompoundFile(true);
+>           checkpoint();
+3489a3660,3670
+>     
+>     
+>     
+>     
+>     
+>     
+>     
+>     
+>     if (autoCommit)
+>       sync(false, merge.info.sizeInBytes());
+> 
+3498,3509d3678
+<   private void deletePartialSegmentsFile() throws IOException  {
+<     if (segmentInfos.getLastGeneration() != segmentInfos.getGeneration()) {
+<       String segmentFileName = IndexFileNames.fileNameFromGeneration(IndexFileNames.SEGMENTS,
+<                                                                      "",
+<                                                                      segmentInfos.getGeneration());
+<       if (infoStream != null)
+<         message("now delete partial segments file \"" + segmentFileName + "\"");
+< 
+<       deleter.deleteFile(segmentFileName);
+<     }
+<   }
+< 
+3514c3683
+<   private final void applyDeletes(boolean flushedNewSegment) throws CorruptIndexException, IOException {
+---
+>   private final void applyDeletes(SegmentInfo newSegment) throws CorruptIndexException, IOException {
+3524c3693
+<     if (flushedNewSegment) {
+---
+>     if (newSegment != null) {
+3530c3699
+<         reader = SegmentReader.get(segmentInfos.info(segmentInfos.size() - 1), false);
+---
+>         reader = SegmentReader.get(newSegment, false);
+3547,3550c3716
+<     int infosEnd = segmentInfos.size();
+<     if (flushedNewSegment) {
+<       infosEnd--;
+<     }
+---
+>     final int infosEnd = segmentInfos.size();
+3570,3572d3735
+< 
+<     
+<     docWriter.clearBufferedDeletes();
+3647a3811,4040
+>   private HashSet synced = new HashSet();
+> 
+>   
+>   private HashSet syncing = new HashSet();
+> 
+>   private boolean startSync(String fileName, Collection pending) {
+>     synchronized(synced) {
+>       if (!synced.contains(fileName)) {
+>         if (!syncing.contains(fileName)) {
+>           syncing.add(fileName);
+>           return true;
+>         } else {
+>           pending.add(fileName);
+>           return false;
+>         }
+>       } else
+>         return false;
+>     }
+>   }
+> 
+>   private void finishSync(String fileName, boolean success) {
+>     synchronized(synced) {
+>       assert syncing.contains(fileName);
+>       syncing.remove(fileName);
+>       if (success)
+>         synced.add(fileName);
+>       synced.notifyAll();
+>     }
+>   }
+> 
+>   
+>   private boolean waitForAllSynced(Collection syncing) throws IOException {
+>     synchronized(synced) {
+>       Iterator it = syncing.iterator();
+>       while(it.hasNext()) {
+>         final String fileName = (String) it.next();
+>         while(!synced.contains(fileName)) {
+>           if (!syncing.contains(fileName))
+>             
+>             
+>             return false;
+>           else
+>             try {
+>               synced.wait();
+>             } catch (InterruptedException ie) {
+>               continue;
+>             }
+>         }
+>       }
+>       return true;
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   private void syncPause(long sizeInBytes) {
+>     if (mergeScheduler instanceof ConcurrentMergeScheduler && maxSyncPauseSeconds > 0) {
+>       
+>       
+>       long pauseTime = (long) (1000*sizeInBytes/10/1024/1024);
+>       final long maxPauseTime = (long) (maxSyncPauseSeconds*1000);
+>       if (pauseTime > maxPauseTime)
+>         pauseTime = maxPauseTime;
+>       final int sleepCount = (int) (pauseTime / 100);
+>       for(int i=0;i<sleepCount;i++) {
+>         synchronized(this) {
+>           if (stopMerges || closing)
+>             break;
+>         }
+>         try {
+>           Thread.sleep(100);
+>         } catch (InterruptedException ie) {
+>           Thread.currentThread().interrupt();
+>         }
+>       }
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+>   private void sync(boolean includeFlushes, long sizeInBytes) throws IOException {
+> 
+>     message("start sync() includeFlushes=" + includeFlushes);
+> 
+>     if (!includeFlushes)
+>       syncPause(sizeInBytes);
+> 
+>     
+>     
+>     
+>     
+>     
+> 
+>     SegmentInfos toSync = null;
+>     final int mySyncCount;
+>     synchronized(this) {
+> 
+>       if (!commitPending) {
+>         message("  skip sync(): no commit pending");
+>         return;
+>       }
+> 
+>       
+>       
+>       
+>       toSync = (SegmentInfos) segmentInfos.clone();
+>       final int numSegmentsToSync = toSync.size();
+> 
+>       boolean newCommitPending = false;
+> 
+>       if (!includeFlushes) {
+>         
+>         assert lastMergeInfo != null;
+>         assert toSync.contains(lastMergeInfo);
+>         int downTo = numSegmentsToSync-1;
+>         while(!toSync.info(downTo).equals(lastMergeInfo)) {
+>           message("  skip segment " + toSync.info(downTo).name);
+>           toSync.remove(downTo);
+>           downTo--;
+>           newCommitPending = true;
+>         }
+> 
+>       } else if (numSegmentsToSync > 0)
+>         
+>         
+>         
+>         
+>         
+>         lastMergeInfo = toSync.info(numSegmentsToSync-1);
+> 
+>       mySyncCount = syncCount++;
+>       deleter.incRef(toSync, false);
+> 
+>       commitPending = newCommitPending;
+>     }
+> 
+>     boolean success0 = false;
+> 
+>     try {
+> 
+>       
+>       while(true) {
+> 
+>         final Collection pending = new ArrayList();
+> 
+>         for(int i=0;i<toSync.size();i++) {
+>           final SegmentInfo info = toSync.info(i);
+>           final List files = info.files();
+>           for(int j=0;j<files.size();j++) {
+>             final String fileName = (String) files.get(j);
+>             if (startSync(fileName, pending)) {
+>               boolean success = false;
+>               try {
+>                 
+>                 
+>                 assert directory.fileExists(fileName);
+>                 message("now sync " + fileName);
+>                 directory.sync(fileName);
+>                 success = true;
+>               } finally {
+>                 finishSync(fileName, success);
+>               }
+>             }
+>           }
+>         }
+> 
+>         
+>         
+>         
+>         
+>         
+>         
+>         if (waitForAllSynced(pending))
+>           break;
+>       }
+> 
+>       synchronized(this) {
+>         
+>         
+>         
+>         
+>         if (mySyncCount > syncCountSaved) {
+>           
+>           if (segmentInfos.getGeneration() > toSync.getGeneration())
+>             toSync.updateGeneration(segmentInfos);
+> 
+>           boolean success = false;
+>           try {
+>             toSync.commit(directory);
+>             success = true;
+>           } finally {
+>             
+>             
+>             segmentInfos.updateGeneration(toSync);
+>             if (!success) {
+>               commitPending = true;
+>               message("hit exception committing segments file");
+>             }
+>           }
+>           message("commit complete");
+> 
+>           syncCountSaved = mySyncCount;
+> 
+>           deleter.checkpoint(toSync, true);
+>           setRollbackSegmentInfos();
+>         } else
+>           message("sync superseded by newer infos");
+>       }
+> 
+>       message("done all syncs");
+> 
+>       success0 = true;
+> 
+>     } finally {
+>       synchronized(this) {
+>         deleter.decRef(toSync);
+>         if (!success0)
+>           commitPending = true;
+>       }
+>     }
+>   }
+> 
+>   

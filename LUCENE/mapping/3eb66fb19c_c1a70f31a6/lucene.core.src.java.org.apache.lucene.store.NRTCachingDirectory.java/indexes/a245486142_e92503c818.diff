@@ -1,0 +1,71 @@
+19a20
+> import java.io.FileNotFoundException;
+20a22,23
+> import java.nio.file.NoSuchFileException;
+> import java.util.ArrayList;
+24a28
+> import java.util.List;
+178d181
+< 
+234a238,295
+>   @Override
+>   public IndexOutput createTempOutput(String prefix, String suffix, IOContext context) throws IOException {
+>     if (VERBOSE) {
+>       System.out.println("nrtdir.createTempOutput prefix=" + prefix + " suffix=" + suffix);
+>     }
+>     List<String> toDelete = new ArrayList<>();
+> 
+>     
+>     boolean success = false;
+> 
+>     Directory first;
+>     Directory second;
+>     if (doCacheWrite(prefix, context)) {
+>       first = cache;
+>       second = in;
+>     } else {
+>       first = in;
+>       second = cache;
+>     }
+> 
+>     IndexOutput out = null;
+>     try {
+>       while (true) {
+>         out = first.createTempOutput(prefix, suffix, context);
+>         String name = out.getName();
+>         toDelete.add(name);
+>         if (slowFileExists(second, name)) {
+>           out.close();
+>         } else {
+>           success = true;
+>           break;
+>         }
+>       }
+>     } finally {
+>       if (success) {
+>         IOUtils.deleteFiles(first, toDelete);
+>       } else {
+>         IOUtils.closeWhileHandlingException(out);
+>         IOUtils.deleteFilesIgnoringExceptions(first, toDelete);
+>       }
+>     }
+> 
+>     return out;
+>   }
+> 
+>   
+> 
+> 
+> 
+>   static boolean slowFileExists(Directory dir, String fileName) throws IOException {
+>     try {
+>       dir.openInput(fileName, IOContext.DEFAULT).close();
+>       return true;
+>     } catch (NoSuchFileException | FileNotFoundException e) {
+>       return false;
+>     }
+>   }
+> 
+247a309,310
+>       assert slowFileExists(in, fileName) == false: "fileName=" + fileName + " exists both in cache and in delegate";
+> 

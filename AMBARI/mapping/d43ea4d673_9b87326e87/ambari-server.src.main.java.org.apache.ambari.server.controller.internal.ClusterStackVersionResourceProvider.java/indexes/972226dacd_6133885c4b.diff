@@ -1,0 +1,107 @@
+23d22
+< import java.util.Collection;
+59a59,60
+> import org.apache.ambari.server.events.ActionFinalReportReceivedEvent;
+> import org.apache.ambari.server.events.publishers.AmbariEventPublisher;
+66d66
+< import org.apache.ambari.server.orm.entities.HostEntity;
+73a74
+> import org.apache.ambari.server.state.ComponentInfo;
+81d81
+< import org.apache.ambari.server.orm.entities.ClusterEntity;
+175a176,178
+>   private static AmbariEventPublisher ambariEventPublisher;
+> 
+>   @Inject
+316,317d318
+<       stackName = currentStackVersion.getStackName();
+<       stackVersion = currentStackVersion.getStackVersion();
+344a346,347
+>     ArrayList<Host> directTransitions = new ArrayList<Host>();
+> 
+375,376c378,384
+<         addHostVersionInstallCommandsToStage(desiredRepoVersion,
+<                 cluster, managementController, ami, stackId, perOsRepos, stage, host);
+---
+>         if (hostHasVersionableComponents(cluster, ami, stackId, host)) {
+>           addHostVersionInstallCommandsToStage(desiredRepoVersion,
+>                   cluster, managementController, ami, stackId, perOsRepos, stage, host);
+>         } else {
+>           directTransitions.add(host);
+>         }
+> 
+406a415,420
+>       
+>       
+>       for(Host host : directTransitions) {
+>         transitionHostVersionToInstalled(host, cluster, existingCSVer.getRepositoryVersion().getVersion());
+>       }
+> 
+480a495,546
+>   
+> 
+> 
+> 
+>   private boolean hostHasVersionableComponents(Cluster cluster, AmbariMetaInfo ami,
+>                                                StackId stackId, Host host) throws SystemException {
+>     List<ServiceComponentHost> components = cluster.getServiceComponentHosts(host.getHostName());
+>     for (ServiceComponentHost component : components) {
+>       ComponentInfo componentInfo;
+>       try {
+>         componentInfo = ami.getComponent(stackId.getStackName(),
+>                 stackId.getStackVersion(), component.getServiceName(), component.getServiceComponentName());
+>       } catch (AmbariException e) {
+>         throw new SystemException(String.format("Exception while accessing component %s of service %s for stack %s",
+>                 component.getServiceName(), component.getServiceComponentName(), stackId));
+>       }
+>       if (componentInfo.isVersionAdvertised()) {
+>         return true;
+>       }
+>     }
+>     return false;
+>   }
+> 
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   private void transitionHostVersionToInstalled(Host host, Cluster cluster,
+>                                                 String version) {
+>     LOG.info(String.format("Transitioning version %s on host %s directly to installed" +
+>                     " without distributing bits to host since it has no versionable components.",
+>             version, host.getHostName()));
+>     CommandReport report = new CommandReport();
+>     report.setRole(INSTALL_PACKAGES_ACTION);
+>     report.setStdOut("Skipped distributing bits to host since it has " +
+>             "no versionable components installed");
+>     report.setStdErr("");
+>     
+>     
+>     report.setStructuredOut("{}");
+>     report.setExitCode(0);
+>     report.setStatus(HostRoleStatus.COMPLETED.toString());
+>     ActionFinalReportReceivedEvent event = new ActionFinalReportReceivedEvent(
+>             cluster.getClusterId(), host.getHostName(),
+>             report, true);
+>     ambariEventPublisher.publish(event);
+>   }
+> 
+> 
+555,559c621,623
+<       String defaultHostName = null;
+<       
+<       ClusterEntity clusterEntity = clusterDAO.findByName(clName);
+<       List<HostEntity> hosts = new ArrayList(clusterEntity.getHostEntities());
+<       if (hosts != null && !hosts.isEmpty()) {
+---
+>       String defaultHostName;
+>       ArrayList<Host> hosts = new ArrayList<Host>(cluster.getHosts());
+>       if (!hosts.isEmpty()) {
+562,563c626
+<       }
+<       if (defaultHostName == null) {
+---
+>       } else {

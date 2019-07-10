@@ -1,0 +1,11 @@
+276c276
+<   public Bits getDeletedDocs() throws IOException {
+---
+>   public Bits getDeletedDocs() {
+327,332d326
+<   public boolean isDeleted(int n) {
+<     
+<     return in.isDeleted(n);
+<   }
+< 
+<   @Override

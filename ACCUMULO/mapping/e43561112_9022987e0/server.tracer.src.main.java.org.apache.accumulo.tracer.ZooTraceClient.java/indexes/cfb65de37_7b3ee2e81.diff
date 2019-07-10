@@ -1,0 +1,63 @@
+25a26,28
+> import java.util.concurrent.Executors;
+> import java.util.concurrent.ScheduledExecutorService;
+> import java.util.concurrent.TimeUnit;
+30a34
+> import org.apache.zookeeper.KeeperException;
+34a39,40
+> import com.google.common.util.concurrent.ThreadFactoryBuilder;
+> 
+47a54
+>   long retryPause = 5000l;
+56a64,68
+>   
+>   protected void setRetryPause(long pause) {
+>     retryPause = pause;
+>   }
+> 
+75c87
+<     process(null);
+---
+>     setInitialTraceHosts();
+82,87c94
+<       if (pathExists || zoo.exists(path)) {
+<         pathExists = true;
+<         updateHosts(path, zoo.getChildren(path, this));
+<       } else {
+<         zoo.exists(path, this);
+<       }
+---
+>       updateHostsFromZooKeeper();
+92a100,131
+>   protected void setInitialTraceHosts() {
+>     
+>     final ScheduledExecutorService svc = Executors.newScheduledThreadPool(1, new ThreadFactoryBuilder().setDaemon(true).build());
+>     final Runnable task = new Runnable() {
+>       @Override
+>       public void run() {
+>         try {
+>           updateHostsFromZooKeeper();
+>           log.info("Successfully initialized tracer hosts from ZooKeeper");
+>           
+>           svc.shutdown();
+>         } catch (Exception e) {
+>           log.error("Unabled to get destination tracer hosts in ZooKeeper, will retry in 5 seconds", e);
+>           
+>           svc.schedule(this, retryPause, TimeUnit.MILLISECONDS);
+>         }
+>       }
+>     };
+> 
+>     
+>     task.run();
+>   }
+> 
+>   protected void updateHostsFromZooKeeper() throws KeeperException, InterruptedException {
+>     if (pathExists || zoo.exists(path)) {
+>       pathExists = true;
+>       updateHosts(path, zoo.getChildren(path, this));
+>     } else {
+>       zoo.exists(path, this);
+>     }
+>   }
+> 

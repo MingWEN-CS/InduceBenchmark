@@ -1,0 +1,191 @@
+19,20c19,35
+< import org.apache.lucene.index.Term;
+< import org.apache.lucene.index.TermEnum;
+---
+> import java.io.IOException;
+> import java.util.ArrayList;
+> import java.util.Collection;
+> import java.util.Collections;
+> import java.util.Comparator;
+> import java.util.LinkedList;
+> import java.util.List;
+> import java.util.Queue;
+> import java.util.SortedMap;
+> import java.util.TreeMap;
+> 
+> import org.apache.jackrabbit.core.query.lucene.directory.DirectoryManager;
+> import org.apache.lucene.document.Document;
+> import org.apache.lucene.document.Field;
+> import org.apache.lucene.document.FieldSelector;
+> import org.apache.lucene.document.Fieldable;
+> import org.apache.lucene.index.CorruptIndexException;
+23,24d37
+< import org.apache.lucene.index.CorruptIndexException;
+< import org.apache.lucene.index.TermPositions;
+25a39,41
+> import org.apache.lucene.index.Term;
+> import org.apache.lucene.index.TermEnum;
+> import org.apache.lucene.index.TermPositions;
+27,32d42
+< import org.apache.lucene.document.Document;
+< import org.apache.lucene.document.FieldSelector;
+< import org.apache.lucene.document.Fieldable;
+< import org.apache.lucene.document.Field;
+< import org.apache.jackrabbit.core.query.lucene.directory.DirectoryManager;
+< import org.slf4j.LoggerFactory;
+34,35c44
+< 
+< import java.io.IOException;
+---
+> import org.slf4j.LoggerFactory;
+59a69
+> 
+61c71,72
+<                                DirectoryManager directoryManager)
+---
+>                                DirectoryManager directoryManager,
+>                                char oldSeparatorChar)
+79c90
+<                 if (t.text().indexOf('\uFFFF') == -1) {
+---
+>                 if (t.text().indexOf(oldSeparatorChar) == -1) {
+105c116,117
+<                         IndexReader.open(index.getDirectory()));
+---
+>                         IndexReader.open(index.getDirectory()),
+>                         oldSeparatorChar);
+134c146,148
+<         public MigrationIndexReader(IndexReader in) {
+---
+>         private final char oldSepChar;
+> 
+>         public MigrationIndexReader(IndexReader in, char oldSepChar) {
+135a150
+>             this.oldSepChar = oldSepChar;
+146c161
+<                     value = value.replace('\uFFFF', '[');
+---
+>                     value = value.replace(oldSepChar, '[');
+154c169,182
+<             return new MigrationTermEnum(in.terms());
+---
+>             List<TermEnum> enums = new ArrayList<TermEnum>();
+>             List<String> fieldNames = new ArrayList<String>();
+>             for (Object obj : in.getFieldNames(FieldOption.ALL)) {
+>                 fieldNames.add((String) obj);
+>             }
+>             Collections.sort(fieldNames);
+>             for (String fieldName : fieldNames) {
+>                 if (fieldName.equals(FieldNames.PROPERTIES)) {
+>                     addPropertyTerms(enums);
+>                 } else {
+>                     enums.add(new RangeScan(in, new Term(fieldName, ""), new Term(fieldName, "\uFFFF")));
+>                 }
+>             }
+>             return new MigrationTermEnum(new ChainedTermEnum(enums), oldSepChar);
+158c186,213
+<             return new MigrationTermPositions(in.termPositions());
+---
+>             return new MigrationTermPositions(in.termPositions(), oldSepChar);
+>         }
+> 
+>         private void addPropertyTerms(List<TermEnum> enums) throws IOException {
+>             SortedMap<String, TermEnum> termEnums = new TreeMap<String, TermEnum>(
+>                     new Comparator<String>() {
+>                         public int compare(String s1, String s2) {
+>                             s1 = s1.replace(oldSepChar, '[');
+>                             s2 = s2.replace(oldSepChar, '[');
+>                             return s1.compareTo(s2);
+>                         }
+>             });
+>             
+>             TermEnum terms = new RangeScan(in,
+>                     new Term(FieldNames.PROPERTIES, ""),
+>                     new Term(FieldNames.PROPERTIES, "\uFFFF"));
+>             String previous = null;
+>             while (terms.next()) {
+>                 Term t = terms.term();
+>                 String name = t.text().substring(0, t.text().indexOf(oldSepChar) + 1);
+>                 if (!name.equals(previous)) {
+>                     termEnums.put(name, new RangeScan(in,
+>                             new Term(FieldNames.PROPERTIES, name),
+>                             new Term(FieldNames.PROPERTIES, name + "\uFFFF")));
+>                 }
+>                 previous = name;
+>             }
+>             enums.addAll(termEnums.values());
+163c218,220
+<             public MigrationTermEnum(TermEnum in) {
+---
+>             private final char oldSepChar;
+> 
+>             public MigrationTermEnum(TermEnum in, char oldSepChar) {
+164a222
+>                 this.oldSepChar = oldSepChar;
+174c232
+<                     return t.createTerm(text.replace('\uFFFF', '['));
+---
+>                     return t.createTerm(text.replace(oldSepChar, '['));
+187c245,247
+<             public MigrationTermPositions(TermPositions in) {
+---
+>             private final char oldSepChar;
+> 
+>             public MigrationTermPositions(TermPositions in, char oldSepChar) {
+188a249
+>                 this.oldSepChar = oldSepChar;
+194c255
+<                     text[term.text().indexOf('[')] = '\uFFFF';
+---
+>                     text[term.text().indexOf('[')] = oldSepChar;
+209a271,320
+> 
+>     private static final class ChainedTermEnum extends TermEnum {
+> 
+>         private Queue<TermEnum> queue = new LinkedList<TermEnum>();
+> 
+>         public ChainedTermEnum(Collection<TermEnum> enums) {
+>             super();
+>             queue.addAll(enums);
+>         }
+> 
+>         public boolean next() throws IOException {
+>             for (;;) {
+>                 TermEnum terms = queue.peek();
+>                 if (terms == null) {
+>                     
+>                     break;
+>                 }
+>                 if (terms.next()) {
+>                     return true;
+>                 } else {
+>                     queue.remove();
+>                     terms.close();
+>                 }
+>             }
+>             return false;
+>         }
+> 
+>         public Term term() {
+>             TermEnum terms = queue.peek();
+>             if (terms != null) {
+>                 return terms.term();
+>             }
+>             return null;
+>         }
+> 
+>         public int docFreq() {
+>             TermEnum terms = queue.peek();
+>             if (terms != null) {
+>                 return terms.docFreq();
+>             }
+>             return 0;
+>         }
+> 
+>         public void close() throws IOException {
+>             
+>             while (!queue.isEmpty()) {
+>                 queue.remove().close();
+>             }
+>         }
+>     }

@@ -1,0 +1,118 @@
+17d16
+< import javax.persistence.CascadeType;
+21,22c20
+< import javax.persistence.JoinColumn;
+< import javax.persistence.MapsId;
+---
+> import javax.persistence.IdClass;
+25d22
+< import javax.persistence.OneToOne;
+28c25,27
+< @Entity
+---
+> import org.apache.commons.lang.builder.EqualsBuilder;
+> import org.apache.commons.lang.builder.HashCodeBuilder;
+> 
+31,33c30,35
+<   @NamedQuery(
+<     name = "AmbariConfigurationEntity.findByType",
+<     query = "select ace from AmbariConfigurationEntity ace where ace.configurationBaseEntity.type = :typeName")
+---
+>     @NamedQuery(
+>         name = "AmbariConfigurationEntity.findByCategory",
+>         query = "select ace from AmbariConfigurationEntity ace where ace.categoryName = :categoryName"),
+>     @NamedQuery(
+>         name = "AmbariConfigurationEntity.deleteByCategory",
+>         query = "delete from AmbariConfigurationEntity ace where ace.categoryName = :categoryName")
+35c37,38
+< 
+---
+> @IdClass(AmbariConfigurationEntityPK.class)
+> @Entity
+39,40c42,54
+<   @Column(name = "id")
+<   private Long id;
+---
+>   @Column(name = "category_name")
+>   private String categoryName;
+> 
+>   @Id
+>   @Column(name = "property_name")
+>   private String propertyName;
+> 
+>   @Column(name = "property_value")
+>   private String propertyValue;
+> 
+>   public String getCategoryName() {
+>     return categoryName;
+>   }
+42,45c56,58
+<   @OneToOne(cascade = CascadeType.ALL)
+<   @MapsId
+<   @JoinColumn(name = "id")
+<   private ConfigurationBaseEntity configurationBaseEntity;
+---
+>   public void setCategoryName(String category) {
+>     this.categoryName = category;
+>   }
+47,48c60,61
+<   public Long getId() {
+<     return id;
+---
+>   public String getPropertyName() {
+>     return propertyName;
+51,52c64,65
+<   public void setId(Long id) {
+<     this.id = id;
+---
+>   public void setPropertyName(String propertyName) {
+>     this.propertyName = propertyName;
+55,56c68,69
+<   public ConfigurationBaseEntity getConfigurationBaseEntity() {
+<     return configurationBaseEntity;
+---
+>   public String getPropertyValue() {
+>     return propertyValue;
+59,60c72,73
+<   public void setConfigurationBaseEntity(ConfigurationBaseEntity configurationBaseEntity) {
+<     this.configurationBaseEntity = configurationBaseEntity;
+---
+>   public void setPropertyValue(String propertyValue) {
+>     this.propertyValue = propertyValue;
+66,68c79,110
+<       "id=" + id +
+<       ", configurationBaseEntity=" + configurationBaseEntity +
+<       '}';
+---
+>         ", category=" + categoryName +
+>         ", name=" + propertyName +
+>         ", value=" + propertyValue +
+>         '}';
+>   }
+> 
+>   @Override
+>   public boolean equals(Object o) {
+>     if (this == o) {
+>       return true;
+>     }
+> 
+>     if (o == null || getClass() != o.getClass()) {
+>       return false;
+>     }
+> 
+>     AmbariConfigurationEntity that = (AmbariConfigurationEntity) o;
+> 
+>     return new EqualsBuilder()
+>         .append(categoryName, that.categoryName)
+>         .append(propertyName, that.propertyName)
+>         .append(propertyValue, that.propertyValue)
+>         .isEquals();
+>   }
+> 
+>   @Override
+>   public int hashCode() {
+>     return new HashCodeBuilder(17, 37)
+>         .append(categoryName)
+>         .append(propertyName)
+>         .append(propertyValue)
+>         .toHashCode();

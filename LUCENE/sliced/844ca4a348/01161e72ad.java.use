@@ -1,0 +1,142 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+19	fieldName	String	param	78	define	org.apache.solr.schema.BoolField.(Anon_1).createComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	78	103
+20	tokenizer	Tokenizer	variable	79	define	org.apache.solr.schema.BoolField.(Anon_1).createComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	78	103
+20	tokenizer	Tokenizer	variable	79	set	org.apache.solr.schema.BoolField.(Anon_1).createComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	78	103
+20	tokenizer	Tokenizer	variable	103	use	org.apache.solr.schema.BoolField.(Anon_1).createComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	78	103
+13	ch	int	variable	94	define	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+17	(Anon_2).done	boolean	variable	93	set	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+13	ch	int	variable	94	set	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+17	(Anon_2).done	boolean	variable	92	use	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+13	ch	int	variable	95	use	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+18	(Anon_2).termAtt	CharTermAttribute	variable	96	use	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+13	ch	int	variable	97	use	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+13	ch	int	variable	97	use	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+13	ch	int	variable	97	use	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+77	BoolField.TRUE_TOKEN	char[]	variable	97	use	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+75	BoolField.FALSE_TOKEN	char[]	variable	97	use	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).incrementToken	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	90	100
+17	(Anon_2).done	boolean	variable	86	set	org.apache.solr.schema.BoolField.(Anon_1).createComponents.(Anon_2).reset	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	84	87
+91	doc	int	param	208	define	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).boolVal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	208	210
+91	doc	int	param	209	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).boolVal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	208	210
+112	sindex	SortedDocValues	variable	209	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).boolVal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	208	210
+114	trueOrd	int	variable	209	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).boolVal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	208	210
+93	doc	int	param	213	define	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).exists	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	213	215
+93	doc	int	param	214	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).exists	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	213	215
+112	sindex	SortedDocValues	variable	214	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).exists	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	213	215
+97	doc	int	param	228	define	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+97	doc	int	param	229	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+99	ord	int	variable	229	define	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+99	ord	int	variable	229	set	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+102	(Anon_4).mval	MutableValueBool	variable	230	set	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+102	(Anon_4).mval	MutableValueBool	variable	231	set	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+112	sindex	SortedDocValues	variable	229	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+100	value		variable	230	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+99	ord	int	variable	230	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+114	trueOrd	int	variable	230	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+98	exists		variable	231	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+99	ord	int	variable	231	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).fillValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	228	232
+102	(Anon_4).mval	MutableValueBool	variable	224	use	org.apache.solr.schema.BoolFieldSource.getValues.(Anon_3).getValueFiller.(Anon_4).getValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	223	225
+78	BoolField.boolAnalyzer	Analyzer	variable	110	use	org.apache.solr.schema.BoolField.getIndexAnalyzer	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	109	111
+78	BoolField.boolAnalyzer	Analyzer	variable	115	use	org.apache.solr.schema.BoolField.getQueryAnalyzer	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	114	116
+26	field	SchemaField	param	48	define	org.apache.solr.schema.BoolField.getSortField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	48	51
+27	reverse	boolean	param	48	define	org.apache.solr.schema.BoolField.getSortField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	48	51
+26	field	SchemaField	param	49	use	org.apache.solr.schema.BoolField.getSortField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	48	51
+26	field	SchemaField	param	50	use	org.apache.solr.schema.BoolField.getSortField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	48	51
+27	reverse	boolean	param	50	use	org.apache.solr.schema.BoolField.getSortField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	48	51
+32	sf	SchemaField	param	54	define	org.apache.solr.schema.BoolField.getUninversionType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	54	60
+32	sf	SchemaField	param	55	use	org.apache.solr.schema.BoolField.getUninversionType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	54	60
+31	SORTED_SET_BINARY		variable	56	use	org.apache.solr.schema.BoolField.getUninversionType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	54	60
+30	SORTED		variable	58	use	org.apache.solr.schema.BoolField.getUninversionType	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	54	60
+35	field	SchemaField	param	63	define	org.apache.solr.schema.BoolField.getValueSource	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	63	66
+37	qparser	QParser	param	63	define	org.apache.solr.schema.BoolField.getValueSource	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	63	66
+35	field	SchemaField	param	64	use	org.apache.solr.schema.BoolField.getValueSource	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	63	66
+35	field	SchemaField	param	65	use	org.apache.solr.schema.BoolField.getValueSource	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	63	66
+36	name		variable	65	use	org.apache.solr.schema.BoolField.getValueSource	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	63	66
+47	input	BytesRef	param	149	define	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+46	charsRef	CharsRefBuilder	param	149	define	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+47	input	BytesRef	param	150	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+47	input	BytesRef	param	150	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+47	input	BytesRef	param	150	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+46	charsRef	CharsRefBuilder	param	151	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+46	charsRef	CharsRefBuilder	param	153	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+46	charsRef	CharsRefBuilder	param	155	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+48	length		variable	150	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+49	offset		variable	150	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+45	bytes		variable	150	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+76	BoolField.TRUE	CharsRef	variable	151	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+74	BoolField.FALSE	CharsRef	variable	153	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	149	156
+41	indexedForm	String	param	140	define	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	140	143
+41	indexedForm	String	param	141	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	140	143
+40	ch	char	variable	141	define	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	140	143
+40	ch	char	variable	141	set	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	140	143
+40	ch	char	variable	142	use	org.apache.solr.schema.BoolField.indexedToReadable	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	140	143
+52	value	Object	param	164	define	org.apache.solr.schema.BoolField.marshalSortValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	164	166
+52	value	Object	param	165	use	org.apache.solr.schema.BoolField.marshalSortValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	164	166
+55	f	IndexableField	param	125	define	org.apache.solr.schema.BoolField.toExternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	125	127
+55	f	IndexableField	param	126	use	org.apache.solr.schema.BoolField.toExternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	125	127
+59	val	String	param	119	define	org.apache.solr.schema.BoolField.toInternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	119	122
+59	val	String	param	120	use	org.apache.solr.schema.BoolField.toInternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	119	122
+59	val	String	param	120	use	org.apache.solr.schema.BoolField.toInternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	119	122
+59	val	String	param	120	use	org.apache.solr.schema.BoolField.toInternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	119	122
+58	ch	char	variable	120	define	org.apache.solr.schema.BoolField.toInternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	119	122
+58	ch	char	variable	120	set	org.apache.solr.schema.BoolField.toInternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	119	122
+58	ch	char	variable	121	use	org.apache.solr.schema.BoolField.toInternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	119	122
+58	ch	char	variable	121	use	org.apache.solr.schema.BoolField.toInternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	119	122
+58	ch	char	variable	121	use	org.apache.solr.schema.BoolField.toInternal	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	119	122
+62	f	IndexableField	param	130	define	org.apache.solr.schema.BoolField.toObject	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	130	132
+62	f	IndexableField	param	131	use	org.apache.solr.schema.BoolField.toObject	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	130	132
+64	sf	SchemaField	param	135	define	org.apache.solr.schema.BoolField.toObject	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	135	137
+65	term	BytesRef	param	135	define	org.apache.solr.schema.BoolField.toObject	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	135	137
+65	term	BytesRef	param	136	use	org.apache.solr.schema.BoolField.toObject	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	135	137
+65	term	BytesRef	param	136	use	org.apache.solr.schema.BoolField.toObject	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	135	137
+49	offset		variable	136	use	org.apache.solr.schema.BoolField.toObject	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	135	137
+45	bytes		variable	136	use	org.apache.solr.schema.BoolField.toObject	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	135	137
+68	value	Object	param	169	define	org.apache.solr.schema.BoolField.unmarshalSortValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	169	171
+68	value	Object	param	170	use	org.apache.solr.schema.BoolField.unmarshalSortValue	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	169	171
+73	writer	TextResponseWriter	param	159	define	org.apache.solr.schema.BoolField.write	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	159	161
+72	name	String	param	159	define	org.apache.solr.schema.BoolField.write	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	159	161
+71	f	IndexableField	param	159	define	org.apache.solr.schema.BoolField.write	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	159	161
+73	writer	TextResponseWriter	param	160	use	org.apache.solr.schema.BoolField.write	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	159	161
+72	name	String	param	160	use	org.apache.solr.schema.BoolField.write	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	159	161
+71	f	IndexableField	param	160	use	org.apache.solr.schema.BoolField.write	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	159	161
+81	field	String	param	178	define	org.apache.solr.schema.BoolFieldSource.BoolFieldSource	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	178	180
+81	field	String	param	179	use	org.apache.solr.schema.BoolFieldSource.BoolFieldSource	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	178	180
+117	BoolFieldSource.field	String	variable	179	set	org.apache.solr.schema.BoolFieldSource.BoolFieldSource	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	178	180
+117	BoolFieldSource.field	String	variable	184	use	org.apache.solr.schema.BoolFieldSource.description	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	183	185
+86	o	Object	param	239	define	org.apache.solr.schema.BoolFieldSource.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	239	241
+86	o	Object	param	240	use	org.apache.solr.schema.BoolFieldSource.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	239	241
+86	o	Object	param	240	use	org.apache.solr.schema.BoolFieldSource.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	239	241
+16	class		variable	240	use	org.apache.solr.schema.BoolFieldSource.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	239	241
+117	BoolFieldSource.field	String	variable	240	use	org.apache.solr.schema.BoolFieldSource.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	239	241
+117	BoolFieldSource.field	String	variable	240	use	org.apache.solr.schema.BoolFieldSource.equals	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	239	241
+109	context	Map	param	189	define	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+111	readerContext	LeafReaderContext	param	189	define	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+111	readerContext	LeafReaderContext	param	190	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+112	sindex	SortedDocValues	variable	190	define	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+110	nord	int	variable	193	define	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+113	tord	int	variable	195	define	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+114	trueOrd	int	variable	204	define	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+108	i	int	variable	196	define	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+107	br	BytesRef	variable	197	define	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+112	sindex	SortedDocValues	variable	190	set	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+110	nord	int	variable	193	set	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+113	tord	int	variable	195	set	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+108	i	int	variable	196	set	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+107	br	BytesRef	variable	197	set	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+113	tord	int	variable	199	set	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+114	trueOrd	int	variable	204	set	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+117	BoolFieldSource.field	String	variable	190	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+112	sindex	SortedDocValues	variable	193	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+108	i	int	variable	196	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+110	nord	int	variable	196	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+112	sindex	SortedDocValues	variable	197	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+108	i	int	variable	197	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+107	br	BytesRef	variable	198	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+48	length		variable	198	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+107	br	BytesRef	variable	198	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+49	offset		variable	198	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+107	br	BytesRef	variable	198	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+45	bytes		variable	198	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+108	i	int	variable	199	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+113	tord	int	variable	204	use	org.apache.solr.schema.BoolFieldSource.getValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	189	235
+118	BoolFieldSource.hcode	int	variable	246	use	org.apache.solr.schema.BoolFieldSource.hashCode	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	245	246
+117	BoolFieldSource.field	String	variable	246	use	org.apache.solr.schema.BoolFieldSource.hashCode	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/844ca4a348/01161e72ad.java	245	246

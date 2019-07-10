@@ -1,0 +1,31 @@
+1356,1357d1355
+<     private ItemState getNonVirtualItemState(ItemId id)
+<             throws NoSuchItemStateException, ItemStateException {
+1359,1371c1357,1367
+<         
+<         synchronized (cache) {
+<             ItemState state = cache.retrieve(id);
+<             if (state == null) {
+<                 
+<                 state = loadItemState(id);
+<                 state.setStatus(ItemState.STATUS_EXISTING);
+<                 
+<                 cache.cache(state);
+<                 
+<                 state.setContainer(this);
+<             }
+<             return state;
+---
+>     private synchronized ItemState getNonVirtualItemState(ItemId id)
+>             throws NoSuchItemStateException, ItemStateException {
+>         ItemState state = cache.retrieve(id);
+>         if (state == null) {
+>             
+>             state = loadItemState(id);
+>             state.setStatus(ItemState.STATUS_EXISTING);
+>             
+>             cache.cache(state);
+>             
+>             state.setContainer(this);
+1372a1369
+>         return state;

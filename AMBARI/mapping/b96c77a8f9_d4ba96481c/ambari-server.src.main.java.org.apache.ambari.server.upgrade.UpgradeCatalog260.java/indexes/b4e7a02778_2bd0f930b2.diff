@@ -1,0 +1,6 @@
+389,391d388
+<     String supersetConfigMappingRemoveSQL = String.format(
+<         "DELETE FROM %s WHERE type_name like '%s%%'",
+<         CLUSTER_CONFIG_MAPPING_TABLE, configPrefix);
+413d409
+<     dbAccessor.executeQuery(supersetConfigMappingRemoveSQL);

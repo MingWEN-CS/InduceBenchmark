@@ -1,0 +1,70 @@
+96c96
+<     private static Logger log = LoggerFactory.getLogger(DatabaseJournal.class);
+---
+>     static Logger log = LoggerFactory.getLogger(DatabaseJournal.class);
+131c131
+<     private ConnectionHelper conHelper;
+---
+>     ConnectionHelper conHelper;
+151c151
+<     private int janitorSleep = 60 * 60 * 24;
+---
+>     int janitorSleep = 60 * 60 * 24;
+157c157,158
+<     private Calendar janitorNextRun = Calendar.getInstance();
+---
+>     Calendar janitorNextRun = Calendar.getInstance();
+> 
+209c210
+<     
+---
+> 
+214c215
+<     
+---
+> 
+449c450
+<             conHelper.startBatch();
+---
+>             startBatch();
+453c454
+<                 conHelper.endBatch(true);
+---
+>                 endBatch(true);
+473,475c474
+<             if (lockLevel++ == 0) {
+<                 conHelper.startBatch();
+<             }
+---
+>             startBatch();
+488d486
+< 
+502a501,510
+>         endBatch(successful);
+>     }
+> 
+>     private void startBatch() throws SQLException {
+>         if (lockLevel++ == 0) {
+>             conHelper.startBatch();
+>         }
+>     }
+> 
+>     private void endBatch(boolean successful) {
+804,806d811
+<         
+< 
+< 
+814,816d818
+<         
+< 
+< 
+832,834d833
+<         
+<         
+< 
+836a836
+>             
+866c866
+<         
+---
+> 

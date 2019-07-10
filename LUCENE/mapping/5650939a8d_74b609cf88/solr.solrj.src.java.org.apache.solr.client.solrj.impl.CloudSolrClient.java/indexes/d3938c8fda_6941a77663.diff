@@ -1,0 +1,21 @@
+906c906,909
+<       
+---
+> 
+>     
+>     Map<String, NamedList> versions = new HashMap<>();
+> 
+939a943,951
+>       for (String updateType: Arrays.asList("adds", "deletes", "deleteByQuery")) {
+>         Object obj = shardResponse.get(updateType);
+>         if (obj instanceof NamedList) {
+>           NamedList versionsList = versions.containsKey(updateType) ?
+>               versions.get(updateType): new NamedList();
+>           versionsList.addAll((NamedList)obj);
+>           versions.put(updateType, versionsList);
+>         }
+>       }
+973a986,988
+>     for (String updateType: versions.keySet()) {
+>       condensed.add(updateType, versions.get(updateType));
+>     }

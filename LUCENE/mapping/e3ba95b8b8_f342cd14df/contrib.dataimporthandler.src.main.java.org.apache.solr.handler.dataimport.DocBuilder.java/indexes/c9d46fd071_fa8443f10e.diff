@@ -1,0 +1,47 @@
+466,467c466
+<     entityProcessor.init(new ContextImpl(entity, resolver, null,
+<             Context.FIND_DELTA, session, null, this));
+---
+>     entityProcessor.init(new ContextImpl(entity, resolver, null, Context.FIND_DELTA, session, null, this));
+469d467
+<     int count = 0;
+478d475
+<       count++;
+481,485d477
+<     LOG.info("Completed ModifiedRowKey for Entity: " + entity.name
+<             + " rows obtained : " + count);
+<     count = 0;
+<     
+<     LOG.info("Running DeletedRowKey() for Entity: " + entity.name);
+487a480
+>     Set<Map<String, Object>> deltaRemoveSet = new HashSet<Map<String, Object>>();
+492a486,492
+>       
+>       for (Map<String, Object> modifiedRow : deltaSet) {
+>         if (modifiedRow.get(entity.pk).equals(row.get(entity.pk))) {
+>           deltaRemoveSet.add(modifiedRow);
+>         }
+>       }
+> 
+494d493
+<       count++;
+497,498c496,501
+<     LOG.info("Completed DeletedRowKey for Entity: " + entity.name
+<             + " rows obtained : " + count);
+---
+> 
+>     
+>     deltaSet.removeAll(deltaRemoveSet);
+> 
+>     LOG.info("Completed ModifiedRowKey for Entity: " + entity.name + " rows obtained : " + deltaSet.size());
+>     LOG.info("Completed DeletedRowKey for Entity: " + entity.name + " rows obtained : " + deletedSet.size());
+510,511c513
+<         getModifiedParentRows(resolver.addNamespace(entity.name, row),
+<                 entity.name, parentEntityProcessor, parentKeyList);
+---
+>         getModifiedParentRows(resolver.addNamespace(entity.name, row), entity.name, parentEntityProcessor, parentKeyList);
+514,515c516
+<         getModifiedParentRows(resolver.addNamespace(entity.name, row),
+<                 entity.name, parentEntityProcessor, parentKeyList);
+---
+>         getModifiedParentRows(resolver.addNamespace(entity.name, row), entity.name, parentEntityProcessor, parentKeyList);

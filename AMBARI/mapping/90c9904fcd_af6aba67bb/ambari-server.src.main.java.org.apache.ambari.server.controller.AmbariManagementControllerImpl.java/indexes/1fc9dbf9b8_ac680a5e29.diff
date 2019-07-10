@@ -1,0 +1,53 @@
+66d65
+< import java.util.concurrent.locks.Lock;
+204a204
+> import com.google.common.collect.ListMultimap;
+212d211
+< import com.google.common.collect.ListMultimap;
+3114,3120c3113,3114
+<     Lock clusterWriteLock = cluster.getClusterGlobalLock().writeLock();
+<     clusterWriteLock.lock();
+<     try {
+<       updateServiceStates(cluster, changedServices, changedComponents, changedHosts, ignoredHosts);
+<     } finally {
+<       clusterWriteLock.unlock();
+<     }
+---
+>     updateServiceStates(cluster, changedServices, changedComponents, changedHosts, ignoredHosts);
+> 
+5169c5163
+<     if (stackInfo == null)
+---
+>     if (stackInfo == null) {
+5170a5165
+>     }
+5174c5169
+<     if (extensionInfo == null)
+---
+>     if (extensionInfo == null) {
+5175a5171
+>     }
+5205c5201
+<     if (stackInfo == null)
+---
+>     if (stackInfo == null) {
+5206a5203
+>     }
+5210c5207
+<     if (extensionInfo == null)
+---
+>     if (extensionInfo == null) {
+5211a5209
+>     }
+5268c5266
+<     if (stackInfo == null)
+---
+>     if (stackInfo == null) {
+5269a5268
+>     }
+5273c5272
+<     if (extensionInfo == null)
+---
+>     if (extensionInfo == null) {
+5274a5274
+>     }

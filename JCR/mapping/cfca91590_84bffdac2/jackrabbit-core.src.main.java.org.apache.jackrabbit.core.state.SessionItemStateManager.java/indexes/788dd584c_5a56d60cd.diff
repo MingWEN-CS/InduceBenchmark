@@ -1,0 +1,141 @@
+22a23
+> import java.util.HashMap;
+24a26
+> import java.util.Map;
+39,40d40
+< import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+< import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
+43d42
+< import org.apache.jackrabbit.spi.QNodeDefinition;
+68c67,68
+<     private final ItemStateStore atticStore;
+---
+>     private final Map<ItemId, ItemState> atticStore =
+>         new HashMap<ItemId, ItemState>();
+73c73,74
+<     private final ItemStateStore transientStore;
+---
+>     private final Map<ItemId, ItemState> transientStore =
+>         new HashMap<ItemId, ItemState>();
+84,88d84
+<     private final NodeTypeRegistry ntReg;
+< 
+<     
+< 
+< 
+97,103c93,94
+< 
+<     public SessionItemStateManager(NodeId rootNodeId,
+<                                    LocalItemStateManager stateMgr,
+<                                    NodeTypeRegistry ntReg) {
+<         transientStore = new ItemStateMap();
+<         atticStore = new ItemStateMap();
+< 
+---
+>     public SessionItemStateManager(
+>             NodeId rootNodeId, LocalItemStateManager stateMgr) {
+109,110d99
+< 
+<         this.ntReg = ntReg;
+166c155
+<         if (atticStore.contains(id)) {
+---
+>         if (atticStore.containsKey(id)) {
+178c167
+<         if (transientStore.contains(id)) {
+---
+>         if (transientStore.containsKey(id)) {
+190c179
+<         if (atticStore.contains(id)) {
+---
+>         if (atticStore.containsKey(id)) {
+196c185
+<             return transientStore.contains(id);
+---
+>             return transientStore.containsKey(id);
+199c188
+<         if (transientStore.contains(id)) {
+---
+>         if (transientStore.containsKey(id)) {
+349c338
+<         return transientStore.contains(id);
+---
+>         return transientStore.containsKey(id);
+358c347
+<         return atticStore.contains(id);
+---
+>         return atticStore.containsKey(id);
+432,433c421,422
+<             ItemId id, ItemStateStore store, HierarchyManager hierarchyManager)
+<             throws RepositoryException {
+---
+>             ItemId id, Map<ItemId, ItemState> store,
+>             HierarchyManager hierarchyManager) throws RepositoryException {
+479c468
+<         if (transientStore.contains(hierMgr.getRootNodeId())) {
+---
+>         if (transientStore.containsKey(hierMgr.getRootNodeId())) {
+572c561
+<         return atticStore.contains(id);
+---
+>         return atticStore.containsKey(id);
+590c579
+<             if (transientStore.contains(id)) {
+---
+>             if (transientStore.containsKey(id)) {
+599c588
+<             transientStore.put(state);
+---
+>             transientStore.put(state.getId(), state);
+618c607
+<             if (transientStore.contains(id)) {
+---
+>             if (transientStore.containsKey(id)) {
+626c615
+<             transientStore.put(state);
+---
+>             transientStore.put(id, state);
+646c635
+<             if (transientStore.contains(id)) {
+---
+>             if (transientStore.containsKey(id)) {
+654c643
+<             transientStore.put(state);
+---
+>             transientStore.put(id, state);
+673c662
+<             if (transientStore.contains(id)) {
+---
+>             if (transientStore.containsKey(id)) {
+681c670
+<             transientStore.put(state);
+---
+>             transientStore.put(id, state);
+727c716
+<         atticStore.put(state);
+---
+>         atticStore.put(state.getId(), state);
+899c888,889
+<         if (state.getContainer() == this || !transientStore.contains(state.getId())) {
+---
+>         if (state.getContainer() == this
+>                 || !transientStore.containsKey(state.getId())) {
+911c901,902
+<         if (state.getContainer() == this || !transientStore.contains(state.getId())) {
+---
+>         if (state.getContainer() == this
+>                 || !transientStore.containsKey(state.getId())) {
+923c914,915
+<         if (state.getContainer() == this || !transientStore.contains(state.getId())) {
+---
+>         if (state.getContainer() == this
+>                 || !transientStore.containsKey(state.getId())) {
+935c927,928
+<         if (state.getContainer() == this || !transientStore.contains(state.getId())) {
+---
+>         if (state.getContainer() == this
+>                 || !transientStore.containsKey(state.getId())) {
+967c960
+<             return atticStore.contains(id);
+---
+>             return atticStore.containsKey(id);

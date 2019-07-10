@@ -1,0 +1,27 @@
+36a37
+> import org.apache.lucene.index.DimensionalValues;
+38d38
+< import org.apache.lucene.index.PostingsEnum;
+46a47
+> import org.apache.lucene.index.PostingsEnum;
+66d66
+< import org.apache.lucene.util.BytesRefHash;
+67a68
+> import org.apache.lucene.util.BytesRefHash;
+69d69
+< import org.apache.lucene.util.IntBlockPool;
+71a72
+> import org.apache.lucene.util.IntBlockPool;
+445,447c446,447
+<             this.storeOffsets
+<                 ? IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS,
+<             DocValuesType.NONE, -1, Collections.emptyMap());
+---
+>                                   this.storeOffsets ? IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS,
+>                                   DocValuesType.NONE, -1, Collections.emptyMap(), 0, 0);
+822a823,827
+>     public DimensionalValues getDimensionalValues() {
+>       return null;
+>     }
+> 
+>     @Override

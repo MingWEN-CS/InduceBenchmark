@@ -1,0 +1,47 @@
+1a2,47
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> package org.apache.ambari.server.api.services;
+> 
+> import java.util.Map;
+> 
+> import org.apache.ambari.server.controller.ApiModel;
+> 
+> import io.swagger.annotations.ApiModelProperty;
+> 
+> 
+> 
+> 
+> public interface AmbariConfigurationRequestSwagger extends ApiModel {
+> 
+>   @ApiModelProperty(name = "AmbariConfiguration")
+>   AmbariConfigurationRequestInfo getAmbariConfiguration();
+> 
+>   interface AmbariConfigurationRequestInfo {
+>     @ApiModelProperty
+>     Long getId();
+> 
+>     @ApiModelProperty
+>     Map<String, Object> getData();
+> 
+>     @ApiModelProperty
+>     String getType();
+> 
+>     @ApiModelProperty
+>     Long getVersion();
+> 
+>     @ApiModelProperty(name = "version_tag")
+>     String getVersionTag();
+>   }
+> 
+> }

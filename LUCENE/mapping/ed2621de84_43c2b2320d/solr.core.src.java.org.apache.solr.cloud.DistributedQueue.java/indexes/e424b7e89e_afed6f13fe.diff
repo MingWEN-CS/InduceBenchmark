@@ -1,0 +1,116 @@
+20c20,21
+< import java.util.Collections;
+---
+> import java.util.ArrayList;
+> import java.util.Collection;
+23d23
+< import java.util.SortedSet;
+27a28
+> import java.util.function.Function;
+34a36
+> import org.apache.solr.common.util.Pair;
+85,86c87
+< 
+<   private final Condition notEmpty = updateLock.newCondition();
+---
+>   private final Condition changed = updateLock.newCondition();
+93,97d93
+<   
+< 
+< 
+<   private boolean isDirty = true;
+< 
+168c164
+<         waitNanos = notEmpty.awaitNanos(waitNanos);
+---
+>         waitNanos = changed.awaitNanos(waitNanos);
+225c221
+<         notEmpty.await();
+---
+>         changed.await();
+277c273
+<       if (!knownChildren.isEmpty()) {
+---
+>       if (lastWatcher != null && !knownChildren.isEmpty()) {
+281,285d276
+<       if (lastWatcher != null && !isDirty) {
+<         
+<         return null;
+<       }
+< 
+290d280
+<       isDirty = false;
+294c284
+<       notEmpty.signalAll();
+---
+>       changed.signalAll();
+332c322,324
+<   SortedSet<String> getChildren(long waitMillis) throws KeeperException, InterruptedException {
+---
+> 
+>   Collection<Pair<String, byte[]>> peekElements(int max, long waitMillis, Function<String, Boolean> acceptFilter) throws KeeperException, InterruptedException {
+>     List<String> foundChildren = new ArrayList<>();
+334c326
+<     while (waitNanos > 0) {
+---
+>     while (true) {
+336c328,329
+<       firstElement();
+---
+>       firstChild(false);
+> 
+339,340c332,335
+<         if (!knownChildren.isEmpty()) {
+<           return new TreeSet<>(knownChildren);
+---
+>         for (String child : knownChildren) {
+>           if (acceptFilter.apply(child)) {
+>             foundChildren.add(child);
+>           }
+342c337,343
+<         waitNanos = notEmpty.awaitNanos(waitNanos);
+---
+>         if (!foundChildren.isEmpty()) {
+>           break;
+>         }
+>         if (waitNanos <= 0) {
+>           break;
+>         }
+>         waitNanos = changed.awaitNanos(waitNanos);
+345a347,350
+> 
+>       if (!foundChildren.isEmpty()) {
+>         break;
+>       }
+347c352,374
+<     return Collections.emptySortedSet();
+---
+> 
+>     
+>     
+>     
+>     List<Pair<String, byte[]>> result = new ArrayList<>();
+>     for (String child : foundChildren) {
+>       if (result.size() >= max) {
+>         break;
+>       }
+>       try {
+>         byte[] data = zookeeper.getData(dir + "/" + child, null, null, true);
+>         result.add(new Pair<>(child, data));
+>       } catch (KeeperException.NoNodeException e) {
+>         
+>         updateLock.lockInterruptibly();
+>         try {
+>           knownChildren.remove(child);
+>         } finally {
+>           updateLock.unlock();
+>         }
+>       }
+>     }
+>     return result;
+422,424c449
+<         isDirty = true;
+<         
+<         notEmpty.signalAll();
+---
+>         changed.signalAll();

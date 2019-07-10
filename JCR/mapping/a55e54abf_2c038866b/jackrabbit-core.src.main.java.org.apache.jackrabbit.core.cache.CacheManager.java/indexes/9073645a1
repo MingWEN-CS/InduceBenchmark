@@ -1,0 +1,341 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.cache;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.WeakHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class CacheManager implements CacheAccessListener {
+
+    
+    private static Logger log = LoggerFactory.getLogger(CacheManager.class);
+
+    
+    private static final long DEFAULT_MAX_MEMORY = 16 * 1024 * 1024;
+
+    
+    private static final long DEFAULT_MIN_MEMORY_PER_CACHE = 128 * 1024;
+
+    
+    private static final long DEFAULT_MAX_MEMORY_PER_CACHE = 4 * 1024 * 1024;
+
+    
+    private WeakHashMap<Cache, Object> caches = new WeakHashMap<Cache, Object>();
+
+    
+    private static final int DEFAULT_MIN_RESIZE_INTERVAL = 1000;
+
+    
+    private static final int DEFAULT_LOG_STATS_INTERVAL = 60 * 1000;
+
+    
+    private static final int BIG_OBJECT_SIZE = 16 * 1024;
+
+    
+    private long maxMemory = Long.getLong(
+            "org.apache.jackrabbit.maxCacheMemory",
+            DEFAULT_MAX_MEMORY);
+
+    
+    private long minMemoryPerCache = Long.getLong(
+            "org.apache.jackrabbit.minMemoryPerCache",
+            DEFAULT_MIN_MEMORY_PER_CACHE);
+
+    
+    private long maxMemoryPerCache = Long.getLong(
+            "org.apache.jackrabbit.maxMemoryPerCache",
+            DEFAULT_MAX_MEMORY_PER_CACHE);
+
+    
+    private long minResizeInterval = Long.getLong(
+            "org.apache.jackrabbit.cacheResizeInterval",
+            DEFAULT_MIN_RESIZE_INTERVAL);
+
+    
+    private long minLogStatsInterval = Long.getLong(
+            "org.apache.jackrabbit.cacheLogStatsInterval",
+            DEFAULT_LOG_STATS_INTERVAL);
+
+    
+    private volatile long nextResize =
+        System.currentTimeMillis() + DEFAULT_MIN_RESIZE_INTERVAL;
+
+
+    
+    private volatile long nextLogStats =
+            System.currentTimeMillis() + DEFAULT_LOG_STATS_INTERVAL;
+
+
+    public long getMaxMemory() {
+        return maxMemory;
+    }
+
+    public void setMaxMemory(final long maxMemory) {
+        this.maxMemory = maxMemory;
+    }
+
+    public long getMaxMemoryPerCache() {
+        return maxMemoryPerCache;
+    }
+
+    public void setMaxMemoryPerCache(final long maxMemoryPerCache) {
+        this.maxMemoryPerCache = maxMemoryPerCache;
+    }
+
+    public long getMinMemoryPerCache() {
+        return minMemoryPerCache;
+    }
+
+    public void setMinMemoryPerCache(final long minMemoryPerCache) {
+        this.minMemoryPerCache = minMemoryPerCache;
+    }
+
+    public long getMinResizeInterval() {
+        return minResizeInterval;
+    }
+
+    public void setMinResizeInterval(long minResizeInterval) {
+        this.minResizeInterval = minResizeInterval;
+    }
+
+    
+
+
+
+    public void cacheAccessed(long accessCount) {
+
+        logCacheStats();
+
+        long now = System.currentTimeMillis();
+        if (now < nextResize) {
+            return;
+        }
+        synchronized (this) {
+            
+            
+            if (now < nextResize) {
+                return;
+            }
+            nextResize = now + minResizeInterval;
+            resizeAll();
+            nextResize = System.currentTimeMillis() + minResizeInterval;
+        }
+    }
+
+    
+
+
+    private void logCacheStats() {
+        if (log.isDebugEnabled()) {
+            long now = System.currentTimeMillis();
+            if (now < nextLogStats) {
+                return;
+            }
+            
+            List<Cache> list = new ArrayList<Cache>();
+            synchronized (caches) {
+                list.addAll(caches.keySet());
+            }
+            for (Cache cache : list) {
+                log.debug(cache.getCacheInfoAsString());
+            }
+            nextLogStats = now + minLogStatsInterval;
+        }
+    }
+
+    
+
+
+    private void resizeAll() {
+        if (log.isTraceEnabled()) {
+            log.trace("resizeAll size=" + caches.size());
+        }
+        
+        
+        
+        
+        List<Cache> list = new ArrayList<Cache>();
+        synchronized (caches) {
+            list.addAll(caches.keySet());
+        }
+        if (list.size() == 0) {
+            
+            return;
+        }
+        CacheInfo[] infos = new CacheInfo[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            infos[i] = new CacheInfo((Cache) list.get(i));
+        }
+        
+        long totalAccessCount = 0;
+        long totalMemoryUsed = 0;
+        for (CacheInfo info : infos) {
+            totalAccessCount += info.getAccessCount();
+            totalMemoryUsed += info.getMemoryUsed();
+        }
+        
+        
+        
+        
+        
+        double memoryPerAccess = (double) maxMemory / 2.
+                / Math.max(1., (double) totalAccessCount);
+        double memoryPerUsed = (double) maxMemory / 2.
+                / Math.max(1., (double) totalMemoryUsed);
+        int fullCacheCount = 0;
+        for (CacheInfo info : infos) {
+            long mem = (long) (memoryPerAccess * info.getAccessCount());
+            mem += (long) (memoryPerUsed * info.getMemoryUsed());
+            mem = Math.min(mem, maxMemoryPerCache);
+            if (info.wasFull()) {
+                fullCacheCount++;
+            } else {
+                mem = Math.min(mem, info.getMemoryUsed());
+            }
+            mem = Math.min(mem, maxMemoryPerCache);
+            mem = Math.max(mem, minMemoryPerCache);
+            info.setMemory(mem);
+        }
+        
+        long unusedMemory = maxMemory;
+        for (CacheInfo info : infos) {
+            unusedMemory -= info.getMemory();
+        }
+        
+        if (unusedMemory > 0 && fullCacheCount > 0) {
+            for (CacheInfo info : infos) {
+                if (info.wasFull()) {
+                    info.setMemory(info.getMemory() + unusedMemory
+                            / fullCacheCount);
+                }
+            }
+        }
+        
+        for (CacheInfo info : infos) {
+            Cache cache = info.getCache();
+            if (log.isTraceEnabled()) {
+                log.trace(cache + " now:" + cache.getMaxMemorySize() + " used:"
+                        + info.getMemoryUsed() + " access:" + info.getAccessCount()
+                        + " new:" + info.getMemory());
+            }
+            cache.setMaxMemorySize(info.getMemory());
+        }
+    }
+
+    
+
+
+
+
+
+    public void add(Cache cache) {
+        synchronized (caches) {
+            caches.put(cache, null);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    public void remove(Cache cache) {
+        synchronized (caches) {
+            caches.remove(cache);
+        }
+    }
+
+    
+
+
+    public static class CacheInfo {
+        private Cache cache;
+
+        private long accessCount;
+
+        private long memory;
+
+        private long memoryUsed;
+
+        private boolean wasFull;
+
+        CacheInfo(Cache cache) {
+            this.cache = cache;
+            
+            
+            
+            this.memory = cache.getMaxMemorySize();
+            this.memoryUsed = cache.getMemoryUsed();
+            this.accessCount = cache.getAccessCount();
+            
+            cache.resetAccessCount();
+            
+            
+            
+            wasFull = (memoryUsed + BIG_OBJECT_SIZE) >= memory;
+        }
+
+        boolean wasFull() {
+            return wasFull;
+        }
+
+        long getAccessCount() {
+            return accessCount;
+        }
+
+        long getMemoryUsed() {
+            return memoryUsed;
+        }
+
+        void setMemory(long mem) {
+            this.memory = mem;
+        }
+
+        long getMemory() {
+            return memory;
+        }
+
+        Cache getCache() {
+            return cache;
+        }
+
+    }
+
+    public void disposeCache(Cache cache) {
+        remove(cache);
+    }
+
+}

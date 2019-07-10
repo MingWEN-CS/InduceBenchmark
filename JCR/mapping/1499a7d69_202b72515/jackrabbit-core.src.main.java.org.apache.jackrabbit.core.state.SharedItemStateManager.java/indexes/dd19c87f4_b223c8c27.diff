@@ -1,0 +1,61 @@
+19a20
+> import java.util.Iterator;
+26a28
+> import javax.jcr.nodetype.NodeType;
+249,251c251,253
+<         for (int i = 0; i < virtualProviders.length; i++) {
+<             if (virtualProviders[i].isVirtualRoot(id)) {
+<                 return virtualProviders[i].getItemState(id);
+---
+>         for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+>             if (virtualProvider.isVirtualRoot(id)) {
+>                 return virtualProvider.getItemState(id);
+269,271c271,273
+<         for (int i = 0; i < virtualProviders.length; i++) {
+<             if (virtualProviders[i].hasItemState(id)) {
+<                 return virtualProviders[i].getItemState(id);
+---
+>         for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+>             if (virtualProvider.hasItemState(id)) {
+>                 return virtualProvider.getItemState(id);
+283,284c285,286
+<         for (int i = 0; i < virtualProviders.length; i++) {
+<             if (virtualProviders[i].isVirtualRoot(id)) {
+---
+>         for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+>             if (virtualProvider.isVirtualRoot(id)) {
+310,311c312,313
+<         for (int i = 0; i < virtualProviders.length; i++) {
+<             if (virtualProviders[i].hasItemState(id)) {
+---
+>         for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+>             if (virtualProvider.hasItemState(id)) {
+337c339
+<         for (int i = 0; i < virtualProviders.length; i++) {
+---
+>         for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+339c341
+<                 return virtualProviders[i].getNodeReferences(id);
+---
+>                 return virtualProvider.getNodeReferences(id);
+373,374c375,376
+<         for (int i = 0; i < virtualProviders.length; i++) {
+<             if (virtualProviders[i].hasNodeReferences(id)) {
+---
+>         for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+>             if (virtualProvider.hasNodeReferences(id)) {
+452,453c454,455
+<         for (int i = 0; i < virtualProviders.length; i++) {
+<             virtualProviders[i].removeListener(this);
+---
+>         for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+>             virtualProvider.removeListener(this);
+640a643,646
+>                                         public EffectiveNodeType getEffectiveNodeType(Name ntName) throws NoSuchNodeTypeException {
+>                                             return ntReg.getEffectiveNodeType(ntName);
+>                                         }
+> 
+1425c1431
+<         Set mixins = state.getMixinTypeNames();
+---
+>         Set<Name> mixins = state.getMixinTypeNames();

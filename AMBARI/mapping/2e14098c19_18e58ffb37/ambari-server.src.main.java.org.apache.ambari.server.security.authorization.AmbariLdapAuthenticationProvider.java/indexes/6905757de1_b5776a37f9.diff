@@ -1,0 +1,26 @@
+27d26
+< import org.apache.commons.lang.StringUtils;
+75c74
+<         LOG.debug("Got exception during LDAP authentification attempt", e);
+---
+>         LOG.debug("Got exception during LDAP authentication attempt", e);
+78c77
+<         if (cause != null) {
+---
+>         if ((cause != null) && (cause != e)) {
+81,83c80,86
+<           
+<           if ((cause != e) && (cause instanceof
+<                   org.springframework.ldap.AuthenticationException)) {
+---
+>           if (cause instanceof org.springframework.ldap.CommunicationException) {
+>             if (LOG.isDebugEnabled()) {
+>               LOG.warn("Failed to communicate with the LDAP server: " + cause.getMessage(), e);
+>             } else {
+>               LOG.warn("Failed to communicate with the LDAP server: " + cause.getMessage());
+>             }
+>           } else if (cause instanceof org.springframework.ldap.AuthenticationException) {
+85c88
+<                     "connecting to LDAP server) are invalid.", e);
+---
+>                 "connecting to LDAP server) are invalid.", e);

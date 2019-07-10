@@ -1,0 +1,97 @@
+21c21
+< import java.util.HashMap;
+---
+> import java.util.concurrent.ConcurrentMap;
+24a25,27
+> import org.apache.oozie.service.MemoryLocksService.Type;
+> 
+> import com.google.common.collect.MapMaker;
+30d32
+<     final private HashMap<String, ReentrantReadWriteLock> locks = new HashMap<String, ReentrantReadWriteLock>();
+32,34c34
+<     private static enum Type {
+<         READ, WRITE
+<     }
+---
+>     final private ConcurrentMap<String, ReentrantReadWriteLock> locks = new MapMaker().weakValues().makeMap();
+40,47c40,46
+<         private final ReentrantReadWriteLock rwLock;
+<         private final java.util.concurrent.locks.Lock lock;
+<         private final String resource;
+< 
+<         private MemoryLockToken(ReentrantReadWriteLock rwLock, java.util.concurrent.locks.Lock lock, String resource) {
+<             this.rwLock = rwLock;
+<             this.lock = lock;
+<             this.resource = resource;
+---
+>         private final ReentrantReadWriteLock lockEntry;
+>         private final Type type;
+> 
+>         public MemoryLockToken(ReentrantReadWriteLock lockEntry, Type type) {
+>             this.lockEntry = lockEntry;
+>             this.type = type;
+> 
+55,61c54,60
+<             lock.unlock();
+<             if (!isLockHeld()) {
+<                 synchronized (locks) {
+<                     if (!isLockHeld()) {
+<                         locks.remove(resource);
+<                     }
+<                 }
+---
+>             switch (type) {
+>                 case WRITE:
+>                     lockEntry.writeLock().unlock();
+>                     break;
+>                 case READ:
+>                     lockEntry.readLock().unlock();
+>                     break;
+64,66d62
+<         private boolean isLockHeld(){
+<             return rwLock.hasQueuedThreads() || rwLock.isWriteLocked() || rwLock.getReadLockCount() > 0;
+<         }
+86,100d81
+<     public MemoryLockToken getReadLock(String resource, long wait) throws InterruptedException {
+<         return getLock(resource, Type.READ, wait);
+<     }
+< 
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<     public MemoryLockToken getWriteLock(String resource, long wait) throws InterruptedException {
+<         return getLock(resource, Type.WRITE, wait);
+<     }
+102,110c83,89
+<     private MemoryLockToken getLock(String resource, Type type, long wait) throws InterruptedException {
+<         ReentrantReadWriteLock lockEntry;
+<         synchronized (locks) {
+<             if (locks.containsKey(resource)) {
+<                 lockEntry = locks.get(resource);
+<             }
+<             else {
+<                 lockEntry = new ReentrantReadWriteLock(true);
+<                 locks.put(resource, lockEntry);
+---
+>     public MemoryLockToken getLock(final String resource, Type type, long wait) throws InterruptedException {
+>         ReentrantReadWriteLock lockEntry = locks.get(resource);
+>         if (lockEntry == null) {
+>             ReentrantReadWriteLock newLock = new ReentrantReadWriteLock(true);
+>             lockEntry = locks.putIfAbsent(resource, newLock);
+>             if (lockEntry == null) {
+>                 lockEntry = newLock;
+113d91
+< 
+136c114,118
+<         return new MemoryLockToken(lockEntry, lock, resource);
+---
+>         return new MemoryLockToken(lockEntry, type);
+>     }
+> 
+>     public ConcurrentMap<String, ReentrantReadWriteLock> getLockMap(){
+>         return locks;

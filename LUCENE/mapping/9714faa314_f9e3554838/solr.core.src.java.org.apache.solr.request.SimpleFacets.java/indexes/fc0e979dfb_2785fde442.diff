@@ -1,0 +1,43 @@
+54a55
+> import org.apache.solr.request.IntervalFacets.FacetInterval;
+245a247
+> 
+257a260
+>       facetResponse.add("facet_intervals", getFacetIntervalCounts());
+1405a1409
+> 
+1406a1411,1444
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public NamedList<Object> getFacetIntervalCounts() throws IOException, SyntaxError {
+>     NamedList<Object> res = new SimpleOrderedMap<Object>();
+>     String[] fields = params.getParams(FacetParams.FACET_INTERVAL);
+>     if (fields == null || fields.length == 0) return res;
+> 
+>     for (String field : fields) {
+>       parseParams(FacetParams.FACET_INTERVAL, field);
+>       String[] intervalStrs = required.getFieldParams(field, FacetParams.FACET_INTERVAL_SET);
+>       SchemaField schemaField = searcher.getCore().getLatestSchema().getField(field);
+>       if (!schemaField.hasDocValues()) {
+>         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Interval Faceting only on fields with doc values");
+>       }
+>       if (params.getBool(GroupParams.GROUP_FACET, false)) {
+>         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Interval Faceting can't be used with " + GroupParams.GROUP_FACET);
+>       }
+>       
+>       SimpleOrderedMap<Integer> fieldResults = new SimpleOrderedMap<Integer>();
+>       res.add(field, fieldResults);
+>       IntervalFacets intervalFacets = new IntervalFacets(schemaField, searcher, docs, intervalStrs);
+>       for (FacetInterval interval : intervalFacets) {
+>         fieldResults.add(interval.getKey(), interval.getCount());
+>       }
+>     }
+> 
+>     return res;
+>   }
+> 

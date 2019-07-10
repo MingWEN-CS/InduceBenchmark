@@ -1,0 +1,9 @@
+189a190
+>   private boolean isInitializedByTomcat;
+254a256
+>         isInitializedByTomcat = true;
+382a385,388
+>     if (secretProvider != null && isInitializedByTomcat) {
+>       secretProvider.destroy();
+>       secretProvider = null;
+>     }

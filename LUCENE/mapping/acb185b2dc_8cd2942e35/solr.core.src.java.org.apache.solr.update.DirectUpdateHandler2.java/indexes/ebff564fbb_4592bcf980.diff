@@ -1,0 +1,176 @@
+28a29,30
+> import com.codahale.metrics.Gauge;
+> import com.codahale.metrics.Meter;
+51a54,55
+> import org.apache.solr.metrics.SolrMetricManager;
+> import org.apache.solr.metrics.SolrMetricProducer;
+74c78
+< public class DirectUpdateHandler2 extends UpdateHandler implements SolrCoreState.IndexWriterCloser {
+---
+> public class DirectUpdateHandler2 extends UpdateHandler implements SolrCoreState.IndexWriterCloser, SolrMetricProducer {
+79c83
+<   LongAdder addCommandsCumulative = new LongAdder();
+---
+>   Meter addCommandsCumulative;
+81,89c85,94
+<   LongAdder deleteByIdCommandsCumulative= new LongAdder();
+<   LongAdder deleteByQueryCommands= new LongAdder();
+<   LongAdder deleteByQueryCommandsCumulative= new LongAdder();
+<   LongAdder expungeDeleteCommands = new LongAdder();
+<   LongAdder mergeIndexesCommands = new LongAdder();
+<   LongAdder commitCommands= new LongAdder();
+<   LongAdder optimizeCommands= new LongAdder();
+<   LongAdder rollbackCommands= new LongAdder();
+<   LongAdder numDocsPending= new LongAdder();
+---
+>   Meter deleteByIdCommandsCumulative;
+>   LongAdder deleteByQueryCommands = new LongAdder();
+>   Meter deleteByQueryCommandsCumulative;
+>   Meter expungeDeleteCommands;
+>   Meter mergeIndexesCommands;
+>   Meter commitCommands;
+>   Meter splitCommands;
+>   Meter optimizeCommands;
+>   Meter rollbackCommands;
+>   LongAdder numDocsPending = new LongAdder();
+91c96
+<   LongAdder numErrorsCumulative = new LongAdder();
+---
+>   Meter numErrorsCumulative;
+148a154,182
+>   @Override
+>   public void initializeMetrics(SolrMetricManager manager, String registry, String scope) {
+>     commitCommands = manager.meter(registry, "commits", getCategory().toString(), scope);
+>     Gauge<Integer> autoCommits = () -> commitTracker.getCommitCount();
+>     manager.register(registry, autoCommits, true, "autoCommits", getCategory().toString(), scope);
+>     Gauge<Integer> softAutoCommits = () -> softCommitTracker.getCommitCount();
+>     manager.register(registry, softAutoCommits, true, "softAutoCommits", getCategory().toString(), scope);
+>     optimizeCommands = manager.meter(registry, "optimizes", getCategory().toString(), scope);
+>     rollbackCommands = manager.meter(registry, "rollbacks", getCategory().toString(), scope);
+>     splitCommands = manager.meter(registry, "splits", getCategory().toString(), scope);
+>     mergeIndexesCommands = manager.meter(registry, "merges", getCategory().toString(), scope);
+>     expungeDeleteCommands = manager.meter(registry, "expungeDeletes", getCategory().toString(), scope);
+>     Gauge<Long> docsPending = () -> numDocsPending.longValue();
+>     manager.register(registry, docsPending, true, "docsPending", getCategory().toString(), scope);
+>     Gauge<Long> adds = () -> addCommands.longValue();
+>     manager.register(registry, adds, true, "adds", getCategory().toString(), scope);
+>     Gauge<Long> deletesById = () -> deleteByIdCommands.longValue();
+>     manager.register(registry, deletesById, true, "deletesById", getCategory().toString(), scope);
+>     Gauge<Long> deletesByQuery = () -> deleteByQueryCommands.longValue();
+>     manager.register(registry, deletesByQuery, true, "deletesByQuery", getCategory().toString(), scope);
+>     Gauge<Long> errors = () -> numErrors.longValue();
+>     manager.register(registry, errors, true, "errors", getCategory().toString(), scope);
+> 
+>     addCommandsCumulative = manager.meter(registry, "cumulativeAdds", getCategory().toString(), scope);
+>     deleteByIdCommandsCumulative = manager.meter(registry, "cumulativeDeletesById", getCategory().toString(), scope);
+>     deleteByQueryCommandsCumulative = manager.meter(registry, "cumulativeDeletesByQuery", getCategory().toString(), scope);
+>     numErrorsCumulative = manager.meter(registry, "cumulativeErrors", getCategory().toString(), scope);
+>   }
+> 
+195c229
+<     addCommandsCumulative.increment();
+---
+>     addCommandsCumulative.mark();
+233c267
+<         numErrorsCumulative.increment();
+---
+>         numErrorsCumulative.mark();
+371c405
+<     deleteByIdCommandsCumulative.increment();
+---
+>     deleteByIdCommandsCumulative.mark();
+429c463
+<     deleteByQueryCommandsCumulative.increment();
+---
+>     deleteByQueryCommandsCumulative.mark();
+481c515
+<         numErrorsCumulative.increment();
+---
+>         numErrorsCumulative.mark();
+489c523
+<     mergeIndexesCommands.increment();
+---
+>     mergeIndexesCommands.mark();
+543c577,580
+<       if (error) numErrors.increment();
+---
+>       if (error) {
+>         numErrors.increment();
+>         numErrorsCumulative.mark();
+>       }
+555c592
+<       optimizeCommands.increment();
+---
+>       optimizeCommands.mark();
+557,558c594,595
+<       commitCommands.increment();
+<       if (cmd.expungeDeletes) expungeDeleteCommands.increment();
+---
+>       commitCommands.mark();
+>       if (cmd.expungeDeletes) expungeDeleteCommands.mark();
+677c714,717
+<       if (error) numErrors.increment();
+---
+>       if (error) {
+>         numErrors.increment();
+>         numErrorsCumulative.mark();
+>       }
+705c745
+<     rollbackCommands.increment();
+---
+>     rollbackCommands.mark();
+725,728c765,771
+<       addCommandsCumulative.add(-addCommands.sumThenReset());
+<       deleteByIdCommandsCumulative.add(-deleteByIdCommands.sumThenReset());
+<       deleteByQueryCommandsCumulative.add(-deleteByQueryCommands.sumThenReset());
+<       if (error) numErrors.increment();
+---
+>       addCommandsCumulative.mark(-addCommands.sumThenReset());
+>       deleteByIdCommandsCumulative.mark(-deleteByIdCommands.sumThenReset());
+>       deleteByQueryCommandsCumulative.mark(-deleteByQueryCommands.sumThenReset());
+>       if (error) {
+>         numErrors.increment();
+>         numErrorsCumulative.mark();
+>       }
+837c880,886
+<     splitter.split();
+---
+>     splitCommands.mark();
+>     try {
+>       splitter.split();
+>     } catch (IOException e) {
+>       numErrors.increment();
+>       numErrorsCumulative.mark();
+>     }
+876c925
+<     if(cmd.isBlock()){
+---
+>     if (cmd.isBlock()) {
+879c928
+<     }else{
+---
+>     } else {
+919c968
+<     lst.add("commits", commitCommands.longValue());
+---
+>     lst.add("commits", commitCommands.getCount());
+934,936c983,985
+<     lst.add("optimizes", optimizeCommands.longValue());
+<     lst.add("rollbacks", rollbackCommands.longValue());
+<     lst.add("expungeDeletes", expungeDeleteCommands.longValue());
+---
+>     lst.add("optimizes", optimizeCommands.getCount());
+>     lst.add("rollbacks", rollbackCommands.getCount());
+>     lst.add("expungeDeletes", expungeDeleteCommands.getCount());
+944,947c993,996
+<     lst.add("cumulative_adds", addCommandsCumulative.longValue());
+<     lst.add("cumulative_deletesById", deleteByIdCommandsCumulative.longValue());
+<     lst.add("cumulative_deletesByQuery", deleteByQueryCommandsCumulative.longValue());
+<     lst.add("cumulative_errors", numErrorsCumulative.longValue());
+---
+>     lst.add("cumulative_adds", addCommandsCumulative.getCount());
+>     lst.add("cumulative_deletesById", deleteByIdCommandsCumulative.getCount());
+>     lst.add("cumulative_deletesByQuery", deleteByQueryCommandsCumulative.getCount());
+>     lst.add("cumulative_errors", numErrorsCumulative.getCount());
+973a1023
+> 

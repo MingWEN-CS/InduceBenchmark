@@ -1,0 +1,10 @@
+135c135
+<     MockRAMDirectory directory = new MockRAMDirectory();
+---
+>     MockRAMDirectory directory = newDirectory(random);
+153c153
+<     MockRAMDirectory target = new MockRAMDirectory();
+---
+>     MockRAMDirectory target = newDirectory(random);
+178a179
+>     target.close();

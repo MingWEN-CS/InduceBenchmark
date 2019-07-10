@@ -1,0 +1,214 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.oozie.service;
+
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.curator.framework.recipes.locks.InterProcessMutex;
+import org.apache.curator.framework.recipes.locks.InterProcessReadWriteLock;
+import org.apache.oozie.ErrorCode;
+import org.apache.oozie.util.Instrumentable;
+import org.apache.oozie.util.Instrumentation;
+import org.apache.oozie.event.listener.ZKConnectionListener;
+import org.apache.oozie.lock.LockToken;
+import org.apache.oozie.util.XLog;
+import org.apache.oozie.util.ZKUtils;
+
+import java.io.IOException;
+import java.util.concurrent.ScheduledExecutorService;
+
+import org.apache.curator.framework.recipes.locks.ChildReaper;
+import org.apache.curator.framework.recipes.locks.Reaper;
+import org.apache.curator.framework.state.ConnectionState;
+import org.apache.curator.utils.ThreadUtils;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.MapMaker;
+
+
+
+
+
+
+public class ZKLocksService extends MemoryLocksService implements Service, Instrumentable {
+
+    private ZKUtils zk;
+    private static XLog LOG = XLog.getLog(ZKLocksService.class);
+    public static final String LOCKS_NODE = "/locks";
+
+    private ConcurrentMap<String, InterProcessReadWriteLock> zkLocks = new MapMaker().weakValues().makeMap();
+
+
+    private static final String REAPING_LEADER_PATH = ZKUtils.ZK_BASE_SERVICES_PATH + "/locksChildReaperLeaderPath";
+    public static final String REAPING_THRESHOLD = CONF_PREFIX + "ZKLocksService.locks.reaper.threshold";
+    public static final String REAPING_THREADS = CONF_PREFIX + "ZKLocksService.locks.reaper.threads";
+    private ChildReaper reaper = null;
+
+    
+
+
+
+
+    @Override
+    public void init(Services services) throws ServiceException {
+        super.init(services);
+        try {
+            zk = ZKUtils.register(this);
+            reaper = new ChildReaper(zk.getClient(), LOCKS_NODE, Reaper.Mode.REAP_UNTIL_GONE, getExecutorService(),
+                    ConfigurationService.getInt(services.getConf(), REAPING_THRESHOLD) * 1000, REAPING_LEADER_PATH);
+            reaper.start();
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ErrorCode.E1700, ex.getMessage(), ex);
+        }
+    }
+
+    
+
+
+    @Override
+    public void destroy() {
+        if (reaper != null && ZKConnectionListener.getZKConnectionState() != ConnectionState.LOST) {
+            try {
+                reaper.close();
+            }
+            catch (IOException e) {
+                LOG.error("Error closing childReaper", e);
+            }
+        }
+        if (zk != null) {
+            zk.unregister(this);
+        }
+        zk = null;
+        super.destroy();
+    }
+
+    
+
+
+
+
+    @Override
+    public void instrument(Instrumentation instr) {
+        
+        instr.addVariable(INSTRUMENTATION_GROUP, "locks", new Instrumentation.Variable<Integer>() {
+            @Override
+            public Integer getValue() {
+                return zkLocks.size();
+            }
+        });
+    }
+
+    
+
+
+
+
+
+
+
+    @Override
+    public LockToken getReadLock(String resource, long wait) throws InterruptedException {
+        return acquireLock(resource, Type.READ, wait);
+    }
+
+    
+
+
+
+
+
+
+
+    @Override
+    public LockToken getWriteLock(String resource, long wait) throws InterruptedException {
+        return acquireLock(resource, Type.WRITE, wait);
+    }
+
+    private LockToken acquireLock(final String resource, Type type, long wait) throws InterruptedException {
+        InterProcessReadWriteLock lockEntry = zkLocks.get(resource);
+        if (lockEntry == null) {
+            InterProcessReadWriteLock newLock = new InterProcessReadWriteLock(zk.getClient(), LOCKS_NODE + "/" + resource);
+            lockEntry = zkLocks.putIfAbsent(resource, newLock);
+            if (lockEntry == null) {
+                lockEntry = newLock;
+            }
+        }
+        InterProcessMutex lock = (type.equals(Type.READ)) ? lockEntry.readLock() : lockEntry.writeLock();
+        ZKLockToken token = null;
+        try {
+            if (wait == -1) {
+                lock.acquire();
+                token = new ZKLockToken(lockEntry, type);
+            }
+            else if (lock.acquire(wait, TimeUnit.MILLISECONDS)) {
+                token = new ZKLockToken(lockEntry, type);
+            }
+        }
+        catch (Exception ex) {
+            
+            LOG.error("Error while acquiring lock", ex);
+        }
+        return token;
+    }
+
+    
+
+
+    class ZKLockToken implements LockToken {
+        private final InterProcessReadWriteLock lockEntry;
+        private final Type type;
+
+        private ZKLockToken(InterProcessReadWriteLock lockEntry, Type type) {
+            this.lockEntry = lockEntry;
+            this.type = type;
+        }
+
+        
+
+
+        @Override
+        public void release() {
+            try {
+                switch (type) {
+                    case WRITE:
+                        lockEntry.writeLock().release();
+                        break;
+                    case READ:
+                        lockEntry.readLock().release();
+                        break;
+                }
+            }
+            catch (Exception ex) {
+                LOG.warn("Could not release lock: " + ex.getMessage(), ex);
+            }
+        }
+    }
+
+    @VisibleForTesting
+    public ConcurrentMap<String, InterProcessReadWriteLock> getLocks(){
+        return zkLocks;
+    }
+
+    private static ScheduledExecutorService getExecutorService() {
+        return ThreadUtils.newFixedThreadScheduledPool(ConfigurationService.getInt(REAPING_THREADS),
+                "ZKLocksChildReaper");
+    }
+
+}

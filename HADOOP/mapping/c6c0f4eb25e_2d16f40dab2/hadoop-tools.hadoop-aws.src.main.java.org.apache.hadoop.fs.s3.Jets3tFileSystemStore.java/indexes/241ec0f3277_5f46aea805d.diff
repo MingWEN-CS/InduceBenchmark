@@ -1,0 +1,4 @@
+176c176
+<         return null;
+---
+>         throw new IOException(key + " doesn't exist");

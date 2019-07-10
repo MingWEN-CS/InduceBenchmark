@@ -1,0 +1,15 @@
+3574a3575,3582
+>     String serviceName = request.getServiceName();
+>     List<ServiceConfigVersionResponse> serviceConfigVersionResponses =  new ArrayList<ServiceConfigVersionResponse>();
+> 
+>     if (Boolean.TRUE.equals(request.getIsCurrent()) && serviceName != null) {
+>       serviceConfigVersionResponses.addAll(cluster.getActiveServiceConfigVersionResponse(serviceName));
+>     } else {
+>       serviceConfigVersionResponses.addAll(cluster.getServiceConfigVersions());
+>     }
+3576,3577c3584,3585
+<     for (ServiceConfigVersionResponse response : cluster.getServiceConfigVersions()) {
+<       if (request.getServiceName() != null && !StringUtils.equals(request.getServiceName(), response.getServiceName())) {
+---
+>     for (ServiceConfigVersionResponse response : serviceConfigVersionResponses) {
+>       if (serviceName != null && !StringUtils.equals(serviceName, response.getServiceName())) {

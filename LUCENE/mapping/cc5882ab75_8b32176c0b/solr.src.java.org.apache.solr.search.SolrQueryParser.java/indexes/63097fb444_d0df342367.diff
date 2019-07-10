@@ -1,0 +1,41 @@
+58,62d57
+< 
+< 
+< 
+< 
+< 
+70,89d64
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   public SolrQueryParser(IndexSchema schema, String defaultField) {
+<     super(schema.getSolrConfig().getLuceneVersion("luceneMatchVersion", Version.LUCENE_30), defaultField == null ? schema.getDefaultSearchFieldName() : defaultField, schema.getQueryAnalyzer());
+<     this.schema = schema;
+<     this.parser  = null;
+<     this.defaultField = defaultField;
+<     setLowercaseExpandedTerms(false);
+<     setEnablePositionIncrements(true);
+<     checkAllowLeadingWildcards();
+<   }
+< 
+95c70
+<     super(parser.getReq().getSchema().getSolrConfig().getLuceneVersion("luceneMatchVersion", Version.LUCENE_30), defaultField, analyzer);
+---
+>     super(parser.getReq().getCore().getSolrConfig().getLuceneVersion("luceneMatchVersion", Version.LUCENE_30), defaultField, analyzer);
+141,146c116,117
+<         if (parser==null) {
+<           return QueryParsing.parseFunction(queryText, schema);
+<         } else {
+<           QParser nested = parser.subQuery(queryText, "func");
+<           return nested.getQuery();
+<         }
+---
+>         QParser nested = parser.subQuery(queryText, "func");
+>         return nested.getQuery();

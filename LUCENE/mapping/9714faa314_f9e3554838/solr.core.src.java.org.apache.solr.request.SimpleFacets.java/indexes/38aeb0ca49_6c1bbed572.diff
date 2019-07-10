@@ -1,0 +1,8 @@
+40a41
+> import org.apache.lucene.index.DocValues;
+49d49
+< import org.apache.lucene.search.FieldCache;
+647c647
+<     SortedDocValues si = FieldCache.DEFAULT.getTermsIndex(searcher.getAtomicReader(), fieldName);
+---
+>     SortedDocValues si = DocValues.getSorted(searcher.getAtomicReader(), fieldName);

@@ -1,0 +1,36 @@
+21a22
+> import static org.apache.hadoop.fs.CommonConfigurationKeys.HADOOP_USER_GROUP_METRICS_PERCENTILES_INTERVALS;
+60a62,63
+> import org.apache.hadoop.metrics2.lib.MetricsRegistry;
+> import org.apache.hadoop.metrics2.lib.MutableQuantiles;
+94a98,99
+>     final MetricsRegistry registry = new MetricsRegistry("UgiMetrics");
+> 
+98a104,105
+>     @Metric("GetGroups") MutableRate getGroups;
+>     MutableQuantiles[] getGroupsQuantiles;
+102a110,118
+> 
+>     void addGetGroups(long latency) {
+>       getGroups.add(latency);
+>       if (getGroupsQuantiles != null) {
+>         for (MutableQuantiles q : getGroupsQuantiles) {
+>           q.add(latency);
+>         }
+>       }
+>     }
+252a269,282
+> 
+>     if (metrics.getGroupsQuantiles == null) {
+>       int[] intervals = conf.getInts(HADOOP_USER_GROUP_METRICS_PERCENTILES_INTERVALS);
+>       if (intervals != null && intervals.length > 0) {
+>         final int length = intervals.length;
+>         MutableQuantiles[] getGroupsQuantiles = new MutableQuantiles[length];
+>         for (int i = 0; i < length; i++) {
+>           getGroupsQuantiles[i] = metrics.registry.newQuantiles(
+>             "getGroups" + intervals[i] + "s",
+>             "Get groups", "ops", "latency", intervals[i]);
+>         }
+>         metrics.getGroupsQuantiles = getGroupsQuantiles;
+>       }
+>     }

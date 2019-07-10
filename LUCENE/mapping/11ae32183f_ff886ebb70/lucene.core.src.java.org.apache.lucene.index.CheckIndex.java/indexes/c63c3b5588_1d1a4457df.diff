@@ -1,0 +1,8 @@
+33a34
+> import org.apache.lucene.codecs.blocktree.FieldReader;
+1120,1121c1121,1122
+<         if (fieldTerms instanceof BlockTreeTermsReader.FieldReader) {
+<           final Stats stats = ((BlockTreeTermsReader.FieldReader) fieldTerms).computeStats();
+---
+>         if (fieldTerms instanceof FieldReader) {
+>           final Stats stats = ((FieldReader) fieldTerms).computeStats();

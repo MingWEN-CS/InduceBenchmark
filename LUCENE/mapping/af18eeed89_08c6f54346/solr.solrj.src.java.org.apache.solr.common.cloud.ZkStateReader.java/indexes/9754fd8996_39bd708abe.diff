@@ -1,0 +1,298 @@
+40a41
+> import java.util.Collections;
+46a48
+> import java.util.concurrent.ConcurrentHashMap;
+103c105
+< 
+---
+>   private final Set<String> watchedCollections = new HashSet<String>();
+105a108,112
+> 
+> 
+>   private Map<String , DocCollection> watchedCollectionStates = new ConcurrentHashMap<String, DocCollection>();
+> 
+> 
+166c173,174
+< 
+---
+>       } else {
+>         throw new ZooKeeperException(ErrorCode.INVALID_STATE, "No config data found at path: " + path);
+255,270c263,282
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+---
+>   public Boolean checkValid(String coll, int version) {
+>     DocCollection collection = clusterState.getCollectionOrNull(coll);
+>     if (collection == null) return null;
+>     if (collection.getZNodeVersion() < version) {
+>       log.debug("server older than client {}<{}", collection.getZNodeVersion(), version);
+>       DocCollection nu = getCollectionLive(this, coll);
+>       if (nu.getZNodeVersion() > collection.getZNodeVersion()) {
+>         updateWatchedCollection(nu);
+>         collection = nu;
+>       }
+>     }
+>     
+>     if (collection.getZNodeVersion() == version) {
+>       return Boolean.TRUE;
+>     }
+>     
+>     log.debug("wrong version from client {}!={} ", version, collection.getZNodeVersion());
+>     
+>     return Boolean.FALSE;
+>   }
+299,301d310
+<               Stat stat = new Stat();
+<               byte[] data = zkClient.getData(CLUSTER_STATE, thisWatch, stat ,
+<                   true);
+303d311
+<               ClusterState clusterState = ClusterState.load(stat.getVersion(), data, ln);
+305,310c313
+<               ZkStateReader.this.clusterState = clusterState;
+< 
+< 
+< 
+< 
+< 
+---
+>               ZkStateReader.this.clusterState = constructState(ln, thisWatch);
+379,380c382
+<       ClusterState clusterState = ClusterState.load(zkClient, liveNodeSet, ZkStateReader.this);
+<       this.clusterState = clusterState;
+---
+>       this.clusterState = constructState(liveNodeSet, null);
+425a428,463
+>     
+>     synchronized (this) {
+>       for (String watchedCollection : watchedCollections) {
+>         addZkWatch(watchedCollection);
+>       }
+>     }
+>   }
+> 
+>   private ClusterState constructState(Set<String> ln, Watcher watcher)
+>       throws KeeperException, InterruptedException {
+>     Stat stat = new Stat();
+>     byte[] data = zkClient.getData(CLUSTER_STATE, watcher, stat, true);
+>     ClusterState loadedData = ClusterState.load(stat.getVersion(), data, ln,
+>         CLUSTER_STATE);
+>     Map<String,ClusterState.CollectionRef> result = new LinkedHashMap<>();
+>     result.putAll(loadedData.getCollectionStates());
+>                                                     
+>                                                     
+>     for (String s : getIndividualColls()) {
+>       DocCollection watched = watchedCollectionStates.get(s);
+>       if (watched != null) {
+>         
+>         result.put(s, new ClusterState.CollectionRef(watched));
+>       } else {
+>         
+>         
+>         final String collName = s;
+>         result.put(s, new ClusterState.CollectionRef(null) {
+>           @Override
+>           public DocCollection get() {
+>             return getCollectionLive(ZkStateReader.this, collName);
+>           }
+>         });
+>       }
+>     }
+>     return new ClusterState(ln, result, stat.getVersion());
+428a467,490
+>   private Set<String> getIndividualColls() throws KeeperException, InterruptedException {
+>     List<String> children = null;
+>     try {
+>       children = zkClient.getChildren(COLLECTIONS_ZKNODE, null, true);
+>     } catch (KeeperException.NoNodeException e) {
+>       log.warn("Error fetching collection names");
+>       
+>       return new HashSet<>();
+>     }
+>     if (children == null || children.isEmpty()) return new HashSet<>();
+>     HashSet<String> result = new HashSet<>(children.size());
+>     
+>     for (String c : children) {
+>       try {
+>         if (zkClient.exists(getCollectionPath(c), true)) {
+>           result.add(c);
+>         }
+>       } catch (Exception e) {
+>         log.warn("Error reading collections nodes", e);
+>       }
+>     }
+>     return result;
+>   }
+> 
+446c508
+<           clusterState = ClusterState.load(zkClient, liveNodesSet,this);
+---
+>           clusterState = constructState(liveNodesSet,null);
+453a516,520
+>       synchronized (ZkStateReader.this) {
+>         for (String watchedCollection : watchedCollections) {
+>           updateWatchedCollection(getCollectionLive(this, watchedCollection));
+>         }
+>       }
+478,479c545,546
+<                 
+<                 clusterState = ClusterState.load(zkClient, liveNodesSet,ZkStateReader.this);
+---
+> 
+>                 clusterState = constructState(liveNodesSet,null);
+484d550
+< 
+506a573,578
+> 
+>             synchronized (ZkStateReader.this) {
+>               for (String watchedCollection : watchedCollections) {
+>                 updateWatchedCollection(getCollectionLive(ZkStateReader.this, watchedCollection));
+>               }
+>             }
+511d582
+< 
+513c584
+<    
+---
+> 
+681a753,879
+>   public static DocCollection getCollectionLive(ZkStateReader zkStateReader,
+>       String coll) {
+>     String collectionPath = getCollectionPath(coll);
+>     try {
+>       if (!zkStateReader.getZkClient().exists(collectionPath, true)) return null;
+>       Stat stat = new Stat();
+>       byte[] data = zkStateReader.getZkClient().getData(collectionPath, null, stat, true);
+>       ClusterState state = ClusterState.load(stat.getVersion(), data,
+>           Collections.<String> emptySet(), collectionPath);
+>       ClusterState.CollectionRef collectionRef = state.getCollectionStates().get(coll);
+>       return collectionRef == null ? null : collectionRef.get();
+>     } catch (KeeperException.NoNodeException e) {
+>       log.warn("No node available : " + collectionPath, e);
+>       return null;
+>     } catch (KeeperException e) {
+>       throw new SolrException(ErrorCode.BAD_REQUEST,
+>           "Could not load collection from ZK:" + coll, e);
+>     } catch (InterruptedException e) {
+>       Thread.currentThread().interrupt();
+>       throw new SolrException(ErrorCode.BAD_REQUEST,
+>           "Could not load collection from ZK:" + coll, e);
+>     }
+>   }
+> 
+>   public static String getCollectionPath(String coll) {
+>     return COLLECTIONS_ZKNODE+"/"+coll + "/state.json";
+>   }
+> 
+>   public void addCollectionWatch(String coll) throws KeeperException, InterruptedException {
+>     synchronized (this) {
+>       if (watchedCollections.contains(coll)) return;
+>       else {
+>         watchedCollections.add(coll);
+>       }
+>       addZkWatch(coll);
+>     }
+>   }
+> 
+>   private void addZkWatch(final String coll) throws KeeperException,
+>       InterruptedException {
+>     log.info("addZkWatch {}", coll);
+>     final String fullpath = getCollectionPath(coll);
+>     synchronized (getUpdateLock()) {
+>       
+>       cmdExecutor.ensureExists(fullpath, zkClient);
+>       log.info("Updating collection state at {} from ZooKeeper... ", fullpath);
+>       
+>       Watcher watcher = new Watcher() {
+>         
+>         @Override
+>         public void process(WatchedEvent event) {
+>           
+>           
+>           if (EventType.None.equals(event.getType())) {
+>             return;
+>           }
+>           log.info("A cluster state change: {}, has occurred - updating... ",
+>               (event), ZkStateReader.this.clusterState == null ? 0
+>                   : ZkStateReader.this.clusterState.getLiveNodes().size());
+>           try {
+>             
+>             
+>             
+>             synchronized (ZkStateReader.this.getUpdateLock()) {
+>               if (!watchedCollections.contains(coll)) {
+>                 log.info("Unwatched collection {}", coll);
+>                 return;
+>               }
+>               
+>               final Watcher thisWatch = this;
+>               Stat stat = new Stat();
+>               byte[] data = zkClient.getData(fullpath, thisWatch, stat, true);
+>               
+>               if (data == null || data.length == 0) {
+>                 log.warn("No value set for collection state : {}", coll);
+>                 return;
+>                 
+>               }
+>               ClusterState clusterState = ClusterState.load(stat.getVersion(),
+>                   data, Collections.<String> emptySet(), fullpath);
+>               
+>               
+>               DocCollection newState = clusterState.getCollectionStates()
+>                   .get(coll).get();
+>               updateWatchedCollection(newState);
+>               
+>             }
+>           } catch (KeeperException e) {
+>             if (e.code() == KeeperException.Code.SESSIONEXPIRED
+>                 || e.code() == KeeperException.Code.CONNECTIONLOSS) {
+>               log.warn("ZooKeeper watch triggered, but Solr cannot talk to ZK");
+>               return;
+>             }
+>             log.error("Unwatched collection :" + coll, e);
+>             throw new ZooKeeperException(ErrorCode.SERVER_ERROR, "", e);
+>             
+>           } catch (InterruptedException e) {
+>             Thread.currentThread().interrupt();
+>             log.error("Unwatched collection :" + coll, e);
+>             return;
+>           }
+>         }
+>         
+>       };
+>       zkClient.exists(fullpath, watcher, true);
+>     }
+>     updateWatchedCollection(getCollectionLive(this, coll));
+>   }
+>   
+>   private void updateWatchedCollection(DocCollection newState) {
+>     watchedCollectionStates.put(newState.getName(), newState);
+>     log.info("Updating data for {} to ver {} ", newState.getName(),
+>         newState.getZNodeVersion());
+>     
+>     this.clusterState = clusterState.copyWith(Collections.singletonMap(
+>         newState.getName(), newState));
+>   }
+>   
+>   
+>   public void removeZKWatch(final String coll) {
+>     synchronized (this) {
+>       watchedCollections.remove(coll);
+>       clusterState = clusterState.copyWith(Collections
+>           .<String,DocCollection> singletonMap(coll, null));
+>     }
+>   }
+> 

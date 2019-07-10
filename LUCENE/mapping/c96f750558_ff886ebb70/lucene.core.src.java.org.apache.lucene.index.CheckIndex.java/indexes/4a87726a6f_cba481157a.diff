@@ -1,0 +1,50 @@
+761,763c761,769
+<       assert bb.isValid();
+<       final BytesRef minTerm = bb == null ? null : BytesRef.deepCopyOf(bb);
+<       
+---
+>       BytesRef minTerm;
+>       if (bb != null) {
+>         assert bb.isValid();
+>         minTerm = BytesRef.deepCopyOf(bb);
+>       } else {
+>         minTerm = null;
+>       }
+> 
+>       BytesRef maxTerm;
+765,766c771,782
+<       assert bb.isValid();
+<       final BytesRef maxTerm = bb == null ? null : BytesRef.deepCopyOf(bb);
+---
+>       if (bb != null) {
+>         assert bb.isValid();
+>         maxTerm = BytesRef.deepCopyOf(bb);
+>         if (minTerm == null) {
+>           throw new RuntimeException("field \"" + field + "\" has null minTerm but non-null maxTerm");
+>         }
+>       } else {
+>         maxTerm = null;
+>         if (minTerm != null) {
+>           throw new RuntimeException("field \"" + field + "\" has non-null minTerm but null maxTerm");
+>         }
+>       }
+827a844,849
+>         if (minTerm == null) {
+>           
+>           assert maxTerm == null;
+>           throw new RuntimeException("field=\"" + field + "\": invalid term: term=" + term + ", minTerm=" + minTerm);
+>         }
+>         
+829c851
+<           throw new RuntimeException("invalid term: term=" + term + ", minTerm=" + minTerm);
+---
+>           throw new RuntimeException("field=\"" + field + "\": invalid term: term=" + term + ", minTerm=" + minTerm);
+833c855
+<           throw new RuntimeException("invalid term: term=" + term + ", maxTerm=" + maxTerm);
+---
+>           throw new RuntimeException("field=\"" + field + "\": invalid term: term=" + term + ", maxTerm=" + maxTerm);
+1082a1105,1108
+>       if (minTerm != null && status.termCount + status.delTermCount == 0) {
+>         throw new RuntimeException("field=\"" + field + "\": minTerm is non-null yet we saw no terms: " + minTerm);
+>       }
+> 

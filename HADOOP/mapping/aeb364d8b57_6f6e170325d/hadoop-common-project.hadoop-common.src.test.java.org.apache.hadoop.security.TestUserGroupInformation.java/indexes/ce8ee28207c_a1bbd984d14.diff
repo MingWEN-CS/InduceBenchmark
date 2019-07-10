@@ -1,0 +1,77 @@
+252a253,316
+> 
+>   @SuppressWarnings("unchecked") 
+>   @Test
+>   public <T extends TokenIdentifier> void testGetCreds() throws Exception {
+>     UserGroupInformation ugi = 
+>         UserGroupInformation.createRemoteUser("someone"); 
+>     
+>     Text service = new Text("service");
+>     Token<T> t1 = mock(Token.class);
+>     when(t1.getService()).thenReturn(service);
+>     Token<T> t2 = mock(Token.class);
+>     when(t2.getService()).thenReturn(new Text("service2"));
+>     Token<T> t3 = mock(Token.class);
+>     when(t3.getService()).thenReturn(service);
+>     
+>     
+>     ugi.addToken(t1);
+>     ugi.addToken(t2);
+>     checkTokens(ugi, t1, t2);
+> 
+>     Credentials creds = ugi.getCredentials();
+>     creds.addToken(t3.getService(), t3);
+>     assertSame(t3, creds.getToken(service));
+>     
+>     checkTokens(ugi, t1, t2);
+>   }
+> 
+>   @SuppressWarnings("unchecked") 
+>   @Test
+>   public <T extends TokenIdentifier> void testAddCreds() throws Exception {
+>     UserGroupInformation ugi = 
+>         UserGroupInformation.createRemoteUser("someone"); 
+>     
+>     Text service = new Text("service");
+>     Token<T> t1 = mock(Token.class);
+>     when(t1.getService()).thenReturn(service);
+>     Token<T> t2 = mock(Token.class);
+>     when(t2.getService()).thenReturn(new Text("service2"));
+>     byte[] secret = new byte[]{};
+>     Text secretKey = new Text("sshhh");
+> 
+>     
+>     Credentials creds = new Credentials();
+>     creds.addToken(t1.getService(), t1);
+>     creds.addToken(t2.getService(), t2);
+>     creds.addSecretKey(secretKey, secret);
+>     
+>     
+>     ugi.addCredentials(creds);
+>     checkTokens(ugi, t1, t2);
+>     assertSame(secret, ugi.getCredentials().getSecretKey(secretKey));
+>   }
+> 
+>   @SuppressWarnings("unchecked") 
+>   @Test
+>   public <T extends TokenIdentifier> void testGetCredsNotSame()
+>       throws Exception {
+>     UserGroupInformation ugi = 
+>         UserGroupInformation.createRemoteUser("someone"); 
+>     Credentials creds = ugi.getCredentials();
+>     
+>     assertNotSame(creds, ugi.getCredentials());
+>   }
+> 
+301a366,370
+>     Credentials creds = new Credentials();
+>     byte[] secretKey = new byte[]{};
+>     Text secretName = new Text("shhh");
+>     creds.addSecretKey(secretName, secretKey);
+>     
+303a373
+>     ugi.addCredentials(creds);
+308a379,381
+>     Credentials ugiCreds = ugi.getCredentials();
+>     assertSame(secretKey, ugiCreds.getSecretKey(secretName));
+>     assertEquals(1, ugiCreds.numberOfSecretKeys());

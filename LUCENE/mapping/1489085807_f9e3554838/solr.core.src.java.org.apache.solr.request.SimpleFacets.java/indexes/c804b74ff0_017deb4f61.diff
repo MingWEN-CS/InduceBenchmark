@@ -1,0 +1,6 @@
+557,558c557,558
+<       
+<        if (type instanceof BoolField) {
+---
+>        
+>        if (type instanceof BoolField && (field.indexed() == true || field.hasDocValues() == false)) {

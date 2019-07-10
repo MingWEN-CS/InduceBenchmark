@@ -1,0 +1,24 @@
+170,171c170,171
+<       Path absPattern =
+<           fixRelativePart(new Path(flatPattern .isEmpty() ? "." : flatPattern ));
+---
+>       Path absPattern = fixRelativePart(new Path(
+>           flatPattern.isEmpty() ? Path.CUR_DIR : flatPattern));
+179,181c179,191
+<       candidates.add(new FileStatus(0, true, 0, 0, 0,
+<           new Path(scheme, authority, "/")));
+< 
+---
+>       if (Path.WINDOWS && !components.isEmpty()
+>           && Path.isWindowsAbsolutePath(absPattern.toUri().getPath(), true)) {
+>         
+>         
+>         
+>         String driveLetter = components.remove(0);
+>         candidates.add(new FileStatus(0, true, 0, 0, 0, new Path(scheme,
+>             authority, Path.SEPARATOR + driveLetter + Path.SEPARATOR)));
+>       } else {
+>         candidates.add(new FileStatus(0, true, 0, 0, 0,
+>             new Path(scheme, authority, Path.SEPARATOR)));
+>       }
+>       

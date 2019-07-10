@@ -1,0 +1,9 @@
+224,227d223
+<     if (params.get(PROP_SO_TIMEOUT) != null || params.get(PROP_CONNECTION_TIMEOUT) != null) {
+<       throw new SolrException(ErrorCode.SERVER_ERROR, "The socket connect and read timeout cannot be set here and must be set");
+<     }
+<     
+264c260
+<     HttpClientBuilder builder = setupBuilder(newHttpClientBuilder, params == null ? new ModifiableSolrParams() : params);
+---
+>     HttpClientBuilder builder = setupBuilder(newHttpClientBuilder, params);

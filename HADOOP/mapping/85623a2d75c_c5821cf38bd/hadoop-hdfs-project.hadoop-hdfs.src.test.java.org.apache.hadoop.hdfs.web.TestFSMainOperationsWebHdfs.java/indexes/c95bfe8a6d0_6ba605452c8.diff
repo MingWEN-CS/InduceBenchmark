@@ -1,0 +1,28 @@
+20,22d19
+< import static org.apache.hadoop.fs.FileSystemTestHelper.exists;
+< import static org.apache.hadoop.fs.FileSystemTestHelper.getTestRootPath;
+< 
+32d28
+< import org.apache.hadoop.fs.FileSystemTestHelper;
+55a52,57
+>   private static FileSystem fileSystem;
+>   
+>   @Override
+>   protected FileSystem createFileSystem() throws Exception {
+>     return fileSystem;
+>   }
+59,62d60
+<     
+<     
+<     FileSystemTestHelper.TEST_ROOT_DIR = "/tmp/TestFSMainOperationsWebHdfs";
+< 
+81c79
+<       fSys = ugi.doAs(new PrivilegedExceptionAction<FileSystem>() {
+---
+>       fileSystem = ugi.doAs(new PrivilegedExceptionAction<FileSystem>() {
+88c86
+<       defaultWorkingDirectory = fSys.getWorkingDirectory();
+---
+>       defaultWorkingDirectory = fileSystem.getWorkingDirectory();
+166a165
+> 

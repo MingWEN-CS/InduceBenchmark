@@ -1,0 +1,8 @@
+28a29
+> import org.apache.commons.lang.StringUtils;
+33a35
+> 
+47c49
+<     userName = userEntity.getUserName();
+---
+>     userName = StringUtils.lowerCase(userEntity.getUserName()); 

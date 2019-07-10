@@ -1,0 +1,5 @@
+53c53,54
+<   private static FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+---
+>   private static FileContextTestHelper fileContextTestHelper =
+>       new FileContextTestHelper("/tmp/TestFcHdfsSymlink");

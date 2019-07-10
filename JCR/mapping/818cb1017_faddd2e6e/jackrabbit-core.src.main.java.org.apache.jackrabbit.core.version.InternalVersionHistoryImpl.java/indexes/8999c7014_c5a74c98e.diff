@@ -1,0 +1,10 @@
+330,331c330,331
+<     public UUID getVersionableUUID() {
+<         return versionableId.getUUID();
+---
+>     public NodeId getVersionableId() {
+>         return versionableId;
+579c579
+<         String versionableUUID = nodeState.getNodeId().getUUID().toString();
+---
+>         String versionableUUID = nodeState.getNodeId().toString();

@@ -1,0 +1,8 @@
+25,26d24
+< import org.apache.solr.common.SolrException;
+< import org.apache.solr.common.SolrException.ErrorCode;
+153,154c151
+< 
+<   public abstract void newIndexWriter(boolean rollback, boolean forceNewDir) throws IOException;
+---
+>   public abstract void newIndexWriter(boolean rollback) throws IOException;

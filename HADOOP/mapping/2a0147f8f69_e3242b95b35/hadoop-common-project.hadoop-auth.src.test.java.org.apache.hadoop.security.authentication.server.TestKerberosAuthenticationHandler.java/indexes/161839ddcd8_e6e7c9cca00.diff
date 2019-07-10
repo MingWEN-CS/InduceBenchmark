@@ -1,0 +1,19 @@
+21a22
+> import org.apache.hadoop.security.authentication.util.KerberosUtil;
+26c27
+< import sun.security.jgss.GSSUtil;
+---
+> import org.ietf.jgss.Oid;
+29a31
+> import java.lang.reflect.Field;
+146,148c148,153
+<           GSSName serviceName = gssManager.createName(servicePrincipal, GSSUtil.NT_GSS_KRB5_PRINCIPAL);
+<           gssContext = gssManager.createContext(serviceName, GSSUtil.GSS_KRB5_MECH_OID, null,
+<                                                 GSSContext.DEFAULT_LIFETIME);
+---
+>           GSSName serviceName = gssManager.createName(servicePrincipal,
+>               GSSName.NT_HOSTBASED_SERVICE);
+>           Oid oid = KerberosUtil.getOidClassInstance(servicePrincipal, 
+>               gssManager);
+>           gssContext = gssManager.createContext(serviceName, oid, null,
+>                                                   GSSContext.DEFAULT_LIFETIME);

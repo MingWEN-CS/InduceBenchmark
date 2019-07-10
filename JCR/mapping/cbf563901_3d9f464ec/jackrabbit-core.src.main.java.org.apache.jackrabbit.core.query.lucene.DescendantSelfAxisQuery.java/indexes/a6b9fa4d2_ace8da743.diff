@@ -1,0 +1,41 @@
+29d28
+< import org.apache.jackrabbit.core.ItemManager;
+232c231
+<             Map startingPoints = new TreeMap();
+---
+>             Map<String, ScoreNode> startingPoints = new TreeMap<String, ScoreNode>();
+257,258c256,257
+<             for (Iterator it = startingPoints.keySet().iterator(); it.hasNext(); ) {
+<                 String path = (String) it.next();
+---
+>             for (Iterator<String> it = startingPoints.keySet().iterator(); it.hasNext(); ) {
+>                 String path = it.next();
+268c267
+<             final Iterator scoreNodes = startingPoints.values().iterator();
+---
+>             final Iterator<ScoreNode> scoreNodes = startingPoints.values().iterator();
+273,274d271
+<                 private ItemManager itemMgr = session.getItemManager();
+< 
+303c300
+<                         ScoreNode sn = (ScoreNode) scoreNodes.next();
+---
+>                         ScoreNode sn = scoreNodes.next();
+511,512c508,509
+<                                     new Integer(contextHits.cardinality()),
+<                                     new Long(time),
+---
+>                                     contextHits.cardinality(),
+>                                     time,
+556,557c553,554
+<                 for (int i = 0; i < pDocs.length; i++) {
+<                     if (ancestorCount >= minLevels && contextHits.get(pDocs[i])) {
+---
+>                 for (int pDoc : pDocs) {
+>                     if (ancestorCount >= minLevels && contextHits.get(pDoc)) {
+607,608c604,605
+<                 for (int i = 0; i < docs.length; i++) {
+<                     int[] p = hResolver.getParents(docs[i], new int[0]);
+---
+>                 for (int doc : docs) {
+>                     int[] p = hResolver.getParents(doc, new int[0]);

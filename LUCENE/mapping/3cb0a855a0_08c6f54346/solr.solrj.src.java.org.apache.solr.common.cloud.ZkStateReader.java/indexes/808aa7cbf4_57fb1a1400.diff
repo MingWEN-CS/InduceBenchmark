@@ -1,0 +1,249 @@
+101d100
+<   private final Set<String> watchedCollections = new HashSet<String>();
+103,104d101
+<   private Map<String , DocCollection> externalWatchedCollections = new ConcurrentHashMap<String, DocCollection>();
+<   private Set<String> allCollections = Collections.emptySet();
+257,270c254,268
+<   public Boolean checkValid(String coll, int version){
+<     DocCollection collection = clusterState.getCollectionOrNull(coll);
+<     if(collection ==null) return null;
+<     if(collection.getVersion() < version){
+<       log.info("server older than client {}<{}",collection.getVersion(),version);
+<       DocCollection nu = getExternCollectionFresh(this, coll);
+<       if(nu.getVersion()> collection.getVersion()){
+<         updateExternCollection(nu);
+<         collection = nu;
+<       }
+<     }
+<     if(collection.getVersion() == version) return Boolean.TRUE;
+<     log.info("wrong version from client {}!={} ",version, collection.getVersion());
+<     return Boolean.FALSE;
+---
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+272d269
+<   }
+305c302
+<               ClusterState clusterState = ClusterState.load(stat.getVersion(), data, ln,ZkStateReader.this);
+---
+>               ClusterState clusterState = ClusterState.load(stat.getVersion(), data, ln);
+309d305
+<               updateCollectionNames();
+384,385c380
+<       updateCollectionNames();
+<       
+---
+> 
+430,463d424
+<     
+<     synchronized (this){
+<       for (String watchedCollection : watchedCollections) {
+<         addZkWatch(watchedCollection);
+<       }
+<     }
+<   }
+< 
+<   public void updateCollectionNames() throws KeeperException, InterruptedException {
+<     Set<String> colls = getExternColls();
+<     colls.addAll(clusterState.getAllInternalCollections());
+<     allCollections = Collections.unmodifiableSet(colls);
+<   }
+< 
+<   private Set<String> getExternColls() throws KeeperException, InterruptedException {
+<     List<String> children = null;
+<     try {
+<       children = zkClient.getChildren(COLLECTIONS_ZKNODE, null, true);
+<     } catch (KeeperException.NoNodeException e) {
+<       log.warn("Error fetching collection names");
+< 
+<       return new HashSet<>();
+<     }
+<     if(children == null || children.isEmpty()) return new HashSet<>();
+<     HashSet<String> result = new HashSet<>(children.size());
+< 
+<     for (String c : children) {
+<       try {
+<         if(zkClient.exists(getCollectionPath(c),true)) result.add(c);
+<       } catch (Exception e) {
+<         log.warn("Error checking external collections", e);
+<       }
+<     }
+<     return result;
+491d451
+<         updateCollectionNames();
+550,554c510
+<     synchronized (this) {
+<       for (String watchedCollection : watchedCollections) {
+<         externalWatchedCollections.put(watchedCollection, getExternCollectionFresh(this, watchedCollection));
+<       }
+<     }
+---
+> 
+679,681d634
+<   public Set<String> getAllCollections(){
+<     return allCollections;
+<   }
+728,877d680
+<   public void updateExternCollection(DocCollection c) {
+<     if(watchedCollections.contains(c.getName())){
+<       externalWatchedCollections.put(c.getName(), c);
+<       log.info("Updated DocCollection "+c.getName()+" to: ");
+<     }
+<   }
+< 
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   public DocCollection getExternCollection(String coll, boolean cachedCopyOnly) {
+<     if (watchedCollections.contains(coll) || cachedCopyOnly) {
+<       DocCollection c = externalWatchedCollections.get(coll);
+<       if (c != null || cachedCopyOnly) return c;
+<     }
+< 
+<     return getExternCollectionFresh(this, coll);
+<   }
+<   
+<   
+<   
+<   public Map ephemeralCollectionData;
+< 
+<   public static DocCollection getExternCollectionFresh(ZkStateReader zkStateReader, String coll) {
+<     String collectionPath = getCollectionPath(coll);
+<     if(zkStateReader.ephemeralCollectionData !=null ){
+<       ClusterState cs = (ClusterState) zkStateReader.ephemeralCollectionData.get(collectionPath);
+<       if(cs !=null) {
+<         return  cs.getCommonCollection(coll);
+<       }
+<     }
+<     try {
+<       if (!zkStateReader.getZkClient().exists(collectionPath, true)) return null;
+<       Stat stat = new Stat();
+<       byte[] data = zkStateReader.getZkClient().getData(collectionPath, null, stat, true);
+<       ClusterState state = ClusterState.load(stat.getVersion(), data, Collections.<String>emptySet(), zkStateReader);
+<       return state.getCommonCollection(coll);
+<     } catch (KeeperException.NoNodeException e) {
+<       log.warn("No node available : " + collectionPath, e);
+<       return null;
+<     } catch (KeeperException e) {
+<       throw new SolrException(ErrorCode.BAD_REQUEST, "Could not load collection from ZK:" + coll, e);
+<     } catch (InterruptedException e) {
+<       throw new SolrException(ErrorCode.BAD_REQUEST, "Could not load collection from ZK:" + coll, e);
+<     }
+<   }
+< 
+<   public DocCollection getExternCollection(String coll) {
+<     return getExternCollection(coll, false);
+<   }
+< 
+<   public static String getCollectionPath(String coll) {
+<     return COLLECTIONS_ZKNODE+"/"+coll + "/state";
+<   }
+< 
+<   public void addCollectionWatch(String coll) throws KeeperException, InterruptedException {
+<     synchronized (this){
+<       if(watchedCollections.contains(coll)) return;
+<       else {
+<         watchedCollections.add(coll);
+<       }
+<       addZkWatch(coll);
+<     }
+< 
+<   }
+< 
+<   private void addZkWatch(final String coll) throws KeeperException, InterruptedException {
+<     log.info("addZkWatch {}", coll);
+<     final String fullpath = getCollectionPath(coll);
+<     synchronized (getUpdateLock()){
+< 
+<       cmdExecutor.ensureExists(fullpath, zkClient);
+<       log.info("Updating collection state at {} from ZooKeeper... ",fullpath);
+< 
+<       Watcher watcher = new Watcher() {
+< 
+<         @Override
+<         public void process(WatchedEvent event) {
+<           
+<           
+<           if (EventType.None.equals(event.getType())) {
+<             return;
+<           }
+<           log.info("A cluster state change: {}, has occurred - updating... ", (event), ZkStateReader.this.clusterState == null ? 0 : ZkStateReader.this.clusterState.getLiveNodes().size());
+<           try {
+< 
+<             
+<             
+<             synchronized (ZkStateReader.this.getUpdateLock()) {
+<               if(!watchedCollections.contains(coll)) {
+<                 log.info("Unwatched collection {}",coll);
+<                 return;
+<               }
+<               
+<               final Watcher thisWatch = this;
+<               Stat stat = new Stat();
+<               byte[] data = zkClient.getData(fullpath, thisWatch, stat, true);
+<               if(data == null || data.length ==0){
+<                 log.warn("No value set for collection state : {}", coll);
+<                 return;
+< 
+<               }
+<               ClusterState clusterState = ClusterState.load(stat.getVersion(), data, Collections.<String>emptySet(),ZkStateReader.this);
+<               
+< 
+<               externalWatchedCollections.put(coll,clusterState.getCommonCollection(coll));
+<               log.info("Updating data for {} ", coll);
+< 
+<             }
+<           } catch (KeeperException e) {
+<             if (e.code() == KeeperException.Code.SESSIONEXPIRED
+<                 || e.code() == KeeperException.Code.CONNECTIONLOSS) {
+<               log.warn("ZooKeeper watch triggered, but Solr cannot talk to ZK");
+<               return;
+<             }
+<             log.error("Unwatched collection :"+coll , e);
+<             throw new ZooKeeperException(ErrorCode.SERVER_ERROR,
+<                 "", e);
+< 
+<           } catch (InterruptedException e) {
+<             
+<             Thread.currentThread().interrupt();
+<             log.error("Unwatched collection :"+coll , e);
+<             return;
+<           }
+<         }
+< 
+<       };
+<       zkClient.exists(fullpath, watcher, true);
+<     }
+< 
+<     externalWatchedCollections.put(coll, getExternCollectionFresh(this, coll));
+<   }
+< 
+<   
+<   public void removeZKWatch(final String coll){
+<     synchronized (this){
+<       watchedCollections.remove(coll);
+<     }
+<   }
+< 
+< 
+< 
+< 

@@ -1,0 +1,20 @@
+20a21
+> import org.apache.commons.io.input.CountingInputStream;
+91a93,100
+>     
+> 
+> 
+>     private final CountingInputStream cin;
+> 
+>     
+> 
+> 
+115c124,125
+<         this.in = new DataInputStream(stream);
+---
+>         this.cin = new CountingInputStream(stream);
+>         this.in = new DataInputStream(cin);
+126a137
+>         long start = cin.getByteCount();
+132a144
+>         bundle.setSize(cin.getByteCount() - start);

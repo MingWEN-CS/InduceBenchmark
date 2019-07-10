@@ -1,0 +1,15 @@
+1455,1462c1455,1459
+<         fsyncService.submit(new Runnable(){
+<           @Override
+<           public void run() {
+<             try {
+<               file.sync();
+<             } catch (IOException e) {
+<               fsyncException = e;
+<             }
+---
+>         fsyncService.submit(() -> {
+>           try {
+>             file.sync();
+>           } catch (IOException e) {
+>             fsyncException = e;

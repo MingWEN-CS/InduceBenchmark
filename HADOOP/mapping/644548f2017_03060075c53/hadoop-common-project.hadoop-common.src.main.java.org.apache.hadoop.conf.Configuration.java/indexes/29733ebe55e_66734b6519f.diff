@@ -1,0 +1,58 @@
+633,636c633,641
+<       warnOnceIfDeprecated(deprecations, name);
+<       for (String newKey : keyInfo.newKeys) {
+<         if(newKey != null) {
+<           names.add(newKey);
+---
+>       if (keyInfo != null) {
+>         if (!keyInfo.getAndSetAccessed()) {
+>           logDeprecation(keyInfo.getWarningMessage(name));
+>         }
+> 
+>         for (String newKey : keyInfo.newKeys) {
+>           if (newKey != null) {
+>             names.add(newKey);
+>           }
+1235,1239c1240,1242
+<   private void warnOnceIfDeprecated(DeprecationContext deprecations, String name) {
+<     DeprecatedKeyInfo keyInfo = deprecations.getDeprecatedKeyMap().get(name);
+<     if (keyInfo != null && !keyInfo.getAndSetAccessed()) {
+<       LOG_DEPRECATION.info(keyInfo.getWarningMessage(name));
+<     }
+---
+>   @VisibleForTesting
+>   void logDeprecation(String message) {
+>     LOG_DEPRECATION.info(message);
+1627a1631,1641
+>     } else {
+>       return getTimeDurationHelper(name, vStr, unit);
+>     }
+>   }
+> 
+>   public long getTimeDuration(String name, String defaultValue, TimeUnit unit) {
+>     String vStr = get(name);
+>     if (null == vStr) {
+>       return getTimeDurationHelper(name, defaultValue, unit);
+>     } else {
+>       return getTimeDurationHelper(name, vStr, unit);
+1629,1630d1642
+<     vStr = vStr.trim();
+<     return getTimeDurationHelper(name, vStr, unit);
+1633a1646,1647
+>     vStr = vStr.trim();
+>     vStr = StringUtils.toLowerCase(vStr);
+1636c1650
+<       LOG.warn("No unit for " + name + "(" + vStr + ") assuming " + unit);
+---
+>       logDeprecation("No unit for " + name + "(" + vStr + ") assuming " + unit);
+1641c1655,1662
+<     return unit.convert(Long.parseLong(vStr), vUnit.unit());
+---
+> 
+>     long raw = Long.parseLong(vStr);
+>     long converted = unit.convert(raw, vUnit.unit());
+>     if (vUnit.unit().convert(converted, unit) < raw) {
+>       logDeprecation("Possible loss of precision converting " + vStr
+>           + vUnit.suffix() + " to " + unit + " for " + name);
+>     }
+>     return converted;

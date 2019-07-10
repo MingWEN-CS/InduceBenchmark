@@ -1,0 +1,199 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.io;
+
+import java.io.*;
+import java.net.Socket;
+
+import org.apache.commons.logging.Log;
+
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+import org.apache.hadoop.conf.Configuration;
+
+
+
+
+@InterfaceAudience.Public
+@InterfaceStability.Evolving
+public class IOUtils {
+
+  
+
+
+
+
+
+
+
+  public static void copyBytes(InputStream in, OutputStream out, int buffSize, boolean close) 
+    throws IOException {
+
+    try {
+      copyBytes(in, out, buffSize);
+      if(close) {
+        out.close();
+        out = null;
+        in.close();
+        in = null;
+      }
+    } finally {
+      if(close) {
+        closeStream(out);
+        closeStream(in);
+      }
+    }
+  }
+  
+  
+
+
+
+
+
+
+  public static void copyBytes(InputStream in, OutputStream out, int buffSize) 
+    throws IOException {
+
+    PrintStream ps = out instanceof PrintStream ? (PrintStream)out : null;
+    byte buf[] = new byte[buffSize];
+    int bytesRead = in.read(buf);
+    while (bytesRead >= 0) {
+      out.write(buf, 0, bytesRead);
+      if ((ps != null) && ps.checkError()) {
+        throw new IOException("Unable to write to output stream.");
+      }
+      bytesRead = in.read(buf);
+    }
+  }
+  
+
+
+
+
+
+
+  public static void copyBytes(InputStream in, OutputStream out, Configuration conf)
+    throws IOException {
+    copyBytes(in, out, conf.getInt("io.file.buffer.size", 4096), true);
+  }
+  
+  
+
+
+
+
+
+
+
+  public static void copyBytes(InputStream in, OutputStream out, Configuration conf, boolean close)
+    throws IOException {
+    copyBytes(in, out, conf.getInt("io.file.buffer.size", 4096),  close);
+  }
+  
+  
+
+
+
+
+
+
+
+  public static void readFully( InputStream in, byte buf[],
+      int off, int len ) throws IOException {
+    int toRead = len;
+    while ( toRead > 0 ) {
+      int ret = in.read( buf, off, toRead );
+      if ( ret < 0 ) {
+        throw new IOException( "Premature EOF from inputStream");
+      }
+      toRead -= ret;
+      off += ret;
+    }
+  }
+  
+  
+
+
+
+
+
+  public static void skipFully( InputStream in, long len ) throws IOException {
+    while ( len > 0 ) {
+      long ret = in.skip( len );
+      if ( ret < 0 ) {
+        throw new IOException( "Premature EOF from inputStream");
+      }
+      len -= ret;
+    }
+  }
+  
+  
+
+
+
+
+
+  public static void cleanup(Log log, java.io.Closeable... closeables) {
+    for(java.io.Closeable c : closeables) {
+      if (c != null) {
+        try {
+          c.close();
+        } catch(IOException e) {
+          if (log != null && log.isDebugEnabled()) {
+            log.debug("Exception in closing " + c, e);
+          }
+        }
+      }
+    }
+  }
+
+  
+
+
+
+
+  public static void closeStream( java.io.Closeable stream ) {
+    cleanup(null, stream);
+  }
+  
+  
+
+
+
+  public static void closeSocket( Socket sock ) {
+    
+    if ( sock != null ) {
+      try {
+       sock.close();
+      } catch ( IOException ignored ) {
+      }
+    }
+  }
+  
+  
+
+  public static class NullOutputStream extends OutputStream {
+    public void write(byte[] b, int off, int len) throws IOException {
+    }
+
+    public void write(int b) throws IOException {
+    }
+  }  
+}

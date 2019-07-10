@@ -1,0 +1,49 @@
+99c99
+<     private Properties prop;
+---
+>     private Properties properties;
+110c110,115
+<         if (config == null) {
+---
+>         Properties initProps = null;
+>         
+>         
+>         if(this.properties != null){
+>             initProps = this.properties;
+>         } else if (config == null) {
+111a117,123
+>             try{
+>                 initProps = Utils.readConfig(config);
+>             }catch(IOException e){
+>                 throw new DataStoreException("Could not initialize S3 from "
+>                         + config, e);
+>             }
+>             this.properties = initProps;
+113,120c125
+<         Properties properties = null;
+<         try{
+<             properties = Utils.readConfig(config);
+<         }catch(IOException e){
+<             throw new DataStoreException("Could not initialize S3 from "
+<                     + config, e);
+<         }
+<         init(store, homeDir, properties);
+---
+>         init(store, homeDir, initProps);
+131d135
+<             this.prop = prop;
+550a555,564
+>     
+> 
+> 
+> 
+> 
+> 
+>     public void setProperties(Properties properties) {
+>         this.properties = properties;
+>     }
+> 
+653c667
+<             int nThreads = Integer.parseInt(prop.getProperty("maxConnections"));
+---
+>             int nThreads = Integer.parseInt(properties.getProperty("maxConnections"));

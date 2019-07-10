@@ -1,0 +1,25 @@
+304,313c304,308
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+---
+>     assertQ(req("q", "*:*", FacetParams.FACET, "true", FacetParams.FACET_FIELD, "f_td", "f.f_td.facet.sort", FacetParams.FACET_SORT_INDEX),
+>         "*[count(
+>         "
+>         "
+>         "
+314a310,314
+>     assertQ(req("q", "*:*", FacetParams.FACET, "true", FacetParams.FACET_FIELD, "f_td", "f.f_td.facet.sort", FacetParams.FACET_SORT_INDEX, FacetParams.FACET_MINCOUNT, "1", FacetParams.FACET_METHOD, FacetParams.FACET_METHOD_fc),
+>         "*[count(
+>         "
+>         "
+>         "
+316d315
+<   

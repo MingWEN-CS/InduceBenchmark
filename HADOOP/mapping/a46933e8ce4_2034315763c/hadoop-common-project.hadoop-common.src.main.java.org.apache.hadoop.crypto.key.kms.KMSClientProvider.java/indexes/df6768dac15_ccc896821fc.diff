@@ -1,0 +1,23 @@
+1074c1074
+<   private boolean currentUgiContainsKmsDt() throws IOException {
+---
+>   private boolean containsKmsDt(UserGroupInformation ugi) throws IOException {
+1076,1077c1076
+<     Credentials creds = UserGroupInformation.getCurrentUser().
+<         getCredentials();
+---
+>     Credentials creds = ugi.getCredentials();
+1099,1100c1098,1101
+<     } else if (!currentUgiContainsKmsDt() &&
+<         !currentUgi.hasKerberosCredentials()) {
+---
+>     }
+> 
+>     if (!containsKmsDt(actualUgi) &&
+>         !actualUgi.hasKerberosCredentials()) {
+1103c1104,1106
+<       actualUgi = currentUgi.getLoginUser();
+---
+>       LOG.debug("using loginUser no KMS Delegation Token "
+>           + "no Kerberos Credentials");
+>       actualUgi = UserGroupInformation.getLoginUser();

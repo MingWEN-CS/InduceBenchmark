@@ -1,0 +1,9 @@
+58c58,59
+<   public static void copyBytes(InputStream in, OutputStream out, int buffSize, boolean close) 
+---
+>   public static void copyBytes(InputStream in, OutputStream out,
+>                                int buffSize, boolean close)
+197c198
+<   public static void readFully(InputStream in, byte buf[],
+---
+>   public static void readFully(InputStream in, byte[] buf,

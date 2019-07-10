@@ -1,0 +1,88 @@
+31a32
+> import java.util.ArrayList;
+47,48d47
+< import junit.framework.Assert;
+< 
+64a64
+> import org.apache.hadoop.security.SaslRpcServer.QualityOfProtection;
+69d68
+< import org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod;
+79a79,81
+> import org.junit.runner.RunWith;
+> import org.junit.runners.Parameterized;
+> import org.junit.runners.Parameterized.Parameters;
+81a84
+> @RunWith(Parameterized.class)
+82a86,100
+>   @Parameters
+>   public static Collection<Object[]> data() {
+>     Collection<Object[]> params = new ArrayList<Object[]>();
+>     for (QualityOfProtection qop : QualityOfProtection.values()) {
+>       params.add(new Object[]{ qop });
+>     }
+>     return params;
+>   }
+> 
+>   QualityOfProtection expectedQop;
+>   
+>   public TestSaslRPC(QualityOfProtection qop) {
+>     expectedQop = qop;
+>   }
+>   
+117a136,138
+>     LOG.info("---------------------------------");
+>     LOG.info("Testing QOP:"+expectedQop);
+>     LOG.info("---------------------------------");
+119a141
+>     conf.set("hadoop.rpc.protection", expectedQop.name().toLowerCase());
+229c251
+<     public AuthenticationMethod getAuthMethod() throws IOException;
+---
+>     public AuthMethod getAuthMethod() throws IOException;
+236,237c258,260
+<     public AuthenticationMethod getAuthMethod() throws IOException {
+<       return UserGroupInformation.getCurrentUser().getAuthenticationMethod();
+---
+>     public AuthMethod getAuthMethod() throws IOException {
+>       return UserGroupInformation.getCurrentUser()
+>           .getAuthenticationMethod().getAuthMethod();
+343a367,368
+>       AuthMethod authMethod = proxy.getAuthMethod();
+>       assertEquals(TOKEN, authMethod);
+345c370,371
+<       Assert.assertEquals(SaslRpcServer.SASL_PROPS.get(Sasl.QOP), "auth");
+---
+>       assertEquals(expectedQop.saslQop,
+>                    RPC.getConnectionIdForProxy(proxy).getSaslQop());            
+395a422
+>     Client client = null;
+405c432
+<       Client client = WritableRpcEngine.getClient(conf);
+---
+>       client = WritableRpcEngine.getClient(newConf);
+431,433c458,464
+<       RPC.stopProxy(proxy1);
+<       RPC.stopProxy(proxy2);
+<       RPC.stopProxy(proxy3);
+---
+>       
+>       if (client != null) {
+>         client.getConnectionIds().clear();
+>       }
+>       if (proxy1 != null) RPC.stopProxy(proxy1);
+>       if (proxy2 != null) RPC.stopProxy(proxy2);
+>       if (proxy3 != null) RPC.stopProxy(proxy3);
+877,881d907
+<             if (serverAuth != SIMPLE) {
+<               assertEquals(SaslRpcServer.SASL_PROPS.get(Sasl.QOP), "auth");
+<             }
+<             
+<             
+883c909,913
+<             return proxy.getAuthMethod().toString();
+---
+>             AuthMethod authMethod = proxy.getAuthMethod();
+>             
+>             assertEquals((authMethod != SIMPLE) ? expectedQop.saslQop : null,
+>                          RPC.getConnectionIdForProxy(proxy).getSaslQop());            
+>             return authMethod.toString();

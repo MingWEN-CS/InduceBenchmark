@@ -1,0 +1,91 @@
+22,23c22
+< import org.mockito.Mockito;
+< import static org.mockito.Mockito.mock;
+---
+> import static org.mockito.Mockito.*;
+37a37
+> import org.apache.hadoop.io.Text;
+197,198d196
+<     UserGroupInformation realUgi2 = UserGroupInformation.createUserForTesting(
+<         "RealUser", GROUP_NAMES);
+215a214,251
+> 
+>   @SuppressWarnings("unchecked") 
+>   @Test
+>   public <T extends TokenIdentifier> void testAddToken() throws Exception {
+>     UserGroupInformation ugi = 
+>         UserGroupInformation.createRemoteUser("someone"); 
+>     
+>     Token<T> t1 = mock(Token.class);
+>     Token<T> t2 = mock(Token.class);
+>     Token<T> t3 = mock(Token.class);
+>     
+>     
+>     ugi.addToken(t1);
+>     checkTokens(ugi, t1);
+> 
+>     
+>     ugi.addToken(t2);
+>     checkTokens(ugi, t2);
+>     
+>     
+>     when(t1.getService()).thenReturn(new Text("t1"));
+>     ugi.addToken(t1);
+>     checkTokens(ugi, t1, t2);
+>   
+>     
+>     when(t3.getService()).thenReturn(new Text("t1"));
+>     ugi.addToken(t3);
+>     checkTokens(ugi, t2, t3);
+> 
+>     
+>     when(t1.getService()).thenReturn(new Text("t1.1"));
+>     ugi.addToken(t1);
+>     checkTokens(ugi, t1, t2, t3);    
+> 
+>     
+>     ugi.addToken(t1);
+>     checkTokens(ugi, t1, t2, t3);    
+>   }
+216a253,289
+>   private void checkTokens(UserGroupInformation ugi, Token<?> ... tokens) {
+>     
+>     Collection<Token<?>> ugiTokens = ugi.getTokens();
+>     for (Token<?> t : tokens) {
+>       assertTrue(ugiTokens.contains(t));
+>     }
+>     assertEquals(tokens.length, ugiTokens.size());
+> 
+>     
+>     Credentials ugiCreds = ugi.getCredentials();
+>     for (Token<?> t : tokens) {
+>       assertSame(t, ugiCreds.getToken(t.getService()));
+>     }
+>     assertEquals(tokens.length, ugiCreds.numberOfTokens());
+>   }
+> 
+>   @SuppressWarnings("unchecked") 
+>   @Test
+>   public <T extends TokenIdentifier> void testAddNamedToken() throws Exception {
+>     UserGroupInformation ugi = 
+>         UserGroupInformation.createRemoteUser("someone"); 
+>     
+>     Token<T> t1 = mock(Token.class);
+>     Text service1 = new Text("t1");
+>     Text service2 = new Text("t2");
+>     when(t1.getService()).thenReturn(service1);
+>     
+>     
+>     ugi.addToken(service1, t1);
+>     assertSame(t1, ugi.getCredentials().getToken(service1));
+> 
+>     
+>     ugi.addToken(service2, t1);
+>     assertSame(t1, ugi.getCredentials().getToken(service1));
+>     assertSame(t1, ugi.getCredentials().getToken(service2));
+>   }
+> 
+223a297
+>     when(t1.getService()).thenReturn(new Text("t1"));
+224a299
+>     when(t2.getService()).thenReturn(new Text("t2"));

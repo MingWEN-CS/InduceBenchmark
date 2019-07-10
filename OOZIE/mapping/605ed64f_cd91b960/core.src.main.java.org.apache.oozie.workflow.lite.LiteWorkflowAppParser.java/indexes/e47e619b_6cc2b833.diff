@@ -1,0 +1,26 @@
+630,638c630,632
+<                 XConfiguration actionConf;
+<                 Element actionConfiguration = eActionConf.getChild("configuration", actionNs);
+<                 if (actionConfiguration == null) {
+<                     actionConf = new XConfiguration();
+<                 }
+<                 else {
+<                     actionConf = new XConfiguration(new StringReader(XmlUtils.prettyPrint(actionConfiguration)
+<                             .toString()));
+<                 }
+---
+>                 XConfiguration actionConf = new XConfiguration();
+>                 if (configDefault != null)
+>                     XConfiguration.copy(configDefault, actionConf);
+642c636,642
+<                     XConfiguration.injectDefaults(globalConf, actionConf);
+---
+>                     XConfiguration.copy(globalConf, actionConf);
+>                 }
+>                 Element actionConfiguration = eActionConf.getChild("configuration", actionNs);
+>                 if (actionConfiguration != null) {
+>                     
+>                     XConfiguration.copy(new XConfiguration(new StringReader(XmlUtils.prettyPrint(
+>                             actionConfiguration).toString())), actionConf);
+644d643
+<                 XConfiguration.injectDefaults(configDefault, actionConf);

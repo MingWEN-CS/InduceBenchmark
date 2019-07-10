@@ -1,0 +1,20 @@
+159c159
+<         if (log.isInfoEnabled()) {
+---
+>         if (log.isDebugEnabled()) {
+165c165
+<                 log.info(cache.getCacheInfoAsString());
+---
+>                 log.debug(cache.getCacheInfoAsString());
+175,176c175,176
+<         if (log.isDebugEnabled()) {
+<             log.debug("resizeAll size=" + caches.size());
+---
+>         if (log.isTraceEnabled()) {
+>             log.trace("resizeAll size=" + caches.size());
+241,242c241,242
+<             if (log.isDebugEnabled()) {
+<                 log.debug(cache + " now:" + cache.getMaxMemorySize() + " used:"
+---
+>             if (log.isTraceEnabled()) {
+>                 log.trace(cache + " now:" + cache.getMaxMemorySize() + " used:"

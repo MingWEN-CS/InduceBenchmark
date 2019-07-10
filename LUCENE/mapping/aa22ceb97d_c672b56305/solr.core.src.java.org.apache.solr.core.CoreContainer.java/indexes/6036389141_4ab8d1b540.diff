@@ -1,0 +1,148 @@
+397c397
+<     libDir = cfg.get(ConfigSolr.ConfLevel.SOLR, "sharedLib", null);
+---
+>     libDir = cfg.get(ConfigSolr.CfgProp.SOLR_SHAREDLIB , null);
+410c410
+<     if (cfg.getBool(ConfigSolr.ConfLevel.SOLR_LOGGING, "enabled", true)) {
+---
+>     if (cfg.getBool(ConfigSolr.CfgProp.SOLR_LOGGING_ENABLED, true)) {
+412c412
+<       String fname = cfg.get(ConfigSolr.ConfLevel.SOLR_LOGGING, "class", null);
+---
+>       String fname = cfg.get(ConfigSolr.CfgProp.SOLR_LOGGING_CLASS, null);
+444,445c444,445
+<           v.size = cfg.getInt(ConfigSolr.ConfLevel.SOLR_LOGGING_WATCHER, "size", 50);
+<           v.threshold = cfg.get(ConfigSolr.ConfLevel.SOLR_LOGGING_WATCHER, "threshold", null);
+---
+>           v.size = cfg.getInt(ConfigSolr.CfgProp.SOLR_LOGGING_WATCHER_SIZE, 50);
+>           v.threshold = cfg.get(ConfigSolr.CfgProp.SOLR_LOGGING_WATCHER_THRESHOLD, null);
+453,456c453,461
+<     
+<     String dcoreName = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "defaultCoreName", null);
+<     if (dcoreName != null && !dcoreName.isEmpty()) {
+<       defaultCoreName = dcoreName;
+---
+> 
+> 
+>     if (! cfg.is50OrLater()) { 
+>       String dcoreName = cfg.get(ConfigSolr.CfgProp.SOLR_CORES_DEFAULT_CORE_NAME, null);
+>       if (dcoreName != null && !dcoreName.isEmpty()) {
+>         defaultCoreName = dcoreName;
+>       }
+>       persistent = cfg.getBool(ConfigSolr.CfgProp.SOLR_PERSISTENT, false);
+>       adminPath = cfg.get(ConfigSolr.CfgProp.SOLR_ADMINPATH, null);
+458,460c463,464
+<     persistent = cfg.getBool(ConfigSolr.ConfLevel.SOLR, "persistent", false);
+<     zkHost = cfg.get(ConfigSolr.ConfLevel.SOLR, "zkHost", null);
+<     coreLoadThreads = cfg.getInt(ConfigSolr.ConfLevel.SOLR, "coreLoadThreads", CORE_LOAD_THREADS);
+---
+>     zkHost = cfg.get(ConfigSolr.CfgProp.SOLR_ZKHOST, null);
+>     coreLoadThreads = cfg.getInt(ConfigSolr.CfgProp.SOLR_CORELOADTHREADS, CORE_LOAD_THREADS);
+462,464c466,468
+<     adminPath = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "adminPath", null);
+<     shareSchema = cfg.getBool(ConfigSolr.ConfLevel.SOLR_CORES, "shareSchema", DEFAULT_SHARE_SCHEMA);
+<     zkClientTimeout = cfg.getInt(ConfigSolr.ConfLevel.SOLR_CORES, "zkClientTimeout", DEFAULT_ZK_CLIENT_TIMEOUT);
+---
+> 
+>     shareSchema = cfg.getBool(ConfigSolr.CfgProp.SOLR_SHARESCHEMA, DEFAULT_SHARE_SCHEMA);
+>     zkClientTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_ZKCLIENTTIMEOUT, DEFAULT_ZK_CLIENT_TIMEOUT);
+466,467c470,471
+<     distribUpdateConnTimeout = cfg.getInt(ConfigSolr.ConfLevel.SOLR_CORES, "distribUpdateConnTimeout", 0);
+<     distribUpdateSoTimeout = cfg.getInt(ConfigSolr.ConfLevel.SOLR_CORES, "distribUpdateSoTimeout", 0);
+---
+>     distribUpdateConnTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_DISTRIBUPDATECONNTIMEOUT, 0);
+>     distribUpdateSoTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_DISTRIBUPDATESOTIMEOUT, 0);
+470c474
+<     hostPort = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "hostPort", null);
+---
+>     hostPort = cfg.get(ConfigSolr.CfgProp.SOLR_HOSTPORT, null);
+472c476
+<     hostContext = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "hostContext", null);
+---
+>     hostContext = cfg.get(ConfigSolr.CfgProp.SOLR_HOSTCONTEXT, null);
+474c478
+<     host = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "host", null);
+---
+>     host = cfg.get(ConfigSolr.CfgProp.SOLR_HOST, null);
+476c480,485
+<     leaderVoteWait = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "leaderVoteWait", LEADER_VOTE_WAIT);
+---
+>     leaderVoteWait = cfg.get(ConfigSolr.CfgProp.SOLR_LEADERVOTEWAIT, LEADER_VOTE_WAIT);
+> 
+>     adminHandler = cfg.get(ConfigSolr.CfgProp.SOLR_ADMINHANDLER, null);
+>     managementPath = cfg.get(ConfigSolr.CfgProp.SOLR_MANAGEMENTPATH, null);
+> 
+>     transientCacheSize = cfg.getInt(ConfigSolr.CfgProp.SOLR_TRANSIENTCACHESIZE, Integer.MAX_VALUE);
+481,484d489
+<     adminHandler = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "adminHandler", null);
+<     managementPath = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "managementPath", null);
+< 
+<     transientCacheSize = cfg.getInt(ConfigSolr.ConfLevel.SOLR_CORES, "transientCacheSize", Integer.MAX_VALUE);
+1338a1344
+>   
+1339a1346,1347
+>     if (cfg != null && cfg.is50OrLater()) return;
+> 
+1350,1352c1358,1360
+<     addCoresAttrib(coresAttribs, "adminPath", this.adminPath, null);
+<     addCoresAttrib(coresAttribs, "adminHandler", this.adminHandler, null);
+<     addCoresAttrib(coresAttribs, "shareSchema",
+---
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ADMINPATH, "adminPath", this.adminPath, null);
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ADMINHANDLER, "adminHandler", this.adminHandler, null);
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_SHARESCHEMA,"shareSchema",
+1355c1363
+<     addCoresAttrib(coresAttribs, "host", this.host, null);
+---
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOST, "host", this.host, null);
+1361,1362c1369,1370
+<     addCoresAttrib(coresAttribs, "hostPort", this.hostPort, DEFAULT_HOST_PORT);
+<     addCoresAttrib(coresAttribs, "zkClientTimeout",
+---
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOSTPORT, "hostPort", this.hostPort, DEFAULT_HOST_PORT);
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ZKCLIENTTIMEOUT, "zkClientTimeout",
+1365,1367c1373,1378
+<     addCoresAttrib(coresAttribs, "hostContext", this.hostContext, DEFAULT_HOST_CONTEXT);
+<     addCoresAttrib(coresAttribs, "leaderVoteWait", this.leaderVoteWait, LEADER_VOTE_WAIT);
+<     addCoresAttrib(coresAttribs, "coreLoadThreads", Integer.toString(this.coreLoadThreads), Integer.toString(CORE_LOAD_THREADS));
+---
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOSTCONTEXT, "hostContext",
+>         this.hostContext, DEFAULT_HOST_CONTEXT);
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_LEADERVOTEWAIT, "leaderVoteWait",
+>         this.leaderVoteWait, LEADER_VOTE_WAIT);
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_CORELOADTHREADS, "coreLoadThreads",
+>         Integer.toString(this.coreLoadThreads), Integer.toString(CORE_LOAD_THREADS));
+1370c1381,1382
+<       addCoresAttrib(coresAttribs, "transientCacheSize", Integer.toString(this.transientCacheSize), Integer.toString(Integer.MAX_VALUE));
+---
+>       addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_TRANSIENTCACHESIZE, "transientCacheSize",
+>           Integer.toString(this.transientCacheSize), Integer.toString(Integer.MAX_VALUE));
+1381c1393,1395
+<   private void addCoresAttrib(Map<String,String> coresAttribs, String attribName, String attribValue, String defaultValue) {
+---
+>   
+>   private void addCoresAttrib(Map<String,String> coresAttribs, ConfigSolr.CfgProp prop,
+>                               String attribName, String attribValue, String defaultValue) {
+1388,1389c1402,1404
+<       String rawValue = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, attribName, null);
+<       if (rawValue == null && defaultValue != null && attribValue.equals(defaultValue)) return;
+---
+>       String origValue = cfg.getOrigProp(prop, null);
+> 
+>       if (origValue == null && defaultValue != null && attribValue.equals(defaultValue)) return;
+1391,1392c1406,1407
+<       if (attribValue.equals(PropertiesUtil.substituteProperty(rawValue, loader.getCoreProperties()))) {
+<         coresAttribs.put(attribName, rawValue);
+---
+>       if (attribValue.equals(PropertiesUtil.substituteProperty(origValue, loader.getCoreProperties()))) {
+>         coresAttribs.put(attribName, origValue);
+1436a1452,1456
+> 
+>   public String getBadCoreMessage(String name) {
+>     return cfg.getBadCoreMessage(name);
+>   }
+> 
+1479c1499
+<     final int transientCacheSize = cfg.getInt(ConfigSolr.ConfLevel.SOLR_CORES, "transientCacheSize", Integer.MAX_VALUE);
+---
+>     final int transientCacheSize = cfg.getInt(ConfigSolr.CfgProp.SOLR_TRANSIENTCACHESIZE, Integer.MAX_VALUE);

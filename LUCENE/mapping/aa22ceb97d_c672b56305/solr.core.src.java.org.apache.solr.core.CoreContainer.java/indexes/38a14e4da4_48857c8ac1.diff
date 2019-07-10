@@ -1,0 +1,15 @@
+1145a1146,1148
+> 
+> 
+> 
+1159a1163,1172
+>       
+>       
+>       
+>       Exception e = getCoreInitFailures().get(name);
+>       if (null != e) {
+>         throw new SolrException(ErrorCode.SERVER_ERROR, "SolrCore '" + name +
+>                                 "' is not available due to init failure: " +
+>                                 e.getMessage(), e);
+>       }
+>       

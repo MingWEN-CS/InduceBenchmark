@@ -1,0 +1,63 @@
+31a32
+> import javax.jcr.nodetype.ConstraintViolationException;
+56a58,59
+> import org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl;
+> import org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl;
+166c169
+<     org.apache.jackrabbit.spi.commons.nodetype.NodeDefinitionImpl getDefinition(NodeState state)
+---
+>     NodeDefinitionImpl getDefinition(NodeState state)
+179c182
+<         NodeState parentState;
+---
+>         NodeState parentState = null;
+187c190,197
+<                 parentState = (NodeState) parentState.getOverlayedState();
+---
+>                 
+>                 
+>                 if (parentState.getStatus() == ItemState.STATUS_NEW) {
+>                     
+>                     parentState = null;
+>                 } else {
+>                     parentState = (NodeState) parentState.getOverlayedState();
+>                 }
+190a201,203
+>         }
+> 
+>         if (parentState == null) {
+198a212
+> 
+205c219,221
+<             QNodeDefinition def = ent.getApplicableChildNodeDef(
+---
+>             QNodeDefinition def;
+>             try {
+>                 def = ent.getApplicableChildNodeDef(
+206a223,230
+>             } catch (ConstraintViolationException e) {
+>                 
+>                 ent = ntReg.getEffectiveNodeType(NameConstants.NT_UNSTRUCTURED);
+>                 def = ent.getApplicableChildNodeDef(
+>                         cne.getName(), state.getNodeTypeName(), ntReg);
+>                 log.warn("Fallback to nt:unstructured due to unknown child " +
+>                         "node definition for type '" + state.getNodeTypeName() + "'");
+>             }
+213c237
+<     org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl getDefinition(PropertyState state)
+---
+>     PropertyDefinitionImpl getDefinition(PropertyState state)
+228c252,254
+<             QPropertyDefinition def = ent.getApplicablePropertyDef(
+---
+>             QPropertyDefinition def;
+>             try {
+>                 def = ent.getApplicablePropertyDef(
+229a256,262
+>             } catch (ConstraintViolationException e) {
+>                 ent = ntReg.getEffectiveNodeType(NameConstants.NT_UNSTRUCTURED);
+>                 def = ent.getApplicablePropertyDef(state.getName(),
+>                         state.getType(), state.isMultiValued());
+>                 log.warn("Fallback to nt:unstructured due to unknown property " +
+>                         "definition for '" + state.getName() + "'");
+>             }

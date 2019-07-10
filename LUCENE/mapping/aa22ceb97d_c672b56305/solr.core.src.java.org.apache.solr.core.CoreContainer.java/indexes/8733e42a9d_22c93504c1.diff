@@ -1,0 +1,8 @@
+1116c1116
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOSTPORT, "hostPort",zkSys.getHostPort(), ZkContainer.DEFAULT_HOST_PORT);
+---
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOSTPORT, "hostPort",zkSys.getHostPort(), null);
+1121c1121
+<         zkSys.getHostContext(), ZkContainer.DEFAULT_HOST_CONTEXT);
+---
+>         zkSys.getHostContext(), null);

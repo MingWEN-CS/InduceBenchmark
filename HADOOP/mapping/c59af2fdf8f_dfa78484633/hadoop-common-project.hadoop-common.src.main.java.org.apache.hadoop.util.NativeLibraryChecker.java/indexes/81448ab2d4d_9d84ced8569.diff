@@ -1,0 +1,30 @@
+21d20
+< import org.apache.hadoop.util.NativeCodeLoader;
+29a29,32
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+> 
+> import java.io.IOException;
+33a37,39
+>   public static final Logger LOG =
+>       LoggerFactory.getLogger(NativeLibraryChecker.class);
+> 
+102,107c108,118
+<     
+<     winutilsPath = Shell.getWinUtilsPath();
+<     if (winutilsPath != null) {
+<       winutilsExists = true;
+<     } else {
+<       winutilsPath = "";
+---
+>     if (Shell.WINDOWS) {
+>       
+>       try {
+>         winutilsPath = Shell.getWinutilsFile().getCanonicalPath();
+>         winutilsExists = true;
+>       } catch (IOException e) {
+>         LOG.debug("No Winutils: ", e);
+>         winutilsPath = e.getMessage();
+>         winutilsExists = false;
+>       }
+>       System.out.printf("winutils: %b %s%n", winutilsExists, winutilsPath);

@@ -1,0 +1,4 @@
+467c467
+<             numShards = state.getCollectionStates().get(collection).getSlices().size();
+---
+>             numShards = state.getCollection(collection).getSlices().size();

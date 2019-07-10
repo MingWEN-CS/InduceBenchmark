@@ -1,0 +1,16 @@
+54a55
+> import javax.security.sasl.Sasl;
+89a91
+> import com.google.common.annotations.VisibleForTesting;
+713a716,718
+>               
+>               remoteId.saslQop =
+>                   (String)saslRpcClient.getNegotiatedProperty(Sasl.QOP);
+1457a1463
+>     private String saslQop; 
+1511a1518,1522
+>     @VisibleForTesting
+>     String getSaslQop() {
+>       return saslQop;
+>     }
+>     

@@ -1,0 +1,15 @@
+450,454d449
+<             super.doSync(startRevision);
+<         } catch (SQLException e) {
+<             
+<             log.error("couldn't sync the cluster node", e);
+<         } finally {
+455a451,452
+>                 super.doSync(startRevision);
+>             } finally {
+457,458d453
+<             } catch (SQLException e) {
+<                 log.warn("couldn't close connection", e);
+459a455,456
+>         } catch (SQLException e) {
+>             throw new JournalException("Couldn't sync the cluster node", e);

@@ -1,0 +1,4 @@
+116c116
+<         boolean validateDbConn = conf.getBoolean(CONF_VALIDATE_DB_CONN, false);
+---
+>         boolean validateDbConn = conf.getBoolean(CONF_VALIDATE_DB_CONN, true);

@@ -1,0 +1,17 @@
+25a26
+> import org.apache.lucene.search.LeafFieldComparator;
+601c602,603
+<         FieldComparator comparator = null;
+---
+>         FieldComparator<?> comparator = null;
+>         LeafFieldComparator leafComparator = null;
+624c626
+<             comparator = comparator.setNextReader(currentLeaf);
+---
+>             leafComparator = comparator.getLeafComparator(currentLeaf);
+628,629c630,631
+<           comparator.setScorer(new FakeScorer(doc, score));
+<           comparator.copy(0, doc);
+---
+>           leafComparator.setScorer(new FakeScorer(doc, score));
+>           leafComparator.copy(0, doc);

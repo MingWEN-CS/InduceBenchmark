@@ -1,0 +1,167 @@
+965a966
+>       SolrCore created = null;
+967c968
+<         return createFromZk(instanceDir, dcore);
+---
+>         created = createFromZk(instanceDir, dcore);
+969c970
+<         return createFromLocal(instanceDir, dcore);
+---
+>         created = createFromLocal(instanceDir, dcore);
+971a973,975
+>       coreMaps.addCreated(created); 
+>       return created;
+> 
+1013a1018,1027
+>   public String checkUniqueDataDir(String targetPath) {
+>     return coreMaps.checkUniqueDataDir(targetPath);
+> 
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+1046a1061,1067
+>       if (cfg != null) { 
+>         String badMsg = cfg.getBadCoreMessage(name);
+>         if (badMsg != null) {
+>           throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, badMsg);
+>         }
+>       }
+> 
+1100a1122
+>   
+1151a1174,1181
+> 
+>     if (cfg != null) { 
+>       String badMsg = cfg.getBadCoreMessage(name);
+>       if (badMsg != null) {
+>         throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, badMsg);
+>       }
+>     }
+> 
+1403a1434,1436
+>   String getCoreToOrigName(SolrCore core) {
+>     return coreMaps.getCoreToOrigName(core);
+>   }
+1424a1458,1459
+>   private final Map<String, SolrCore> createdCores = new LinkedHashMap<String, SolrCore>();
+> 
+1495c1530
+<             addPersistOneCore(cfg, core, container.loader);
+---
+>             addPersistOneCore(cfg, container.loader, core.getCoreDescriptor(), getCoreToOrigName(core));
+1613a1649
+>       set.addAll(createdCores.keySet());
+1648,1650c1684,1687
+<       SolrCore core = cores.remove(name);
+<       if (removeOrig && core != null) {
+<         coreToOrigName.remove(core);
+---
+>       SolrCore tmp = cores.remove(name);
+>       SolrCore ret = null;
+>       if (removeOrig && tmp != null) {
+>         coreToOrigName.remove(tmp);
+1652,1653c1689,1697
+< 
+<       return core;
+---
+>       ret = (ret == null) ? tmp : ret;
+>       
+>       
+>       tmp = transientCores.remove(name);
+>       ret = (ret == null) ? tmp : ret;
+>       tmp = createdCores.remove(name);
+>       ret = (ret == null) ? tmp : ret;
+>       dynamicDescriptors.remove(name);
+>       return ret;
+1762,1763d1805
+<     
+<     
+1768a1811,1822
+>         
+>         for (Map.Entry<String, CoreDescriptor> ent : dynamicDescriptors.entrySet()) {
+>           if (! cores.containsKey(ent.getKey()) && ! transientCores.containsKey(ent.getKey())) {
+>             addPersistOneCore(cfg, loader, ent.getValue(), null);
+>           }
+>         }
+>         for (Map.Entry<String, SolrCore> ent : createdCores.entrySet()) {
+>           if (! cores.containsKey(ent.getKey()) && ! transientCores.containsKey(ent.getKey())
+>               && ! dynamicDescriptors.containsKey(ent.getKey())) {
+>             addPersistOneCore(cfg, loader, ent.getValue().getCoreDescriptor(), null);
+>           }
+>         }
+1774a1829,1840
+>         
+>         for (Map.Entry<String, CoreDescriptor> ent : dynamicDescriptors.entrySet()) {
+>           if (! cores.containsKey(ent.getKey()) && ! transientCores.containsKey(ent.getKey())) {
+>             addPersistOneCore(cfg, loader, ent.getValue(), null);
+>           }
+>         }
+>         for (Map.Entry<String, SolrCore> ent : createdCores.entrySet()) {
+>           if (! cores.containsKey(ent.getKey()) && ! transientCores.containsKey(ent.getKey())
+>               && ! dynamicDescriptors.containsKey(ent.getKey())) {
+>             addPersistOneCore(cfg, loader, ent.getValue().getCoreDescriptor(), null);
+>           }
+>         }
+1830c1896
+<       addPersistOneCore(cfg, solrCore, loader);
+---
+>       addPersistOneCore(cfg, loader, solrCore.getCoreDescriptor(), getCoreToOrigName(solrCore));
+1839,1841c1905
+<   protected void addPersistOneCore(ConfigSolr cfg, SolrCore solrCore, SolrResourceLoader loader) {
+< 
+<     CoreDescriptor dcore = solrCore.getCoreDescriptor();
+---
+>   protected void addPersistOneCore(ConfigSolr cfg, SolrResourceLoader loader, CoreDescriptor dcore, String origCoreName) {
+1845,1846d1908
+<     String origCoreName = null;
+< 
+1882,1884d1943
+< 
+<       origCoreName = getCoreToOrigName(solrCore);
+< 
+1914,1923d1972
+<     
+<     Properties implicit = dcore.initImplicitProperties();
+< 
+<     if (! coreName.equals(container.getDefaultCoreName())) {
+<       for (String prop : implicit.stringPropertyNames()) {
+<         if (coreAttribs.get(prop) == null) {
+<           coreAttribs.put(prop, implicit.getProperty(prop));
+<         }
+<       }
+<     }
+1950a2000,2021
+>   protected void addCreated(SolrCore core) {
+>     synchronized (locker) {
+>       createdCores.put(core.getName(), core);
+>     }
+>   }
+> 
+>   protected String checkUniqueDataDir(String targetPath) {
+>     
+>     
+>     
+>     
+>     synchronized (locker) {
+>       for (SolrCore core : cores.values()) {
+>         if (targetPath.equals(core.getDataDir())) return core.getName();
+>       }
+>       for (SolrCore core : transientCores.values()) {
+>         if (targetPath.equals(core.getDataDir())) return core.getName();
+>       }
+>       for (CoreDescriptor desc : dynamicDescriptors.values()) {
+>         if (targetPath.equals(desc.getDataDir())) return desc.getName();
+>       }
+>     }
+1951a2023,2024
+>     return null;
+>   }
+1985c2058,2059
+<           coreMaps.addPersistOneCore(cfg, removeMe, container.loader);
+---
+>           coreMaps.addPersistOneCore(cfg, container.loader, removeMe.getCoreDescriptor(),
+>               container.getCoreToOrigName(removeMe));

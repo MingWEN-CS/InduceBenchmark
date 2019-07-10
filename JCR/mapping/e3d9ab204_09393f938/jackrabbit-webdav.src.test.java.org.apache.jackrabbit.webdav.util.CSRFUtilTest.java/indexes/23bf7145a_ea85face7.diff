@@ -1,0 +1,144 @@
+32d31
+< import java.util.Arrays;
+35d33
+< import java.util.HashSet;
+39d36
+< import java.util.Set;
+48,52d44
+<     private static final String GET = "GET";
+<     private static final String POST = "POST";
+< 
+<     private static final Set<String> EMPTY_REFERER = new HashSet<String>() {{ add(null); }};
+< 
+54d45
+<     private static final List<String> invalidURLs = new ArrayList<String>();
+56a48
+>         validURLs.add(null);
+60,63d51
+< 
+<         invalidURLs.add("http:
+<         invalidURLs.add("http:
+<         invalidURLs.add("http:
+66,76c54,56
+<     private static void testValid(CSRFUtil util, Collection<String> validURLs, String method, Set<String> contentTypes) throws MalformedURLException {
+<         if (null == contentTypes) {
+<             for (String url : validURLs) {
+<                 assertTrue(url, util.isValidRequest(createRequest(url, method, null)));
+<             }
+<         } else {
+<             for (String contentType : contentTypes) {
+<                 for (String url : validURLs) {
+<                     assertTrue(url, util.isValidRequest(createRequest(url, method, contentType)));
+<                 }
+<             }
+---
+>     private static void testValid(CSRFUtil util, Collection<String> validURLs) throws MalformedURLException {
+>         for (String url : validURLs) {
+>             assertTrue(url, util.isValidRequest(createRequest(url)));
+80,90c60,62
+<     private static void testInvalid(CSRFUtil util, Collection<String> invalidURLs, String method, Set<String> contentTypes) throws MalformedURLException {
+<         if (null == contentTypes) {
+<             for (String url : validURLs) {
+<                 assertFalse(url, util.isValidRequest(createRequest(url, method, null)));
+<             }
+<         } else {
+<             for (String contentType : contentTypes) {
+<                 for (String url : invalidURLs) {
+<                     assertFalse(url, util.isValidRequest(createRequest(url, method, contentType)));
+<                 }
+<             }
+---
+>     private static void testInvalid(CSRFUtil util, Collection<String> invalidURLs) throws MalformedURLException {
+>         for (String url : invalidURLs) {
+>             assertFalse(url, util.isValidRequest(createRequest(url)));
+94,95c66,67
+<     private static HttpServletRequest createRequest(String url, String method, String contentType) {
+<         return new DummyRequest(url, SERVER_NAME, method, contentType);
+---
+>     private static HttpServletRequest createRequest(String url) {
+>         return new DummyRequest(url, SERVER_NAME);
+100,102d71
+<         testValid(util, validURLs, POST, CSRFUtil.CONTENT_TYPES);
+<         testInvalid(util, invalidURLs, POST, CSRFUtil.CONTENT_TYPES);
+<     }
+104,108c73
+<     public void testEmptyConfig() throws Exception {
+<         CSRFUtil util = new CSRFUtil("");
+<         testValid(util, validURLs, POST, CSRFUtil.CONTENT_TYPES);
+<         testInvalid(util, invalidURLs, POST, CSRFUtil.CONTENT_TYPES);
+<     }
+---
+>         testValid(util, validURLs);
+110,113c75,79
+<     public void testNoReferrer() throws Exception {
+<         CSRFUtil util = new CSRFUtil("");
+<         testValid(util, validURLs, POST, CSRFUtil.CONTENT_TYPES);
+<         assertFalse("no referrer", util.isValidRequest(createRequest(null, POST, "text/plain")));
+---
+>         List<String> invalidURLs = new ArrayList<String>();
+>         invalidURLs.add("http:
+>         invalidURLs.add("http:
+>         invalidURLs.add("http:
+>         testInvalid(util, invalidURLs);
+116c82
+<     public void testNoContentType() throws Exception {
+---
+>     public void testEmptyConfig() throws Exception {
+118,119c84,90
+<         testValid(util, validURLs, POST, EMPTY_REFERER);
+<         testInvalid(util, invalidURLs, POST, EMPTY_REFERER);
+---
+>         testValid(util, validURLs);
+> 
+>         List<String> invalidURLs = new ArrayList<String>();
+>         invalidURLs.add("http:
+>         invalidURLs.add("http:
+>         invalidURLs.add("http:
+>         testInvalid(util, invalidURLs);
+124c95,96
+<         testValid(util, validURLs, POST, CSRFUtil.CONTENT_TYPES);
+---
+>         testValid(util, validURLs);
+> 
+126c98,102
+<         testValid(util, invalidURLs, POST, CSRFUtil.CONTENT_TYPES);
+---
+>         List<String> otherHosts = new ArrayList<String>();
+>         otherHosts.add("http:
+>         otherHosts.add("http:
+>         otherHosts.add("https:
+>         testValid(util, otherHosts);
+148,150c124,126
+<             testValid(util, validURLs, POST, CSRFUtil.CONTENT_TYPES);
+<             testValid(util, otherHosts, POST, CSRFUtil.CONTENT_TYPES);
+<             testInvalid(util, invalidURLs, POST, CSRFUtil.CONTENT_TYPES);
+---
+>             testValid(util, validURLs);
+>             testValid(util, otherHosts);
+>             testInvalid(util, invalidURLs);
+154,160d129
+<     public void testMethodsAndMediaType() throws Exception {
+<         CSRFUtil util = new CSRFUtil("");
+<         testValid(util, invalidURLs, GET, CSRFUtil.CONTENT_TYPES);
+<         testValid(util, invalidURLs, POST, new HashSet<String>(Arrays.asList(new String[] {"application/json"})));
+<         testInvalid(util, invalidURLs, POST, CSRFUtil.CONTENT_TYPES);
+<     }
+< 
+165,166d133
+<         private final String method;
+<         private final String contentType;
+168c135
+<         private DummyRequest(String referer, String serverName, String method, String contentType) {
+---
+>         private DummyRequest(String referer, String serverName) {
+171,172d137
+<             this.method = method;
+<             this.contentType = contentType;
+209c174
+<             return method;
+---
+>             return null;
+278c243
+<             return contentType;
+---
+>             return null;

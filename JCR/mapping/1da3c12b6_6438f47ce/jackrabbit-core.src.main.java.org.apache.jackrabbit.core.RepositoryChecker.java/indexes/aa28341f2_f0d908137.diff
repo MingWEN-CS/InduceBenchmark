@@ -1,0 +1,118 @@
+26a27
+> import java.util.Calendar;
+42c43
+< import org.apache.jackrabbit.core.version.InternalVersionManager;
+---
+> import org.apache.jackrabbit.core.version.InternalVersionManagerImpl;
+43a45,47
+> import org.apache.jackrabbit.spi.NameFactory;
+> import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+> import org.apache.jackrabbit.util.ISO8601;
+65c69,71
+<     private final InternalVersionManager versionManager;
+---
+>     private final ChangeLog vworkspaceChanges;
+> 
+>     private final InternalVersionManagerImpl versionManager;
+69c75
+<             InternalVersionManager versionManager) {
+---
+>             InternalVersionManagerImpl versionManager) {
+71a78
+>         this.vworkspaceChanges = new ChangeLog();
+94,96c101,104
+<     public void fix() throws RepositoryException {
+<         if (workspaceChanges.hasUpdates()) {
+<             log.warn("Fixing repository inconsistencies");
+---
+>     private void fix(PersistenceManager pm, ChangeLog changes, String store)
+>             throws RepositoryException {
+>         if (changes.hasUpdates()) {
+>             log.warn("Fixing " + store + " inconsistencies");
+98c106
+<                 workspace.store(workspaceChanges);
+---
+>                 pm.store(changes);
+100,102c108,110
+<                 e.printStackTrace();
+<                 throw new RepositoryException(
+<                         "Failed to fix workspace inconsistencies", e);
+---
+>                 String message = "Failed to fix " + store + " inconsistencies (aborting)";
+>                 log.error(message, e);
+>                 throw new RepositoryException(message, e);
+105c113
+<             log.info("No repository inconsistencies found");
+---
+>             log.info("No " + store + "  inconsistencies found");
+108a117,122
+>     public void fix() throws RepositoryException {
+>         fix(workspace, workspaceChanges, "workspace");
+>         fix(versionManager.getPersistenceManager(), vworkspaceChanges,
+>                 "versioning workspace");
+>     }
+> 
+112a127
+>             NodeId vhid = null;
+119a135,136
+>                 vhid = vh.getId();
+>                 
+146a164,174
+>             } catch (InconsistentVersioningState e) {
+>                 log.info(message, e);
+>                 NodeId nvhid = e.getVersionHistoryNodeId();
+>                 if (nvhid != null) {
+>                     if (vhid != null && !nvhid.equals(vhid)) {
+>                         log.error("vhrid returned with InconsistentVersioningState does not match the id we already had: "
+>                                 + vhid + " vs " + nvhid);
+>                     }
+>                     vhid = nvhid; 
+>                 }
+>                 removeVersionHistoryReferences(node, vhid);
+149c177
+<                 removeVersionHistoryReferences(node);
+---
+>                 removeVersionHistoryReferences(node, vhid);
+154c182
+<     private void removeVersionHistoryReferences(NodeState node) {
+---
+>     private void removeVersionHistoryReferences(NodeState node, NodeId vhid) {
+168a197,234
+>         
+>         if (vhid != null) {
+>             
+>             
+>             
+>             
+>             log.info("trying to rename version history of node " + node.getId());
+> 
+>             NameFactory nf = NameFactoryImpl.getInstance();
+>             
+>             
+>             Name vhrname = nf.create(Name.NS_DEFAULT_URI, node.getId().toString());
+> 
+>             try {
+>                 NodeState vhrState = versionManager.getPersistenceManager().load(vhid);
+>                 NodeState vhrParentState = versionManager.getPersistenceManager().load(vhrState.getParentId());
+>                 
+>                 if (vhrParentState.hasChildNodeEntry(vhrname)) {
+>                     NodeState modifiedParent = (NodeState) vworkspaceChanges.get(vhrState.getParentId());
+>                     if (modifiedParent == null) {
+>                         modifiedParent = new NodeState(vhrParentState, NodeState.STATUS_EXISTING_MODIFIED, true);
+>                     }
+>                     
+>                     Calendar now = Calendar.getInstance();
+>                     String appendme = " (disconnected by RepositoryChecker on "
+>                             + ISO8601.format(now) + ")";
+>                     modifiedParent.renameChildNodeEntry(vhid,
+>                             nf.create(vhrname.getNamespaceURI(), vhrname.getLocalName() + appendme));
+> 
+>                     vworkspaceChanges.modified(modifiedParent);
+>                 }
+>                 else {
+>                     log.info("child node entry " + vhrname + " for version history not found inside parent folder.");
+>                 }
+>             } catch (Exception ex) {
+>                 log.error("while trying to rename the version history", ex);
+>             }
+>         }

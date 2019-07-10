@@ -1,0 +1,36 @@
+274a275,280
+>   @VisibleForTesting
+>   public static ThreadLocal<Call> getCurCall() {
+>     return CurCall;
+>   }
+>   
+>   
+281c287
+<   static int getCallId() {
+---
+>   public static int getCallId() {
+300,303c306,307
+<     if (call != null) {
+<       return call.connection.getHostInetAddress();
+<     }
+<     return null;
+---
+>     return (call != null && call.connection != null) ? call.connection
+>         .getHostInetAddress() : null;
+328c332,333
+<     return (call != null) ? call.connection.user : null;
+---
+>     return (call != null && call.connection != null) ? call.connection.user
+>         : null;
+466c471
+<   private static class Call {
+---
+>   public static class Call {
+477c482
+<     private Call(int id, int retryCount, Writable param, 
+---
+>     public Call(int id, int retryCount, Writable param, 
+483c488
+<     private Call(int id, int retryCount, Writable param, Connection connection,
+---
+>     public Call(int id, int retryCount, Writable param, Connection connection,

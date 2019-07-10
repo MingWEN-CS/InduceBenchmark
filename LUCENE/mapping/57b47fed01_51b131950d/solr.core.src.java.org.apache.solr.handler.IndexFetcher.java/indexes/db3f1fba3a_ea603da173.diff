@@ -1,0 +1,262 @@
+32d31
+< import java.nio.file.Paths;
+49d47
+< import java.util.concurrent.Executors;
+81c79
+< import org.apache.solr.handler.ReplicationHandler.FileInfo;
+---
+> import org.apache.solr.handler.ReplicationHandler.*;
+85a84
+> import org.apache.solr.update.UpdateLog;
+113a113,114
+> import static org.apache.solr.handler.ReplicationHandler.TLOG_FILE;
+> import static org.apache.solr.handler.ReplicationHandler.TLOG_FILES;
+140a142,143
+>   private volatile List<Map<String, Object>> tlogFilesToDownload;
+> 
+144a148,149
+>   private volatile List<Map<String, Object>> tlogFilesDownloaded;
+> 
+148c153
+<   
+---
+> 
+183c188
+<     
+---
+> 
+210c215
+<       
+---
+> 
+245a251,254
+>       files = (List<Map<String, Object>>) response.get(TLOG_FILES);
+>       if (files != null) {
+>         tlogFilesToDownload = Collections.synchronizedList(files);
+>       }
+254c263
+<   
+---
+> 
+265c274
+<     
+---
+> 
+274c283
+<     
+---
+> 
+281c290
+<     
+---
+> 
+326c335
+<         
+---
+> 
+331c340
+<       
+---
+> 
+347a357,359
+>       if (tlogFilesToDownload != null) {
+>         LOG.info("Number of tlog files in master: " + tlogFilesToDownload.size());
+>       }
+359c371,372
+<       String tmpIdxDirName = "index." + new SimpleDateFormat(SnapShooter.DATE_FMT, Locale.ROOT).format(new Date());
+---
+>       String timestamp = new SimpleDateFormat(SnapShooter.DATE_FMT, Locale.ROOT).format(new Date());
+>       String tmpIdxDirName = "index." + timestamp;
+363c376
+<       
+---
+> 
+375c388
+<         
+---
+> 
+413c426
+<         
+---
+> 
+418c431
+<           
+---
+> 
+419a433,435
+>           if (tlogFilesToDownload != null) {
+>             downloadTlogFiles(timestamp, latestGeneration);
+>           }
+443c459
+<               
+---
+> 
+467c483
+<         
+---
+> 
+487c503
+<           
+---
+> 
+490c506
+<         
+---
+> 
+500c516
+<         
+---
+> 
+608c624
+<       
+---
+> 
+699c715
+<     
+---
+> 
+722c738
+<     
+---
+> 
+759c775
+<         localFileFetcher = new LocalFsFileFetcher(tmpconfDir, file, saveAs, true, latestGeneration);
+---
+>         localFileFetcher = new LocalFsFileFetcher(tmpconfDir, file, saveAs, CONF_FILE_SHORT, latestGeneration);
+772a789,816
+>   private void downloadTlogFiles(String timestamp, long latestGeneration) throws Exception {
+>     UpdateLog ulog = solrCore.getUpdateHandler().getUpdateLog();
+> 
+>     LOG.info("Starting download of tlog files from master: " + tlogFilesToDownload);
+>     tlogFilesDownloaded = Collections.synchronizedList(new ArrayList<Map<String, Object>>());
+>     File tmpTlogDir = new File(ulog.getLogDir(), "tlog." + getDateAsStr(new Date()));
+>     try {
+>       boolean status = tmpTlogDir.mkdirs();
+>       if (!status) {
+>         throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,
+>             "Failed to create temporary tlog folder: " + tmpTlogDir.getName());
+>       }
+>       for (Map<String, Object> file : tlogFilesToDownload) {
+>         String saveAs = (String) (file.get(ALIAS) == null ? file.get(NAME) : file.get(ALIAS));
+>         localFileFetcher = new LocalFsFileFetcher(tmpTlogDir, file, saveAs, TLOG_FILE, latestGeneration);
+>         currentFile = file;
+>         localFileFetcher.fetchFile();
+>         tlogFilesDownloaded.add(new HashMap<>(file));
+>       }
+>       
+>       
+>       terminateAndWaitFsyncService();
+>       copyTmpTlogFiles2Tlog(tmpTlogDir, timestamp);
+>     } finally {
+>       delTree(tmpTlogDir);
+>     }
+>   }
+> 
+793c837
+<             (String) file.get(NAME), false, latestGeneration);
+---
+>             (String) file.get(NAME), FILE, latestGeneration);
+832c876
+<         
+---
+> 
+835c879
+<           
+---
+> 
+845a890
+> 
+847,848c892
+<         
+<         
+---
+> 
+881c925
+<   }  
+---
+>   }
+985c1029
+<   
+---
+> 
+1023a1068,1091
+>   
+> 
+> 
+> 
+>   private void copyTmpTlogFiles2Tlog(File tmpTlogDir, String timestamp) {
+>     File tlogDir = new File(solrCore.getUpdateHandler().getUpdateLog().getLogDir());
+>     File backupTlogDir = new File(tlogDir.getParent(), UpdateLog.TLOG_NAME + "." + timestamp);
+> 
+>     try {
+>       org.apache.commons.io.FileUtils.moveDirectory(tlogDir, backupTlogDir);
+>     } catch (IOException e) {
+>       throw new SolrException(ErrorCode.SERVER_ERROR,
+>           "Unable to rename: " + tlogDir + " to: " + backupTlogDir, e);
+>     }
+> 
+>     try {
+>       tmpTlogDir = new File(backupTlogDir, tmpTlogDir.getName());
+>       org.apache.commons.io.FileUtils.moveDirectory(tmpTlogDir, tlogDir);
+>     } catch (IOException e) {
+>       throw new SolrException(ErrorCode.SERVER_ERROR,
+>           "Unable to rename: " + tmpTlogDir + " to: " + tlogDir, e);
+>     }
+>   }
+> 
+1117c1185
+<   
+---
+> 
+1133c1201
+<   
+---
+> 
+1161a1230,1243
+>   List<Map<String, Object>> getTlogFilesToDownload() {
+>     
+>     List<Map<String, Object>> tmp = tlogFilesToDownload;
+>     
+>     return tmp == null ? Collections.EMPTY_LIST : new ArrayList<>(tmp);
+>   }
+> 
+>   List<Map<String, Object>> getTlogFilesDownloaded() {
+>     
+>     List<Map<String, Object>> tmp = tlogFilesDownloaded;
+>     
+>     return tmp == null ? Collections.EMPTY_LIST : new ArrayList<>(tmp);
+>   }
+> 
+1222c1304
+<     private boolean isConf;
+---
+>     private String solrParamOutput;
+1233c1315
+<                 boolean isConf, long latestGen) throws IOException {
+---
+>                 String solrParamOutput, long latestGen) throws IOException {
+1237c1319
+<       this.isConf = isConf;
+---
+>       this.solrParamOutput = solrParamOutput;
+1407,1412c1489
+<       if (isConf) {
+<         
+<         params.set(CONF_FILE_SHORT, fileName);
+<       } else {
+<         params.set(FILE, fileName);
+<       }
+---
+>       params.set(solrParamOutput, fileName);
+1481,1482c1558,1559
+<                 boolean isConf, long latestGen) throws IOException {
+<       super(new DirectoryFile(tmpIndexDir, saveAs), fileDetails, saveAs, isConf, latestGen);
+---
+>                          String solrParamOutput, long latestGen) throws IOException {
+>       super(new DirectoryFile(tmpIndexDir, saveAs), fileDetails, saveAs, solrParamOutput, latestGen);
+1530,1531c1607,1608
+<                 boolean isConf, long latestGen) throws IOException {
+<       super(new LocalFsFile(dir, saveAs), fileDetails, saveAs, isConf, latestGen);
+---
+>                        String solrParamOutput, long latestGen) throws IOException {
+>       super(new LocalFsFile(dir, saveAs), fileDetails, saveAs, solrParamOutput, latestGen);

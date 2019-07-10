@@ -1,0 +1,67 @@
+28d27
+< import org.apache.solr.client.solrj.impl.CloudSolrClient;
+34a34
+> import org.apache.solr.client.solrj.request.UpdateRequest;
+52d51
+< import org.apache.solr.update.DirectUpdateHandler2;
+54,55c53
+< import org.apache.solr.util.TimeOut;
+< import org.junit.BeforeClass;
+---
+> import org.apache.solr.util.RTimer;
+66d63
+< import java.util.Iterator;
+331c328,330
+<     add(cloudClient, params, getDoc("id", 300));
+---
+>     add(cloudClient, params , getDoc("id", 300), getDoc("id", 301));
+> 
+>     waitForDocCount(before + 2, 30000, "add commitWithin did not work");
+333,344d331
+<     final List<SolrClient> clientsToCheck = new ArrayList<>(clients);
+<     TimeOut timeout = new TimeOut(45, TimeUnit.SECONDS);
+<     do {
+<       final Iterator<SolrClient> it = clientsToCheck.iterator();
+<       while (it.hasNext()) {
+<         final SolrClient sc = it.next();
+<         if ((before + 1) == sc.query(new SolrQuery("*:*")).getResults().getNumFound()) {
+<           it.remove();
+<         }
+<       }
+<       Thread.sleep(100);
+<     } while (!clientsToCheck.isEmpty() && !timeout.hasTimedOut());
+346c333,339
+<     assertTrue("commitWithin did not work on some nodes: "+clientsToCheck, clientsToCheck.isEmpty());
+---
+>     UpdateRequest deleteByIdReq = new UpdateRequest();
+>     deleteByIdReq.deleteById("300");
+>     deleteByIdReq.setCommitWithin(10);
+>     deleteByIdReq.process(cloudClient);
+> 
+>     waitForDocCount(before + 1, 30000, "deleteById commitWithin did not work");
+> 
+347a341,347
+>     UpdateRequest deleteByQueryReq = new UpdateRequest();
+>     deleteByQueryReq.deleteByQuery("id:301");
+>     deleteByQueryReq.setCommitWithin(10);
+>     deleteByQueryReq.process(cloudClient);
+> 
+>     waitForDocCount(before, 30000, "deleteByQuery commitWithin did not work");
+> 
+371a372,387
+> 
+>   private void waitForDocCount(long expectedNumFound, long waitMillis, String failureMessage)
+>       throws SolrServerException, IOException, InterruptedException {
+>     RTimer timer = new RTimer();
+>     long timeout = (long)timer.getTime() + waitMillis;
+>     while (cloudClient.query(new SolrQuery("*:*")).getResults().getNumFound() != expectedNumFound) {
+>       if (timeout <= (long)timer.getTime()) {
+>         fail(failureMessage);
+>       }
+>       Thread.sleep(100);
+>     }
+> 
+>     for (SolrClient client : clients) {
+>       assertEquals(failureMessage, expectedNumFound, client.query(new SolrQuery("*:*")).getResults().getNumFound());
+>     }
+>   }

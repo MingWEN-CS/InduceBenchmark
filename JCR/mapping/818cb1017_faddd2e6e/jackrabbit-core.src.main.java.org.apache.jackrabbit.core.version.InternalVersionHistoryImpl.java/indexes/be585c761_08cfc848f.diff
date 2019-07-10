@@ -1,0 +1,60 @@
+19c19,30
+< import org.apache.jackrabbit.core.NodeImpl;
+---
+> import java.util.Calendar;
+> import java.util.HashMap;
+> import java.util.Iterator;
+> import java.util.LinkedHashMap;
+> import java.util.Map;
+> import java.util.Set;
+> 
+> import javax.jcr.PropertyType;
+> import javax.jcr.ReferentialIntegrityException;
+> import javax.jcr.RepositoryException;
+> import javax.jcr.version.VersionException;
+> 
+20a32
+> import org.apache.jackrabbit.core.state.ChildNodeEntry;
+24d35
+< import org.apache.jackrabbit.core.state.ChildNodeEntry;
+31,42d41
+< import javax.jcr.PropertyType;
+< import javax.jcr.ReferentialIntegrityException;
+< import javax.jcr.RepositoryException;
+< import javax.jcr.Value;
+< import javax.jcr.version.VersionException;
+< import java.util.Calendar;
+< import java.util.HashMap;
+< import java.util.Iterator;
+< import java.util.Set;
+< import java.util.LinkedHashMap;
+< import java.util.Map;
+< 
+403c402
+<                 NodeStateEx parentNode = vMgr.getNodeStateEx(node.getParentId());
+---
+>                 NodeStateEx parentNode = node.getParent();
+492c491
+<     InternalVersionImpl checkin(Name name, NodeImpl src)
+---
+>     InternalVersionImpl checkin(Name name, NodeStateEx src)
+498,501c497,500
+<             Value[] preds = src.getProperty(NameConstants.JCR_PREDECESSORS).getValues();
+<             predecessors = new InternalValue[preds.length];
+<             for (int i = 0; i < preds.length; i++) {
+<                 NodeId predId = new NodeId(preds[i].getString());
+---
+>             predecessors = src.getPropertyValues(NameConstants.JCR_PREDECESSORS);
+>             
+>             for (InternalValue pred: predecessors) {
+>                 NodeId predId = pred.getNodeId();
+507d505
+<                 predecessors[i] = InternalValue.create(predId);
+529c527
+<             InternalValue act = src.getProperty(NameConstants.JCR_ACTIVITY).internalGetValue();
+---
+>             InternalValue act = src.getPropertyValue(NameConstants.JCR_ACTIVITY);
+611c609
+<                 ivalues[i] = InternalValue.create((Name) iter.next());
+---
+>                 ivalues[i] = InternalValue.create(iter.next());

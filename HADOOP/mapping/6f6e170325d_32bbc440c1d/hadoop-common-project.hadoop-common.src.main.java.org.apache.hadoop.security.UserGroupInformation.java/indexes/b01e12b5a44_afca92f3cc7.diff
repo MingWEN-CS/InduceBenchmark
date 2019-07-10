@@ -1,0 +1,8 @@
+69a70,71
+> import com.google.common.annotations.VisibleForTesting;
+> 
+716c718,719
+<   synchronized static void setLoginUser(UserGroupInformation ugi) {
+---
+>   @VisibleForTesting
+>   public synchronized static void setLoginUser(UserGroupInformation ugi) {

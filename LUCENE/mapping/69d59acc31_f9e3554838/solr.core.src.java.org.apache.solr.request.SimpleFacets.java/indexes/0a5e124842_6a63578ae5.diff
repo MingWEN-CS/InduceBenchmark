@@ -1,0 +1,24 @@
+74a75
+> import org.apache.solr.handler.component.SpatialHeatmapFacets;
+262c263
+< 
+---
+>       facetResponse.add(SpatialHeatmapFacets.RESPONSE_KEY, getHeatmapCounts());
+1521a1523,1539
+>   private NamedList getHeatmapCounts() throws IOException, SyntaxError {
+>     final NamedList<Object> resOuter = new SimpleOrderedMap<>();
+>     String[] unparsedFields = rb.req.getParams().getParams(FacetParams.FACET_HEATMAP);
+>     if (unparsedFields == null || unparsedFields.length == 0) {
+>       return resOuter;
+>     }
+>     if (params.getBool(GroupParams.GROUP_FACET, false)) {
+>       throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+>           "Heatmaps can't be used with " + GroupParams.GROUP_FACET);
+>     }
+>     for (String unparsedField : unparsedFields) {
+>       parseParams(FacetParams.FACET_HEATMAP, unparsedField); 
+> 
+>       resOuter.add(key, SpatialHeatmapFacets.getHeatmapForField(key, facetValue, rb, params, docs));
+>     }
+>     return resOuter;
+>   }

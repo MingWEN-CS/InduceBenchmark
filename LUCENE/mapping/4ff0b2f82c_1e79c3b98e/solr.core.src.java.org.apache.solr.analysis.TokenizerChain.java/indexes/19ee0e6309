@@ -1,0 +1,89 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.analysis;
+
+import org.apache.lucene.analysis.*;
+
+import java.io.Reader;
+
+
+
+
+
+
+
+
+
+public final class TokenizerChain extends SolrAnalyzer {
+  final private CharFilterFactory[] charFilters;
+  final private TokenizerFactory tokenizer;
+  final private TokenFilterFactory[] filters;
+
+  public TokenizerChain(TokenizerFactory tokenizer, TokenFilterFactory[] filters) {
+    this(null,tokenizer,filters);
+  }
+
+  public TokenizerChain(CharFilterFactory[] charFilters, TokenizerFactory tokenizer, TokenFilterFactory[] filters) {
+    this.charFilters = charFilters;
+    this.tokenizer = tokenizer;
+    this.filters = filters;
+  }
+
+  public CharFilterFactory[] getCharFilterFactories() { return charFilters; }
+  public TokenizerFactory getTokenizerFactory() { return tokenizer; }
+  public TokenFilterFactory[] getTokenFilterFactories() { return filters; }
+
+  @Override
+  public Reader initReader(Reader reader) {
+    if (charFilters != null && charFilters.length > 0) {
+      CharStream cs = CharReader.get( reader );
+      for (CharFilterFactory charFilter : charFilters) {
+        cs = charFilter.create(cs);
+      }
+      reader = cs;
+    }
+    return reader;
+  }
+
+  @Override
+  protected TokenStreamComponents createComponents(String fieldName, Reader aReader) {
+    Tokenizer tk = tokenizer.create(aReader);
+    TokenStream ts = tk;
+    for (TokenFilterFactory filter : filters) {
+      ts = filter.create(ts);
+    }
+    return new TokenStreamComponents(tk, ts);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder("TokenizerChain(");
+    for (CharFilterFactory filter: charFilters) {
+      sb.append(filter);
+      sb.append(", ");
+    }
+    sb.append(tokenizer);
+    for (TokenFilterFactory filter: filters) {
+      sb.append(", ");
+      sb.append(filter);
+    }
+    sb.append(')');
+    return sb.toString();
+  }
+
+}

@@ -1,0 +1,4 @@
+270c270
+<         if (termsEnum.seek(internalKey, false) != TermsEnum.SeekStatus.FOUND) {
+---
+>         if (!termsEnum.seekExact(internalKey, false)) {

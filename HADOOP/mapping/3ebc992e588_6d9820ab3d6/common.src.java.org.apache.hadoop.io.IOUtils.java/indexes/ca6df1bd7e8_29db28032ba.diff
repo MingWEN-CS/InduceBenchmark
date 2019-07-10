@@ -1,0 +1,94 @@
+44a45
+> 
+47d47
+< 
+73d72
+< 
+84a84
+> 
+91a92
+> 
+104a106
+> 
+108a111,137
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static void copyBytes(InputStream in, OutputStream out, long count)
+>       throws IOException {
+>     byte buf[] = new byte[4096];
+>     long bytesRemaining = count;
+>     int bytesRead;
+> 
+>     while (bytesRemaining > 0) {
+>       int bytesToRead = (int)
+>         (bytesRemaining < buf.length ? bytesRemaining : buf.length);
+> 
+>       bytesRead = in.read(buf, 0, bytesToRead);
+>       if (bytesRead == -1)
+>         break;
+> 
+>       out.write(buf, 0, bytesRead);
+>       bytesRemaining -= bytesRead;
+>     }
+>   }
+118,119c147,150
+<   public static void readFully( InputStream in, byte buf[],
+<       int off, int len ) throws IOException {
+---
+> 
+> 
+>   public static void readFully(InputStream in, byte buf[],
+>       int off, int len) throws IOException {
+121,123c152,154
+<     while ( toRead > 0 ) {
+<       int ret = in.read( buf, off, toRead );
+<       if ( ret < 0 ) {
+---
+>     while (toRead > 0) {
+>       int ret = in.read(buf, off, toRead);
+>       if (ret < 0) {
+137,140c168,172
+<   public static void skipFully( InputStream in, long len ) throws IOException {
+<     while ( len > 0 ) {
+<       long ret = in.skip( len );
+<       if ( ret < 0 ) {
+---
+> 
+>   public static void skipFully(InputStream in, long len) throws IOException {
+>     while (len > 0) {
+>       long ret = in.skip(len);
+>       if (ret < 0) {
+152a185
+> 
+154c187
+<     for(java.io.Closeable c : closeables) {
+---
+>     for (java.io.Closeable c : closeables) {
+172c205,206
+<   public static void closeStream( java.io.Closeable stream ) {
+---
+> 
+>   public static void closeStream(java.io.Closeable stream) {
+180,182c214,216
+<   public static void closeSocket( Socket sock ) {
+<     
+<     if ( sock != null ) {
+---
+> 
+>   public static void closeSocket(Socket sock) {
+>     if (sock != null) {
+184,185c218,219
+<        sock.close();
+<       } catch ( IOException ignored ) {
+---
+>         sock.close();
+>       } catch (IOException ignored) {
+191a226
+> 

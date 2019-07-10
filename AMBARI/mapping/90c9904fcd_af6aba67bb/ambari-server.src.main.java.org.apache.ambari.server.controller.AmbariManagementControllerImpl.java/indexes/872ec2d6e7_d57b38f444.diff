@@ -1,0 +1,37 @@
+2469a2470
+>       Collection<ServiceComponentHost> componentsToConfigureForKerberos = new ArrayList<>();
+2532,2536c2533
+<                       try {
+<                         kerberosHelper.configureService(cluster, scHost);
+<                       } catch (KerberosInvalidConfigurationException e) {
+<                         throw new AmbariException(e.getMessage(), e);
+<                       }
+---
+>                       componentsToConfigureForKerberos.add(scHost);
+2746a2744,2769
+>       if(!componentsToConfigureForKerberos.isEmpty()) {
+>         
+>         
+>         
+>         
+>         Map<String, Collection<String>> serviceFilter = new HashMap<String, Collection<String>>();
+> 
+>         for (ServiceComponentHost scHost : componentsToConfigureForKerberos) {
+>           String serviceName = scHost.getServiceName();
+>           Collection<String> componentFilter = serviceFilter.get(serviceName);
+> 
+>           if (componentFilter == null) {
+>             componentFilter = new HashSet<String>();
+>             serviceFilter.put(serviceName, componentFilter);
+>           }
+> 
+>           componentFilter.add(scHost.getServiceComponentName());
+>         }
+> 
+>         try {
+>           kerberosHelper.configureServices(cluster, serviceFilter);
+>         } catch (KerberosInvalidConfigurationException e) {
+>           throw new AmbariException(e.getMessage(), e);
+>         }
+>       }
+> 

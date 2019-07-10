@@ -1,0 +1,10 @@
+42a43
+>   private static final int DELEGATE_TO_FS_DEFAULT_PORT = -1;
+67c68
+<     return defaultPort != 0 ? defaultPort : -1;
+---
+>     return defaultPort != 0 ? defaultPort : DELEGATE_TO_FS_DEFAULT_PORT;
+162c163
+<     return 0;
+---
+>     return DELEGATE_TO_FS_DEFAULT_PORT;

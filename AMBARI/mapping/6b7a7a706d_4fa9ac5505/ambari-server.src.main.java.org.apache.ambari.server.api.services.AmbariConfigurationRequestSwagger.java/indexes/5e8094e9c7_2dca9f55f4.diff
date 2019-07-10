@@ -1,0 +1,19 @@
+32c32
+<     Long getId();
+---
+>     String getCategoryName();
+35,44c35
+<     Map<String, Object> getData();
+< 
+<     @ApiModelProperty
+<     String getType();
+< 
+<     @ApiModelProperty
+<     Long getVersion();
+< 
+<     @ApiModelProperty(name = "version_tag")
+<     String getVersionTag();
+---
+>     Map<String, Object> getProperties();
+46d36
+< 

@@ -1,0 +1,8 @@
+676a677
+>       LOG.warn("Auth method failure", e);
+687a689
+>       LOG.warn("Auth method failure", e);
+705c707
+<         UserGroupInformation.createRemoteUser(currentUser + "-SERVER");
+---
+>         UserGroupInformation.createRemoteUser(currentUser + "-SERVER/localhost@NONE");

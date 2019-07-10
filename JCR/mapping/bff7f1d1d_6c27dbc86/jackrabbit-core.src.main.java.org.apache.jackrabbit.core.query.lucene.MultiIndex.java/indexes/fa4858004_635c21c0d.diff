@@ -1,0 +1,4 @@
+244c244
+<         merger = new IndexMerger(this);
+---
+>         merger = new IndexMerger(this, handler.getIndexMergerPoolSize());

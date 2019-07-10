@@ -1,0 +1,24 @@
+175,176d174
+<   
+<   private UpdateShardHandler updateShardHandler;
+179c177
+<       String localHostContext, int leaderVoteWait, boolean genericCoreNodeNames, int distribUpdateConnTimeout, int distribUpdateSoTimeout, final CurrentCoreDescriptorProvider registerOnReconnect) throws InterruptedException,
+---
+>       String localHostContext, int leaderVoteWait, boolean genericCoreNodeNames, final CurrentCoreDescriptorProvider registerOnReconnect) throws InterruptedException,
+190,191d187
+<     updateShardHandler = new UpdateShardHandler(distribUpdateConnTimeout, distribUpdateSoTimeout);
+<     
+414,420d409
+<     if (updateShardHandler != null) {
+<       try {
+<         updateShardHandler.close();
+<       } catch(Throwable t) {
+<         log.error("Error closing updateShardHandler", t);
+<       }
+<     }
+1551,1555d1539
+<   
+<   public UpdateShardHandler getUpdateShardHandler() {
+<     return updateShardHandler;
+<   }
+< 

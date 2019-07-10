@@ -1,0 +1,22 @@
+119a120,126
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+120a128,140
+> 
+> 
+> 
+> 
+> 
+>   public BlendedInfixSuggester(Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer,
+>                                int minPrefixChars, BlenderType blenderType, int numFactor, 
+>                                boolean commitOnBuild, boolean allTermsRequired, boolean highlight) throws IOException {
+>     super(dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild, allTermsRequired, highlight);
+>     this.blenderType = blenderType;
+>     this.numFactor = numFactor;
+>   }
+>   

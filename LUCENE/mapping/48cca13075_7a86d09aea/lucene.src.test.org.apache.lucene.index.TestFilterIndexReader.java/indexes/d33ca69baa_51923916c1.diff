@@ -1,0 +1,15 @@
+33d32
+< import java.util.Random;
+133,135c132,133
+<     Random random = newRandom();
+<     Directory directory = newDirectory(random);
+<     IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer()));
+---
+>     Directory directory = newDirectory();
+>     IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+152,153c150,151
+<     Directory target = newDirectory(random);
+<     writer = new IndexWriter(target, newIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer()));
+---
+>     Directory target = newDirectory();
+>     writer = new IndexWriter(target, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));

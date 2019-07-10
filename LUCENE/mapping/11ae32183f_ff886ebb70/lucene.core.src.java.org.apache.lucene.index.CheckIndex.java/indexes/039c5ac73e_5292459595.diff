@@ -1,0 +1,14 @@
+26a27
+> import java.util.Arrays;
+457a459,463
+>     String[] files = dir.listAll();
+>     String lastSegmentsFile = SegmentInfos.getLastCommitSegmentsFileName(files);
+>     if (lastSegmentsFile == null) {
+>       throw new IndexNotFoundException("no segments* file found in " + dir + ": files: " + Arrays.toString(files));
+>     }
+459c465,467
+<       sis.read(dir);
+---
+>       
+>       
+>       sis.read(dir, lastSegmentsFile);

@@ -1,0 +1,34 @@
+76c76
+<   private static final Logger LOG = LoggerFactory.getLogger(
+---
+>   public static final Logger LOG = LoggerFactory.getLogger(
+277d276
+<             && kerbName.getRealm() != null
+280c279
+<           LOG.trace("Map server: {} to principal: {}", kerbName.getHostName(),
+---
+>           boolean added = serverPrincipalMap.put(kerbName.getHostName(),
+282c281,282
+<           serverPrincipalMap.put(kerbName.getHostName(), spnegoPrincipal);
+---
+>           LOG.info("Map server: {} to principal: [{}], added = {}",
+>               kerbName.getHostName(), spnegoPrincipal, added);
+284c284
+<           LOG.warn("HTTP principal: {} is invalid for SPNEGO!",
+---
+>           LOG.warn("HTTP principal: [{}] is invalid for SPNEGO!",
+422,423c422,423
+<                   LOG.trace("SPNEGO with principals: {}",
+<                       serverPrincipals.toString());
+---
+>                   LOG.trace("SPNEGO with server principals: {} for {}",
+>                       serverPrincipals.toString(), serverName);
+467c467
+<       LOG.trace("SPNEGO initiated with principal {}", serverPrincipal);
+---
+>       LOG.trace("SPNEGO initiated with server principal [{}]", serverPrincipal);
+494c494,495
+<         LOG.trace("SPNEGO completed for principal [{}]", clientPrincipal);
+---
+>         LOG.trace("SPNEGO completed for client principal [{}]",
+>             clientPrincipal);

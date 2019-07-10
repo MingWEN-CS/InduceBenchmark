@@ -1,0 +1,5 @@
+982a983,986
+> 
+>         byte[] secKey = credentialsConf.getCredentials().getSecretKey(new Text(InsertTestToken.DUMMY_SECRET_KEY));
+>         assertNotNull(secKey);
+>         assertEquals(InsertTestToken.DUMMY_SECRET_KEY, new String(secKey, "UTF-8"));

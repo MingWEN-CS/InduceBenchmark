@@ -1,0 +1,22 @@
+144a145
+> import org.apache.ambari.server.stack.RepoUtil;
+210a212
+> import com.google.common.collect.ListMultimap;
+2312c2314
+<     
+---
+> 
+2352c2354
+<     
+---
+> 
+4139a4142
+>       ListMultimap<String, RepositoryInfo> stackRepositoriesByOs = ambariMetaInfo.getStackManager().getStack(stackName, stackVersion).getRepositoriesByOs();
+4140a4144
+> 
+4153a4158,4162
+>       
+>       List<RepositoryInfo> serviceRepos =
+>           RepoUtil.getServiceRepos(xml.repositoryInfo.getRepositories(), stackRepositoriesByOs);
+>       responses.addAll(RepoUtil.asResponses(serviceRepos, versionDefinitionId, stackName, stackVersion));
+> 

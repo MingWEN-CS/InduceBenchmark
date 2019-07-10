@@ -1,0 +1,13 @@
+1591,1592c1591,1599
+<         assertEquals("-Xmx2048m -Djava.net.preferIPv4Stack=true -Xmx2560m",
+<                 launcherConf.get(JavaActionExecutor.YARN_AM_COMMAND_OPTS).trim());
+---
+>         
+>         if (createJobConf().get("yarn.resourcemanager.address") != null) {
+>             assertEquals("-Xmx1024m -Xmx2048m -Djava.net.preferIPv4Stack=true -Xmx2560m",
+>                     launcherConf.get(JavaActionExecutor.YARN_AM_COMMAND_OPTS).trim());
+>         }
+>         else {
+>             assertEquals("-Xmx2048m -Djava.net.preferIPv4Stack=true -Xmx2560m",
+>                     launcherConf.get(JavaActionExecutor.YARN_AM_COMMAND_OPTS).trim());
+>         }

@@ -1,0 +1,35 @@
+20,23c20
+< import org.apache.lucene.analysis.TokenStream;
+< import org.apache.lucene.analysis.CharStream;
+< import org.apache.lucene.analysis.CharReader;
+< import org.apache.lucene.analysis.Tokenizer;
+---
+> import org.apache.lucene.analysis.*;
+55,56c52,53
+<   public Reader charStream(Reader reader){
+<     if( charFilters != null && charFilters.length > 0 ){
+---
+>   public Reader initReader(Reader reader) {
+>     if (charFilters != null && charFilters.length > 0) {
+58,59c55,56
+<       for (int i=0; i<charFilters.length; i++) {
+<         cs = charFilters[i].create(cs);
+---
+>       for (CharFilterFactory charFilter : charFilters) {
+>         cs = charFilter.create(cs);
+67,68c64,65
+<   public TokenStreamInfo getStream(String fieldName, Reader reader) {
+<     Tokenizer tk = tokenizer.create(charStream(reader));
+---
+>   protected TokenStreamComponents createComponents(String fieldName, Reader aReader) {
+>     Tokenizer tk = tokenizer.create(aReader);
+70,71c67,68
+<     for (int i=0; i<filters.length; i++) {
+<       ts = filters[i].create(ts);
+---
+>     for (TokenFilterFactory filter : filters) {
+>       ts = filter.create(ts);
+73c70
+<     return new TokenStreamInfo(tk,ts);
+---
+>     return new TokenStreamComponents(tk, ts);

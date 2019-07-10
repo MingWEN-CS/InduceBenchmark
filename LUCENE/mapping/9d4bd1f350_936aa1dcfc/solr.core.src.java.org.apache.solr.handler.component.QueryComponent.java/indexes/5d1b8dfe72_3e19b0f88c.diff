@@ -1,0 +1,66 @@
+33d32
+< import java.util.regex.Pattern;
+842,853c841,842
+<       String fl = rb.req.getParams().get(CommonParams.FL);
+<       if (fl == null) {
+<         if (fields.getRequestedFieldNames() == null && fields.wantsAllFields()) {
+<           fl = "*";
+<         } else  {
+<           fl = "";
+<           for (String s : fields.getRequestedFieldNames()) {
+<             fl += s + ",";
+<           }
+<         }
+<       }
+<       if (!fields.wantsField(keyFieldName))  {
+---
+>       String[] fls = rb.req.getParams().getParams(CommonParams.FL);
+>       if (fls != null && fls.length > 0 && (fls.length != 1 || !fls[0].isEmpty())) {
+855,866c844
+<         
+<         if (fl.endsWith(",")) {
+<           fl += keyFieldName;
+<         } else  {
+<           fl += "," + keyFieldName;
+<         }
+<       }
+<       sreq.params.set(CommonParams.FL, updateFl(fl, shardQueryIncludeScore));
+<     } else {
+<       
+<       if (shardQueryIncludeScore) {
+<         sreq.params.set(CommonParams.FL, keyFieldName + ",score");
+---
+>         sreq.params.set(CommonParams.FL, fls);
+868c846,848
+<         sreq.params.set(CommonParams.FL, keyFieldName);
+---
+>         
+>         
+>         sreq.params.set(CommonParams.FL, "*");
+870a851,857
+>     StringBuilder additionalFL = new StringBuilder();
+>     boolean additionalAdded = false;
+>     if (!distribSinglePass || !fields.wantsField(keyFieldName)) 
+>       additionalAdded = addFL(additionalFL, keyFieldName, additionalAdded);
+>     if ((!distribSinglePass || !fields.wantsScore()) && shardQueryIncludeScore) 
+>       additionalAdded = addFL(additionalFL, "score", additionalAdded);
+>     if (additionalAdded) sreq.params.add(CommonParams.FL, additionalFL.toString());
+874,881c861,865
+< 
+< 
+<   String updateFl(String originalFields, boolean includeScoreIfMissing) {
+<     if (includeScoreIfMissing && !scorePattern.matcher(originalFields).find()) {
+<       return originalFields + ",score";
+<     } else {
+<       return originalFields;
+<     }
+---
+>   
+>   private boolean addFL(StringBuilder fl, String field, boolean additionalAdded) {
+>     if (additionalAdded) fl.append(",");
+>     fl.append(field);
+>     return true;
+884,886d867
+<   private static final Pattern scorePattern = Pattern.compile("\\bscore\\b");
+< 
+< 

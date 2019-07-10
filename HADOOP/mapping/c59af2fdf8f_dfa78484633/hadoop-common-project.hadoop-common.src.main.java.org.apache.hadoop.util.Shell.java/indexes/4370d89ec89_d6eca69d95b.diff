@@ -1,0 +1,44 @@
+188c188
+<           { getWinutilsPath(), "groups", "-F", "\"" + user + "\"" }
+---
+>           { getWinUtilsPath(), "groups", "-F", "\"" + user + "\"" }
+201c201
+<     return (WINDOWS) ? new String[] { getWinutilsPath(), "ls", "-F" }
+---
+>     return (WINDOWS) ? new String[] { getWinUtilsPath(), "ls", "-F" }
+209c209
+<           new String[] { getWinutilsPath(), "chmod", "-R", perm }
+---
+>           new String[] { getWinUtilsPath(), "chmod", "-R", perm }
+213c213
+<           new String[] { getWinutilsPath(), "chmod", perm }
+---
+>           new String[] { getWinUtilsPath(), "chmod", perm }
+237c237
+<         new String[] { getWinutilsPath(), "chown", "\"" + owner + "\"" }
+---
+>         new String[] { getWinUtilsPath(), "chown", "\"" + owner + "\"" }
+244c244
+<        new String[] { getWinutilsPath(), "symlink", link, target }
+---
+>        new String[] { getWinUtilsPath(), "symlink", link, target }
+251c251
+<         new String[] { getWinutilsPath(), "readlink", link }
+---
+>         new String[] { getWinUtilsPath(), "readlink", link }
+269c269
+<         return new String[] {Shell.getWinutilsPath(), "task", "isAlive", pid };
+---
+>         return new String[] {Shell.getWinUtilsPath(), "task", "isAlive", pid };
+271c271
+<         return new String[] {Shell.getWinutilsPath(), "task", "kill", pid };
+---
+>         return new String[] {Shell.getWinUtilsPath(), "task", "kill", pid };
+665c665
+<   public static String getWinutilsPath() {
+---
+>   public static String getWinUtilsPath() {
+680c680
+<   public static File getWinutilsFile() throws FileNotFoundException {
+---
+>   public static File getWinUtilsFile() throws FileNotFoundException {

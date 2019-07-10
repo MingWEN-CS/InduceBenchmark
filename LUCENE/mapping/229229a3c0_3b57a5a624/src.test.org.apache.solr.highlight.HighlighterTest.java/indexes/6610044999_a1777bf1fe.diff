@@ -1,0 +1,11 @@
+150a151
+>     args.put("q.alt", "*:*");
+162c163,168
+< 
+---
+>     
+>     
+>     assertQ("Should not explode...", 
+>         sumLRF.makeRequest( new String[] { null } ), 
+>         "
+>         );

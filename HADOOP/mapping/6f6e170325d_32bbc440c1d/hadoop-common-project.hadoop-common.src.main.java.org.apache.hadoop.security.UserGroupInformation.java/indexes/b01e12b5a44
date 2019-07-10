@@ -1,0 +1,1551 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.security;
+
+import static org.apache.hadoop.fs.CommonConfigurationKeys.HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN;
+import static org.apache.hadoop.fs.CommonConfigurationKeys.HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN_DEFAULT;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.kerberos.KerberosKey;
+import javax.security.auth.kerberos.KerberosPrincipal;
+import javax.security.auth.kerberos.KerberosTicket;
+import javax.security.auth.login.AppConfigurationEntry;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+import javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
+import javax.security.auth.spi.LoginModule;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.metrics2.annotation.Metric;
+import org.apache.hadoop.metrics2.annotation.Metrics;
+import org.apache.hadoop.metrics2.lib.DefaultMetricsSystem;
+import org.apache.hadoop.metrics2.lib.MutableRate;
+import org.apache.hadoop.security.SaslRpcServer.AuthMethod;
+import org.apache.hadoop.security.authentication.util.KerberosName;
+import org.apache.hadoop.security.authentication.util.KerberosUtil;
+import org.apache.hadoop.security.token.Token;
+import org.apache.hadoop.security.token.TokenIdentifier;
+import org.apache.hadoop.util.Shell;
+import org.apache.hadoop.util.Time;
+
+
+
+
+
+
+
+@InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce", "HBase", "Hive", "Oozie"})
+@InterfaceStability.Evolving
+public class UserGroupInformation {
+  private static final Log LOG =  LogFactory.getLog(UserGroupInformation.class);
+  
+
+
+  private static final float TICKET_RENEW_WINDOW = 0.80f;
+  static final String HADOOP_USER_NAME = "HADOOP_USER_NAME";
+  static final String HADOOP_PROXY_USER = "HADOOP_PROXY_USER";
+  
+  
+
+
+
+  @Metrics(about="User and group related metrics", context="ugi")
+  static class UgiMetrics {
+    @Metric("Rate of successful kerberos logins and latency (milliseconds)")
+    MutableRate loginSuccess;
+    @Metric("Rate of failed kerberos logins and latency (milliseconds)")
+    MutableRate loginFailure;
+
+    static UgiMetrics create() {
+      return DefaultMetricsSystem.instance().register(new UgiMetrics());
+    }
+  }
+  
+  
+
+
+
+  @InterfaceAudience.Private
+  public static class HadoopLoginModule implements LoginModule {
+    private Subject subject;
+
+    @Override
+    public boolean abort() throws LoginException {
+      return true;
+    }
+
+    private <T extends Principal> T getCanonicalUser(Class<T> cls) {
+      for(T user: subject.getPrincipals(cls)) {
+        return user;
+      }
+      return null;
+    }
+
+    @Override
+    public boolean commit() throws LoginException {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("hadoop login commit");
+      }
+      
+      if (!subject.getPrincipals(User.class).isEmpty()) {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("using existing subject:"+subject.getPrincipals());
+        }
+        return true;
+      }
+      Principal user = null;
+      
+      if (isAuthenticationMethodEnabled(AuthenticationMethod.KERBEROS)) {
+        user = getCanonicalUser(KerberosPrincipal.class);
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("using kerberos user:"+user);
+        }
+      }
+      
+      
+      if (!isSecurityEnabled() && (user == null)) {
+        String envUser = System.getenv(HADOOP_USER_NAME);
+        if (envUser == null) {
+          envUser = System.getProperty(HADOOP_USER_NAME);
+        }
+        user = envUser == null ? null : new User(envUser);
+      }
+      
+      if (user == null) {
+        user = getCanonicalUser(OS_PRINCIPAL_CLASS);
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("using local user:"+user);
+        }
+      }
+      
+      if (user != null) {
+        subject.getPrincipals().add(new User(user.getName()));
+        return true;
+      }
+      LOG.error("Can't find user in " + subject);
+      throw new LoginException("Can't find user name");
+    }
+
+    @Override
+    public void initialize(Subject subject, CallbackHandler callbackHandler,
+                           Map<String, ?> sharedState, Map<String, ?> options) {
+      this.subject = subject;
+    }
+
+    @Override
+    public boolean login() throws LoginException {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("hadoop login");
+      }
+      return true;
+    }
+
+    @Override
+    public boolean logout() throws LoginException {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("hadoop logout");
+      }
+      return true;
+    }
+  }
+
+  
+  static UgiMetrics metrics = UgiMetrics.create();
+  
+  private static boolean isInitialized = false;
+  
+  private static AuthenticationMethod authenticationMethod;
+  
+  private static Groups groups;
+  
+  private static long kerberosMinSecondsBeforeRelogin;
+  
+  private static Configuration conf;
+
+  
+  
+  public static final String HADOOP_TOKEN_FILE_LOCATION = 
+    "HADOOP_TOKEN_FILE_LOCATION";
+  
+  
+
+
+
+  private static synchronized void ensureInitialized() {
+    if (!isInitialized) {
+        initialize(new Configuration(), KerberosName.hasRulesBeenSet());
+    }
+  }
+
+  
+
+
+
+  private static synchronized void initialize(Configuration conf, boolean skipRulesSetting) {
+    initUGI(conf);
+    
+    try {
+      if (!skipRulesSetting) {
+        HadoopKerberosName.setConfiguration(conf);
+      }
+    } catch (IOException ioe) {
+      throw new RuntimeException("Problem with Kerberos auth_to_local name " +
+          "configuration", ioe);
+    }
+  }
+  
+  
+
+
+
+  private static synchronized void initUGI(Configuration conf) {
+    authenticationMethod = SecurityUtil.getAuthenticationMethod(conf);
+    try {
+        kerberosMinSecondsBeforeRelogin = 1000L * conf.getLong(
+                HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN,
+                HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN_DEFAULT);
+    }
+    catch(NumberFormatException nfe) {
+        throw new IllegalArgumentException("Invalid attribute value for " +
+                HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN + " of " +
+                conf.get(HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN));
+    }
+    
+    if (!(groups instanceof TestingGroups)) {
+      groups = Groups.getUserToGroupsMappingService(conf);
+    }
+    isInitialized = true;
+    UserGroupInformation.conf = conf;
+  }
+
+  
+
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public static void setConfiguration(Configuration conf) {
+    initialize(conf, false);
+  }
+  
+  
+
+
+
+
+
+  public static boolean isSecurityEnabled() {
+    return !isAuthenticationMethodEnabled(AuthenticationMethod.SIMPLE);
+  }
+  
+  @InterfaceAudience.Private
+  @InterfaceStability.Evolving
+  private static boolean isAuthenticationMethodEnabled(AuthenticationMethod method) {
+    ensureInitialized();
+    return (authenticationMethod == method);
+  }
+  
+  
+
+
+  private static UserGroupInformation loginUser = null;
+  private static String keytabPrincipal = null;
+  private static String keytabFile = null;
+
+  private final Subject subject;
+  
+  private final User user;
+  private final boolean isKeytab;
+  private final boolean isKrbTkt;
+  
+  private static String OS_LOGIN_MODULE_NAME;
+  private static Class<? extends Principal> OS_PRINCIPAL_CLASS;
+  
+  private static final boolean windows =
+      System.getProperty("os.name").startsWith("Windows");
+  private static final boolean is64Bit =
+      System.getProperty("os.arch").contains("64");
+  private static final boolean ibmJava = System.getProperty("java.vendor").contains("IBM");
+  private static final boolean aix = System.getProperty("os.name").equals("AIX");
+
+  
+  private static String getOSLoginModuleName() {
+    if (ibmJava) {
+      if (windows) {
+        return is64Bit ? "com.ibm.security.auth.module.Win64LoginModule"
+            : "com.ibm.security.auth.module.NTLoginModule";
+      } else if (aix) {
+        return is64Bit ? "com.ibm.security.auth.module.AIX64LoginModule"
+            : "com.ibm.security.auth.module.AIXLoginModule";
+      } else {
+        return "com.ibm.security.auth.module.LinuxLoginModule";
+      }
+    } else {
+      return windows ? "com.sun.security.auth.module.NTLoginModule"
+        : "com.sun.security.auth.module.UnixLoginModule";
+    }
+  }
+
+  
+  @SuppressWarnings("unchecked")
+  private static Class<? extends Principal> getOsPrincipalClass() {
+    ClassLoader cl = ClassLoader.getSystemClassLoader();
+    try {
+      String principalClass = null;
+      if (ibmJava) {
+        if (is64Bit) {
+          principalClass = "com.ibm.security.auth.UsernamePrincipal";
+        } else {
+          if (windows) {
+            principalClass = "com.ibm.security.auth.NTUserPrincipal";
+          } else if (aix) {
+            principalClass = "com.ibm.security.auth.AIXPrincipal";
+          } else {
+            principalClass = "com.ibm.security.auth.LinuxPrincipal";
+          }
+        }
+      } else {
+        principalClass = windows ? "com.sun.security.auth.NTUserPrincipal"
+            : "com.sun.security.auth.UnixPrincipal";
+      }
+      return (Class<? extends Principal>) cl.loadClass(principalClass);
+    } catch (ClassNotFoundException e) {
+      LOG.error("Unable to find JAAS classes:" + e.getMessage());
+    }
+    return null;
+  }
+  static {
+    OS_LOGIN_MODULE_NAME = getOSLoginModuleName();
+    OS_PRINCIPAL_CLASS = getOsPrincipalClass();
+  }
+
+  private static class RealUser implements Principal {
+    private final UserGroupInformation realUser;
+    
+    RealUser(UserGroupInformation realUser) {
+      this.realUser = realUser;
+    }
+    
+    @Override
+    public String getName() {
+      return realUser.getUserName();
+    }
+    
+    public UserGroupInformation getRealUser() {
+      return realUser;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      } else if (o == null || getClass() != o.getClass()) {
+        return false;
+      } else {
+        return realUser.equals(((RealUser) o).realUser);
+      }
+    }
+    
+    @Override
+    public int hashCode() {
+      return realUser.hashCode();
+    }
+    
+    @Override
+    public String toString() {
+      return realUser.toString();
+    }
+  }
+  
+  
+
+
+
+  private static class HadoopConfiguration 
+      extends javax.security.auth.login.Configuration {
+    private static final String SIMPLE_CONFIG_NAME = "hadoop-simple";
+    private static final String USER_KERBEROS_CONFIG_NAME = 
+      "hadoop-user-kerberos";
+    private static final String KEYTAB_KERBEROS_CONFIG_NAME = 
+      "hadoop-keytab-kerberos";
+
+    private static final Map<String, String> BASIC_JAAS_OPTIONS =
+      new HashMap<String,String>();
+    static {
+      String jaasEnvVar = System.getenv("HADOOP_JAAS_DEBUG");
+      if (jaasEnvVar != null && "true".equalsIgnoreCase(jaasEnvVar)) {
+        BASIC_JAAS_OPTIONS.put("debug", "true");
+      }
+    }
+    
+    private static final AppConfigurationEntry OS_SPECIFIC_LOGIN =
+      new AppConfigurationEntry(OS_LOGIN_MODULE_NAME,
+                                LoginModuleControlFlag.REQUIRED,
+                                BASIC_JAAS_OPTIONS);
+    private static final AppConfigurationEntry HADOOP_LOGIN =
+      new AppConfigurationEntry(HadoopLoginModule.class.getName(),
+                                LoginModuleControlFlag.REQUIRED,
+                                BASIC_JAAS_OPTIONS);
+    private static final Map<String,String> USER_KERBEROS_OPTIONS = 
+      new HashMap<String,String>();
+    static {
+      if (ibmJava) {
+        USER_KERBEROS_OPTIONS.put("useDefaultCcache", "true");
+      } else {
+        USER_KERBEROS_OPTIONS.put("doNotPrompt", "true");
+        USER_KERBEROS_OPTIONS.put("useTicketCache", "true");
+        USER_KERBEROS_OPTIONS.put("renewTGT", "true");
+      }
+      String ticketCache = System.getenv("KRB5CCNAME");
+      if (ticketCache != null) {
+        if (ibmJava) {
+          
+          System.setProperty("KRB5CCNAME", ticketCache);
+        } else {
+          USER_KERBEROS_OPTIONS.put("ticketCache", ticketCache);
+        }
+      }
+      USER_KERBEROS_OPTIONS.putAll(BASIC_JAAS_OPTIONS);
+    }
+    private static final AppConfigurationEntry USER_KERBEROS_LOGIN =
+      new AppConfigurationEntry(KerberosUtil.getKrb5LoginModuleName(),
+                                LoginModuleControlFlag.OPTIONAL,
+                                USER_KERBEROS_OPTIONS);
+    private static final Map<String,String> KEYTAB_KERBEROS_OPTIONS = 
+      new HashMap<String,String>();
+    static {
+      if (ibmJava) {
+        KEYTAB_KERBEROS_OPTIONS.put("credsType", "both");
+      } else {
+        KEYTAB_KERBEROS_OPTIONS.put("doNotPrompt", "true");
+        KEYTAB_KERBEROS_OPTIONS.put("useKeyTab", "true");
+        KEYTAB_KERBEROS_OPTIONS.put("storeKey", "true");
+        KEYTAB_KERBEROS_OPTIONS.put("refreshKrb5Config", "true");
+      }
+      KEYTAB_KERBEROS_OPTIONS.putAll(BASIC_JAAS_OPTIONS);      
+    }
+    private static final AppConfigurationEntry KEYTAB_KERBEROS_LOGIN =
+      new AppConfigurationEntry(KerberosUtil.getKrb5LoginModuleName(),
+                                LoginModuleControlFlag.REQUIRED,
+                                KEYTAB_KERBEROS_OPTIONS);
+    
+    private static final AppConfigurationEntry[] SIMPLE_CONF = 
+      new AppConfigurationEntry[]{OS_SPECIFIC_LOGIN, HADOOP_LOGIN};
+
+    private static final AppConfigurationEntry[] USER_KERBEROS_CONF =
+      new AppConfigurationEntry[]{OS_SPECIFIC_LOGIN, USER_KERBEROS_LOGIN,
+                                  HADOOP_LOGIN};
+
+    private static final AppConfigurationEntry[] KEYTAB_KERBEROS_CONF =
+      new AppConfigurationEntry[]{KEYTAB_KERBEROS_LOGIN, HADOOP_LOGIN};
+
+    @Override
+    public AppConfigurationEntry[] getAppConfigurationEntry(String appName) {
+      if (SIMPLE_CONFIG_NAME.equals(appName)) {
+        return SIMPLE_CONF;
+      } else if (USER_KERBEROS_CONFIG_NAME.equals(appName)) {
+        return USER_KERBEROS_CONF;
+      } else if (KEYTAB_KERBEROS_CONFIG_NAME.equals(appName)) {
+        if (ibmJava) {
+          KEYTAB_KERBEROS_OPTIONS.put("useKeytab",
+              prependFileAuthority(keytabFile));
+        } else {
+          KEYTAB_KERBEROS_OPTIONS.put("keyTab", keytabFile);
+        }
+        KEYTAB_KERBEROS_OPTIONS.put("principal", keytabPrincipal);
+        return KEYTAB_KERBEROS_CONF;
+      }
+      return null;
+    }
+  }
+
+  private static String prependFileAuthority(String keytabPath) {
+    return keytabPath.startsWith("file:
+        : "file:
+  }
+
+  
+
+
+  private static class DynamicConfiguration
+      extends javax.security.auth.login.Configuration {
+    private AppConfigurationEntry[] ace;
+    
+    DynamicConfiguration(AppConfigurationEntry[] ace) {
+      this.ace = ace;
+    }
+    
+    @Override
+    public AppConfigurationEntry[] getAppConfigurationEntry(String appName) {
+      return ace;
+    }
+  }
+
+  private static LoginContext
+  newLoginContext(String appName, Subject subject,
+    javax.security.auth.login.Configuration loginConf)
+      throws LoginException {
+    
+    
+    
+    Thread t = Thread.currentThread();
+    ClassLoader oldCCL = t.getContextClassLoader();
+    t.setContextClassLoader(HadoopLoginModule.class.getClassLoader());
+    try {
+      return new LoginContext(appName, subject, null, loginConf);
+    } finally {
+      t.setContextClassLoader(oldCCL);
+    }
+  }
+
+  private LoginContext getLogin() {
+    return user.getLogin();
+  }
+  
+  private void setLogin(LoginContext login) {
+    user.setLogin(login);
+  }
+
+  
+
+
+
+
+  UserGroupInformation(Subject subject) {
+    this.subject = subject;
+    this.user = subject.getPrincipals(User.class).iterator().next();
+    this.isKeytab = !subject.getPrivateCredentials(KerberosKey.class).isEmpty();
+    this.isKrbTkt = !subject.getPrivateCredentials(KerberosTicket.class).isEmpty();
+  }
+  
+  
+
+
+
+  public boolean hasKerberosCredentials() {
+    return isKeytab || isKrbTkt;
+  }
+
+  
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public synchronized
+  static UserGroupInformation getCurrentUser() throws IOException {
+    AccessControlContext context = AccessController.getContext();
+    Subject subject = Subject.getSubject(context);
+    if (subject == null || subject.getPrincipals(User.class).isEmpty()) {
+      return getLoginUser();
+    } else {
+      return new UserGroupInformation(subject);
+    }
+  }
+
+  
+
+
+
+
+
+
+
+ 
+  public static UserGroupInformation getBestUGI(
+      String ticketCachePath, String user) throws IOException {
+    if (ticketCachePath != null) {
+      return getUGIFromTicketCache(ticketCachePath, user);
+    } else if (user == null) {
+      return getCurrentUser();
+    } else {
+      return createRemoteUser(user);
+    }    
+  }
+
+  
+
+
+
+
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public static UserGroupInformation getUGIFromTicketCache(
+            String ticketCache, String user) throws IOException {
+    if (!isAuthenticationMethodEnabled(AuthenticationMethod.KERBEROS)) {
+      return getBestUGI(null, user);
+    }
+    try {
+      Map<String,String> krbOptions = new HashMap<String,String>();
+      krbOptions.put("doNotPrompt", "true");
+      krbOptions.put("useTicketCache", "true");
+      krbOptions.put("useKeyTab", "false");
+      krbOptions.put("renewTGT", "false");
+      krbOptions.put("ticketCache", ticketCache);
+      krbOptions.putAll(HadoopConfiguration.BASIC_JAAS_OPTIONS);
+      AppConfigurationEntry ace = new AppConfigurationEntry(
+          KerberosUtil.getKrb5LoginModuleName(),
+          LoginModuleControlFlag.REQUIRED,
+          krbOptions);
+      DynamicConfiguration dynConf =
+          new DynamicConfiguration(new AppConfigurationEntry[]{ ace });
+      LoginContext login = newLoginContext(
+          HadoopConfiguration.USER_KERBEROS_CONFIG_NAME, null, dynConf);
+      login.login();
+
+      Subject loginSubject = login.getSubject();
+      Set<Principal> loginPrincipals = loginSubject.getPrincipals();
+      if (loginPrincipals.isEmpty()) {
+        throw new RuntimeException("No login principals found!");
+      }
+      if (loginPrincipals.size() != 1) {
+        LOG.warn("found more than one principal in the ticket cache file " +
+          ticketCache);
+      }
+      User ugiUser = new User(loginPrincipals.iterator().next().getName(),
+          AuthenticationMethod.KERBEROS, login);
+      loginSubject.getPrincipals().add(ugiUser);
+      UserGroupInformation ugi = new UserGroupInformation(loginSubject);
+      ugi.setLogin(login);
+      ugi.setAuthenticationMethod(AuthenticationMethod.KERBEROS);
+      return ugi;
+    } catch (LoginException le) {
+      throw new IOException("failure to login using ticket cache file " +
+          ticketCache, le);
+    }
+  }
+
+  
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public synchronized 
+  static UserGroupInformation getLoginUser() throws IOException {
+    if (loginUser == null) {
+      ensureInitialized();
+      try {
+        Subject subject = new Subject();
+        LoginContext login =
+            newLoginContext(authenticationMethod.getLoginAppName(), 
+                            subject, new HadoopConfiguration());
+        login.login();
+        UserGroupInformation realUser = new UserGroupInformation(subject);
+        realUser.setLogin(login);
+        realUser.setAuthenticationMethod(authenticationMethod);
+        realUser = new UserGroupInformation(login.getSubject());
+        
+        
+        String proxyUser = System.getenv(HADOOP_PROXY_USER);
+        if (proxyUser == null) {
+          proxyUser = System.getProperty(HADOOP_PROXY_USER);
+        }
+        loginUser = proxyUser == null ? realUser : createProxyUser(proxyUser, realUser);
+
+        String fileLocation = System.getenv(HADOOP_TOKEN_FILE_LOCATION);
+        if (fileLocation != null) {
+          
+          
+          
+          Credentials cred = Credentials.readTokenStorageFile(
+              new File(fileLocation), conf);
+          loginUser.addCredentials(cred);
+        }
+        loginUser.spawnAutoRenewalThreadForUserCreds();
+      } catch (LoginException le) {
+        LOG.debug("failure to login", le);
+        throw new IOException("failure to login", le);
+      }
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("UGI loginUser:"+loginUser);
+      }
+    }
+    return loginUser;
+  }
+
+  @InterfaceAudience.Private
+  @InterfaceStability.Unstable
+  synchronized static void setLoginUser(UserGroupInformation ugi) {
+    
+    
+    loginUser = ugi;
+  }
+  
+  
+
+
+
+  public boolean isFromKeytab() {
+    return isKeytab;
+  }
+  
+  
+
+
+
+  private synchronized KerberosTicket getTGT() {
+    Set<KerberosTicket> tickets = subject
+        .getPrivateCredentials(KerberosTicket.class);
+    for (KerberosTicket ticket : tickets) {
+      if (SecurityUtil.isOriginalTGT(ticket)) {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Found tgt " + ticket);
+        }
+        return ticket;
+      }
+    }
+    return null;
+  }
+  
+  private long getRefreshTime(KerberosTicket tgt) {
+    long start = tgt.getStartTime().getTime();
+    long end = tgt.getEndTime().getTime();
+    return start + (long) ((end - start) * TICKET_RENEW_WINDOW);
+  }
+
+  
+  private void spawnAutoRenewalThreadForUserCreds() {
+    if (isSecurityEnabled()) {
+      
+      if (user.getAuthenticationMethod() == AuthenticationMethod.KERBEROS &&
+          !isKeytab) {
+        Thread t = new Thread(new Runnable() {
+          
+          @Override
+          public void run() {
+            String cmd = conf.get("hadoop.kerberos.kinit.command",
+                                  "kinit");
+            KerberosTicket tgt = getTGT();
+            if (tgt == null) {
+              return;
+            }
+            long nextRefresh = getRefreshTime(tgt);
+            while (true) {
+              try {
+                long now = Time.now();
+                if(LOG.isDebugEnabled()) {
+                  LOG.debug("Current time is " + now);
+                  LOG.debug("Next refresh is " + nextRefresh);
+                }
+                if (now < nextRefresh) {
+                  Thread.sleep(nextRefresh - now);
+                }
+                Shell.execCommand(cmd, "-R");
+                if(LOG.isDebugEnabled()) {
+                  LOG.debug("renewed ticket");
+                }
+                reloginFromTicketCache();
+                tgt = getTGT();
+                if (tgt == null) {
+                  LOG.warn("No TGT after renewal. Aborting renew thread for " +
+                           getUserName());
+                  return;
+                }
+                nextRefresh = Math.max(getRefreshTime(tgt),
+                                       now + kerberosMinSecondsBeforeRelogin);
+              } catch (InterruptedException ie) {
+                LOG.warn("Terminating renewal thread");
+                return;
+              } catch (IOException ie) {
+                LOG.warn("Exception encountered while running the" +
+                    " renewal command. Aborting renew thread. " + ie);
+                return;
+              }
+            }
+          }
+        });
+        t.setDaemon(true);
+        t.setName("TGT Renewer for " + getUserName());
+        t.start();
+      }
+    }
+  }
+  
+
+
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public synchronized
+  static void loginUserFromKeytab(String user,
+                                  String path
+                                  ) throws IOException {
+    if (!isSecurityEnabled())
+      return;
+
+    keytabFile = path;
+    keytabPrincipal = user;
+    Subject subject = new Subject();
+    LoginContext login; 
+    long start = 0;
+    try {
+      login = newLoginContext(HadoopConfiguration.KEYTAB_KERBEROS_CONFIG_NAME,
+            subject, new HadoopConfiguration());
+      start = Time.now();
+      login.login();
+      metrics.loginSuccess.add(Time.now() - start);
+      loginUser = new UserGroupInformation(subject);
+      loginUser.setLogin(login);
+      loginUser.setAuthenticationMethod(AuthenticationMethod.KERBEROS);
+    } catch (LoginException le) {
+      if (start > 0) {
+        metrics.loginFailure.add(Time.now() - start);
+      }
+      throw new IOException("Login failure for " + user + " from keytab " + 
+                            path, le);
+    }
+    LOG.info("Login successful for user " + keytabPrincipal
+        + " using keytab file " + keytabFile);
+  }
+  
+  
+
+
+
+
+  public synchronized void checkTGTAndReloginFromKeytab() throws IOException {
+    if (!isSecurityEnabled()
+        || user.getAuthenticationMethod() != AuthenticationMethod.KERBEROS
+        || !isKeytab)
+      return;
+    KerberosTicket tgt = getTGT();
+    if (tgt != null && Time.now() < getRefreshTime(tgt)) {
+      return;
+    }
+    reloginFromKeytab();
+  }
+
+  
+
+
+
+
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public synchronized void reloginFromKeytab()
+  throws IOException {
+    if (!isSecurityEnabled() ||
+         user.getAuthenticationMethod() != AuthenticationMethod.KERBEROS ||
+         !isKeytab)
+      return;
+    
+    long now = Time.now();
+    if (!hasSufficientTimeElapsed(now)) {
+      return;
+    }
+
+    KerberosTicket tgt = getTGT();
+    
+    if (tgt != null && now < getRefreshTime(tgt)) {
+      return;
+    }
+    
+    LoginContext login = getLogin();
+    if (login == null || keytabFile == null) {
+      throw new IOException("loginUserFromKeyTab must be done first");
+    }
+    
+    long start = 0;
+    
+    user.setLastLogin(now);
+    try {
+      LOG.info("Initiating logout for " + getUserName());
+      synchronized (UserGroupInformation.class) {
+        
+        
+        
+        login.logout();
+        
+        
+        login = newLoginContext(
+            HadoopConfiguration.KEYTAB_KERBEROS_CONFIG_NAME, getSubject(),
+            new HadoopConfiguration());
+        LOG.info("Initiating re-login for " + keytabPrincipal);
+        start = Time.now();
+        login.login();
+        metrics.loginSuccess.add(Time.now() - start);
+        setLogin(login);
+      }
+    } catch (LoginException le) {
+      if (start > 0) {
+        metrics.loginFailure.add(Time.now() - start);
+      }
+      throw new IOException("Login failure for " + keytabPrincipal + 
+          " from keytab " + keytabFile, le);
+    } 
+  }
+
+  
+
+
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public synchronized void reloginFromTicketCache()
+  throws IOException {
+    if (!isSecurityEnabled() || 
+        user.getAuthenticationMethod() != AuthenticationMethod.KERBEROS ||
+        !isKrbTkt)
+      return;
+    LoginContext login = getLogin();
+    if (login == null) {
+      throw new IOException("login must be done first");
+    }
+    long now = Time.now();
+    if (!hasSufficientTimeElapsed(now)) {
+      return;
+    }
+    
+    user.setLastLogin(now);
+    try {
+      LOG.info("Initiating logout for " + getUserName());
+      
+      
+      
+      login.logout();
+      
+      
+      login = 
+        newLoginContext(HadoopConfiguration.USER_KERBEROS_CONFIG_NAME, 
+            getSubject(), new HadoopConfiguration());
+      LOG.info("Initiating re-login for " + getUserName());
+      login.login();
+      setLogin(login);
+    } catch (LoginException le) {
+      throw new IOException("Login failure for " + getUserName(), le);
+    } 
+  }
+
+
+  
+
+
+
+
+
+
+
+  public synchronized
+  static UserGroupInformation loginUserFromKeytabAndReturnUGI(String user,
+                                  String path
+                                  ) throws IOException {
+    if (!isSecurityEnabled())
+      return UserGroupInformation.getCurrentUser();
+    String oldKeytabFile = null;
+    String oldKeytabPrincipal = null;
+
+    long start = 0;
+    try {
+      oldKeytabFile = keytabFile;
+      oldKeytabPrincipal = keytabPrincipal;
+      keytabFile = path;
+      keytabPrincipal = user;
+      Subject subject = new Subject();
+      
+      LoginContext login = newLoginContext(
+          HadoopConfiguration.KEYTAB_KERBEROS_CONFIG_NAME, subject,
+          new HadoopConfiguration());
+       
+      start = Time.now();
+      login.login();
+      metrics.loginSuccess.add(Time.now() - start);
+      UserGroupInformation newLoginUser = new UserGroupInformation(subject);
+      newLoginUser.setLogin(login);
+      newLoginUser.setAuthenticationMethod(AuthenticationMethod.KERBEROS);
+      
+      return newLoginUser;
+    } catch (LoginException le) {
+      if (start > 0) {
+        metrics.loginFailure.add(Time.now() - start);
+      }
+      throw new IOException("Login failure for " + user + " from keytab " + 
+                            path, le);
+    } finally {
+      if(oldKeytabFile != null) keytabFile = oldKeytabFile;
+      if(oldKeytabPrincipal != null) keytabPrincipal = oldKeytabPrincipal;
+    }
+  }
+
+  private boolean hasSufficientTimeElapsed(long now) {
+    if (now - user.getLastLogin() < kerberosMinSecondsBeforeRelogin ) {
+      LOG.warn("Not attempting to re-login since the last re-login was " +
+          "attempted less than " + (kerberosMinSecondsBeforeRelogin/1000) +
+          " seconds before.");
+      return false;
+    }
+    return true;
+  }
+  
+  
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public synchronized static boolean isLoginKeytabBased() throws IOException {
+    return getLoginUser().isKeytab;
+  }
+
+  
+
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public static UserGroupInformation createRemoteUser(String user) {
+    if (user == null || user.isEmpty()) {
+      throw new IllegalArgumentException("Null user");
+    }
+    Subject subject = new Subject();
+    subject.getPrincipals().add(new User(user));
+    UserGroupInformation result = new UserGroupInformation(subject);
+    result.setAuthenticationMethod(AuthenticationMethod.SIMPLE);
+    return result;
+  }
+
+  
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public static enum AuthenticationMethod {
+    
+    
+    SIMPLE(AuthMethod.SIMPLE,
+        HadoopConfiguration.SIMPLE_CONFIG_NAME),
+    KERBEROS(AuthMethod.KERBEROS,
+        HadoopConfiguration.USER_KERBEROS_CONFIG_NAME),
+    TOKEN(AuthMethod.DIGEST),
+    CERTIFICATE(null),
+    KERBEROS_SSL(null),
+    PROXY(null);
+    
+    private final AuthMethod authMethod;
+    private final String loginAppName;
+    
+    private AuthenticationMethod(AuthMethod authMethod) {
+      this(authMethod, null);
+    }
+    private AuthenticationMethod(AuthMethod authMethod, String loginAppName) {
+      this.authMethod = authMethod;
+      this.loginAppName = loginAppName;
+    }
+    
+    public AuthMethod getAuthMethod() {
+      return authMethod;
+    }
+    
+    String getLoginAppName() {
+      if (loginAppName == null) {
+        throw new UnsupportedOperationException(
+            this + " login authentication is not supported");
+      }
+      return loginAppName;
+    }
+    
+    public static AuthenticationMethod valueOf(AuthMethod authMethod) {
+      for (AuthenticationMethod value : values()) {
+        if (value.getAuthMethod() == authMethod) {
+          return value;
+        }
+      }
+      throw new IllegalArgumentException(
+          "no authentication method for " + authMethod);
+    }
+  };
+
+  
+
+
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public static UserGroupInformation createProxyUser(String user,
+      UserGroupInformation realUser) {
+    if (user == null || user.isEmpty()) {
+      throw new IllegalArgumentException("Null user");
+    }
+    if (realUser == null) {
+      throw new IllegalArgumentException("Null real user");
+    }
+    Subject subject = new Subject();
+    Set<Principal> principals = subject.getPrincipals();
+    principals.add(new User(user));
+    principals.add(new RealUser(realUser));
+    UserGroupInformation result =new UserGroupInformation(subject);
+    result.setAuthenticationMethod(AuthenticationMethod.PROXY);
+    return result;
+  }
+
+  
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public UserGroupInformation getRealUser() {
+    for (RealUser p: subject.getPrincipals(RealUser.class)) {
+      return p.getRealUser();
+    }
+    return null;
+  }
+
+
+  
+  
+
+
+
+  private static class TestingGroups extends Groups {
+    private final Map<String, List<String>> userToGroupsMapping = 
+      new HashMap<String,List<String>>();
+    private Groups underlyingImplementation;
+    
+    private TestingGroups(Groups underlyingImplementation) {
+      super(new org.apache.hadoop.conf.Configuration());
+      this.underlyingImplementation = underlyingImplementation;
+    }
+    
+    @Override
+    public List<String> getGroups(String user) throws IOException {
+      List<String> result = userToGroupsMapping.get(user);
+      
+      if (result == null) {
+        result = underlyingImplementation.getGroups(user);
+      }
+
+      return result;
+    }
+
+    private void setUserGroups(String user, String[] groups) {
+      userToGroupsMapping.put(user, Arrays.asList(groups));
+    }
+  }
+
+  
+
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public static UserGroupInformation createUserForTesting(String user, 
+                                                          String[] userGroups) {
+    ensureInitialized();
+    UserGroupInformation ugi = createRemoteUser(user);
+    
+    if (!(groups instanceof TestingGroups)) {
+      groups = new TestingGroups(groups);
+    }
+    
+    ((TestingGroups) groups).setUserGroups(ugi.getShortUserName(), userGroups);
+    return ugi;
+  }
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  public static UserGroupInformation createProxyUserForTesting(String user,
+      UserGroupInformation realUser, String[] userGroups) {
+    ensureInitialized();
+    UserGroupInformation ugi = createProxyUser(user, realUser);
+    
+    if (!(groups instanceof TestingGroups)) {
+      groups = new TestingGroups(groups);
+    }
+    
+    ((TestingGroups) groups).setUserGroups(ugi.getShortUserName(), userGroups);
+    return ugi;
+  }
+  
+  
+
+
+
+  public String getShortUserName() {
+    for (User p: subject.getPrincipals(User.class)) {
+      return p.getShortName();
+    }
+    return null;
+  }
+
+  
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public String getUserName() {
+    return user.getName();
+  }
+
+  
+
+
+
+
+
+
+
+
+  public synchronized boolean addTokenIdentifier(TokenIdentifier tokenId) {
+    return subject.getPublicCredentials().add(tokenId);
+  }
+
+  
+
+
+
+
+  public synchronized Set<TokenIdentifier> getTokenIdentifiers() {
+    return subject.getPublicCredentials(TokenIdentifier.class);
+  }
+  
+  
+
+
+
+
+
+  public synchronized boolean addToken(Token<? extends TokenIdentifier> token) {
+    return (token != null) ? addToken(token.getService(), token) : false;
+  }
+
+  
+
+
+
+
+
+
+  public synchronized boolean addToken(Text alias,
+                                       Token<? extends TokenIdentifier> token) {
+    getCredentialsInternal().addToken(alias, token);
+    return true;
+  }
+  
+  
+
+
+
+
+  public synchronized
+  Collection<Token<? extends TokenIdentifier>> getTokens() {
+    return Collections.unmodifiableCollection(
+        getCredentialsInternal().getAllTokens());
+  }
+
+  
+
+
+
+
+  public synchronized Credentials getCredentials() {
+    return new Credentials(getCredentialsInternal());
+  }
+  
+  
+
+
+
+  public synchronized void addCredentials(Credentials credentials) {
+    getCredentialsInternal().addAll(credentials);
+  }
+
+  private synchronized Credentials getCredentialsInternal() {
+    final Credentials credentials;
+    final Set<Credentials> credentialsSet =
+      subject.getPrivateCredentials(Credentials.class);
+    if (!credentialsSet.isEmpty()){
+      credentials = credentialsSet.iterator().next();
+    } else {
+      credentials = new Credentials();
+      subject.getPrivateCredentials().add(credentials);
+    }
+    return credentials;
+  }
+
+  
+
+
+
+
+  public synchronized String[] getGroupNames() {
+    ensureInitialized();
+    try {
+      List<String> result = groups.getGroups(getShortUserName());
+      return result.toArray(new String[result.size()]);
+    } catch (IOException ie) {
+      LOG.warn("No groups available for user " + getShortUserName());
+      return new String[0];
+    }
+  }
+  
+  
+
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder(getUserName());
+    sb.append(" (auth:"+getAuthenticationMethod()+")");
+    if (getRealUser() != null) {
+      sb.append(" via ").append(getRealUser().toString());
+    }
+    return sb.toString();
+  }
+
+  
+
+
+
+
+  public synchronized 
+  void setAuthenticationMethod(AuthenticationMethod authMethod) {
+    user.setAuthenticationMethod(authMethod);
+  }
+
+  
+
+
+
+
+  public void setAuthenticationMethod(AuthMethod authMethod) {
+    user.setAuthenticationMethod(AuthenticationMethod.valueOf(authMethod));
+  }
+
+  
+
+
+
+
+  public synchronized AuthenticationMethod getAuthenticationMethod() {
+    return user.getAuthenticationMethod();
+  }
+
+  
+
+
+
+
+
+  public synchronized AuthenticationMethod getRealAuthenticationMethod() {
+    UserGroupInformation ugi = getRealUser();
+    if (ugi == null) {
+      ugi = this;
+    }
+    return ugi.getAuthenticationMethod();
+  }
+
+  
+
+
+
+
+
+
+  public static AuthenticationMethod getRealAuthenticationMethod(
+      UserGroupInformation ugi) {
+    AuthenticationMethod authMethod = ugi.getAuthenticationMethod();
+    if (authMethod == AuthenticationMethod.PROXY) {
+      authMethod = ugi.getRealUser().getAuthenticationMethod();
+    }
+    return authMethod;
+  }
+
+  
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    } else if (o == null || getClass() != o.getClass()) {
+      return false;
+    } else {
+      return subject == ((UserGroupInformation) o).subject;
+    }
+  }
+
+  
+
+
+  @Override
+  public int hashCode() {
+    return System.identityHashCode(subject);
+  }
+
+  
+
+
+
+  protected Subject getSubject() {
+    return subject;
+  }
+
+  
+
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public <T> T doAs(PrivilegedAction<T> action) {
+    logPrivilegedAction(subject, action);
+    return Subject.doAs(subject, action);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+  @InterfaceAudience.Public
+  @InterfaceStability.Evolving
+  public <T> T doAs(PrivilegedExceptionAction<T> action
+                    ) throws IOException, InterruptedException {
+    try {
+      logPrivilegedAction(subject, action);
+      return Subject.doAs(subject, action);
+    } catch (PrivilegedActionException pae) {
+      Throwable cause = pae.getCause();
+      LOG.error("PriviledgedActionException as:"+this+" cause:"+cause);
+      if (cause instanceof IOException) {
+        throw (IOException) cause;
+      } else if (cause instanceof Error) {
+        throw (Error) cause;
+      } else if (cause instanceof RuntimeException) {
+        throw (RuntimeException) cause;
+      } else if (cause instanceof InterruptedException) {
+        throw (InterruptedException) cause;
+      } else {
+        throw new UndeclaredThrowableException(pae,"Unknown exception in doAs");
+      }
+    }
+  }
+
+  private void logPrivilegedAction(Subject subject, Object action) {
+    if (LOG.isDebugEnabled()) {
+      
+      String where = new Throwable().getStackTrace()[2].toString();
+      LOG.debug("PrivilegedAction as:"+this+" from:"+where);
+    }
+  }
+
+  private void print() throws IOException {
+    System.out.println("User: " + getUserName());
+    System.out.print("Group Ids: ");
+    System.out.println();
+    String[] groups = getGroupNames();
+    System.out.print("Groups: ");
+    for(int i=0; i < groups.length; i++) {
+      System.out.print(groups[i] + " ");
+    }
+    System.out.println();    
+  }
+
+  
+
+
+
+
+
+  public static void main(String [] args) throws Exception {
+  System.out.println("Getting UGI for current user");
+    UserGroupInformation ugi = getCurrentUser();
+    ugi.print();
+    System.out.println("UGI: " + ugi);
+    System.out.println("Auth method " + ugi.user.getAuthenticationMethod());
+    System.out.println("Keytab " + ugi.isKeytab);
+    System.out.println("============================================================");
+    
+    if (args.length == 2) {
+      System.out.println("Getting UGI from keytab....");
+      loginUserFromKeytab(args[0], args[1]);
+      getCurrentUser().print();
+      System.out.println("Keytab: " + ugi);
+      System.out.println("Auth method " + loginUser.user.getAuthenticationMethod());
+      System.out.println("Keytab " + loginUser.isKeytab);
+    }
+  }
+
+}

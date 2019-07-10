@@ -1,0 +1,25 @@
+204a205
+>         ensureActivitiesNode();
+1320a1322,1343
+> 
+> 
+> 
+> 
+> 
+>     private void ensureActivitiesNode() throws ItemStateException {
+>         NodeState jcrSystemState = (NodeState) getNonVirtualItemState(RepositoryImpl.SYSTEM_ROOT_NODE_ID);
+>         if (!jcrSystemState.hasChildNodeEntry(RepositoryImpl.ACTIVITIES_NODE_ID)) {
+>             jcrSystemState.addChildNodeEntry(NameConstants.JCR_ACTIVITIES, RepositoryImpl.ACTIVITIES_NODE_ID);
+> 
+>             ChangeLog changeLog = new ChangeLog();
+>             changeLog.modified(jcrSystemState);
+> 
+>             persistMgr.store(changeLog);
+>             changeLog.persisted();
+>         }
+>     }
+> 
+>     
+> 
+> 
+> 

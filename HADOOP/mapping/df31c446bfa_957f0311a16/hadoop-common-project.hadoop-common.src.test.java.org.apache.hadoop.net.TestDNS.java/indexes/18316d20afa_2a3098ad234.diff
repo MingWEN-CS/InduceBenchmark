@@ -1,0 +1,119 @@
+20a21,24
+> import java.lang.reflect.Field;
+> import java.lang.reflect.Modifier;
+> import java.net.NetworkInterface;
+> import java.net.SocketException;
+30a35,37
+> 
+> import static org.hamcrest.CoreMatchers.not;
+> import static org.hamcrest.core.Is.is;
+41a49,53
+>   
+>   private static final String DUMMY_HOSTNAME = "-DUMMY_HOSTNAME";
+>   private static final String INVALID_DNS_SERVER = "0.0.0.0";
+> 
+>   
+92,97c104,105
+<     try {
+<       String host = DNS.getDefaultHost(null);
+<       fail("Expected a NullPointerException, got " + host);
+<     } catch (NullPointerException npe) {
+<       
+<     }
+---
+>     String host = DNS.getDefaultHost(null);  
+>     assertThat(host, is(DNS.getDefaultHost(DEFAULT)));
+108a117,136
+> 
+>   @Test
+>   public void testNullDnsServer() throws Exception {
+>     String host = DNS.getDefaultHost(getLoopbackInterface(), null);
+>     assertThat(host, is(DNS.getDefaultHost(getLoopbackInterface())));
+>   }
+> 
+>   
+> 
+> 
+> 
+>   @Test
+>   public void testDefaultDnsServer() throws Exception {
+>     String host = DNS.getDefaultHost(getLoopbackInterface(), DEFAULT);
+>     assertThat(host, is(DNS.getDefaultHost(getLoopbackInterface())));
+>   }
+> 
+>   
+> 
+> 
+149a178,187
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+150a189,204
+> 
+> 
+> 
+>   @Test (timeout=60000)
+>   public void testLookupWithHostsFallback() throws Exception {
+>     final String oldHostname = changeDnsCachedHostname(DUMMY_HOSTNAME);
+> 
+>     try {
+>       String hostname = DNS.getDefaultHost(
+>           getLoopbackInterface(), INVALID_DNS_SERVER, true);
+> 
+>       
+>       assertThat(hostname, not(DUMMY_HOSTNAME));
+>     } finally {
+>       
+>       changeDnsCachedHostname(oldHostname);
+158a213,256
+> 
+>   @Test(timeout=60000)
+>   public void testLookupWithoutHostsFallback() throws Exception {
+>     final String oldHostname = changeDnsCachedHostname(DUMMY_HOSTNAME);
+> 
+>     try {
+>       String hostname = DNS.getDefaultHost(
+>           getLoopbackInterface(), INVALID_DNS_SERVER, false);
+> 
+>       
+>       
+>       assertThat(hostname, is(DUMMY_HOSTNAME));
+>     } finally {
+>       
+>       changeDnsCachedHostname(oldHostname);
+>     }
+>   }
+> 
+>   private String getLoopbackInterface() throws SocketException {
+>     return NetworkInterface.getByInetAddress(
+>         InetAddress.getLoopbackAddress()).getDisplayName();
+>   }
+> 
+>   
+> 
+> 
+> 
+>   private String changeDnsCachedHostname(final String newHostname)
+>       throws Exception {
+>     final String oldCachedHostname = DNS.getDefaultHost(DEFAULT);
+>     Field field = DNS.class.getDeclaredField("cachedHostname");
+>     field.setAccessible(true);
+>     Field modifiersField = Field.class.getDeclaredField("modifiers");
+>     modifiersField.setAccessible(true);
+>     modifiersField.set(field, field.getModifiers() & ~Modifier.FINAL);
+>     field.set(null, newHostname);
+>     return oldCachedHostname;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 

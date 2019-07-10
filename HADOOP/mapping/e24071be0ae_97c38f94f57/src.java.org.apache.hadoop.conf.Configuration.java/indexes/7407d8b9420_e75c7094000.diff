@@ -1,0 +1,138 @@
+33a34
+> import java.util.AbstractMap;
+1070c1071,1203
+<  
+---
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   protected class ConfigItemMap extends AbstractMap<String, String>
+>       implements Map<String, String> {
+> 
+>     private final String prefix;
+> 
+>     public ConfigItemMap(String prefix) {
+>       this.prefix = prefix;
+>     }
+> 
+>     @Override
+>     public boolean containsKey(Object key) {
+>       return lookup(key.toString()) != null;
+>     }
+> 
+>     @Override
+>     public Set<Map.Entry<String, String>> entrySet() {
+>       throw new UnsupportedOperationException("unsupported");
+>     }
+> 
+>     @Override
+>     public boolean equals(Object o) {
+>       return o != null && o instanceof ConfigItemMap
+>           && prefix.equals(((ConfigItemMap) o).prefix)
+>           && Configuration.this == ((ConfigItemMap) o).getConfiguration();
+>     }
+> 
+>     private Configuration getConfiguration() {
+>       return Configuration.this;
+>     }
+> 
+>     @Override
+>     public String get(Object key) {
+>       if (null == key) {
+>         return null;
+>       }
+> 
+>       return lookup(key.toString());
+>     }
+> 
+>     @Override
+>     public int hashCode() {
+>       return prefix.hashCode();
+>     }
+> 
+>     @Override
+>     public String put(String key, String val) {
+>       if (null == key) {
+>         return null;
+>       }
+> 
+>       String ret = get(key);
+>       Configuration.this.set(prefix + key, val);
+>       return ret;
+>     }
+> 
+>     @Override
+>     public void putAll(Map<? extends String, ? extends String> m) {
+>       for (Map.Entry<? extends String, ? extends String> entry : m.entrySet()) {
+>         put(entry.getKey(), entry.getValue());
+>       }
+>     }
+> 
+>     private String lookup(String subKey) {
+>       String configKey = prefix + subKey;
+>       Properties props = Configuration.this.getProps();
+>       Object val = props.get(configKey);
+>       String str = null;
+>       if (null != val) {
+>         str = substituteVars(val.toString());
+>       }
+> 
+>       return str;
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public void setMap(String name, Map<String, String> valueMap) {
+>     
+>     for (Map.Entry<String, String> entry : valueMap.entrySet()) {
+>       set(name + "." + entry.getKey(), entry.getValue());
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public Map<String, String> getMap(String name) {
+>     String prefix = handleDeprecation(name) + ".";
+>     return new ConfigItemMap(prefix);
+>   }
+> 

@@ -1,0 +1,121 @@
+133a134
+>   private int transientCacheSize = Integer.MAX_VALUE;
+138d138
+<   protected int transientCacheSize = Integer.MAX_VALUE; 
+324,328d323
+<       if (! fconf.exists()) {
+<         if (StringUtils.isBlank(containerConfigFilename) || containerConfigFilename.endsWith(".xml")) {
+<           fconf = new File(solrHome, SolrProperties.SOLR_PROPERTIES_FILE);
+<         }
+<       }
+334c329
+<         log.info("no solr.xml or solr.properties file found - using default old-style solr.xml");
+---
+>         log.info("no solr.xml found. using default old-style solr.xml");
+336c331
+<           cores.load(solrHome, new ByteArrayInputStream(ConfigSolrXmlBackCompat.DEF_SOLR_XML.getBytes("UTF-8")), true, null);
+---
+>           cores.load(solrHome, new ByteArrayInputStream(ConfigSolrXml.DEF_SOLR_XML.getBytes("UTF-8")), null);
+364c359
+<       this.load(dir, in, configFile.getName().endsWith(".xml"),  configFile.getName());
+---
+>       this.load(dir, in,  configFile.getName());
+378c373
+<   protected void load(String dir, InputStream is, boolean isXmlFile, String fileName)  {
+---
+>   protected void load(String dir, InputStream is, String fileName)  {
+392,393d386
+<     
+<     
+395,401c388,389
+<       if (isXmlFile) {
+<         cfg = new ConfigSolrXmlBackCompat(loader, null, is, null, false);
+<         this.cfg = new ConfigSolrXmlBackCompat(loader, (ConfigSolrXmlBackCompat)cfg);
+<       } else {
+<         cfg = new SolrProperties(this, loader, is, fileName);
+<         this.cfg = new SolrProperties(this, loader, (SolrProperties)cfg);
+<       }
+---
+>       cfg = new ConfigSolrXml(loader, null, is, null, false, this);
+>       this.cfg = new ConfigSolrXml(loader, (ConfigSolrXml) cfg, this);
+482c470
+<     
+---
+> 
+488c476,478
+<     
+---
+> 
+>     transientCacheSize = cfg.getInt(ConfigSolr.ConfLevel.SOLR_CORES, "transientCacheSize", Integer.MAX_VALUE);
+> 
+889c879,880
+<       solrLoader = new ZkSolrResourceLoader(instanceDir, zkConfigName, libLoader, SolrProperties.getCoreProperties(instanceDir, dcore), zkController);
+---
+>       solrLoader = new ZkSolrResourceLoader(instanceDir, zkConfigName, libLoader,
+>           ConfigSolrXml.getCoreProperties(instanceDir, dcore), zkController);
+912c903
+<     solrLoader = new SolrResourceLoader(instanceDir, libLoader, SolrProperties.getCoreProperties(instanceDir, dcore));
+---
+>     solrLoader = new SolrResourceLoader(instanceDir, libLoader, ConfigSolrXml.getCoreProperties(instanceDir, dcore));
+1069c1060
+<           solrLoader = new SolrResourceLoader(instanceDir.getAbsolutePath(), libLoader, SolrProperties.getCoreProperties(instanceDir.getAbsolutePath(), cd));
+---
+>           solrLoader = new SolrResourceLoader(instanceDir.getAbsolutePath(), libLoader, ConfigSolrXml.getCoreProperties(instanceDir.getAbsolutePath(), cd));
+1082c1073
+<                 SolrProperties.getCoreProperties(instanceDir.getAbsolutePath(), cd), zkController);
+---
+>                 ConfigSolrXml.getCoreProperties(instanceDir.getAbsolutePath(), cd), zkController);
+1232c1223,1240
+<   
+---
+> 
+>   public String getHostPort() {
+>     return hostPort;
+>   }
+> 
+>   public String getHostContext() {
+>     return hostContext;
+>   }
+> 
+>   public String getHost() {
+>     return host;
+>   }
+> 
+>   public int getZkClientTimeout() {
+>     return zkClientTimeout;
+>   }
+> 
+> 
+1311,1314d1318
+<     if (transientCacheSize != Integer.MAX_VALUE) {
+<       coresAttribs.put("transientCacheSize", Integer.toString(transientCacheSize));
+<     }
+<     
+1321a1326,1329
+>     if (transientCacheSize != Integer.MAX_VALUE) { 
+>     
+>       addCoresAttrib(coresAttribs, "transientCacheSize", Integer.toString(this.transientCacheSize), Integer.toString(Integer.MAX_VALUE));
+>     }
+1405,1406d1412
+<   private int transientCacheSize = Integer.MAX_VALUE;
+< 
+1426c1432
+<     transientCacheSize = cfg.getInt(ConfigSolr.ConfLevel.SOLR_CORES, "transientCacheSize", Integer.MAX_VALUE);
+---
+>     final int transientCacheSize = cfg.getInt(ConfigSolr.ConfLevel.SOLR_CORES, "transientCacheSize", Integer.MAX_VALUE);
+1538c1544
+<   }
+---
+>     }
+1748c1754
+<         ConfigSolrXmlBackCompat.initPersistStatic();
+---
+>         ConfigSolrXml.initPersistStatic();
+1751c1757
+<         ConfigSolrXmlBackCompat.addPersistAllCoresStatic(containerProperties, rootSolrAttribs, coresAttribs,
+---
+>         ConfigSolrXml.addPersistAllCoresStatic(containerProperties, rootSolrAttribs, coresAttribs,
+1910c1916
+<       ConfigSolrXmlBackCompat.addPersistCore(persistProps, coreAttribs);
+---
+>       ConfigSolrXml.addPersistCore(persistProps, coreAttribs);

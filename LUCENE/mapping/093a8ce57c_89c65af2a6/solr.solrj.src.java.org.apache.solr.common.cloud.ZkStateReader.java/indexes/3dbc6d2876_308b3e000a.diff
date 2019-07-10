@@ -1,0 +1,48 @@
+229a230,232
+> 
+> 
+>   @Deprecated
+251a255,297
+> 
+> 
+> 
+>   public void forceUpdateCollection(String collection) throws KeeperException, InterruptedException {
+>     synchronized (getUpdateLock()) {
+>       if (clusterState == null) {
+>         return;
+>       }
+> 
+>       ClusterState.CollectionRef ref = clusterState.getCollectionRef(collection);
+>       if (ref == null) {
+>         
+>         
+>         refreshLegacyClusterState(null);
+>         if (!legacyCollectionStates.containsKey(collection)) {
+>           
+>           LazyCollectionRef tryLazyCollection = new LazyCollectionRef(collection);
+>           if (tryLazyCollection.get() == null) {
+>             
+>             return;
+>           }
+>           
+>           lazyCollectionStates.putIfAbsent(collection, tryLazyCollection);
+>         }
+>       } else if (ref.isLazilyLoaded()) {
+>         if (ref.get() != null) {
+>           return;
+>         }
+>         
+>         refreshLegacyClusterState(null);
+>       } else if (legacyCollectionStates.containsKey(collection)) {
+>         
+>         refreshLegacyClusterState(null);
+>       } else if (watchedCollectionStates.containsKey(collection)) {
+>         
+>         DocCollection newState = fetchCollectionState(collection, null);
+>         updateWatchedCollection(collection, newState);
+>       }
+>       constructState();
+>     }
+>   }
+> 
+>   

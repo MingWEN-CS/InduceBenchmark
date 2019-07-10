@@ -1,0 +1,65 @@
+30a31
+> import java.net.URL;
+31a33,34
+> import java.util.Random;
+> import java.util.concurrent.Future;
+46,49c49
+<     DocCollection testcoll = getCommonCloudSolrServer().getZkStateReader().getClusterState().getCollection(COLL_NAME);
+<     final Slice shard1 = testcoll.getSlices().iterator().next();
+<     if(!shard1.getState().equals(Slice.ACTIVE)) fail("shard is not active");
+<     Replica replica1 = shard1.getReplicas().iterator().next();
+---
+> 
+53,60c53,75
+<     for (JettySolrRunner jetty : jettys) {
+<       sb.append(jetty.getBaseUrl()).append(",");
+<       if( jetty.getBaseUrl().toString().startsWith(replica1.getStr(ZkStateReader.BASE_URL_PROP)) ) {
+<         stoppedJetty = jetty;
+<         ChaosMonkey.stop(jetty);
+<         stopped = true;
+<         break;
+<       }
+---
+>     Replica replica1=null;
+>     Slice shard1 = null;
+>     DocCollection testcoll = getCommonCloudSolrServer().getZkStateReader().getClusterState().getCollection(COLL_NAME);
+>     for (JettySolrRunner jetty : jettys) sb.append(jetty.getBaseUrl()).append(",");
+> 
+>     for (Slice slice : testcoll.getActiveSlices()) {
+>       for (Replica replica : slice.getReplicas())
+>         for (JettySolrRunner jetty : jettys) {
+>           URL baseUrl = null;
+>           try {
+>             baseUrl = jetty.getBaseUrl();
+>           } catch (Exception e) {
+>             continue;
+>           }
+>           if (baseUrl.toString().startsWith(replica.getStr(ZkStateReader.BASE_URL_PROP))) {
+>             stoppedJetty = jetty;
+>             ChaosMonkey.stop(jetty);
+>             replica1 = replica;
+>             shard1 = slice;
+>             stopped = true;
+>             break;
+>           }
+>         }
+61a77,91
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+63c93
+<       fail("Could not find jetty for replica "+ replica1 + "jettys: "+sb);
+---
+>       fail("Could not find jetty to stop in collection "+ testcoll + " jettys: "+sb);

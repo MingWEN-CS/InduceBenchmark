@@ -1,0 +1,29 @@
+348c348
+<                 new XConfiguration());
+---
+>                 context.getProtoActionConf());
+399c399
+<                 new XConfiguration());
+---
+>                 context.getProtoActionConf());
+721a722,725
+> 
+>         MapReduceActionExecutor ae = new MapReduceActionExecutor();
+>         JobConf conf = ae.createBaseHadoopConf(context, XmlUtils.parseXml(actionXml));
+> 
+723c727
+<                 new XConfiguration());
+---
+>                 conf);
+726d729
+<         MapReduceActionExecutor ae = new MapReduceActionExecutor();
+730d732
+<         JobConf conf = ae.createBaseHadoopConf(context, XmlUtils.parseXml(actionXml));
+799c801
+<                 new XConfiguration());
+---
+>                 context.getProtoActionConf());
+882c884
+<                 new XConfiguration());
+---
+>                 context.getProtoActionConf());

@@ -1,0 +1,41 @@
+20a21
+> import org.junit.Assert;
+152a154,191
+> 
+>   public void testGetCheckProcessIsAliveCommand() throws Exception {
+>     String anyPid = "9999";
+>     String[] checkProcessAliveCommand = Shell.getCheckProcessIsAliveCommand(
+>         anyPid);
+> 
+>     String[] expectedCommand;
+> 
+>     if (Shell.WINDOWS) {
+>       expectedCommand =
+>           new String[]{ Shell.WINUTILS, "task", "isAlive", anyPid };
+>     } else if (Shell.isSetsidAvailable) {
+>       expectedCommand = new String[]{ "kill", "-0", "--", "-" + anyPid };
+>     } else {
+>       expectedCommand = new String[]{"kill", "-0", anyPid};
+>     }
+>     Assert.assertArrayEquals(expectedCommand, checkProcessAliveCommand);
+>   }
+> 
+>   public void testGetSignalKillCommand() throws Exception {
+>     String anyPid = "9999";
+>     int anySignal = 9;
+>     String[] checkProcessAliveCommand = Shell.getSignalKillCommand(anySignal,
+>         anyPid);
+> 
+>     String[] expectedCommand;
+>     if (Shell.WINDOWS) {
+>       expectedCommand =
+>           new String[]{ Shell.WINUTILS, "task", "kill", anyPid };
+>     } else if (Shell.isSetsidAvailable) {
+>       expectedCommand =
+>           new String[]{ "kill", "-" + anySignal, "--", "-" + anyPid };
+>     } else {
+>       expectedCommand =
+>           new String[]{ "kill", "-" + anySignal, anyPid };
+>     }
+>     Assert.assertArrayEquals(expectedCommand, checkProcessAliveCommand);
+>   }

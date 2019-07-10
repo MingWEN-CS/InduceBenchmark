@@ -1,0 +1,24 @@
+20a21
+> import java.io.IOException;
+111a113,125
+>         Properties properties = null;
+>         try{
+>             properties = Utils.readConfig(config);
+>         }catch(IOException e){
+>             throw new DataStoreException("Could not initialize S3 from "
+>                     + config, e);
+>         }
+>         init(store, homeDir, properties);
+>     }
+> 
+>     public void init(CachingDataStore store, String homeDir, Properties prop)
+>             throws DataStoreException {
+> 
+117c131
+<             prop = Utils.readConfig(config);
+---
+>             this.prop = prop;
+190c204
+<                 + config, e);
+---
+>                 + prop, e);

@@ -1,0 +1,5 @@
+198c198,199
+<         retBean = WorkflowActionQueryExecutor.getInstance().get(WorkflowActionQuery.GET_ACTION_ID_TYPE, bean.getId());
+---
+>         retBean = WorkflowActionQueryExecutor.getInstance().get(WorkflowActionQuery.GET_ACTION_ID_TYPE_LASTCHECK,
+>                 bean.getId());

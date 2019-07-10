@@ -1,0 +1,111 @@
+20d19
+< import static org.apache.hadoop.fs.CommonConfigurationKeys.HADOOP_SECURITY_AUTHENTICATION;
+136c135
+<       if (useKerberos) {
+---
+>       if (isAuthenticationMethodEnabled(AuthenticationMethod.KERBEROS)) {
+195c194
+<   private static boolean useKerberos;
+---
+>   private static AuthenticationMethod authenticationMethod;
+240,253c239
+<     AuthenticationMethod auth = SecurityUtil.getAuthenticationMethod(conf);
+<     switch (auth) {
+<       case SIMPLE:
+<       case TOKEN:
+<         useKerberos = false;
+<         break;
+<       case KERBEROS:
+<         useKerberos = true;
+<         break;
+<       default:
+<         throw new IllegalArgumentException("Invalid attribute value for " +
+<                                            HADOOP_SECURITY_AUTHENTICATION + 
+<                                            " of " + auth);
+<     }
+---
+>     authenticationMethod = SecurityUtil.getAuthenticationMethod(conf);
+290a277,282
+>     return !isAuthenticationMethodEnabled(AuthenticationMethod.SIMPLE);
+>   }
+>   
+>   @InterfaceAudience.Private
+>   @InterfaceStability.Evolving
+>   private static boolean isAuthenticationMethodEnabled(AuthenticationMethod method) {
+292c284
+<     return useKerberos;
+---
+>     return (authenticationMethod == method);
+588c580
+<     if (!isSecurityEnabled()) {
+---
+>     if (!isAuthenticationMethodEnabled(AuthenticationMethod.KERBEROS)) {
+640a633
+>       ensureInitialized();
+643,653c636,638
+<         LoginContext login;
+<         AuthenticationMethod authenticationMethod;
+<         if (isSecurityEnabled()) {
+<           authenticationMethod = AuthenticationMethod.KERBEROS;
+<           login = newLoginContext(HadoopConfiguration.USER_KERBEROS_CONFIG_NAME,
+<               subject, new HadoopConfiguration());
+<         } else {
+<           authenticationMethod = AuthenticationMethod.SIMPLE;
+<           login = newLoginContext(HadoopConfiguration.SIMPLE_CONFIG_NAME, 
+<               subject, new HadoopConfiguration());
+<         }
+---
+>         LoginContext login =
+>             newLoginContext(authenticationMethod.getLoginAppName(), 
+>                             subject, new HadoopConfiguration());
+677a663,670
+>   @InterfaceAudience.Private
+>   @InterfaceStability.Unstable
+>   synchronized static void setLoginUser(UserGroupInformation ugi) {
+>     
+>     
+>     loginUser = ugi;
+>   }
+>   
+1030,1031c1023,1026
+<     SIMPLE(AuthMethod.SIMPLE),
+<     KERBEROS(AuthMethod.KERBEROS),
+---
+>     SIMPLE(AuthMethod.SIMPLE,
+>         HadoopConfiguration.SIMPLE_CONFIG_NAME),
+>     KERBEROS(AuthMethod.KERBEROS,
+>         HadoopConfiguration.USER_KERBEROS_CONFIG_NAME),
+1037a1033,1034
+>     private final String loginAppName;
+>     
+1038a1036,1038
+>       this(authMethod, null);
+>     }
+>     private AuthenticationMethod(AuthMethod authMethod, String loginAppName) {
+1039a1040
+>       this.loginAppName = loginAppName;
+1045a1047,1054
+>     String getLoginAppName() {
+>       if (loginAppName == null) {
+>         throw new UnsupportedOperationException(
+>             this + " login authentication is not supported");
+>       }
+>       return loginAppName;
+>     }
+>     
+1336a1346
+> 
+1337a1348,1360
+> 
+> 
+> 
+> 
+> 
+>   public synchronized AuthenticationMethod getRealAuthenticationMethod() {
+>     UserGroupInformation ugi = getRealUser();
+>     if (ugi == null) {
+>       ugi = this;
+>     }
+>     return ugi.getAuthenticationMethod();
+>   }
+> 

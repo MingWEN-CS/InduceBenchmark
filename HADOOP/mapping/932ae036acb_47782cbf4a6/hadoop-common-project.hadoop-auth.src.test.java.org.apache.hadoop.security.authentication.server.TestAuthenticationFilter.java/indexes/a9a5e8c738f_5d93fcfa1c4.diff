@@ -1,0 +1,169 @@
+165c165,166
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+189c190,191
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+209c211
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(
+---
+>           AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE)).thenReturn(
+212c214,215
+<               public void init(Properties config, long tokenValidity) {
+---
+>               public void init(Properties config, ServletContext servletContext,
+>                       long tokenValidity) {
+244c247,248
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+268c272,273
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+307c312,313
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+333c339,340
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+364c371,372
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+370c378,384
+<       Signer signer = new Signer(new StringSignerSecretProvider("secret"));
+---
+>       StringSignerSecretProvider secretProvider
+>               = new StringSignerSecretProvider();
+>       Properties secretProviderProps = new Properties();
+>       secretProviderProps.setProperty(
+>               AuthenticationFilter.SIGNATURE_SECRET, "secret");
+>       secretProvider.init(secretProviderProps, null, TOKEN_VALIDITY_SEC);
+>       Signer signer = new Signer(secretProvider);
+401c415,416
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+408c423,429
+<       Signer signer = new Signer(new StringSignerSecretProvider("secret"));
+---
+>       StringSignerSecretProvider secretProvider
+>               = new StringSignerSecretProvider();
+>       Properties secretProviderProps = new Properties();
+>       secretProviderProps.setProperty(
+>               AuthenticationFilter.SIGNATURE_SECRET, "secret");
+>       secretProvider.init(secretProviderProps, null, TOKEN_VALIDITY_SEC);
+>       Signer signer = new Signer(secretProvider);
+446c467,468
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+452c474,480
+<       Signer signer = new Signer(new StringSignerSecretProvider("secret"));
+---
+>       StringSignerSecretProvider secretProvider
+>               = new StringSignerSecretProvider();
+>       Properties secretProviderProps = new Properties();
+>       secretProviderProps.setProperty(
+>               AuthenticationFilter.SIGNATURE_SECRET, "secret");
+>       secretProvider.init(secretProviderProps, null, TOKEN_VALIDITY_SEC);
+>       Signer signer = new Signer(secretProvider);
+488c516,517
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+541c570,571
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+596c626,632
+<         Signer signer = new Signer(new StringSignerSecretProvider("secret"));
+---
+>         StringSignerSecretProvider secretProvider
+>                 = new StringSignerSecretProvider();
+>         Properties secretProviderProps = new Properties();
+>         secretProviderProps.setProperty(
+>                 AuthenticationFilter.SIGNATURE_SECRET, "secret");
+>         secretProvider.init(secretProviderProps, null, TOKEN_VALIDITY_SEC);
+>         Signer signer = new Signer(secretProvider);
+665c701,702
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+674c711,717
+<       Signer signer = new Signer(new StringSignerSecretProvider("secret"));
+---
+>       StringSignerSecretProvider secretProvider
+>               = new StringSignerSecretProvider();
+>       Properties secretProviderProps = new Properties();
+>       secretProviderProps.setProperty(
+>               AuthenticationFilter.SIGNATURE_SECRET, "secret");
+>       secretProvider.init(secretProviderProps, null, TOKEN_VALIDITY_SEC);
+>       Signer signer = new Signer(secretProvider);
+719c762,763
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+786c830,831
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+795c840,846
+<       Signer signer = new Signer(new StringSignerSecretProvider(secret));
+---
+>       StringSignerSecretProvider secretProvider
+>               = new StringSignerSecretProvider();
+>       Properties secretProviderProps = new Properties();
+>       secretProviderProps.setProperty(
+>               AuthenticationFilter.SIGNATURE_SECRET, secret);
+>       secretProvider.init(secretProviderProps, null, TOKEN_VALIDITY_SEC);
+>       Signer signer = new Signer(secretProvider);
+857c908,909
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+866c918,924
+<       Signer signer = new Signer(new StringSignerSecretProvider(secret));
+---
+>       StringSignerSecretProvider secretProvider
+>               = new StringSignerSecretProvider();
+>       Properties secretProviderProps = new Properties();
+>       secretProviderProps.setProperty(
+>               AuthenticationFilter.SIGNATURE_SECRET, secret);
+>       secretProvider.init(secretProviderProps, null, TOKEN_VALIDITY_SEC);
+>       Signer signer = new Signer(secretProvider);
+896c954,955
+<           AuthenticationFilter.SIGNATURE_PROVIDER_ATTRIBUTE)).thenReturn(null);
+---
+>               AuthenticationFilter.SIGNER_SECRET_PROVIDER_ATTRIBUTE))
+>               .thenReturn(null);
+917c976,982
+<       Signer signer = new Signer(new StringSignerSecretProvider("secret"));
+---
+>       StringSignerSecretProvider secretProvider
+>               = new StringSignerSecretProvider();
+>       Properties secretProviderProps = new Properties();
+>       secretProviderProps.setProperty(
+>               AuthenticationFilter.SIGNATURE_SECRET, "secret");
+>       secretProvider.init(secretProviderProps, null, TOKEN_VALIDITY_SEC);
+>       Signer signer = new Signer(secretProvider);

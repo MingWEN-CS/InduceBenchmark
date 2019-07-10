@@ -1,0 +1,41 @@
+31a32
+> 
+36a38,39
+> import com.google.inject.Injector;
+> 
+66a70,73
+>   
+> 
+> 
+> 
+69a77,79
+>   @Inject
+>   private Injector injector;
+> 
+207a218,226
+>   void setInjector(Injector injector) {
+>     this.injector = injector;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+223c242,249
+<     executor.execute(new LogSearchFileNameRequestRunnable(host, component, cluster, logFileNameCache, currentRequests));
+---
+>     
+>     
+>     
+>     
+>     
+>     
+>     executor.execute(new LogSearchFileNameRequestRunnable(host, component, cluster, logFileNameCache, currentRequests,
+>                                                           injector.getInstance(LoggingRequestHelperFactory.class)));
+261,262c287,288
+<     LogSearchFileNameRequestRunnable(String host, String component, String cluster, Cache<String, Set<String>> logFileNameCache, Set<String> currentRequests) {
+<       this(host, component, cluster, logFileNameCache, currentRequests, new LoggingRequestHelperFactoryImpl(), AmbariServer.getController());
+---
+>     LogSearchFileNameRequestRunnable(String host, String component, String cluster, Cache<String, Set<String>> logFileNameCache, Set<String> currentRequests, LoggingRequestHelperFactory loggingRequestHelperFactory) {
+>       this(host, component, cluster, logFileNameCache, currentRequests, loggingRequestHelperFactory, AmbariServer.getController());

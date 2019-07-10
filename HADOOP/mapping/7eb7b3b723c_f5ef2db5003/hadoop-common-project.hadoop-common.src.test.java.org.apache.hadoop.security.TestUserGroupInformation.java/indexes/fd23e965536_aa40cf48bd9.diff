@@ -1,0 +1,6 @@
+79c79,81
+<     System.setProperty("hadoop.home.dir", "/tmp");
+---
+>     
+>     
+>     System.setProperty("hadoop.home.dir", System.getenv("HADOOP_HOME"));

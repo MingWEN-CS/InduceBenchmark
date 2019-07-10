@@ -1,0 +1,35 @@
+19d18
+< import java.io.PrintStream;
+41d39
+< import org.apache.jackrabbit.core.util.Dumpable;
+50c48
+<         implements UpdatableItemStateManager, Dumpable, NodeStateListener {
+---
+>         implements UpdatableItemStateManager, NodeStateListener {
+127,143c125,132
+<     public void dump(PrintStream ps) {
+<         ps.println("SessionItemStateManager (" + this + ")");
+<         ps.println();
+<         ps.print("[transient] ");
+<         if (transientStore instanceof Dumpable) {
+<             ((Dumpable) transientStore).dump(ps);
+<         } else {
+<             ps.println(transientStore.toString());
+<         }
+<         ps.println();
+<         ps.print("[attic]     ");
+<         if (atticStore instanceof Dumpable) {
+<             ((Dumpable) atticStore).dump(ps);
+<         } else {
+<             ps.println(atticStore.toString());
+<         }
+<         ps.println();
+---
+>     public String toString() {
+>         StringBuilder builder = new StringBuilder();
+>         builder.append("SessionItemStateManager (" + this + ")\n");
+>         builder.append("[transient]\n");
+>         builder.append(transientStore);
+>         builder.append("[attic]\n");
+>         builder.append(atticStore);
+>         return builder.toString();

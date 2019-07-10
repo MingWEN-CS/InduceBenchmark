@@ -1,0 +1,759 @@
+21a22
+> import java.io.FileNotFoundException;
+33,34c34
+< import org.apache.commons.logging.Log;
+< import org.apache.commons.logging.LogFactory;
+---
+> import com.google.common.annotations.VisibleForTesting;
+36a37,38
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+45,47c47,58
+< @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
+< @InterfaceStability.Unstable
+< abstract public class Shell {
+---
+> @InterfaceAudience.Public
+> @InterfaceStability.Evolving
+> public abstract class Shell {
+>   public static final Logger LOG = LoggerFactory.getLogger(Shell.class);
+> 
+>   
+> 
+> 
+> 
+>   private static final String WINDOWS_PROBLEMS =
+>       "https:
+> 
+49c60,63
+<   public static final Log LOG = LogFactory.getLog(Shell.class);
+---
+> 
+> 
+>   static final String WINUTILS_EXE = "winutils.exe";
+> 
+51,52d64
+<   private static boolean IS_JAVA7_OR_ABOVE =
+<       System.getProperty("java.version").substring(0, 3).compareTo("1.7") >= 0;
+53a66,80
+> 
+>   public static final String SYSPROP_HADOOP_HOME_DIR = "hadoop.home.dir";
+> 
+>   
+> 
+> 
+>   public static final String ENV_HADOOP_HOME = "HADOOP_HOME";
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   @Deprecated
+55c82
+<     return IS_JAVA7_OR_ABOVE;
+---
+>     return true;
+62c89,96
+<   public static final int WINDOWS_MAX_SHELL_LENGHT = 8191;
+---
+>   public static final int WINDOWS_MAX_SHELL_LENGTH = 8191;
+> 
+>   
+> 
+> 
+> 
+>   @Deprecated
+>   public static final int WINDOWS_MAX_SHELL_LENGHT = WINDOWS_MAX_SHELL_LENGTH;
+77c111
+<     if (len > WINDOWS_MAX_SHELL_LENGHT) {
+---
+>     if (len > WINDOWS_MAX_SHELL_LENGTH) {
+79,82c113,116
+<           "The command line has a length of %d exceeds maximum allowed length of %d. " +
+<           "Command starts with: %s",
+<           len, WINDOWS_MAX_SHELL_LENGHT,
+<           StringUtils.join("", commands).substring(0, 100)));
+---
+>         "The command line has a length of %d exceeds maximum allowed length" +
+>             " of %d. Command starts with: %s",
+>         len, WINDOWS_MAX_SHELL_LENGTH,
+>         StringUtils.join("", commands).substring(0, 100)));
+87c121
+<   public final static String USER_NAME_COMMAND = "whoami";
+---
+>   public static final String USER_NAME_COMMAND = "whoami";
+102a137,140
+>   
+> 
+> 
+> 
+105c143
+<   static private OSType getOSType() {
+---
+>   private static OSType getOSType() {
+148,150c186,189
+<     return (WINDOWS)? new String[] { WINUTILS, "groups", "-F", "\"" + user + "\""}
+<                     : new String [] {"bash", "-c", "id -gn " + user
+<                                      + "&& id -Gn " + user};
+---
+>     return WINDOWS ?
+>       new String[]
+>           { getWinutilsPath(), "groups", "-F", "\"" + user + "\"" }
+>       : new String [] {"bash", "-c", "id -gn " + user + "&& id -Gn " + user};
+156c195
+<     return (WINDOWS)? new String [] {"cmd", "/c", "getent netgroup " + netgroup}
+---
+>     return WINDOWS ? new String [] {"cmd", "/c", "getent netgroup " + netgroup}
+162c201
+<     return (WINDOWS) ? new String[] { WINUTILS, "ls", "-F" }
+---
+>     return (WINDOWS) ? new String[] { getWinutilsPath(), "ls", "-F" }
+169,170c208,210
+<       return (WINDOWS) ? new String[] { WINUTILS, "chmod", "-R", perm }
+<                          : new String[] { "chmod", "-R", perm };
+---
+>       return (WINDOWS) ?
+>           new String[] { getWinutilsPath(), "chmod", "-R", perm }
+>           : new String[] { "chmod", "-R", perm };
+172,173c212,214
+<       return (WINDOWS) ? new String[] { WINUTILS, "chmod", perm }
+<                        : new String[] { "chmod", perm };
+---
+>       return (WINDOWS) ?
+>           new String[] { getWinutilsPath(), "chmod", perm }
+>           : new String[] { "chmod", perm };
+185,186c226,227
+<   public static String[] getSetPermissionCommand(String perm, boolean recursive,
+<                                                  String file) {
+---
+>   public static String[] getSetPermissionCommand(String perm,
+>       boolean recursive, String file) {
+195,196c236,238
+<     return (WINDOWS) ? new String[] { WINUTILS, "chown", "\"" + owner + "\"" }
+<                      : new String[] { "chown", owner };
+---
+>     return (WINDOWS) ?
+>         new String[] { getWinutilsPath(), "chown", "\"" + owner + "\"" }
+>         : new String[] { "chown", owner };
+198c240
+<   
+---
+> 
+201,202c243,245
+<     return WINDOWS ? new String[] { WINUTILS, "symlink", link, target }
+<                    : new String[] { "ln", "-s", target, link };
+---
+>     return WINDOWS ?
+>        new String[] { getWinutilsPath(), "symlink", link, target }
+>        : new String[] { "ln", "-s", target, link };
+207c250,251
+<     return WINDOWS ? new String[] { WINUTILS, "readlink", link }
+---
+>     return WINDOWS ?
+>         new String[] { getWinutilsPath(), "readlink", link }
+211a256,259
+> 
+> 
+> 
+> 
+221c269
+<         return new String[] { Shell.WINUTILS, "task", "isAlive", pid };
+---
+>         return new String[] {Shell.getWinutilsPath(), "task", "isAlive", pid };
+223c271
+<         return new String[] { Shell.WINUTILS, "task", "kill", pid };
+---
+>         return new String[] {Shell.getWinutilsPath(), "task", "kill", pid };
+234a283
+>   
+235a285
+> 
+242c292
+<   
+---
+> 
+262a313,314
+> 
+> 
+276,277c328,330
+<     return WINDOWS ? new String[] { "cmd", "/c", absolutePath } :
+<       new String[] { "/bin/bash", absolutePath };
+---
+>     return WINDOWS ?
+>       new String[] { "cmd", "/c", absolutePath }
+>       : new String[] { "/bin/bash", absolutePath };
+295,296c348
+<   private AtomicBoolean timedOut;
+< 
+---
+>   private final AtomicBoolean timedOut = new AtomicBoolean(false);
+304c356,363
+<   private static String checkHadoopHome() {
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private static File checkHadoopHome() throws FileNotFoundException {
+307c366
+<     String home = System.getProperty("hadoop.home.dir");
+---
+>     String home = System.getProperty(SYSPROP_HADOOP_HOME_DIR);
+311c370
+<       home = System.getenv("HADOOP_HOME");
+---
+>       home = System.getenv(ENV_HADOOP_HOME);
+312a372,393
+>     return checkHadoopHomeInner(home);
+>   }
+> 
+>   
+> 
+> 
+> 
+>   static final String E_DOES_NOT_EXIST = "does not exist";
+>   static final String E_IS_RELATIVE = "is not an absolute path.";
+>   static final String E_NOT_DIRECTORY = "is not a directory.";
+>   static final String E_NO_EXECUTABLE = "Could not locate Hadoop executable";
+>   static final String E_NOT_EXECUTABLE_FILE = "Not an executable file";
+>   static final String E_HADOOP_PROPS_UNSET = ENV_HADOOP_HOME + " and "
+>       + SYSPROP_HADOOP_HOME_DIR + " are unset.";
+>   static final String E_HADOOP_PROPS_EMPTY = ENV_HADOOP_HOME + " or "
+>       + SYSPROP_HADOOP_HOME_DIR + " set to an empty string";
+>   static final String E_NOT_A_WINDOWS_SYSTEM = "Not a Windows system";
+> 
+>   
+> 
+> 
+> 
+314,329d394
+<     try {
+<        
+<        if (home == null) {
+<          throw new IOException("HADOOP_HOME or hadoop.home.dir are not set.");
+<        }
+< 
+<        if (home.startsWith("\"") && home.endsWith("\"")) {
+<          home = home.substring(1, home.length()-1);
+<        }
+< 
+<        
+<        File homedir = new File(home);
+<        if (!homedir.isAbsolute() || !homedir.exists() || !homedir.isDirectory()) {
+<          throw new IOException("Hadoop home directory " + homedir
+<            + " does not exist, is not a directory, or is not an absolute path.");
+<        }
+331d395
+<        home = homedir.getCanonicalPath();
+332a397,450
+>   @VisibleForTesting
+>   static File checkHadoopHomeInner(String home) throws FileNotFoundException {
+>     
+>     if (home == null) {
+>       throw new FileNotFoundException(E_HADOOP_PROPS_UNSET);
+>     }
+>     
+>     while (home.startsWith("\"")) {
+>       home = home.substring(1);
+>     }
+>     while (home.endsWith("\"")) {
+>       home = home.substring(0, home.length() - 1);
+>     }
+> 
+>     
+>     if (home.isEmpty()) {
+>       throw new FileNotFoundException(E_HADOOP_PROPS_EMPTY);
+>     }
+> 
+>     
+>     
+>     File homedir = new File(home);
+>     if (!homedir.isAbsolute()) {
+>       throw new FileNotFoundException("Hadoop home directory " + homedir
+>           + " " + E_IS_RELATIVE);
+>     }
+>     if (!homedir.exists()) {
+>       throw new FileNotFoundException("Hadoop home directory " + homedir
+>           + " " + E_DOES_NOT_EXIST);
+>     }
+>     if (!homedir.isDirectory()) {
+>       throw new FileNotFoundException("Hadoop home directory " + homedir
+>           + " "+ E_NOT_DIRECTORY);
+>     }
+>     return homedir;
+>   }
+> 
+>   
+> 
+> 
+>   private static final File HADOOP_HOME_FILE;
+> 
+>   
+> 
+> 
+> 
+>   private static final IOException HADOOP_HOME_DIR_FAILURE_CAUSE;
+> 
+>   static {
+>     File home;
+>     IOException ex;
+>     try {
+>       home = checkHadoopHome();
+>       ex = null;
+336a455
+>       ex = ioe;
+339,340c458,468
+<     
+<     return home;
+---
+>     HADOOP_HOME_FILE = home;
+>     HADOOP_HOME_DIR_FAILURE_CAUSE = ex;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+>   private static String addOsText(String message) {
+>     return WINDOWS ? (message + " -see " + WINDOWS_PROBLEMS) : message;
+342d469
+<   private static String HADOOP_HOME_DIR = checkHadoopHome();
+344a472,484
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private static FileNotFoundException fileNotFoundException(String text,
+>       Exception ex) {
+>     return (FileNotFoundException) new FileNotFoundException(text)
+>         .initCause(ex);
+>   }
+> 
+346,349d485
+<   public static final String getHadoopHome() throws IOException {
+<     if (HADOOP_HOME_DIR == null) {
+<       throw new IOException("Misconfigured HADOOP_HOME cannot be referenced.");
+<     }
+351c487,491
+<     return HADOOP_HOME_DIR;
+---
+> 
+> 
+> 
+>   public static String getHadoopHome() throws IOException {
+>     return getHadoopHomeDir().getCanonicalPath();
+359a500,507
+>   private static File getHadoopHomeDir() throws FileNotFoundException {
+>     if (HADOOP_HOME_DIR_FAILURE_CAUSE != null) {
+>       throw fileNotFoundException(
+>           addOsText(HADOOP_HOME_DIR_FAILURE_CAUSE.toString()),
+>           HADOOP_HOME_DIR_FAILURE_CAUSE);
+>     }
+>     return HADOOP_HOME_FILE;
+>   }
+360a509
+>   
+362,363c511,523
+<   public static final String getQualifiedBinPath(String executable) 
+<   throws IOException {
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static File getQualifiedBin(String executable)
+>       throws FileNotFoundException {
+365,366c525,533
+<     String fullExeName = HADOOP_HOME_DIR + File.separator + "bin" 
+<       + File.separator + executable;
+---
+>     return getQualifiedBinInner(getHadoopHomeDir(), executable);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+368c535,549
+<     File exeFile = new File(fullExeName);
+---
+> 
+>   static File getQualifiedBinInner(File hadoopHomeDir, String executable)
+>       throws FileNotFoundException {
+>     String binDirText = "Hadoop bin directory ";
+>     File bin = new File(hadoopHomeDir, "bin");
+>     if (!bin.exists()) {
+>       throw new FileNotFoundException(addOsText(binDirText + E_DOES_NOT_EXIST
+>           + ": " + bin));
+>     }
+>     if (!bin.isDirectory()) {
+>       throw new FileNotFoundException(addOsText(binDirText + E_NOT_DIRECTORY
+>           + ": " + bin));
+>     }
+> 
+>     File exeFile = new File(bin, executable);
+370,371c551,563
+<       throw new IOException("Could not locate executable " + fullExeName
+<         + " in the Hadoop binaries.");
+---
+>       throw new FileNotFoundException(
+>           addOsText(E_NO_EXECUTABLE + ": " + exeFile));
+>     }
+>     if (!exeFile.isFile()) {
+>       throw new FileNotFoundException(
+>           addOsText(E_NOT_EXECUTABLE_FILE + ": " + exeFile));
+>     }
+>     try {
+>       return exeFile.getCanonicalFile();
+>     } catch (IOException e) {
+>       
+>       
+>       throw fileNotFoundException(e.toString(), e);
+372a565,573
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+374c575,583
+<     return exeFile.getCanonicalPath();
+---
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static String getQualifiedBinPath(String executable)
+>       throws IOException {
+>     return getQualifiedBin(executable).getCanonicalPath();
+378d586
+<   public static final String WINUTILS = getWinUtilsPath();
+380,381d587
+<   public static final String getWinUtilsPath() {
+<     String winUtilsPath = null;
+383,385c589,631
+<     try {
+<       if (WINDOWS) {
+<         winUtilsPath = getQualifiedBinPath("winutils.exe");
+---
+> 
+> 
+> 
+> 
+> 
+> 
+>   @Deprecated
+>   public static final String WINUTILS;
+> 
+>   
+>   private static final String WINUTILS_PATH;
+> 
+>   
+>   private static final File WINUTILS_FILE;
+> 
+>   
+>   private static final IOException WINUTILS_FAILURE;
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   static {
+>     IOException ioe = null;
+>     String path = null;
+>     File file = null;
+>     
+>     
+>     if (WINDOWS) {
+>       try {
+>         file = getQualifiedBin(WINUTILS_EXE);
+>         path = file.getCanonicalPath();
+>         ioe = null;
+>       } catch (IOException e) {
+>         LOG.warn("Did not find {}: {}", WINUTILS_EXE, e);
+>         
+>         LOG.debug("Failed to find " + WINUTILS_EXE, e);
+>         file = null;
+>         path = null;
+>         ioe = e;
+387,389c633,636
+<     } catch (IOException ioe) {
+<        LOG.error("Failed to locate the winutils binary in the hadoop binary path",
+<          ioe);
+---
+>     } else {
+>       
+>       
+>       ioe = new FileNotFoundException(E_NOT_A_WINDOWS_SYSTEM);
+390a638,639
+>     WINUTILS_PATH = path;
+>     WINUTILS_FILE = file;
+392c641,687
+<     return winUtilsPath;
+---
+>     WINUTILS = path;
+>     WINUTILS_FAILURE = ioe;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static boolean hasWinutilsPath() {
+>     return WINUTILS_PATH != null;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static String getWinutilsPath() {
+>     if (WINUTILS_FAILURE == null) {
+>       return WINUTILS_PATH;
+>     } else {
+>       throw new RuntimeException(WINUTILS_FAILURE.toString(),
+>           WINUTILS_FAILURE);
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   public static File getWinutilsFile() throws FileNotFoundException {
+>     if (WINUTILS_FAILURE == null) {
+>       return WINUTILS_FILE;
+>     } else {
+>       
+>       throw fileNotFoundException(WINUTILS_FAILURE.toString(),
+>           WINUTILS_FAILURE);
+>     }
+414a710,712
+>   
+> 
+> 
+415a714,718
+> 
+>   
+> 
+> 
+> 
+430c733,734
+<       if (err.getMessage().contains("posix_spawn is not " +
+---
+>       if (err.getMessage() != null
+>           && err.getMessage().contains("posix_spawn is not " +
+451,453c755,757
+<   private long    interval;   
+<   private long    lastTime;   
+<   final private boolean redirectErrorStream; 
+---
+>   private long interval;   
+>   private long lastTime;   
+>   private final boolean redirectErrorStream; 
+460c764,765
+<   private volatile AtomicBoolean completed;
+---
+>   private final AtomicBoolean completed = new AtomicBoolean(false);
+> 
+462c767,770
+<   public Shell() {
+---
+> 
+> 
+> 
+>   protected Shell() {
+464a773
+> 
+466c775,779
+<   public Shell(long interval) {
+---
+> 
+> 
+> 
+> 
+>   protected Shell(long interval) {
+474c787,792
+<   public Shell(long interval, boolean redirectErrorStream) {
+---
+> 
+> 
+> 
+> 
+> 
+>   protected Shell(long interval, boolean redirectErrorStream) {
+476c794
+<     this.lastTime = (interval<0) ? 0 : -interval;
+---
+>     this.lastTime = (interval < 0) ? 0 : -interval;
+478a797
+> 
+480c799
+<   
+---
+> 
+489a809
+> 
+496c816
+<     if (lastTime + interval > Time.monotonicNow())
+---
+>     if (lastTime + interval > Time.monotonicNow()) {
+497a818
+>     }
+507,509c828,830
+<     timedOut = new AtomicBoolean(false);
+<     completed = new AtomicBoolean(false);
+<     
+---
+>     timedOut.set(false);
+>     completed.set(false);
+> 
+542c863
+<     BufferedReader inReader = 
+---
+>     BufferedReader inReader =
+546c867
+<     
+---
+> 
+644,645d964
+<    
+<   protected abstract String[] getExecString();
+646a966,967
+>   protected abstract String[] getExecString();
+> 
+653a975,976
+> 
+> 
+657c980
+<   
+---
+> 
+677c1000
+<     
+---
+> 
+682c1005
+<     
+---
+> 
+697c1020
+<   
+---
+> 
+707c1030
+<     
+---
+> 
+709c1032
+<   
+---
+> 
+720c1043
+<     
+---
+> 
+723,724c1046,1047
+<     
+<     
+---
+> 
+> 
+728c1051
+<     
+---
+> 
+732,733c1055,1056
+<    
+<     public ShellCommandExecutor(String[] execString, File dir, 
+---
+> 
+>     public ShellCommandExecutor(String[] execString, File dir,
+763d1085
+<         
+765a1088,1091
+> 
+> 
+> 
+> 
+766a1093,1098
+>       for (String s : command) {
+>         if (s == null) {
+>           throw new IOException("(null) entry in command string: "
+>               + StringUtils.join(" ", command));
+>         }
+>       }
+784c1116
+<     
+---
+> 
+816c1148
+<   
+---
+> 
+826c1158
+<   
+---
+> 
+834c1166
+<   
+---
+> 
+845c1177
+<   
+---
+> 
+855c1187,1188
+<   
+---
+> 
+> 
+872c1205,1206
+<   public static String execCommand(Map<String,String> env, String ... cmd) 
+---
+> 
+>   public static String execCommand(Map<String,String> env, String ... cmd)
+876c1210
+<   
+---
+> 
+882c1216
+<     private Shell shell;
+---
+>     private final Shell shell;

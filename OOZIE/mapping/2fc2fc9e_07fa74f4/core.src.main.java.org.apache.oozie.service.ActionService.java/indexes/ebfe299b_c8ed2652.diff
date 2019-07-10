@@ -1,0 +1,10 @@
+60c60,61
+<         classes = (Class<? extends ActionExecutor>[]) services.getConf().getClasses(CONF_ACTION_EXECUTOR_CLASSES);
+---
+>         classes = (Class<? extends ActionExecutor>[]) ConfigurationService.getClasses
+>                 (services.getConf(), CONF_ACTION_EXECUTOR_CLASSES);
+63c64,65
+<         classes = (Class<? extends ActionExecutor>[]) services.getConf().getClasses(CONF_ACTION_EXECUTOR_EXT_CLASSES);
+---
+>         classes = (Class<? extends ActionExecutor>[]) ConfigurationService.getClasses
+>                 (services.getConf(), CONF_ACTION_EXECUTOR_EXT_CLASSES);

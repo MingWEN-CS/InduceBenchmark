@@ -1,0 +1,8 @@
+382c382
+<           addFieldToDoc(entry.getValue(), key, 1.0f, sf.multiValued(), doc);
+---
+>           addFieldToDoc(entry.getValue(), sf.getName(), 1.0f, sf.multiValued(), doc);
+387c387
+<           addFieldToDoc(entry.getValue(), key, field.boost, field.multiValued, doc);
+---
+>           addFieldToDoc(entry.getValue(), field.getName(), field.boost, field.multiValued, doc);

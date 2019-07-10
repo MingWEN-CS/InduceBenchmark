@@ -1,0 +1,5 @@
+1326a1327,1330
+>             if (credProp == null && credName != null) {
+>                 throw new ActionExecutorException(ActionExecutorException.ErrorType.ERROR, "JA021",
+>                         "Could not load credentials with name [{0}]].", credName);
+>             }

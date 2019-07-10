@@ -1,0 +1,8 @@
+25a26
+> import org.apache.hadoop.fs.FileContextTestHelper;
+45a47,51
+>   @Override
+>   protected FileContextTestHelper createFileContextHelper() {
+>     return new FileContextTestHelper("/tmp/TestViewFsAtHdfsRoot");
+>   }
+> 

@@ -1,0 +1,39 @@
+40a41,42
+> import org.apache.lucene.analysis.MockTokenFilter;
+> import org.apache.lucene.analysis.MockTokenizer;
+1871c1873
+<         return new CrashingFilter(fieldName, new WhitespaceTokenizer(TEST_VERSION_CURRENT, reader));
+---
+>         return new CrashingFilter(fieldName, new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
+1954c1956
+<         return new CrashingFilter(fieldName, new WhitespaceTokenizer(TEST_VERSION_CURRENT, reader));
+---
+>         return new CrashingFilter(fieldName, new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
+3101c3103
+<         return new CrashingFilter(fieldName, new WhitespaceTokenizer(TEST_VERSION_CURRENT, reader));
+---
+>         return new CrashingFilter(fieldName, new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
+4188c4190
+<         TEST_VERSION_CURRENT, new StopAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer(MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET, true)));
+4489c4491
+<     f.setTokenStream(new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("doc1field1")));
+---
+>     f.setTokenStream(new MockTokenizer(new StringReader("doc1field1"), MockTokenizer.WHITESPACE, false));
+4491c4493
+<     f2.setTokenStream(new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("doc1field2")));
+---
+>     f2.setTokenStream(new MockTokenizer(new StringReader("doc1field2"), MockTokenizer.WHITESPACE, false));
+4497,4498c4499,4500
+<     f.setTokenStream(new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("doc2field1")));
+<     f2.setTokenStream(new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("doc2field2")));
+---
+>     f.setTokenStream(new MockTokenizer(new StringReader("doc2field1"), MockTokenizer.WHITESPACE, false));
+>     f2.setTokenStream(new MockTokenizer(new StringReader("doc2field2"), MockTokenizer.WHITESPACE, false));
+4504,4505c4506,4507
+<     f.setTokenStream(new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("doc3field1")));
+<     f2.setTokenStream(new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("doc3field2")));
+---
+>     f.setTokenStream(new MockTokenizer(new StringReader("doc3field1"), MockTokenizer.WHITESPACE, false));
+>     f2.setTokenStream(new MockTokenizer(new StringReader("doc3field2"), MockTokenizer.WHITESPACE, false));

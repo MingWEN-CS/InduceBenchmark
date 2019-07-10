@@ -1,0 +1,8 @@
+76c76
+<     super(Version.LUCENE_24, defaultField == null ? schema.getDefaultSearchFieldName() : defaultField, schema.getQueryAnalyzer());
+---
+>     super(schema.getSolrConfig().getLuceneVersion("luceneMatchVersion", Version.LUCENE_24), defaultField == null ? schema.getDefaultSearchFieldName() : defaultField, schema.getQueryAnalyzer());
+90c90
+<     super(Version.LUCENE_24, defaultField, analyzer);
+---
+>     super(parser.getReq().getSchema().getSolrConfig().getLuceneVersion("luceneMatchVersion", Version.LUCENE_24), defaultField, analyzer);

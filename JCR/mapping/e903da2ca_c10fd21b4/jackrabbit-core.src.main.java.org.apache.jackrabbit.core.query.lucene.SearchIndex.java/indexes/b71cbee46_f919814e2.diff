@@ -1,0 +1,20 @@
+742a743,744
+> 
+> 
+744,747c746,751
+<                                   AbstractQueryImpl queryImpl,
+<                                   Query query,
+<                                   Path[] orderProps,
+<                                   boolean[] orderSpecs) throws IOException {
+---
+>                                              AbstractQueryImpl queryImpl,
+>                                              Query query,
+>                                              Path[] orderProps,
+>                                              boolean[] orderSpecs,
+>                                              long resultFetchHint)
+>             throws IOException {
+755c759,760
+<         return new FilterMultiColumnQueryHits(searcher.execute(query, sort)) {
+---
+>         return new FilterMultiColumnQueryHits(
+>                 searcher.execute(query, sort, resultFetchHint)) {

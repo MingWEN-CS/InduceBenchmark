@@ -1,0 +1,97 @@
+75,76c75,88
+<     public RepositoryChecker(
+<             PersistenceManager workspace,
+---
+>     
+>     private final static long CHUNKSIZE = 256;
+> 
+>     
+>     private long dirtyNodes = 0;
+> 
+>     
+>     private long totalNodes = 0;
+>     private long brokenNodes = 0;
+> 
+>     
+>     private long startTime;
+> 
+>     public RepositoryChecker(PersistenceManager workspace,
+84c96
+<     public void check(NodeId id, boolean recurse)
+---
+>     public void check(NodeId id, boolean recurse, boolean fixImmediately)
+85a98,115
+> 
+>         log.info("Starting RepositoryChecker");
+> 
+>         startTime = System.currentTimeMillis();
+> 
+>         internalCheck(id, recurse, fixImmediately);
+> 
+>         if (fixImmediately) {
+>             internalFix(true);
+>         }
+> 
+>         log.info("RepositoryChecker finished; checked " + totalNodes
+>                 + " nodes in " + (System.currentTimeMillis() - startTime)
+>                 + "ms, problems found: " + brokenNodes);
+>     }
+> 
+>     private void internalCheck(NodeId id, boolean recurse,
+>             boolean fixImmediately) throws RepositoryException {
+87a118,119
+>             totalNodes += 1;
+> 
+90a123,126
+>             if (fixImmediately && dirtyNodes > CHUNKSIZE) {
+>                 internalFix(false);
+>             }
+> 
+94c130
+<                         check(child.getId(), recurse);
+---
+>                         internalCheck(child.getId(), recurse, fixImmediately);
+103,104c139,140
+<     private void fix(PersistenceManager pm, ChangeLog changes, String store)
+<             throws RepositoryException {
+---
+>     private void fix(PersistenceManager pm, ChangeLog changes, String store,
+>             boolean verbose) throws RepositoryException {
+106c142,145
+<             log.warn("Fixing " + store + " inconsistencies");
+---
+>             if (log.isWarnEnabled()) {
+>                 log.warn("Fixing " + store + " inconsistencies: "
+>                         + changes.toString());
+>             }
+108a148
+>                 changes.reset();
+110c150,151
+<                 String message = "Failed to fix " + store + " inconsistencies (aborting)";
+---
+>                 String message = "Failed to fix " + store
+>                         + " inconsistencies (aborting)";
+115c156,158
+<             log.info("No " + store + "  inconsistencies found");
+---
+>             if (verbose) {
+>                 log.info("No " + store + " inconsistencies found");
+>             }
+120c163,167
+<         fix(workspace, workspaceChanges, "workspace");
+---
+>         internalFix(true);
+>     }
+> 
+>     private void internalFix(boolean verbose) throws RepositoryException {
+>         fix(workspace, workspaceChanges, "workspace", verbose);
+122c169,170
+<                 "versioning workspace");
+---
+>                 "versioning workspace", verbose);
+>         dirtyNodes = 0;
+214a263,266
+> 
+>         dirtyNodes += 1;
+>         brokenNodes += 1;
+> 

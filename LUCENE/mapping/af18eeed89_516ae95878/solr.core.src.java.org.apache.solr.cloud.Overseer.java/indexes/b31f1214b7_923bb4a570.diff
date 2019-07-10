@@ -1,0 +1,115 @@
+38a39,40
+> import com.google.common.collect.ImmutableSet;
+> import org.apache.commons.lang.StringUtils;
+122c124,126
+<   static enum LeaderStatus { DONT_KNOW, NO, YES };
+---
+>   static enum LeaderStatus {DONT_KNOW, NO, YES}
+> 
+>   public static final Set<String> sliceUniqueBooleanProperties = ImmutableSet.of("preferredleader");
+440a445,450
+>           case ADDREPLICAPROP:
+>             clusterState = addReplicaProp(clusterState, message);
+>             break;
+>           case DELETEREPLICAPROP:
+>             clusterState = deleteReplicaProp(clusterState, message);
+>             break;
+506a517,612
+>     private ClusterState addReplicaProp(ClusterState clusterState, ZkNodeProps message) {
+> 
+>       if (checkKeyExistence(message, ZkStateReader.COLLECTION_PROP) == false ||
+>           checkKeyExistence(message, ZkStateReader.SHARD_ID_PROP) == false ||
+>           checkKeyExistence(message, ZkStateReader.REPLICA_PROP) == false ||
+>           checkKeyExistence(message, ZkStateReader.PROPERTY_PROP) == false ||
+>           checkKeyExistence(message, ZkStateReader.PROPERTY_VALUE_PROP) == false) {
+>         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+>             "Overseer SETREPLICAPROPERTY requires " +
+>                 ZkStateReader.COLLECTION_PROP + " and " + ZkStateReader.SHARD_ID_PROP + " and " +
+>                 ZkStateReader.REPLICA_PROP + " and " + ZkStateReader.PROPERTY_PROP + " and " +
+>                 ZkStateReader.PROPERTY_VALUE_PROP + " no action taken.");
+>       }
+> 
+>       String collectionName = message.getStr(ZkStateReader.COLLECTION_PROP);
+>       String sliceName = message.getStr(ZkStateReader.SHARD_ID_PROP);
+>       String replicaName = message.getStr(ZkStateReader.REPLICA_PROP);
+>       String property = message.getStr(ZkStateReader.PROPERTY_PROP).toLowerCase(Locale.ROOT);
+>       String propVal = message.getStr(ZkStateReader.PROPERTY_VALUE_PROP);
+>       String sliceUnique = message.getStr(OverseerCollectionProcessor.SLICE_UNIQUE);
+> 
+>       boolean isUnique = false;
+> 
+>       if (sliceUniqueBooleanProperties.contains(property)) {
+>         if (StringUtils.isNotBlank(sliceUnique) && Boolean.parseBoolean(sliceUnique) == false) {
+>           throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Overseer SETREPLICAPROPERTY for " +
+>               property + " cannot have " + OverseerCollectionProcessor.SLICE_UNIQUE + " set to anything other than" +
+>               "'true'. No action taken");
+>         }
+>         isUnique = true;
+>       } else {
+>         isUnique = Boolean.parseBoolean(sliceUnique);
+>       }
+> 
+>       Replica replica = clusterState.getReplica(collectionName, replicaName);
+> 
+>       if (replica == null) {
+>         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Could not find collection/slice/replica " +
+>             collectionName + "/" + sliceName + "/" + replicaName + " no action taken.");
+>       }
+>       log.info("Setting property " + property + " with value: " + propVal +
+>           " for collection: " + collectionName + ". Full message: " + message);
+>       if (StringUtils.equalsIgnoreCase(replica.getStr(property), propVal)) return clusterState; 
+> 
+>       
+>       Map<String,Replica> replicas = clusterState.getSlice(collectionName, sliceName).getReplicasCopy();
+>       if (isUnique == false) {
+>         replicas.get(replicaName).getProperties().put(property, propVal);
+>       } else { 
+>         for (Replica rep : replicas.values()) {
+>           if (rep.getName().equalsIgnoreCase(replicaName)) {
+>             rep.getProperties().put(property, propVal);
+>           } else {
+>             rep.getProperties().remove(property);
+>           }
+>         }
+>       }
+>       Slice newSlice = new Slice(sliceName, replicas, clusterState.getSlice(collectionName, sliceName).shallowCopy());
+>       return updateSlice(clusterState, collectionName, newSlice);
+>     }
+> 
+>     private ClusterState deleteReplicaProp(ClusterState clusterState, ZkNodeProps message) {
+> 
+>       if (checkKeyExistence(message, ZkStateReader.COLLECTION_PROP) == false ||
+>           checkKeyExistence(message, ZkStateReader.SHARD_ID_PROP) == false ||
+>           checkKeyExistence(message, ZkStateReader.REPLICA_PROP) == false ||
+>           checkKeyExistence(message, ZkStateReader.PROPERTY_PROP) == false) {
+>         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+>             "Overseer DELETEREPLICAPROPERTY requires " +
+>                 ZkStateReader.COLLECTION_PROP + " and " + ZkStateReader.SHARD_ID_PROP + " and " +
+>                 ZkStateReader.REPLICA_PROP + " and " + ZkStateReader.PROPERTY_PROP + " no action taken.");
+>       }
+>       String collectionName = message.getStr(ZkStateReader.COLLECTION_PROP);
+>       String sliceName = message.getStr(ZkStateReader.SHARD_ID_PROP);
+>       String replicaName = message.getStr(ZkStateReader.REPLICA_PROP);
+>       String property = message.getStr(ZkStateReader.PROPERTY_PROP).toLowerCase(Locale.ROOT);
+> 
+>       Replica replica = clusterState.getReplica(collectionName, replicaName);
+> 
+>       if (replica == null) {
+>         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Could not find collection/slice/replica " +
+>             collectionName + "/" + sliceName + "/" + replicaName + " no action taken.");
+>       }
+> 
+>       log.info("Deleting property " + property + " for collection: " + collectionName +
+>           " slice " + sliceName + " replica " + replicaName + ". Full message: " + message);
+>       String curProp = replica.getStr(property);
+>       if (curProp == null) return clusterState; 
+> 
+>       Map<String, Replica> replicas = clusterState.getSlice(collectionName, sliceName).getReplicasCopy();
+>       replica = replicas.get(replicaName);
+>       replica.getProperties().remove(property);
+>       Slice newSlice = new Slice(sliceName, replicas, clusterState.getSlice(collectionName, sliceName).shallowCopy());
+>       return updateSlice(clusterState, collectionName, newSlice);
+>     }
+> 
+1058d1163
+< 

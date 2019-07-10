@@ -1,0 +1,1628 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.security.user;
+
+import org.apache.jackrabbit.api.JackrabbitRepository;
+import org.apache.jackrabbit.api.security.principal.ItemBasedPrincipal;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
+import org.apache.jackrabbit.api.security.user.Group;
+import org.apache.jackrabbit.api.security.user.Query;
+import org.apache.jackrabbit.api.security.user.User;
+import org.apache.jackrabbit.api.security.user.UserManager;
+import org.apache.jackrabbit.core.ItemImpl;
+import org.apache.jackrabbit.core.NodeImpl;
+import org.apache.jackrabbit.core.ProtectedItemModifier;
+import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.core.SessionListener;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.security.principal.EveryonePrincipal;
+import org.apache.jackrabbit.core.security.principal.PrincipalImpl;
+import org.apache.jackrabbit.core.security.user.action.AuthorizableAction;
+import org.apache.jackrabbit.core.session.SessionOperation;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.util.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class UserManagerImpl extends ProtectedItemModifier
+        implements UserManager, UserConstants, SessionListener {
+
+    
+
+
+
+    public static final String PARAM_USERS_PATH = "usersPath";
+
+    
+
+
+
+    public static final String PARAM_GROUPS_PATH = "groupsPath";
+
+    
+
+
+    public static final String PARAM_COMPATIBILE_JR16 = "compatibleJR16";
+
+    
+
+
+
+
+
+
+
+
+
+    public static final String PARAM_COMPATIBLE_JR16 = "compatibleJR16";
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static final String PARAM_DEFAULT_DEPTH = "defaultDepth";
+
+    
+
+
+
+
+
+
+    public static final String PARAM_AUTO_EXPAND_TREE = "autoExpandTree";
+
+    
+
+
+
+    public static final String PARAM_AUTO_EXPAND_SIZE = "autoExpandSize";
+
+    
+
+
+
+
+
+
+
+
+    public static final String PARAM_GROUP_MEMBERSHIP_SPLIT_SIZE = "groupMembershipSplitSize";
+
+    
+
+
+
+    public static final String PARAM_PASSWORD_HASH_ALGORITHM = "passwordHashAlgorithm";
+
+    
+
+
+
+    public static final String PARAM_PASSWORD_HASH_ITERATIONS = "passwordHashIterations";
+
+    private static final Logger log = LoggerFactory.getLogger(UserManagerImpl.class);
+
+    private final SessionImpl session;
+    private final String adminId;
+    private final NodeResolver authResolver;
+    private final NodeCreator nodeCreator;
+    private final UserManagerConfig config;
+
+    private final String usersPath;
+    private final String groupsPath;
+    private final MembershipCache membershipCache;
+
+    
+
+
+
+
+
+
+    public UserManagerImpl(SessionImpl session, String adminId) throws RepositoryException {
+        this(session, adminId, null, null);
+    }
+
+    
+
+
+
+
+
+
+
+    public UserManagerImpl(SessionImpl session, String adminId, Properties config) throws RepositoryException {
+        this(session, adminId, config, null);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public UserManagerImpl(SessionImpl session, String adminId, Properties config,
+                           MembershipCache mCache) throws RepositoryException {
+        this(session, new UserManagerConfig(config, adminId, null), mCache);
+    }
+
+    
+
+
+
+
+
+
+
+    private UserManagerImpl(SessionImpl session, UserManagerConfig config, MembershipCache mCache) throws RepositoryException {
+        this.session = session;
+        this.adminId = config.getAdminId();
+        this.config = config;
+
+        nodeCreator = new NodeCreator(config);
+
+        this.usersPath = config.getConfigValue(PARAM_USERS_PATH, USERS_PATH);
+        this.groupsPath = config.getConfigValue(PARAM_GROUPS_PATH, GROUPS_PATH);
+
+        if (mCache != null) {
+            membershipCache = mCache;
+        } else {
+            membershipCache = new MembershipCache(session, groupsPath, hasMemberSplitSize());
+        }
+
+        NodeResolver nr;
+        try {
+            nr = new IndexNodeResolver(session, session);
+        } catch (RepositoryException e) {
+            log.debug("UserManager: no QueryManager available for workspace '" + session.getWorkspace().getName() + "' -> Use traversing node resolver.");
+            nr = new TraversingNodeResolver(session, session);
+        }
+        authResolver = nr;
+        authResolver.setSearchRoots(usersPath, groupsPath);
+    }
+
+    
+
+
+
+
+
+
+    public String getUsersPath() {
+        return usersPath;
+    }
+
+    
+
+
+
+
+
+
+    public String getGroupsPath() {
+        return groupsPath;
+    }
+
+    
+
+
+    public MembershipCache getMembershipCache() {
+        return membershipCache;
+    }  
+
+    
+
+
+
+
+
+
+
+    public int getMemberSplitSize() {
+        int splitSize = config.getConfigValue(PARAM_GROUP_MEMBERSHIP_SPLIT_SIZE, 0);
+        if (splitSize != 0 && splitSize < 4) {
+            log.warn("Invalid value {} for {}. Expected integer >= 4", splitSize, PARAM_GROUP_MEMBERSHIP_SPLIT_SIZE);
+            splitSize = 0;
+        }
+        return splitSize;
+    }
+
+    
+
+
+
+
+
+
+
+    public boolean hasMemberSplitSize() {
+        return getMemberSplitSize() >= 4;
+    }
+
+    
+
+
+
+
+
+    public void setAuthorizableActions(AuthorizableAction[] authorizableActions) {
+        config.setAuthorizableActions(authorizableActions);
+    }
+
+    
+    
+
+
+    public Authorizable getAuthorizable(String id) throws RepositoryException {
+        if (id == null || id.length() == 0) {
+            throw new IllegalArgumentException("Invalid authorizable name '" + id + "'");
+        }
+        Authorizable a = internalGetAuthorizable(id);
+        
+
+
+
+
+
+
+
+        if (a == null && adminId.equals(id) && session.isSystem()) {
+            log.info("Admin user does not exist.");
+            a = createAdmin();
+        }
+
+        return a;
+    }
+
+    
+
+
+    public Authorizable getAuthorizable(Principal principal) throws RepositoryException {
+        NodeImpl n = null;
+        
+        if (principal instanceof AuthorizableImpl.NodeBasedPrincipal) {
+            NodeId nodeId = ((AuthorizableImpl.NodeBasedPrincipal) principal).getNodeId();
+            try {
+                n = session.getNodeById(nodeId);
+            } catch (ItemNotFoundException e) {
+                
+            }
+        } else if (principal instanceof ItemBasedPrincipal) {
+            String authPath = ((ItemBasedPrincipal) principal).getPath();
+            if (session.nodeExists(authPath)) {
+                n = (NodeImpl) session.getNode(authPath);
+            }
+        } else {
+            
+            
+            
+            
+            String name = principal.getName();
+            try {
+                Authorizable a = internalGetAuthorizable(name);
+                if (a != null && name.equals(a.getPrincipal().getName())) {
+                    return a;
+                }
+            } catch (RepositoryException e) {
+                
+            }
+            
+            n = (NodeImpl) authResolver.findNode(P_PRINCIPAL_NAME, name, NT_REP_AUTHORIZABLE);
+        }
+        
+        return getAuthorizable(n);
+    }
+
+    
+
+
+
+
+
+
+    public Authorizable getAuthorizableByPath(String path) throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UnsupportedRepositoryOperationException();
+    }
+
+    
+
+
+    public Iterator<Authorizable> findAuthorizables(String relPath, String value) throws RepositoryException {
+        return findAuthorizables(relPath, value, SEARCH_TYPE_AUTHORIZABLE);
+    }
+
+    
+
+
+    public Iterator<Authorizable> findAuthorizables(String relPath, String value, int searchType)
+            throws RepositoryException {
+        if (searchType < SEARCH_TYPE_USER || searchType > SEARCH_TYPE_AUTHORIZABLE) {
+            throw new IllegalArgumentException("Invalid search type " + searchType);
+        }
+
+        Path path = session.getQPath(relPath);
+        NodeIterator nodes;
+        if (relPath.indexOf('/') == -1) {
+            
+            nodes = authResolver.findNodes(path, value, searchType, true, Long.MAX_VALUE);
+        } else {
+            path = path.getNormalizedPath();
+            if (path.getLength() == 1) {
+                
+                Name ntName;
+                switch (searchType) {
+                    case SEARCH_TYPE_GROUP:
+                        ntName = NT_REP_GROUP;
+                        break;
+                    case SEARCH_TYPE_USER:
+                        ntName = NT_REP_USER;
+                        break;
+                    default:
+                        ntName = NT_REP_AUTHORIZABLE;
+                }
+                nodes = authResolver.findNodes(path.getName(), value, ntName, true);
+            } else {
+                
+                
+                nodes = authResolver.findNodes(path, value, searchType, true, Long.MAX_VALUE);            
+            }
+        }
+        return new AuthorizableIterator(nodes);
+    }
+
+    
+
+
+    public Iterator<Authorizable> findAuthorizables(Query query) throws RepositoryException {
+        XPathQueryBuilder builder = new XPathQueryBuilder();
+        query.build(builder);
+        return new XPathQueryEvaluator(builder, this, session).eval();
+    }
+
+    
+
+
+    public User createUser(String userID, String password) throws RepositoryException {
+        return createUser(userID, password, new PrincipalImpl(userID), null);
+    }
+
+    
+
+
+    public User createUser(String userID, String password,
+                           Principal principal, String intermediatePath)
+            throws AuthorizableExistsException, RepositoryException {
+        checkValidID(userID);
+
+        
+        
+
+        try {
+            NodeImpl userNode = (NodeImpl) nodeCreator.createUserNode(userID, intermediatePath);
+            setPrincipal(userNode, principal);
+            setPassword(userNode, password, true);
+
+            User user = createUser(userNode);
+            onCreate(user, password);
+            if (isAutoSave()) {
+                session.save();
+            }
+
+            log.debug("User created: " + userID + "; " + userNode.getPath());
+            return user;
+        } catch (RepositoryException e) {
+            
+            session.refresh(false);
+            log.debug("Failed to create new User, reverting changes.");
+            throw e;
+        }
+    }
+
+    
+
+
+    public Group createGroup(String groupID) throws AuthorizableExistsException, RepositoryException {
+    	return createGroup(groupID, new PrincipalImpl(groupID), null);
+    }
+    
+    
+
+
+
+
+    public Group createGroup(Principal principal) throws RepositoryException {
+        return createGroup(principal, null);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public Group createGroup(Principal principal, String intermediatePath) throws AuthorizableExistsException, RepositoryException {
+        checkValidPrincipal(principal, true);
+        
+        String groupID = getGroupId(principal.getName());
+        return createGroup(groupID, principal, intermediatePath);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public Group createGroup(String groupID, Principal principal, String intermediatePath) throws AuthorizableExistsException, RepositoryException {
+        checkValidID(groupID);
+        
+        try {
+            NodeImpl groupNode = (NodeImpl) nodeCreator.createGroupNode(groupID, intermediatePath);
+            
+            if (principal != null) {
+            	setPrincipal(groupNode, principal);
+            }
+
+            Group group = createGroup(groupNode);
+            onCreate(group);
+            if (isAutoSave()) {
+                session.save();
+            }
+
+            log.debug("Group created: " + groupID + "; " + groupNode.getPath());
+            return group;
+        } catch (RepositoryException e) {
+            session.refresh(false);
+            log.debug("newInstance new Group failed, revert changes on parent");
+            throw e;
+        }
+    }
+
+    
+
+
+
+
+
+
+    public boolean isAutoSave() {
+        return true;
+    }
+
+    
+
+
+
+
+
+    public void autoSave(boolean enable) throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UnsupportedRepositoryOperationException("Cannot change autosave behavior.");
+    }
+
+    
+    
+
+
+
+
+
+
+
+    void setPrincipal(NodeImpl node, Principal principal) throws AuthorizableExistsException, RepositoryException {
+        checkValidPrincipal(principal, node.isNodeType(NT_REP_GROUP));        
+        
+
+
+
+
+
+
+
+        Authorizable existing = getAuthorizable(principal);
+        if (existing != null && !((AuthorizableImpl) existing).getNode().isSame(node)) {
+            throw new AuthorizableExistsException("Authorizable for '" + principal.getName() + "' already exists: ");
+        }
+        if (!node.isNew() || node.hasProperty(P_PRINCIPAL_NAME)) {
+            throw new RepositoryException("rep:principalName can only be set once on a new node.");
+        }
+        setProperty(node, P_PRINCIPAL_NAME, getValue(principal.getName()), true);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    void setPassword(NodeImpl userNode, String password, boolean forceHash) throws RepositoryException {
+        if (password == null) {
+            if (userNode.isNew()) {
+                
+                return;
+            } else {
+                throw new IllegalArgumentException("Password may not be null.");
+            }
+        }
+        String pwHash;
+        if (forceHash || PasswordUtility.isPlainTextPassword(password)) {
+            try {
+                String algorithm = config.getConfigValue(PARAM_PASSWORD_HASH_ALGORITHM, PasswordUtility.DEFAULT_ALGORITHM);
+                int iterations = config.getConfigValue(PARAM_PASSWORD_HASH_ITERATIONS, PasswordUtility.DEFAULT_ITERATIONS);
+                pwHash = PasswordUtility.buildPasswordHash(password, algorithm, PasswordUtility.DEFAULT_SALT_SIZE, iterations);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RepositoryException(e);
+            } catch (UnsupportedEncodingException e) {
+                throw new RepositoryException(e);
+            }
+        } else {
+            pwHash = password;
+        }
+        Value v = getSession().getValueFactory().createValue(pwHash);
+        setProperty(userNode, P_PASSWORD, getValue(pwHash), userNode.isNew());
+    }
+
+    void setProtectedProperty(NodeImpl node, Name propName, Value value) throws RepositoryException, LockException, ConstraintViolationException, ItemExistsException, VersionException {
+        setProperty(node, propName, value);
+        if (isAutoSave()) {
+            node.save();
+        }
+    }
+
+    void setProtectedProperty(NodeImpl node, Name propName, Value[] values) throws RepositoryException, LockException, ConstraintViolationException, ItemExistsException, VersionException {
+        setProperty(node, propName, values);
+        if (isAutoSave()) {
+            node.save();
+        }
+    }
+
+    void setProtectedProperty(NodeImpl node, Name propName, Value[] values, int type) throws RepositoryException, LockException, ConstraintViolationException, ItemExistsException, VersionException {
+        setProperty(node, propName, values, type);
+        if (isAutoSave()) {
+            node.save();
+        }
+    }
+
+    void removeProtectedItem(ItemImpl item, Node parent) throws RepositoryException, AccessDeniedException, VersionException {
+        removeItem(item);
+        if (isAutoSave()) {
+            parent.save();
+        }
+    }
+
+    NodeImpl addProtectedNode(NodeImpl parent, Name name, Name ntName) throws RepositoryException {
+        NodeImpl n = addNode(parent, name, ntName);
+        if (isAutoSave()) {
+            parent.save();
+        }
+        return n;
+    }
+
+    <T> T performProtectedOperation(SessionImpl session, SessionOperation<T> operation) throws RepositoryException {
+        return performProtected(session, operation);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    Authorizable getAuthorizable(NodeImpl n) throws RepositoryException {
+        Authorizable authorz = null;
+        if (n != null) {
+            String path = n.getPath();
+            if (n.isNodeType(NT_REP_USER)) {
+                if (Text.isDescendant(usersPath, path)) {
+                    authorz = createUser(n);
+                } else {
+                    
+                    log.error("User node '" + path + "' outside of configured user tree ('" + usersPath + "') -> Not a valid user.");
+                }
+            } else if (n.isNodeType(NT_REP_GROUP)) {
+                if (Text.isDescendant(groupsPath, path)) {
+                    authorz = createGroup(n);
+                } else {
+                    
+                    log.error("Group node '" + path + "' outside of configured group tree ('" + groupsPath + "') -> Not a valid group.");
+                }
+            } else {
+                
+                log.warn("Unexpected user/group node type " + n.getPrimaryNodeType().getName());
+            }
+        } 
+        return authorz;
+    }
+
+    
+
+
+
+    String getPath(Node authorizableNode) throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UnsupportedRepositoryOperationException();
+    }
+
+    
+
+
+
+
+    SessionImpl getSession() {
+        return session;
+    }
+
+    
+
+
+
+
+
+
+
+
+    private String getGroupId(String principalName) throws RepositoryException {
+        String groupID = principalName;
+        int i = 0;
+        while (internalGetAuthorizable(groupID) != null) {
+            groupID = principalName + "_" + i;
+            i++;
+        }
+        return groupID;
+    }
+
+    
+
+
+
+
+    private Authorizable internalGetAuthorizable(String id) throws RepositoryException {
+        NodeId nodeId = buildNodeId(id);
+        NodeImpl n = null;
+        try {
+            n = session.getNodeById(nodeId);
+        } catch (ItemNotFoundException e) {
+            boolean compatibleJR16 = config.getConfigValue(PARAM_COMPATIBLE_JR16, false);
+            if (compatibleJR16) {
+                
+                
+                
+                n = (NodeImpl) authResolver.findNode(P_USERID, id, NT_REP_USER);
+                if (n == null) {
+                    
+                    
+                    
+                    
+                    Name nodeName = session.getQName(Text.escapeIllegalJcrChars(id));
+                    n = (NodeImpl) authResolver.findNode(nodeName, NT_REP_GROUP);
+                }
+            } 
+        }
+
+        return getAuthorizable(n);
+    }
+
+    private Value getValue(String strValue) {
+        return session.getValueFactory().createValue(strValue);
+    }
+
+    
+
+
+
+    boolean isAdminId(String userID) {
+        return (adminId != null) && adminId.equals(userID);
+    }
+
+    
+
+
+
+
+
+
+
+    User createUser(NodeImpl userNode) throws RepositoryException {
+        if (userNode == null || !userNode.isNodeType(NT_REP_USER)) {
+            throw new IllegalArgumentException();
+        }
+        if (!Text.isDescendant(usersPath, userNode.getPath())) {
+            throw new RepositoryException("User has to be within the User Path");
+        }
+        return doCreateUser(userNode);
+    }
+
+    
+
+
+
+
+
+
+
+    protected User doCreateUser(NodeImpl node) throws RepositoryException {
+        return new UserImpl(node, this);
+    }
+
+
+    
+
+
+
+
+
+
+
+    Group createGroup(NodeImpl groupNode) throws RepositoryException {
+        if (groupNode == null || !groupNode.isNodeType(NT_REP_GROUP)) {
+            throw new IllegalArgumentException();
+        }
+        if (!Text.isDescendant(groupsPath, groupNode.getPath())) {
+            throw new RepositoryException("Group has to be within the Group Path");
+        }
+        return doCreateGroup(groupNode);
+    }
+
+    
+
+
+
+
+
+
+
+    protected Group doCreateGroup(NodeImpl node) throws RepositoryException {
+        return new GroupImpl(node, this);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private User createAdmin() throws RepositoryException {
+        User admin;
+        try {
+            admin = createUser(adminId, adminId);
+            if (!isAutoSave()) {
+                session.save();
+            }
+            log.info("... created admin user with id \'" + adminId + "\' and default pw.");
+        } catch (ItemExistsException e) {
+            NodeImpl conflictingNode = session.getNodeById(buildNodeId(adminId));
+            String conflictPath = conflictingNode.getPath();
+            log.error("Detected conflicting node " + conflictPath + " of node type " + conflictingNode.getPrimaryNodeType().getName() + ".");
+
+            
+            conflictingNode.remove();
+            log.info("Removed conflicting node at " + conflictPath);
+
+            admin = createUser(adminId, adminId);
+            if (!isAutoSave()) {
+                session.save();
+            }
+            log.info("Resolved conflict and (re)created admin user with id \'" + adminId + "\' and default pw.");
+        }
+        return admin;
+    }
+
+    
+
+
+
+
+
+
+
+    private NodeId buildNodeId(String id) throws RepositoryException {
+        try {
+            UUID uuid = UUID.nameUUIDFromBytes(id.toLowerCase().getBytes("UTF-8"));
+            return new NodeId(uuid);
+        } catch (UnsupportedEncodingException e) {
+            throw new RepositoryException("Unexpected error while build ID hash", e);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+    private void checkValidID(String id) throws IllegalArgumentException, AuthorizableExistsException, RepositoryException {
+        if (id == null || id.length() == 0) {
+            throw new IllegalArgumentException("Cannot create authorizable: ID can neither be null nor empty String.");
+        }
+        if (internalGetAuthorizable(id) != null) {
+            throw new AuthorizableExistsException("User or Group for '" + id + "' already exists");
+        }
+    }
+
+    
+
+
+
+
+
+    private static void checkValidPrincipal(Principal principal, boolean isGroup) {
+        if (principal == null || principal.getName() == null || "".equals(principal.getName())) {
+            throw new IllegalArgumentException("Principal may not be null and must have a valid name.");
+        }
+        if (!isGroup && EveryonePrincipal.NAME.equals(principal.getName())) {
+            throw new IllegalArgumentException("'everyone' is a reserved group principal name.");
+        }
+    }
+
+    
+    
+
+
+
+
+
+
+
+
+    void onCreate(User user, String pw) throws RepositoryException {
+        for (AuthorizableAction action : config.getAuthorizableActions()) {
+            action.onCreate(user, pw, session);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    void onCreate(Group group) throws RepositoryException {
+        for (AuthorizableAction action : config.getAuthorizableActions()) {
+            action.onCreate(group, session);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    void onRemove(Authorizable authorizable) throws RepositoryException {
+        for (AuthorizableAction action : config.getAuthorizableActions()) {
+            action.onRemove(authorizable, session);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+    void onPasswordChange(User user, String password) throws RepositoryException {
+        for (AuthorizableAction action : config.getAuthorizableActions()) {
+            action.onPasswordChange(user, password, session);
+        }
+    }
+
+    
+    
+
+
+    public void loggingOut(SessionImpl session) {
+        
+    }
+
+    
+
+
+    public void loggedOut(SessionImpl session) {
+        
+        if (session != this.session) {
+            this.session.logout();
+        }
+    }
+
+    
+    public static boolean includesAdmin(NodeImpl node) throws RepositoryException {
+        SessionImpl s = (SessionImpl) node.getSession();
+        if (s.getRepository().getDescriptorValue(JackrabbitRepository.OPTION_USER_MANAGEMENT_SUPPORTED).getBoolean()) {
+            UserManager uMgr = s.getUserManager();
+            if (uMgr instanceof UserManagerImpl) {
+                UserManagerImpl uMgrImpl = (UserManagerImpl) uMgr;
+                AuthorizableImpl admin = (AuthorizableImpl) uMgrImpl.getAuthorizable(uMgrImpl.adminId);
+                return Text.isDescendantOrEqual(node.getPath(), admin.getNode().getPath());
+            }
+        }
+        return false;
+    }
+
+    
+    
+
+
+    private final class AuthorizableIterator implements Iterator<Authorizable> {
+
+        private final Set<String> served = new HashSet<String>();
+
+        private Authorizable next;
+        private final NodeIterator authNodeIter;
+
+        private AuthorizableIterator(NodeIterator authNodeIter) {
+            this.authNodeIter = authNodeIter;
+            next = seekNext();
+        }
+
+        
+        
+
+
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        
+
+
+        public Authorizable next() {
+            Authorizable authr = next;
+            if (authr == null) {
+                throw new NoSuchElementException();
+            }
+            next = seekNext();
+            return authr;
+        }
+
+        
+
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        
+        private Authorizable seekNext() {
+            while (authNodeIter.hasNext()) {
+                NodeImpl node = (NodeImpl) authNodeIter.nextNode();
+                try {
+                    if (!served.contains(node.getUUID())) {
+                        Authorizable authr = getAuthorizable(node);
+                        served.add(node.getUUID());
+                        if (authr != null) {
+                            return authr;
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    log.debug(e.getMessage());
+                    
+                }
+            }
+
+            
+            return null;
+        }
+    }
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private class NodeCreator {
+
+        private static final String DELIMITER = "/";
+        private static final int DEFAULT_DEPTH = 2;
+        private static final long DEFAULT_SIZE = 1000;
+
+        private final int defaultDepth;
+        private final boolean autoExpandTree;
+        
+        
+        
+        private final long autoExpandSize;
+
+        private NodeCreator(UserManagerConfig config) {
+            int d = DEFAULT_DEPTH;
+            boolean expand = false;
+            long size = DEFAULT_SIZE;
+
+            if (config != null) {
+                d = config.getConfigValue(PARAM_DEFAULT_DEPTH, DEFAULT_DEPTH);
+                if (d <= 0) {
+                    log.warn("Invalid defaultDepth '" + d + "' -> using default.");
+                    d = DEFAULT_DEPTH;
+                }
+                expand = config.getConfigValue(PARAM_AUTO_EXPAND_TREE, false);
+                size = config.getConfigValue(PARAM_AUTO_EXPAND_SIZE, DEFAULT_SIZE);
+                if (expand && size <= 0) {
+                    log.warn("Invalid autoExpandSize '" + size + "' -> using default.");
+                    size = DEFAULT_SIZE;
+                }
+            }
+
+            defaultDepth = d;
+            autoExpandTree = expand;
+            autoExpandSize = size;
+        }
+
+        public Node createUserNode(String userID, String intermediatePath) throws RepositoryException {
+            return createAuthorizableNode(userID, false, intermediatePath);
+        }
+
+        public Node createGroupNode(String groupID, String intermediatePath) throws RepositoryException {
+            return createAuthorizableNode(groupID, true, intermediatePath);
+        }
+
+        private Node createAuthorizableNode(String id, boolean isGroup, String intermediatePath) throws RepositoryException {
+            String escapedId = Text.escapeIllegalJcrChars(id);
+
+            Node folder;
+            
+            folder = createDefaultFolderNodes(id, escapedId, isGroup, intermediatePath);
+            
+            if (intermediatePath == null) {
+                
+                folder = createIntermediateFolderNodes(id, escapedId, folder);
+            }
+
+            Name nodeName = session.getQName(escapedId);
+            Name ntName = (isGroup) ? NT_REP_GROUP : NT_REP_USER;
+            NodeId nid = buildNodeId(id);
+
+            
+            while (((NodeImpl) folder).hasNode(nodeName)) {
+                NodeImpl colliding = ((NodeImpl) folder).getNode(nodeName);
+                if (colliding.isNodeType(NT_REP_AUTHORIZABLE_FOLDER)) {
+                    log.warn("Existing folder node collides with user/group to be created. Expanding path: " + colliding.getPath());
+                    folder = colliding;
+                } else {
+                    
+                    
+                    
+                    
+                    String msg = "Failed to create authorizable with id '" + id + "' : Detected conflicting node of unexpected nodetype '" + colliding.getPrimaryNodeType().getName() + "'.";
+                    log.error(msg);
+                    throw new ConstraintViolationException(msg);
+                }
+            }
+
+            
+            if (session.getItemManager().itemExists(nid)) {
+                String msg = "Failed to create authorizable with id '" + id + "' : Detected conflict with existing node (NodeID: " + nid + ")";
+                log.error(msg);
+                throw new ItemExistsException(msg);
+            }
+
+            
+            return addNode((NodeImpl) folder, nodeName, ntName, nid);
+        }
+
+        private Node createDefaultFolderNodes(String id, String escapedId,
+                                              boolean isGroup, String intermediatePath) throws RepositoryException {
+
+            String defaultPath = getDefaultFolderPath(id, isGroup, intermediatePath);
+
+            
+            
+            
+            
+            
+            String[] segmts = defaultPath.split("/");
+            NodeImpl folder = (NodeImpl) session.getRootNode();
+            String authRoot = (isGroup) ? groupsPath : usersPath;
+
+            for (String segment : segmts) {
+                if (segment.length() < 1) {
+                    continue;
+                }
+                if (folder.hasNode(segment)) {
+                    folder = (NodeImpl) folder.getNode(segment);
+                    if (Text.isDescendantOrEqual(authRoot, folder.getPath()) &&
+                            !folder.isNodeType(NT_REP_AUTHORIZABLE_FOLDER)) {
+                        throw new ConstraintViolationException("Invalid intermediate path. Must be of type rep:AuthorizableFolder.");
+                    }
+                } else {
+                    folder = addNode(folder, session.getQName(segment), NT_REP_AUTHORIZABLE_FOLDER);
+                }
+            }
+
+            
+            checkAuthorizableNodeExists(escapedId, folder);
+            return folder;
+        }
+
+        private String getDefaultFolderPath(String id, boolean isGroup, String intermediatePath) {
+            StringBuilder bld = new StringBuilder();
+            if (isGroup) {
+                bld.append(groupsPath);
+            } else {
+                bld.append(usersPath);
+            }
+
+            if (intermediatePath == null) {
+                
+                StringBuilder lastSegment = new StringBuilder(defaultDepth);
+                int idLength = id.length();
+                for (int i = 0; i < defaultDepth; i++) {
+                    if (idLength > i) {
+                        lastSegment.append(id.charAt(i));
+                    } else {
+                        
+                        lastSegment.append(id.charAt(idLength-1));
+                    }
+                    bld.append(DELIMITER).append(Text.escapeIllegalJcrChars(lastSegment.toString()));
+                }
+            } else {
+                
+                if (intermediatePath.startsWith(bld.toString())) {
+                    intermediatePath = intermediatePath.substring(bld.toString().length());
+                }
+                if (intermediatePath.length() > 0 && !"/".equals(intermediatePath)) {
+                    if (!intermediatePath.startsWith("/")) {
+                        bld.append("/");
+                    }
+                    bld.append(intermediatePath);
+                }
+            }
+            return bld.toString();
+        }
+
+        private Node createIntermediateFolderNodes(String id, String escapedId, Node folder) throws RepositoryException {
+            if (!autoExpandTree) {
+                
+                return folder;
+            }
+
+            
+            
+            
+            
+            int segmLength = defaultDepth +1;
+
+            while (intermediateFolderNeeded(escapedId, folder)) {
+                String folderName = Text.escapeIllegalJcrChars(id.substring(0, segmLength));
+                if (folder.hasNode(folderName)) {
+                    NodeImpl n = (NodeImpl) folder.getNode(folderName);
+                    
+                    
+                    if (n.isNodeType(NT_REP_AUTHORIZABLE_FOLDER)) {
+                        
+                        folder = n;
+                    } else if (n.isNodeType(NT_REP_AUTHORIZABLE)){
+                        
+
+
+
+
+
+
+
+
+
+
+                        log.warn("Auto-expanding aborted. An existing authorizable node '" + n.getName() +"'conflicts with intermediate folder to be created.");
+                        break;
+                    } else {
+                        
+                        String msg = "Failed to create authorizable node: Detected conflict with node of unexpected nodetype '" + n.getPrimaryNodeType().getName() + "'.";
+                        log.error(msg);
+                        throw new ConstraintViolationException(msg);
+                    }
+                } else {
+                    
+                    folder = addNode((NodeImpl) folder, session.getQName(folderName), NT_REP_AUTHORIZABLE_FOLDER);
+                }
+                segmLength++;
+            }
+
+            
+            checkAuthorizableNodeExists(escapedId, folder);
+            return folder;
+        }
+
+        private void checkAuthorizableNodeExists(String nodeName, Node folder) throws AuthorizableExistsException, RepositoryException {
+            if (folder.hasNode(nodeName) &&
+                    ((NodeImpl) folder.getNode(nodeName)).isNodeType(NT_REP_AUTHORIZABLE)) {
+                throw new AuthorizableExistsException("Unable to create Group/User: Collision with existing authorizable.");
+            }
+        }
+
+        private boolean intermediateFolderNeeded(String nodeName, Node folder) throws RepositoryException {
+            
+            
+            
+            if (nodeName.length() <= folder.getName().length()) {
+                return false;
+            }
+
+            
+            
+            
+            if (nodeName.length() == folder.getName().length()+1) {
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                return true;
+            }
+
+            
+            if (folder.getNodes().getSize() >= autoExpandSize) {
+                return true;
+            }
+
+            
+            
+            return false;
+        }
+    }
+
+
+}

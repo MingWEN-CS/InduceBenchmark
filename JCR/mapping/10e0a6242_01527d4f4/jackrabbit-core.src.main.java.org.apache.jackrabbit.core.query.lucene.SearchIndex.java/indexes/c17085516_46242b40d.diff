@@ -1,0 +1,20 @@
+1418c1418,1423
+<                                 doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, aggregate.getNodeId().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+---
+>                                 doc.add(new Field(
+>                                         FieldNames.AGGREGATED_NODE_UUID, false,
+>                                         aggregate.getNodeId().toString(),
+>                                         Field.Store.NO,
+>                                         Field.Index.NOT_ANALYZED_NO_NORMS,
+>                                         Field.TermVector.NO));
+1466,1467c1471,1477
+<                                         doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID,
+<                                                 parent.getNodeId().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+---
+>                                         doc.add(new Field(
+>                                                 FieldNames.AGGREGATED_NODE_UUID,
+>                                                 false,
+>                                                 parent.getNodeId().toString(),
+>                                                 Field.Store.NO,
+>                                                 Field.Index.NOT_ANALYZED_NO_NORMS,
+>                                                 Field.TermVector.NO));

@@ -1,0 +1,4 @@
+761c761
+<         sortedTerms = terms.sort(BytesRef.getUTF8SortedAsUnicodeComparator());
+---
+>         sortedTerms = terms.sort();

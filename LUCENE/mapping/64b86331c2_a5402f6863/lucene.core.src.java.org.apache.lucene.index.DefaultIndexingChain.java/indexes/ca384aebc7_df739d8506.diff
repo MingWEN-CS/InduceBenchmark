@@ -1,0 +1,8 @@
+773,776c773,774
+<           invertState.length++;
+<           if (invertState.length < 0) {
+<             throw new IllegalArgumentException("too many tokens in field '" + field.name() + "'");
+<           }
+---
+>           invertState.length = Math.addExact(invertState.length, invertState.termFreqAttribute.getTermFrequency());
+>           

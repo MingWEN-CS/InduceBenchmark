@@ -1,0 +1,50 @@
+1370c1370
+<   public static class Builder {
+---
+>   public static class Builder extends SolrClientBuilder<Builder> {
+1373d1372
+<     protected HttpClient httpClient;
+1380,1381d1378
+<     protected Integer connectionTimeoutMillis;
+<     protected Integer socketTimeoutMillis;
+1442,1450d1438
+<     public Builder withHttpClient(HttpClient httpClient) {
+<       this.httpClient = httpClient;
+<       return this;
+<     }
+< 
+< 
+<     
+< 
+< 
+1521,1544d1508
+<     public Builder withConnectionTimeout(int connectionTimeoutMillis) {
+<       if (connectionTimeoutMillis <= 0) {
+<         throw new IllegalArgumentException("connectionTimeoutMillis must be a positive integer.");
+<       }
+<       
+<       this.connectionTimeoutMillis = connectionTimeoutMillis;
+<       return this;
+<     }
+<     
+<     
+< 
+< 
+<     public Builder withSocketTimeout(int socketTimeoutMillis) {
+<       if (socketTimeoutMillis <= 0) {
+<         throw new IllegalArgumentException("socketTimeoutMillis must be a positive integer.");
+<       }
+<       
+<       this.socketTimeoutMillis = socketTimeoutMillis;
+<       return this;
+<     }
+< 
+<     
+< 
+< 
+1562a1527,1531
+> 
+>     @Override
+>     public Builder getThis() {
+>       return this;
+>     }

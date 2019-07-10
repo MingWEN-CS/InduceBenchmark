@@ -1,0 +1,12 @@
+282c282
+<     return MultiFields.getDeletedDocs(in);
+---
+>     return in.getDeletedDocs();
+418c418
+<     return null;
+---
+>     return in.getSequentialSubReaders();
+423c423
+<     return MultiFields.getFields(in);
+---
+>     return in.fields();

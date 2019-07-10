@@ -1,0 +1,225 @@
+50a51,52
+> import java.util.Calendar;
+> import java.text.DateFormat;
+93c95
+<     private final IndexInfos indexNames = new IndexInfos("indexes");
+---
+>     private final IndexInfos indexNames;
+98c100,106
+<     private final Set<String> deletable = new HashSet<String>();
+---
+>     private final IndexHistory indexHistory;
+> 
+>     
+> 
+> 
+> 
+>     private final Map<String, Long> deletable = new HashMap<String, Long>();
+185c193
+<     private final RedoLog redoLog;
+---
+>     private RedoLog redoLog;
+230d237
+<         this.redoLog = new RedoLog(indexDir);
+234,236c241,244
+<         if (indexNames.exists(indexDir)) {
+<             indexNames.read(indexDir);
+<         }
+---
+>         indexNames = new IndexInfos(indexDir, "indexes");
+> 
+>         this.indexHistory = new IndexHistory(indexDir,
+>                 handler.getMaxHistoryAge() * 1000);
+240a249,250
+>         this.redoLog = RedoLog.create(indexDir, indexNames.getGeneration());
+> 
+253,254c263,265
+<         for (int i = 0; i < indexNames.size(); i++) {
+<             String name = indexNames.getName(i);
+---
+>         for (Iterator it = indexNames.iterator(); it.hasNext(); ) {
+>             IndexInfo info = (IndexInfo) it.next();
+>             String name = info.getName();
+266c277,278
+<                     cache, indexingQueue, directoryManager);
+---
+>                     cache, indexingQueue, directoryManager,
+>                     handler.getMaxHistoryAge());
+375c387
+<                 log.info("Created initial index for {} nodes", new Long(count));
+---
+>                 log.info("Created initial index for {} nodes", count);
+422d433
+<             boolean flush = false;
+432c443
+<                     flush |= checkVolatileCommit();
+---
+>                     checkVolatileCommit();
+436,440d446
+< 
+<             
+<             if (flush) {
+<                 flush();
+<             }
+492,493c498
+<             for (int i = 0; i < indexes.size(); i++) {
+<                 PersistentIndex index = (PersistentIndex) indexes.get(i);
+---
+>             for (PersistentIndex index : indexes) {
+586c591,592
+<                     cache, indexingQueue, directoryManager);
+---
+>                     cache, indexingQueue, directoryManager,
+>                     handler.getMaxHistoryAge());
+590c596
+<                 deletable.add(indexName);
+---
+>                 deletable.put(indexName, Long.MIN_VALUE);
+646c652
+<             log.debug("hierarchy cache initialized in {} ms", new Long(time));
+---
+>             log.debug("hierarchy cache initialized in {} ms", time);
+738,739c744
+<                 for (int i = 0; i < indexes.size(); i++) {
+<                     PersistentIndex pIdx = (PersistentIndex) indexes.get(i);
+---
+>                 for (PersistentIndex pIdx : indexes) {
+789,790c794,795
+<             for (int i = 0; i < indexes.size(); i++) {
+<                 ((PersistentIndex) indexes.get(i)).close();
+---
+>             for (PersistentIndex index : indexes) {
+>                 index.close();
+878c883
+<             deletable.add(index.getName());
+---
+>             deletable.put(index.getName(), System.currentTimeMillis());
+889a895
+> 
+891,892c897
+<             executeAndLog(new Start(Action.INTERNAL_TRANSACTION));
+<             commitVolatileIndex();
+---
+>             boolean transactionStarted = false;
+893a899,906
+>             if (volatileIndex.getNumDocuments() > 0) {
+>                 
+>                 executeAndLog(new Start(Action.INTERNAL_TRANSACTION));
+>                 transactionStarted = true;
+>                 commitVolatileIndex();
+>             }
+> 
+>             boolean indexesModified = false;
+896c909
+<                 PersistentIndex index = (PersistentIndex) indexes.get(i);
+---
+>                 PersistentIndex index = indexes.get(i);
+900a914
+>                     long gen = index.getCurrentGeneration();
+901a916,921
+>                     if (gen != index.getCurrentGeneration()) {
+>                         indexesModified = true;
+>                         log.debug("Committed revision {} of index {}",
+>                                 Long.toString(index.getCurrentGeneration(), Character.MAX_RADIX),
+>                                 index.getName());
+>                     }
+903a924,927
+>                         if (!transactionStarted) {
+>                             executeAndLog(new Start(Action.INTERNAL_TRANSACTION));
+>                             transactionStarted = true;
+>                         }
+908d931
+<             executeAndLog(new Commit(getTransactionId()));
+910c933,938
+<             indexNames.write(indexDir);
+---
+>             if (transactionStarted) {
+>                 executeAndLog(new Commit(getTransactionId()));
+>             }
+> 
+>             if (transactionStarted || indexesModified || redoLog.hasEntries()) {
+>                 indexNames.write();
+912,913c940,946
+<             
+<             redoLog.clear();
+---
+>                 indexHistory.addIndexInfos(indexNames);
+> 
+>                 
+>                 
+>                 redoLog.close();
+>                 redoLog = RedoLog.create(indexDir, indexNames.getGeneration());
+>             }
+917a951,952
+>         indexHistory.pruneOutdated();
+> 
+955,958c990,1008
+<         String[] dirNames = directoryManager.getDirectoryNames();
+<         for (int i = 0; i < dirNames.length; i++) {
+<             if (dirNames[i].startsWith("_") && !indexNames.contains(dirNames[i])) {
+<                 deletable.add(dirNames[i]);
+---
+>         for (String name : directoryManager.getDirectoryNames()) {
+>             if (!name.startsWith("_")) {
+>                 continue;
+>             }
+>             long lastUse = indexHistory.getLastUseOf(name);
+>             if (lastUse != Long.MAX_VALUE) {
+>                 if (log.isDebugEnabled()) {
+>                     String msg = "Segment " + name + " not is use anymore. ";
+>                     if (lastUse != Long.MIN_VALUE) {
+>                         Calendar cal = Calendar.getInstance();
+>                         DateFormat df = DateFormat.getInstance();
+>                         cal.setTimeInMillis(lastUse);
+>                         msg += "Unused since: " + df.format(cal.getTime());
+>                     } else {
+>                         msg += "(orphaned)";
+>                     }
+>                     log.debug(msg);
+>                 }
+>                 deletable.put(name, lastUse);
+960a1011,1012
+>         
+>         indexHistory.pruneOutdated();
+970a1023,1024
+> 
+> 
+1088c1142
+<             log.info("indexing... {} ({})", resolver.getJCRPath(path), new Long(count));
+---
+>             log.info("indexing... {} ({})", resolver.getJCRPath(path), count);
+1113a1168
+> 
+1116,1121c1171,1180
+<             for (Iterator<String> it = deletable.iterator(); it.hasNext(); ) {
+<                 String indexName = it.next();
+<                 if (directoryManager.delete(indexName)) {
+<                     it.remove();
+<                 } else {
+<                     log.info("Unable to delete obsolete index: " + indexName);
+---
+>             for (Iterator<Map.Entry<String, Long>> it = deletable.entrySet().iterator(); it.hasNext(); ) {
+>                 Map.Entry<String, Long> entry = it.next();
+>                 String indexName = entry.getKey();
+>                 long lastUse = entry.getValue();
+>                 if (System.currentTimeMillis() - handler.getMaxHistoryAge() * 1000 > lastUse) {
+>                     if (directoryManager.delete(indexName)) {
+>                         it.remove();
+>                     } else {
+>                         log.info("Unable to delete obsolete index: " + indexName);
+>                     }
+1207c1266
+<                     new Long(finished.size()));
+---
+>                     finished.size());
+1494c1553
+<                 index.indexNames.addName(indexName);
+---
+>                 index.indexNames.addName(indexName, idx.getCurrentGeneration());
+1859c1918
+<                     PersistentIndex idx = (PersistentIndex) index.indexes.get(i);
+---
+>                     PersistentIndex idx = index.indexes.get(i);
+1941a2001,2002
+> 
+> 

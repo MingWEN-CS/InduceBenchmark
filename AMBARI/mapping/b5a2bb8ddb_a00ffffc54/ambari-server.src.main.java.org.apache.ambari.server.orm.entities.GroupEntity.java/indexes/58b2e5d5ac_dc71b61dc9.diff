@@ -1,0 +1,10 @@
+104c104
+<   public void setLdapGroup(Boolean ldapGroup) {
+---
+>   private void setLdapGroup(Boolean ldapGroup) {
+116c116
+<   public void setgroupType(GroupType groupType) {
+---
+>   public void setGroupType(GroupType groupType) {
+117a118
+>     setLdapGroup(groupType == GroupType.LDAP);

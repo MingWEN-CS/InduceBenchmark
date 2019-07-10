@@ -1,0 +1,15 @@
+215c215,217
+<       new String[] { "kill", "-0", isSetsidAvailable ? "-" + pid : pid };
+---
+>       isSetsidAvailable ?
+>         new String[] { "kill", "-0", "--", "-" + pid } :
+>         new String[] { "kill", "-0", pid };
+220,221c222,226
+<     return Shell.WINDOWS ? new String[] { Shell.WINUTILS, "task", "kill", pid } :
+<       new String[] { "kill", "-" + code, isSetsidAvailable ? "-" + pid : pid };
+---
+>     return Shell.WINDOWS ?
+>       new String[] { Shell.WINUTILS, "task", "kill", pid } :
+>       isSetsidAvailable ?
+>         new String[] { "kill", "-" + code, "--", "-" + pid } :
+>         new String[] { "kill", "-" + code, pid };

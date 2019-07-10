@@ -1,0 +1,12 @@
+19a20
+> import org.apache.hadoop.security.authentication.client.KerberosAuthenticator;
+38a40
+> 
+567a570,576
+>         
+>         
+>         if ((errCode == HttpServletResponse.SC_UNAUTHORIZED)
+>             && (!httpResponse.containsHeader(
+>                 KerberosAuthenticator.WWW_AUTHENTICATE))) {
+>           errCode = HttpServletResponse.SC_FORBIDDEN;
+>         }

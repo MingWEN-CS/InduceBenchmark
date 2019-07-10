@@ -1,0 +1,105 @@
+184,187c184,193
+<         if (internalVersionManager != null) {
+<             VersioningLock.ReadLock lock =
+<                 internalVersionManager.acquireReadLock();
+<             try {
+---
+>         for (;;) {
+>             if (internalVersionManager != null) {
+>                 VersioningLock.ReadLock lock =
+>                         internalVersionManager.acquireReadLock();
+>                 try {
+>                     internalSync();
+>                 } finally {
+>                     lock.release();
+>                 }
+>             } else {
+189,190d194
+<             } finally {
+<                 lock.release();
+192,193c196,207
+<         } else {
+<             internalSync();
+---
+>             if (syncAgainOnNewRecords()) {
+>                 
+>                 RecordIterator it = getRecords(getMinimalRevision());
+>                 try {
+>                     if (it.hasNext()) {
+>                         continue;
+>                     }
+>                 } finally {
+>                     it.close();
+>                 }
+>             }
+>             break;
+218,236c232,248
+<         for (;;) {
+<             RecordIterator iterator = getRecords(startRevision);
+<             long stopRevision = Long.MIN_VALUE;
+<     
+<             try {
+<                 while (iterator.hasNext()) {
+<                     Record record = iterator.nextRecord();
+<                     if (record.getJournalId().equals(id)) {
+<                         log.info("Record with revision '" + record.getRevision()
+<                                 + "' created by this journal, skipped.");
+<                     } else {
+<                         RecordConsumer consumer = getConsumer(record.getProducerId());
+<                         if (consumer != null) {
+<                             try {
+<                                 consumer.consume(record);
+<                             } catch (IllegalStateException e) {
+<                                 log.error("Could not synchronize to revision: " + record.getRevision() + " due illegal state of RecordConsumer.");
+<                                 return;
+<                             }
+---
+>         RecordIterator iterator = getRecords(startRevision);
+>         long stopRevision = Long.MIN_VALUE;
+> 
+>         try {
+>             while (iterator.hasNext()) {
+>                 Record record = iterator.nextRecord();
+>                 if (record.getJournalId().equals(id)) {
+>                     log.info("Record with revision '" + record.getRevision()
+>                             + "' created by this journal, skipped.");
+>                 } else {
+>                     RecordConsumer consumer = getConsumer(record.getProducerId());
+>                     if (consumer != null) {
+>                         try {
+>                             consumer.consume(record);
+>                         } catch (IllegalStateException e) {
+>                             log.error("Could not synchronize to revision: " + record.getRevision() + " due illegal state of RecordConsumer.");
+>                             return;
+239d250
+<                     stopRevision = record.getRevision();
+241,242c252
+<             } finally {
+<                 iterator.close();
+---
+>                 stopRevision = record.getRevision();
+244,249c254,256
+<     
+<             if (stopRevision > 0) {
+<                 for (RecordConsumer consumer : consumers.values()) {
+<                     consumer.setRevision(stopRevision);
+<                 }
+<                 log.info("Synchronized to revision: " + stopRevision);
+---
+>         } finally {
+>             iterator.close();
+>         }
+251,255c258,260
+<                 if (syncAgainOnNewRecords()) {
+<                     
+<                     startRevision = stopRevision;
+<                     continue;
+<                 }
+---
+>         if (stopRevision > 0) {
+>             for (RecordConsumer consumer : consumers.values()) {
+>                 consumer.setRevision(stopRevision);
+257c262
+<             break;
+---
+>             log.info("Synchronized to revision: " + stopRevision);

@@ -1,0 +1,57 @@
+41a42,43
+> import org.apache.solr.common.cloud.DocCollection;
+> import org.apache.solr.common.cloud.Replica;
+372a375
+>   
+374c377
+<       throws SolrServerException, IOException, InterruptedException {
+---
+>       throws Exception {
+377,379c380,388
+<     while (cloudClient.query(new SolrQuery("*:*")).getResults().getNumFound() != expectedNumFound) {
+<       if (timeout <= (long)timer.getTime()) {
+<         fail(failureMessage);
+---
+>     
+>     ClusterState clusterState = getCommonCloudSolrClient().getZkStateReader().getClusterState();
+>     DocCollection dColl = clusterState.getCollection(DEFAULT_COLLECTION);
+>     long docTotal = -1; 
+>     
+>     while (docTotal != expectedNumFound && timeout > (long) timer.getTime()) {
+>       docTotal = checkSlicesSameCounts(dColl);
+>       if (docTotal != expectedNumFound) {
+>         Thread.sleep(100);
+381d389
+<       Thread.sleep(100);
+382a391,392
+>     
+>     assertEquals(failureMessage, expectedNumFound, docTotal);
+383a394
+>     
+387a399
+> 
+388a401,424
+>   
+>   private long checkSlicesSameCounts(DocCollection dColl) throws SolrServerException, IOException {
+>     long docTotal = 0; 
+>     for (Slice slice : dColl.getActiveSlices()) {
+>       long sliceDocCount = -1;
+>       for (Replica rep : slice.getReplicas()) {
+>         HttpSolrClient one = new HttpSolrClient(rep.getCoreUrl());
+>         SolrQuery query = new SolrQuery("*:*");
+>         query.setDistrib(false);
+>         QueryResponse resp = one.query(query);
+>         long hits = resp.getResults().getNumFound();
+>         if (sliceDocCount == -1) {
+>           sliceDocCount = hits;
+>           docTotal += hits; 
+>         } else {
+>           if (hits != sliceDocCount) {
+>             return -1;
+>           }
+>         }
+>       }
+>     }
+>     return docTotal;
+>   }
+> 

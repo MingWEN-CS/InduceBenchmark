@@ -1,0 +1,73 @@
+51a52
+>     private static final String DRIVER_CLASSPATH_OPTION = "--driver-class-path";
+119,120d119
+<         boolean addedExecutorClasspath = false;
+<         boolean addedDriverClasspath = false;
+122a122,123
+>         StringBuilder driverClassPath = new StringBuilder();
+>         StringBuilder executorClassPath = new StringBuilder();
+127a129
+>                 boolean addToSparkArgs = true;
+130,134c132,133
+<                         
+<                         
+<                         
+<                         opt = opt + File.pathSeparator + PWD;
+<                         addedExecutorClasspath = true;
+---
+>                         appendWithPathSeparator(opt.substring(EXECUTOR_CLASSPATH.length()), executorClassPath);
+>                         addToSparkArgs = false;
+136a136,139
+>                         appendWithPathSeparator(opt.substring(DRIVER_CLASSPATH.length()), driverClassPath);
+>                         addToSparkArgs = false;
+>                     }
+>                     if (opt.equals(DRIVER_CLASSPATH_OPTION)) {
+137a141
+>                         appendWithPathSeparator(sparkOptions.get(i + 1), driverClassPath);
+139,141c143,144
+<                         
+<                         opt = opt + File.pathSeparator + PWD;
+<                         addedDriverClasspath = true;
+---
+>                         i++;
+>                         addToSparkArgs = false;
+150c153,155
+<                 sparkArgs.add(opt);
+---
+>                 if(addToSparkArgs) {
+>                     sparkArgs.add(opt);
+>                 }
+155,168c160,170
+<             if (!addedExecutorClasspath) {
+<                 
+<                 
+<                 
+<                 sparkArgs.add("--conf");
+<                 sparkArgs.add(EXECUTOR_CLASSPATH + PWD);
+<             }
+<             if (!addedDriverClasspath) {
+<                 
+<                 
+<                 
+<                 sparkArgs.add("--conf");
+<                 sparkArgs.add(DRIVER_CLASSPATH + PWD);
+<             }
+---
+>             
+>             
+>             
+>             appendWithPathSeparator(PWD, executorClassPath);
+>             appendWithPathSeparator(PWD, driverClassPath);
+> 
+>             sparkArgs.add("--conf");
+>             sparkArgs.add(EXECUTOR_CLASSPATH + executorClassPath.toString());
+> 
+>             sparkArgs.add("--conf");
+>             sparkArgs.add(DRIVER_CLASSPATH + driverClassPath.toString());
+494a497,502
+>     private void appendWithPathSeparator(String what, StringBuilder to){
+>         if(to.length() > 0){
+>             to.append(File.pathSeparator);
+>         }
+>         to.append(what);
+>     }

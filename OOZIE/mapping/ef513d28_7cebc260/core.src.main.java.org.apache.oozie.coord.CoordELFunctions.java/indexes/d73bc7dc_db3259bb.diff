@@ -1,0 +1,140 @@
+20,26c20,21
+< import java.net.URI;
+< import java.util.ArrayList;
+< import java.util.Calendar;
+< import java.util.Date;
+< import java.util.List;
+< import java.util.TimeZone;
+< 
+---
+> import com.google.common.collect.Lists;
+> import org.apache.commons.lang.StringUtils;
+31d25
+< import org.apache.oozie.dependency.URIHandler.Context;
+32a27,29
+> import org.apache.oozie.dependency.URIHandler.Context;
+> import org.apache.oozie.service.Services;
+> import org.apache.oozie.service.URIHandlerService;
+37,38c34,41
+< import org.apache.oozie.service.Services;
+< import org.apache.oozie.service.URIHandlerService;
+---
+> 
+> import java.net.URI;
+> import java.util.ArrayList;
+> import java.util.Calendar;
+> import java.util.Date;
+> import java.util.GregorianCalendar;
+> import java.util.List;
+> import java.util.TimeZone;
+54a58,63
+>     public static final long MINUTE_MSEC = 60 * 1000L;
+>     public static final long HOUR_MSEC = 60 * MINUTE_MSEC;
+>     public static final long DAY_MSEC = 24 * HOUR_MSEC;
+>     public static final long MONTH_MSEC = 30 * DAY_MSEC;
+>     public static final long YEAR_MSEC = 365 * DAY_MSEC;
+> 
+925d933
+<         StringBuilder instanceList = new StringBuilder();
+933d940
+<             instCount[0] = instCount[0] + end;
+935,941c942,945
+<             for (int i = end; i >= start; i--) {
+<                 
+<                 
+<                 
+<                 nominalInstanceCal = (Calendar) initInstance.clone();
+<                 nominalInstanceCal.add(dsTimeUnit.getCalendarUnit(), instCount[0] * datasetFrequency);
+<                 instCount[0]--;
+---
+>             nominalInstanceCal = (Calendar) initInstance.clone();
+>             nominalInstanceCal.add(dsTimeUnit.getCalendarUnit(), (instCount[0] + start) * datasetFrequency);
+>             List<String> instances = new ArrayList<String>();
+>             for (int i = start; i <= end; i++) {
+947d950
+<                     break;
+950,951c953
+<                     instanceList.append(DateUtils.formatDateOozieTZ(nominalInstanceCal));
+<                     instanceList.append(CoordELFunctions.INSTANCE_SEPARATOR);
+---
+>                     instances.add(DateUtils.formatDateOozieTZ(nominalInstanceCal));
+952a955
+>                 nominalInstanceCal.add(dsTimeUnit.getCalendarUnit(), datasetFrequency);
+953a957,958
+>             instances = Lists.reverse(instances);
+>             return StringUtils.join(instances, CoordELFunctions.INSTANCE_SEPARATOR);
+955,959d959
+< 
+<         if (instanceList.length() > 0) {
+<             instanceList.setLength(instanceList.length() - CoordELFunctions.INSTANCE_SEPARATOR.length());
+<         }
+<         return instanceList.toString();
+1226c1226
+<         Calendar effInitTS = Calendar.getInstance();
+---
+>         Calendar effInitTS = new GregorianCalendar(ds.getTimeZone());
+1228d1227
+<         effInitTS.setTimeZone(ds.getTimeZone());
+1300a1300,1361
+>         Calendar current = Calendar.getInstance(dsTZ);
+>         current.setTime(datasetInitialInstance);
+> 
+>         Calendar calEffectiveTime = new GregorianCalendar(dsTZ);
+>         calEffectiveTime.setTime(effectiveTime);
+>         if (instanceCount == null) {    
+>             instanceCount = new int[1];
+>         }
+>         instanceCount[0] = 0;
+>         if (current.compareTo(calEffectiveTime) > 0) {
+>             return null;
+>         }
+> 
+>         switch(dsTimeUnit) {
+>             case MINUTE:
+>                 instanceCount[0] = (int) ((effectiveTime.getTime() - datasetInitialInstance.getTime()) / MINUTE_MSEC);
+>                 break;
+>             case HOUR:
+>                 instanceCount[0] = (int) ((effectiveTime.getTime() - datasetInitialInstance.getTime()) / HOUR_MSEC);
+>                 break;
+>             case DAY:
+>             case END_OF_DAY:
+>                 instanceCount[0] = (int) ((effectiveTime.getTime() - datasetInitialInstance.getTime()) / DAY_MSEC);
+>                 break;
+>             case MONTH:
+>             case END_OF_MONTH:
+>                 instanceCount[0] = (int) ((effectiveTime.getTime() - datasetInitialInstance.getTime()) / MONTH_MSEC);
+>                 break;
+>             case YEAR:
+>                 instanceCount[0] = (int) ((effectiveTime.getTime() - datasetInitialInstance.getTime()) / YEAR_MSEC);
+>                 break;
+>             default:
+>                 throw new IllegalArgumentException("Unhandled dataset time unit " + dsTimeUnit);
+>         }
+> 
+>         if (instanceCount[0] > 2) {
+>             instanceCount[0] = (instanceCount[0] / dsFreq);
+>             current.add(dsTimeUnit.getCalendarUnit(), instanceCount[0] * dsFreq);
+>         } else {
+>             instanceCount[0] = 0;
+>         }
+>         while (!current.getTime().after(effectiveTime)) {
+>             current.add(dsTimeUnit.getCalendarUnit(), dsFreq);
+>             instanceCount[0]++;
+>         }
+>         current.add(dsTimeUnit.getCalendarUnit(), -dsFreq);
+>         instanceCount[0]--;
+>         return current;
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+>     private static Calendar getCurrentInstance_old(Date effectiveTime, int instanceCount[], ELEvaluator eval) {
+>         Date datasetInitialInstance = getInitialInstance(eval);
+>         TimeUnit dsTimeUnit = getDSTimeUnit(eval);
+>         TimeZone dsTZ = getDatasetTZ(eval);
+>         int dsFreq = getDSFrequency(eval);
+>         

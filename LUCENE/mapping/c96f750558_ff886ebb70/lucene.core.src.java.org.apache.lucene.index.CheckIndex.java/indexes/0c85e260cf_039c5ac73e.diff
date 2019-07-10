@@ -1,0 +1,173 @@
+19a20
+> import java.io.Closeable;
+37a39
+> import org.apache.lucene.store.AlreadyClosedException;
+41a44,45
+> import org.apache.lucene.store.Lock;
+> import org.apache.lucene.store.LockObtainFailedException;
+65c69
+< public class CheckIndex {
+---
+> public class CheckIndex implements Closeable {
+68a73,74
+>   private Lock writeLock;
+>   private volatile boolean closed;
+345c351,362
+<   public CheckIndex(Directory dir) {
+---
+>   public CheckIndex(Directory dir) throws IOException {
+>     this(dir, dir.makeLock(IndexWriter.WRITE_LOCK_NAME));
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   public CheckIndex(Directory dir, Lock writeLock) throws IOException {
+347c364,380
+<     infoStream = null;
+---
+>     this.writeLock = writeLock;
+>     this.infoStream = null;
+>     if (!writeLock.obtain(IndexWriterConfig.WRITE_LOCK_TIMEOUT)) { 
+>       throw new LockObtainFailedException("Index locked for write: " + writeLock);
+>     }
+>   }
+>   
+>   private void ensureOpen() {
+>     if (closed) {
+>       throw new AlreadyClosedException("this instance is closed");
+>     }
+>   }
+> 
+>   @Override
+>   public void close() throws IOException {
+>     closed = true;
+>     IOUtils.close(writeLock);
+419,422d451
+< 
+< 
+< 
+< 
+423a453
+>     ensureOpen();
+2012,2013d2041
+< 
+< 
+2014a2043
+>     ensureOpen();
+2065a2095,2100
+>     int exitCode = doMain(args);
+>     System.exit(exitCode);
+>   }
+>   
+>   
+>   private static int doMain(String args[]) throws IOException, InterruptedException {
+2085c2120
+<           System.exit(1);
+---
+>           return 1;
+2092c2127
+<           System.exit(1);
+---
+>           return 1;
+2099c2134
+<           System.exit(1);
+---
+>           return 1;
+2133c2168
+<       System.exit(1);
+---
+>       return 1;
+2143c2178
+<       System.exit(1);
+---
+>       return 1;
+2147c2182
+<     Directory dir = null;
+---
+>     Directory directory = null;
+2151c2186
+<         dir = FSDirectory.open(path);
+---
+>         directory = FSDirectory.open(path);
+2153c2188
+<         dir = CommandLineUtil.newFSDirectory(dirImpl, path);
+---
+>         directory = CommandLineUtil.newFSDirectory(dirImpl, path);
+2158c2193
+<       System.exit(1);
+---
+>       return 1;
+2161,2172c2196,2225
+<     CheckIndex checker = new CheckIndex(dir);
+<     checker.setCrossCheckTermVectors(doCrossCheckTermVectors);
+<     checker.setInfoStream(System.out, verbose);
+< 
+<     Status result = checker.checkIndex(onlySegments);
+<     if (result.missingSegments) {
+<       System.exit(1);
+<     }
+< 
+<     if (!result.clean) {
+<       if (!doExorcise) {
+<         System.out.println("WARNING: would write new segments file, and " + result.totLoseDocCount + " documents would be lost, if -exorcise were specified\n");
+---
+>     try (Directory dir = directory;
+>          CheckIndex checker = new CheckIndex(dir)) {
+>       checker.setCrossCheckTermVectors(doCrossCheckTermVectors);
+>       checker.setInfoStream(System.out, verbose);
+>       
+>       Status result = checker.checkIndex(onlySegments);
+>       if (result.missingSegments) {
+>         return 1;
+>       }
+>       
+>       if (!result.clean) {
+>         if (!doExorcise) {
+>           System.out.println("WARNING: would write new segments file, and " + result.totLoseDocCount + " documents would be lost, if -exorcise were specified\n");
+>         } else {
+>           System.out.println("WARNING: " + result.totLoseDocCount + " documents will be lost\n");
+>           System.out.println("NOTE: will write new segments file in 5 seconds; this will remove " + result.totLoseDocCount + " docs from the index. YOU WILL LOSE DATA. THIS IS YOUR LAST CHANCE TO CTRL+C!");
+>           for(int s=0;s<5;s++) {
+>             Thread.sleep(1000);
+>             System.out.println("  " + (5-s) + "...");
+>           }
+>           System.out.println("Writing...");
+>           checker.exorciseIndex(result);
+>           System.out.println("OK");
+>           System.out.println("Wrote new segments file \"" + result.newSegments.getSegmentsFileName() + "\"");
+>         }
+>       }
+>       System.out.println("");
+>       
+>       if (result.clean == true) {
+>         return 0;
+2174,2193c2227,2229
+<         System.out.println("WARNING: " + result.totLoseDocCount + " documents will be lost\n");
+<         System.out.println("NOTE: will write new segments file in 5 seconds; this will remove " + result.totLoseDocCount + " docs from the index. YOU WILL LOSE DATA. THIS IS YOUR LAST CHANCE TO CTRL+C!");
+<         for(int s=0;s<5;s++) {
+<           Thread.sleep(1000);
+<           System.out.println("  " + (5-s) + "...");
+<         }
+<         System.out.println("Writing...");
+<         checker.exorciseIndex(result);
+<         System.out.println("OK");
+<         System.out.println("Wrote new segments file \"" + result.newSegments.getSegmentsFileName() + "\"");
+<       }
+<     }
+<     System.out.println("");
+< 
+<     final int exitCode;
+<     if (result.clean == true)
+<       exitCode = 0;
+<     else
+<       exitCode = 1;
+<     System.exit(exitCode);
+---
+>         return 1;
+>       }
+>     }

@@ -1,0 +1,5 @@
+67a68,71
+>   public MiniAccumuloClusterImpl create(AuthenticationToken token, TestingKdc kdc) throws Exception {
+>     return create(MiniClusterHarness.class.getName(), Long.toString(COUNTER.incrementAndGet()), token, kdc);
+>   }
+> 

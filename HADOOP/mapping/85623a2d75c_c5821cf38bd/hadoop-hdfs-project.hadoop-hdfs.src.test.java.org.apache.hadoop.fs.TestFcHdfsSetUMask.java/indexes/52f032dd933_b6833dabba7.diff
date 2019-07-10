@@ -1,0 +1,5 @@
+45c45,46
+<   private static FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+---
+>   private static FileContextTestHelper fileContextTestHelper =
+>       new FileContextTestHelper("/tmp/TestFcHdfsSetUMask");

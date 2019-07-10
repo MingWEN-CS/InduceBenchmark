@@ -1,0 +1,11 @@
+100a101
+> import org.apache.ambari.server.controller.metrics.MetricsCollectorHAManager;
+289a291,292
+>   @Inject
+>   private MetricsCollectorHAManager metricsCollectorHAManager;
+5068a5072,5076
+>   @Override
+>   public MetricsCollectorHAManager getMetricsCollectorHAManager() {
+>     return injector.getInstance(MetricsCollectorHAManager.class);
+>   }
+> 

@@ -1,0 +1,155 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.accumulo.core.client.admin;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.base.Preconditions;
+import org.apache.accumulo.core.client.IteratorSetting;
+import org.apache.hadoop.io.Text;
+
+
+
+
+
+
+
+public class CompactionConfig {
+  private Text start = null;
+  private Text end = null;
+  private boolean flush = true;
+  private boolean wait = true;
+  private List<IteratorSetting> iterators = Collections.emptyList();
+  private CompactionStrategyConfig compactionStrategy = new CompactionStrategyConfig("org.apache.accumulo.tserver.compaction.EverythingCompactionStrategy") {
+    @Override
+    public CompactionStrategyConfig setOptions(Map<String,String> opts) {
+      throw new UnsupportedOperationException();
+    }
+  };
+
+  
+
+
+
+
+
+  public CompactionConfig setStartRow(Text start) {
+    this.start = start;
+    return this;
+  }
+
+  
+
+
+  public Text getStartRow() {
+    return start;
+  }
+
+  
+
+
+
+
+
+  public CompactionConfig setEndRow(Text end) {
+    this.end = end;
+    return this;
+  }
+
+  
+
+
+  public Text getEndRow() {
+    return end;
+  }
+
+  
+
+
+
+
+  public CompactionConfig setFlush(boolean flush) {
+    this.flush = flush;
+    return this;
+  }
+
+  
+
+
+  public boolean getFlush() {
+    return flush;
+  }
+
+  
+
+
+
+
+
+  public CompactionConfig setWait(boolean wait) {
+    this.wait = wait;
+    return this;
+  }
+
+  
+
+
+
+  public boolean getWait() {
+    return wait;
+  }
+
+  
+
+
+
+
+  public CompactionConfig setIterators(List<IteratorSetting> iterators) {
+    this.iterators = new ArrayList<>(iterators);
+    return this;
+  }
+
+  
+
+
+  public List<IteratorSetting> getIterators() {
+    return Collections.unmodifiableList(iterators);
+  }
+
+  
+
+
+
+
+  public CompactionConfig setCompactionStrategy(CompactionStrategyConfig csConfig) {
+    Preconditions.checkNotNull(csConfig);
+    this.compactionStrategy = csConfig;
+    return this;
+  }
+
+  
+
+
+
+  public CompactionStrategyConfig getCompactionStrategy() {
+    return compactionStrategy;
+  }
+}

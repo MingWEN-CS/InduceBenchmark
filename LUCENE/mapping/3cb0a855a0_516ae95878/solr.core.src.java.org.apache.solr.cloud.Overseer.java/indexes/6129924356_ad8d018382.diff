@@ -1,0 +1,57 @@
+311,321c311,314
+<       Map m = (Map) ZkStateReader.fromJSON(data);
+<       String id = (String) m.get("id");
+<       if(overseerCollectionProcessor.getId().equals(id)){
+<         try {
+<           log.info("I'm exiting , but I'm still the leader");
+<           zkClient.delete(path,stat.getVersion(),true);
+<         } catch (KeeperException.BadVersionException e) {
+<           
+<         } catch (Exception e) {
+<           log.error("Could not delete my leader node ", e);
+<         } finally {
+---
+>       try {
+>         Map m = (Map) ZkStateReader.fromJSON(data);
+>         String id = (String) m.get("id");
+>         if(overseerCollectionProcessor.getId().equals(id)){
+323,326c316,319
+<             if(zkController !=null && !zkController.getCoreContainer().isShutDown()){
+<               zkController.rejoinOverseerElection();
+<             }
+< 
+---
+>             log.info("I'm exiting , but I'm still the leader");
+>             zkClient.delete(path,stat.getVersion(),true);
+>           } catch (KeeperException.BadVersionException e) {
+>             
+328c321
+<             log.error("error canceling overseer election election  ",e);
+---
+>             log.error("Could not delete my leader node ", e);
+330d322
+<         }
+332,333c324,331
+<       } else{
+<         log.info("somebody else has already taken up the overseer position");
+---
+>         } else{
+>           log.info("somebody else has already taken up the overseer position");
+>         }
+>       } finally {
+>         
+>         if (zkController != null && !zkController.getCoreContainer().isShutDown()) {
+>           zkController.rejoinOverseerElection(null, false);
+>         }
+380,382c378,384
+<         log.info("Quit command received {}", LeaderElector.getNodeName(myId));
+<         overseerCollectionProcessor.close();
+<         close();
+---
+>         if(myId.equals( message.get("id"))){
+>           log.info("Quit command received {}", LeaderElector.getNodeName(myId));
+>           overseerCollectionProcessor.close();
+>           close();
+>         } else {
+>           log.warn("Overseer received wrong QUIT message {}", message);
+>         }

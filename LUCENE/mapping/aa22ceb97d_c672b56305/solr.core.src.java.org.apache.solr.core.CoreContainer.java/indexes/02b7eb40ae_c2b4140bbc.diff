@@ -1,0 +1,227 @@
+111c111
+<   private final CoreMaps coreMaps = new CoreMaps(this);
+---
+>   private final SolrCores solrCores = new SolrCores(this);
+118c118
+<   protected String managementPath = null;
+---
+>   protected volatile String managementPath = null;
+338,339d337
+<     protected String containerConfigFilename = null;  
+<     protected String dataDir = null; 
+346,347c344
+<       File fconf = new File(solrHome, containerConfigFilename == null ? "solr.xml"
+<           : containerConfigFilename);
+---
+>       File fconf = new File(solrHome, "solr.xml");
+368,369d364
+<       containerConfigFilename = cores.getConfigFile().getName();
+<       
+444c439
+<     coreMaps.allocateLazyCores(cfg, loader);
+---
+>     solrCores.allocateLazyCores(cfg, loader);
+650c645
+<             coreMaps.putDynamicDescriptor(rawName, p);
+---
+>             solrCores.putDynamicDescriptor(rawName, p);
+668c663
+<               coreMaps.putCoreToOrigName(c, c.getName());
+---
+>               solrCores.putCoreToOrigName(c, c.getName());
+681c676
+<       backgroundCloser = new CloserThread(this, coreMaps, cfg);
+---
+>       backgroundCloser = new CloserThread(this, solrCores, cfg);
+753c748
+<       coreMaps.publishCoresAsDown(zkController);
+---
+>       publishCoresAsDown();
+760,761c755,756
+<       synchronized (coreMaps.getLocker()) {
+<         coreMaps.getLocker().notifyAll(); 
+---
+>       synchronized (solrCores.getModifyLock()) {
+>         solrCores.getModifyLock().notifyAll(); 
+774c769
+<       coreMaps.clearMaps(cfg);
+---
+>       solrCores.close();
+778,779c773,774
+<       synchronized (coreMaps.getLocker()) {
+<         coreMaps.getLocker().notifyAll(); 
+---
+>       synchronized (solrCores.getModifyLock()) {
+>         solrCores.getModifyLock().notifyAll(); 
+799c794
+<     coreMaps.addCoresToList(coreStates);
+---
+>     solrCores.addCoresToList(coreStates);
+856c851
+<       old = coreMaps.putTransientCore(cfg, name, core, loader);
+---
+>       old = solrCores.putTransientCore(cfg, name, core, loader);
+858c853
+<       old = coreMaps.putCore(name, core);
+---
+>       old = solrCores.putCore(name, core);
+1047c1042
+<       coreMaps.addCreated(created); 
+---
+>       solrCores.addCreated(created); 
+1061c1056
+<     return coreMaps.getCores();
+---
+>     return solrCores.getCores();
+1068c1063
+<     return coreMaps.getCoreNames();
+---
+>     return solrCores.getCoreNames();
+1075c1070
+<     return coreMaps.getCoreNames(core);
+---
+>     return solrCores.getCoreNames(core);
+1083,1093c1078
+<     return coreMaps.getAllCoreNames();
+< 
+<   }
+< 
+<   
+< 
+< 
+< 
+< 
+<   public String checkUniqueDataDir(String targetPath) {
+<     return coreMaps.checkUniqueDataDir(targetPath);
+---
+>     return solrCores.getAllCoreNames();
+1135,1142c1120
+<       if (cfg != null) { 
+<         String badMsg = cfg.getBadConfigCoreMessage(name);
+<         if (badMsg != null) {
+<           throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, badMsg);
+<         }
+<       }
+< 
+<       SolrCore core = coreMaps.getCore(name);
+---
+>       SolrCore core = solrCores.getCore(name);
+1147c1125
+<         coreMaps.waitAddPendingCoreOps(name);
+---
+>         solrCores.waitAddPendingCoreOps(name);
+1184c1162
+<         coreMaps.removeCoreToOrigName(newCore, core);
+---
+>         solrCores.removeCoreToOrigName(newCore, core);
+1187c1165
+<         coreMaps.removeFromPendingOps(name);
+---
+>         solrCores.removeFromPendingOps(name);
+1210c1188
+<     coreMaps.swap(n0, n1);
+---
+>     solrCores.swap(n0, n1);
+1219c1197
+<     return coreMaps.remove(name, true);
+---
+>     return solrCores.remove(name, true);
+1229c1207
+<         coreMaps.remove(name, false);
+---
+>         solrCores.remove(name, false);
+1249,1255d1226
+<     if (cfg != null) { 
+<       String badMsg = cfg.getBadConfigCoreMessage(name);
+<       if (badMsg != null) {
+<         throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, badMsg);
+<       }
+<     }
+< 
+1257c1228
+<     SolrCore core = coreMaps.getCoreFromAnyList(name);
+---
+>     SolrCore core = solrCores.getCoreFromAnyList(name);
+1265c1236
+<     CoreDescriptor desc = coreMaps.getDynamicDescriptor(name);
+---
+>     CoreDescriptor desc = solrCores.getDynamicDescriptor(name);
+1281c1252
+<     core = coreMaps.waitAddPendingCoreOps(name);
+---
+>     core = solrCores.waitAddPendingCoreOps(name);
+1296c1267
+<       coreMaps.removeFromPendingOps(name);
+---
+>       solrCores.removeFromPendingOps(name);
+1332a1304
+>   @Deprecated
+1388c1360
+<     return coreMaps.isLoaded(name);
+---
+>     return solrCores.isLoaded(name);
+1404c1376
+<     return coreMaps.getUnloadedCoreDescriptor(cname);
+---
+>     return solrCores.getUnloadedCoreDescriptor(cname);
+1452c1424
+<       coreMaps.persistCores(origCfg, containerProperties, rootSolrAttribs, coresAttribs, file, configFile, loader);
+---
+>       solrCores.persistCores(origCfg, containerProperties, rootSolrAttribs, coresAttribs, file, configFile, loader);
+1516,1520c1488
+<     return coreMaps.getCoreToOrigName(core);
+<   }
+< 
+<   public String getBadCoreMessage(String name) {
+<     return cfg.getBadConfigCoreMessage(name);
+---
+>     return solrCores.getCoreToOrigName(core);
+1531a1500,1512
+>   protected void publishCoresAsDown() {
+>     List<SolrCore> cores = solrCores.getCores();
+>     
+>     for (SolrCore core : cores) {
+>       try {
+>         zkController.publish(core.getCoreDescriptor(), ZkStateReader.DOWN);
+>       } catch (KeeperException e) {
+>         CoreContainer.log.error("", e);
+>       } catch (InterruptedException e) {
+>         CoreContainer.log.error("", e);
+>       }
+>     }
+>   }
+1534,1535d1514
+< 
+< 
+1538c1517
+<   CoreMaps coreMaps;
+---
+>   SolrCores solrCores;
+1542c1521
+<   CloserThread(CoreContainer container, CoreMaps coreMaps, ConfigSolr cfg) {
+---
+>   CloserThread(CoreContainer container, SolrCores solrCores, ConfigSolr cfg) {
+1544c1523
+<     this.coreMaps = coreMaps;
+---
+>     this.solrCores = solrCores;
+1555c1534
+<       synchronized (coreMaps.getLocker()) { 
+---
+>       synchronized (solrCores.getModifyLock()) { 
+1557c1536
+<           coreMaps.getLocker().wait();
+---
+>           solrCores.getModifyLock().wait();
+1563c1542
+<       for (SolrCore removeMe = coreMaps.getCoreToClose();
+---
+>       for (SolrCore removeMe = solrCores.getCoreToClose();
+1565c1544
+<            removeMe = coreMaps.getCoreToClose()) {
+---
+>            removeMe = solrCores.getCoreToClose()) {
+1569c1548
+<           coreMaps.removeFromPendingOps(removeMe.getName());
+---
+>           solrCores.removeFromPendingOps(removeMe.getName());

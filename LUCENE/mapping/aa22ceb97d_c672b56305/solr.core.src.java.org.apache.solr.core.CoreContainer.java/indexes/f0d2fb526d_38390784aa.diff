@@ -1,0 +1,17 @@
+1120c1120,1121
+<     addAttrib(rootSolrAttribs, ConfigSolr.CfgProp.SOLR_PERSISTENT, "persistent", Boolean.toString(isPersistent()));
+---
+>     addAttrib(rootSolrAttribs, ConfigSolr.CfgProp.SOLR_PERSISTENT, "persistent",
+>         Boolean.toString(isPersistent()), "false");
+1127c1128
+<     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ADMINPATH, "adminPath", this.adminPath);
+---
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ADMINPATH, "adminPath", this.adminPath, this.getAdminPath());
+1152c1153
+<         Integer.toString(this.distribUpdateConnTimeout));
+---
+>         Integer.toString(this.distribUpdateConnTimeout), Integer.toString(this.distribUpdateConnTimeout));
+1154c1155
+<         Integer.toString(this.distribUpdateSoTimeout));
+---
+>         Integer.toString(this.distribUpdateSoTimeout), Integer.toString(this.distribUpdateSoTimeout));

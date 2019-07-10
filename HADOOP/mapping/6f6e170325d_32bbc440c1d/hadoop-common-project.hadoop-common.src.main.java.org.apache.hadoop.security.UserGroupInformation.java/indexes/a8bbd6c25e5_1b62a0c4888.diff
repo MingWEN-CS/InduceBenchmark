@@ -1,0 +1,6 @@
+1600c1600,1602
+<       LOG.warn("PriviledgedActionException as:"+this+" cause:"+cause);
+---
+>       if (LOG.isDebugEnabled()) {
+>         LOG.debug("PrivilegedActionException as:" + this + " cause:" + cause);
+>       }

@@ -1,0 +1,86 @@
+29d28
+< import org.apache.lucene.util.Parameter;
+2165a2165
+>             Thread.currentThread().interrupt();
+2212a2213,2293
+>   public void expungeDeletes(boolean doWait)
+>     throws CorruptIndexException, IOException {
+>     ensureOpen();
+> 
+>     if (infoStream != null)
+>       message("expungeDeletes: index now " + segString());
+> 
+>     MergePolicy.MergeSpecification spec;
+> 
+>     synchronized(this) {
+>       spec = mergePolicy.findMergesToExpungeDeletes(segmentInfos, this);
+>       if (spec != null) {
+>         final int numMerges = spec.merges.size();
+>         for(int i=0;i<numMerges;i++)
+>           registerMerge((MergePolicy.OneMerge) spec.merges.get(i));
+>       }
+>     }
+> 
+>     mergeScheduler.merge(this);
+> 
+>     if (spec != null && doWait) {
+>       final int numMerges = spec.merges.size();
+>       synchronized(this) {
+>         boolean running = true;
+>         while(running) {
+> 
+>           running = false;
+>           for(int i=0;i<numMerges;i++) {
+>             final MergePolicy.OneMerge merge = (MergePolicy.OneMerge) spec.merges.get(i);
+>             if (pendingMerges.contains(merge) || runningMerges.contains(merge))
+>               running = true;
+>             Throwable t = merge.getException();
+>             if (t != null) {
+>               IOException ioe = new IOException("background merge hit exception: " + merge.segString(directory));
+>               ioe.initCause(t);
+>               throw ioe;
+>             }
+>           }
+> 
+>           if (running) {
+>             try {
+>               wait();
+>             } catch (InterruptedException ie) {
+>               Thread.currentThread().interrupt();
+>             }
+>           }
+>         }
+>       }
+>     }
+> 
+>     
+>     
+>     
+>   }
+> 
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public void expungeDeletes() throws CorruptIndexException, IOException {
+>     expungeDeletes(true);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 

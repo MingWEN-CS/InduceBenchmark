@@ -1,0 +1,40 @@
+119d118
+<   protected ClassLoader libLoader = null;
+396a396,404
+>     
+>     libDir = cfg.get(ConfigSolr.ConfLevel.SOLR, "sharedLib", null);
+>     if (libDir != null) {
+>       File f = FileUtils.resolvePath(new File(dir), libDir);
+>       log.info("loading shared library: " + f.getAbsolutePath());
+>       loader.addToClassLoader(libDir);
+>       loader.reloadLuceneSPI();
+>     }
+> 
+451d458
+<     libDir = cfg.get(ConfigSolr.ConfLevel.SOLR, "sharedLib", null);
+488,493d494
+<     if (libDir != null) {
+<       File f = FileUtils.resolvePath(new File(dir), libDir);
+<       log.info("loading shared library: " + f.getAbsolutePath());
+<       libLoader = SolrResourceLoader.createClassLoader(f, null);
+<     }
+<     
+879c880
+<       solrLoader = new ZkSolrResourceLoader(instanceDir, zkConfigName, libLoader,
+---
+>       solrLoader = new ZkSolrResourceLoader(instanceDir, zkConfigName, loader.getClassLoader(),
+903c904
+<     solrLoader = new SolrResourceLoader(instanceDir, libLoader, ConfigSolrXml.getCoreProperties(instanceDir, dcore));
+---
+>     solrLoader = new SolrResourceLoader(instanceDir, loader.getClassLoader(), ConfigSolrXml.getCoreProperties(instanceDir, dcore));
+1060c1061
+<           solrLoader = new SolrResourceLoader(instanceDir.getAbsolutePath(), libLoader, ConfigSolrXml.getCoreProperties(instanceDir.getAbsolutePath(), cd));
+---
+>           solrLoader = new SolrResourceLoader(instanceDir.getAbsolutePath(), loader.getClassLoader(), ConfigSolrXml.getCoreProperties(instanceDir.getAbsolutePath(), cd));
+1072c1073
+<             solrLoader = new ZkSolrResourceLoader(instanceDir.getAbsolutePath(), zkConfigName, libLoader,
+---
+>             solrLoader = new ZkSolrResourceLoader(instanceDir.getAbsolutePath(), zkConfigName, loader.getClassLoader(),
+1190,1191d1190
+<     
+<     SolrResourceLoader loader = new SolrResourceLoader(solrHome, libLoader, null);

@@ -1,0 +1,74 @@
+48a49,50
+> import static java.util.Collections.singletonMap;
+> 
+614c616
+<         Map<String, DocCollection> newCollections = new LinkedHashMap<String,DocCollection>();
+---
+> 
+618c620
+<         newCollections.putAll(state.getCollectionStates());
+---
+> 
+646,648c648,651
+<         newCollections.put(collectionName, newCollection);
+<         ClusterState newClusterState = new ClusterState(state.getLiveNodes(), newCollections);
+<         return newClusterState;
+---
+> 
+>           return state.copyWith(singletonMap(newCollection.getName(), newCollection));
+> 
+> 
+773a777,779
+>     private ClusterState newState(ClusterState state, Map<String, DocCollection> colls) {
+>       return state.copyWith(colls);
+>     }
+782,783d787
+<         final Map<String, DocCollection> newCollections = new LinkedHashMap<String,DocCollection>(clusterState.getCollectionStates()); 
+<         newCollections.remove(collection);
+785,786c789,792
+<         ClusterState newState = new ClusterState(clusterState.getLiveNodes(), newCollections);
+<         return newState;
+---
+> 
+> 
+> 
+>         return clusterState.copyWith(singletonMap(collection, (DocCollection)null));
+798,799c804,805
+<       final Map<String, DocCollection> newCollections = new LinkedHashMap<String,DocCollection>(clusterState.getCollectionStates()); 
+<       DocCollection coll = newCollections.get(collection);
+---
+> 
+>       DocCollection coll = clusterState.getCollection(collection);
+805d810
+<       newCollections.put(newCollection.getName(), newCollection);
+807c812,814
+<       return new ClusterState(clusterState.getLiveNodes(), newCollections);
+---
+>       return newState(clusterState, singletonMap(collection,newCollection));
+> 
+> 
+819,820c826,828
+<         final Map<String, DocCollection> newCollections = new LinkedHashMap<String,DocCollection>(clusterState.getCollectionStates()); 
+<         DocCollection coll = newCollections.get(collection);
+---
+> 
+> 
+>         DocCollection coll = clusterState.getCollectionOrNull(collection) ;
+869c877
+<           newCollections.remove(coll.getName());
+---
+> 
+881a890,891
+>           return newState(clusterState,singletonMap(collection, (DocCollection) null));
+> 
+886c896,897
+<           newCollections.put(newCollection.getName(), newCollection);
+---
+>            return newState(clusterState,singletonMap(collection,newCollection));
+> 
+889,890c900,901
+<         ClusterState newState = new ClusterState(clusterState.getLiveNodes(), newCollections);
+<         return newState;
+---
+> 
+> 

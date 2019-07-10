@@ -1,0 +1,20 @@
+22d21
+< import java.util.Arrays;
+134d132
+<     createRoleAuthorizations();
+195,209d192
+<   
+< 
+< 
+< 
+< 
+<   protected void createRoleAuthorizations() throws SQLException {
+<     LOG.info("Adding authorizations");
+< 
+<     addRoleAuthorization("CLUSTER.RUN_CUSTOM_COMMAND", "Perform custom cluster-level actions",
+<         Arrays.asList("AMBARI.ADMINISTRATOR:AMBARI", "CLUSTER.ADMINISTRATOR:CLUSTER"));
+< 
+<     addRoleAuthorization("AMBARI.RUN_CUSTOM_COMMAND", "Perform custom administrative actions",
+<       Collections.singletonList("AMBARI.ADMINISTRATOR:AMBARI"));
+<   }
+< 

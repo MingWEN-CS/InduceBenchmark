@@ -1,0 +1,36 @@
+20a21,25
+> import java.util.ArrayList;
+> import java.util.Arrays;
+> import java.util.Collections;
+> import java.util.List;
+> import java.util.Locale;
+26a32
+> import org.apache.lucene.store.IOContext;
+148a155
+>     String startListing = listFiles(dir);
+185c192
+<         + " (= 3X starting usage)", maxDiskUsage <= 3 * maxStartFinalDiskUsage);
+---
+>         + " (= 3X starting usage), BEFORE=" + startListing + "AFTER=" + listFiles(dir), maxDiskUsage <= 3 * maxStartFinalDiskUsage);
+189a197,217
+>   private String listFiles(Directory dir) throws IOException {
+>     SegmentInfos infos = SegmentInfos.readLatestCommit(dir);
+>     StringBuilder sb = new StringBuilder();
+>     sb.append(System.lineSeparator());
+>     for (SegmentCommitInfo info : infos) {
+>       for (String file : info.files()) {
+>         sb.append(String.format(Locale.ROOT, "%-20s%d%n", file, dir.fileLength(file)));
+>       }
+>       if (info.info.getUseCompoundFile()) {
+>         try (Directory cfs = info.info.getCodec().compoundFormat().getCompoundReader(dir, info.info, IOContext.DEFAULT)) {
+>           for (String file : cfs.listAll()) {
+>             sb.append(String.format(Locale.ROOT, " |- (inside compound file) %-20s%d%n", file, cfs.fileLength(file)));
+>           }
+>         }
+>       }
+>     }
+>     sb.append(System.lineSeparator());
+>     return sb.toString();
+>   }
+>   
+>   

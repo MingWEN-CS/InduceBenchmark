@@ -1,0 +1,9 @@
+1059,1061c1059,1062
+<                             String msg = node.getNodeId()
+<                                     + ": the node cannot be removed because it is still being referenced.";
+<                             log.debug(msg);
+---
+>                             String msg =
+>                                 node.getNodeId() + " cannot be removed"
+>                                 + " because it is still being referenced";
+>                             log.debug("{} from {}", msg, refs.getReferences());

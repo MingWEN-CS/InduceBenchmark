@@ -1,0 +1,8 @@
+95,96c95,98
+<             
+<             listOfFileDefinitions.add(new LogFileDefinitionInfo(fileName, LogFileType.SERVICE, searchEngineURI, logFileTailURI));
+---
+>             if (logFileTailURI != null) {
+>               
+>               listOfFileDefinitions.add(new LogFileDefinitionInfo(fileName, LogFileType.SERVICE, searchEngineURI, logFileTailURI));
+>             }

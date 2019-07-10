@@ -1,0 +1,14 @@
+937c937
+<       StringBuffer result = new StringBuffer();
+---
+>       StringBuilder result = new StringBuilder();
+1849c1849
+<     StringBuffer sb = new StringBuffer();
+---
+>     StringBuilder sb = new StringBuilder();
+1861,1862c1861,1862
+<   private void toString(List resources, StringBuffer sb) {
+<     ListIterator i = resources.listIterator();
+---
+>   private <T> void toString(List<T> resources, StringBuilder sb) {
+>     ListIterator<T> i = resources.listIterator();

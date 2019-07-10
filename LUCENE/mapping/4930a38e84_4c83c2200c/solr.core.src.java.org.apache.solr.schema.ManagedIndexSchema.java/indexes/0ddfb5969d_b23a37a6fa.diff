@@ -1,0 +1,4 @@
+297c297
+<                 ZkStateReader.ACTIVE.equals(replica.getStr(ZkStateReader.STATE_PROP)) &&
+---
+>                 replica.getState() == Replica.State.ACTIVE &&

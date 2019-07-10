@@ -1,0 +1,138 @@
+77a78
+>   final FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+121c122
+<     targetTestRoot = FileContextTestHelper.getAbsoluteTestRootPath(fcTarget);
+---
+>     targetTestRoot = fileContextTestHelper.getAbsoluteTestRootPath(fcTarget);
+130c131
+<     fcTarget.delete(FileContextTestHelper.getTestRootPath(fcTarget), true);
+---
+>     fcTarget.delete(fileContextTestHelper.getTestRootPath(fcTarget), true);
+184c185
+<     FileContextTestHelper.createFileNonRecursive(fcView, "/user/foo");
+---
+>     fileContextTestHelper.createFileNonRecursive(fcView, "/user/foo");
+199c200
+<     FileContextTestHelper.createFileNonRecursive(fcView,
+---
+>     fileContextTestHelper.createFileNonRecursive(fcView,
+216c217
+<     FileContextTestHelper.createFileNonRecursive(fcView,
+---
+>     fileContextTestHelper.createFileNonRecursive(fcView,
+224c225
+<     FileContextTestHelper.createFile(fcView,
+---
+>     fileContextTestHelper.createFile(fcView,
+242c243
+<     fcView.mkdir(FileContextTestHelper.getTestRootPath(fcView, "/user/dirX"),
+---
+>     fcView.mkdir(fileContextTestHelper.getTestRootPath(fcView, "/user/dirX"),
+249c250
+<     fcView.mkdir(FileContextTestHelper.getTestRootPath(fcView, "/user/dirX/dirY"),
+---
+>     fcView.mkdir(fileContextTestHelper.getTestRootPath(fcView, "/user/dirX/dirY"),
+273c274
+<     FileContextTestHelper.createFile(fcView, "/user/foo");
+---
+>     fileContextTestHelper.createFile(fcView, "/user/foo");
+279c280
+<         FileContextTestHelper.getTestRootPath(fcView,"/user/fooBar")));
+---
+>         fileContextTestHelper.getTestRootPath(fcView,"/user/fooBar")));
+290c291
+<         FileContextTestHelper.getTestRootPath(fcView,"/user/dirFooBar")));
+---
+>         fileContextTestHelper.getTestRootPath(fcView,"/user/dirFooBar")));
+312c313
+<     FileContextTestHelper.createFile(fcView, "/user/foo");
+---
+>     fileContextTestHelper.createFile(fcView, "/user/foo");
+330c331
+<     FileContextTestHelper.createFile(fcView, "/user/foo");
+---
+>     fileContextTestHelper.createFile(fcView, "/user/foo");
+385c386
+<     fs = FileContextTestHelper.containsPath(fcView, "/user", dirPaths);
+---
+>     fs = fileContextTestHelper.containsPath(fcView, "/user", dirPaths);
+388c389
+<     fs = FileContextTestHelper.containsPath(fcView, "/data", dirPaths);
+---
+>     fs = fileContextTestHelper.containsPath(fcView, "/data", dirPaths);
+391c392
+<     fs = FileContextTestHelper.containsPath(fcView, "/internalDir", dirPaths);
+---
+>     fs = fileContextTestHelper.containsPath(fcView, "/internalDir", dirPaths);
+394c395
+<     fs = FileContextTestHelper.containsPath(fcView, "/danglingLink", dirPaths);
+---
+>     fs = fileContextTestHelper.containsPath(fcView, "/danglingLink", dirPaths);
+397c398
+<     fs = FileContextTestHelper.containsPath(fcView, "/linkToAFile", dirPaths);
+---
+>     fs = fileContextTestHelper.containsPath(fcView, "/linkToAFile", dirPaths);
+407c408
+<       fs = FileContextTestHelper.containsPath(fcView,
+---
+>       fs = fileContextTestHelper.containsPath(fcView,
+411c412
+<       fs = FileContextTestHelper.containsPath(fcView,
+---
+>       fs = fileContextTestHelper.containsPath(fcView,
+537c538
+<     FileContextTestHelper.createFile(fcView, "/user/foo");
+---
+>     fileContextTestHelper.createFile(fcView, "/user/foo");
+542c543
+<         FileContextTestHelper.getTestRootPath(fcView, "/user/dirX"),
+---
+>         fileContextTestHelper.getTestRootPath(fcView, "/user/dirX"),
+549c550
+<         FileContextTestHelper.getTestRootPath(fcView, "/user/dirX/dirY"),
+---
+>         fileContextTestHelper.getTestRootPath(fcView, "/user/dirX/dirY"),
+569c570
+<         FileContextTestHelper.getTestRootPath(fcView, "/user/dirX"),
+---
+>         fileContextTestHelper.getTestRootPath(fcView, "/user/dirX"),
+587c588
+<     fcView.mkdir(FileContextTestHelper.getTestRootPath(fcView, "/"),
+---
+>     fcView.mkdir(fileContextTestHelper.getTestRootPath(fcView, "/"),
+593c594
+<     fcView.mkdir(FileContextTestHelper.getTestRootPath(fcView, "/internalDir"),
+---
+>     fcView.mkdir(fileContextTestHelper.getTestRootPath(fcView, "/internalDir"),
+598c599
+<     fcView.mkdir(FileContextTestHelper.getTestRootPath(fcView,
+---
+>     fcView.mkdir(fileContextTestHelper.getTestRootPath(fcView,
+604c605
+<     fcView.mkdir(FileContextTestHelper.getTestRootPath(fcView, "/dirNew"),
+---
+>     fcView.mkdir(fileContextTestHelper.getTestRootPath(fcView, "/dirNew"),
+609c610
+<     fcView.mkdir(FileContextTestHelper.getTestRootPath(fcView, "/internalDir/dirNew"),
+---
+>     fcView.mkdir(fileContextTestHelper.getTestRootPath(fcView, "/internalDir/dirNew"),
+617c618
+<     FileContextTestHelper.createFileNonRecursive(fcView, "/foo"); 
+---
+>     fileContextTestHelper.createFileNonRecursive(fcView, "/foo"); 
+622c623
+<     FileContextTestHelper.createFileNonRecursive(fcView, "/internalDir/foo");
+---
+>     fileContextTestHelper.createFileNonRecursive(fcView, "/internalDir/foo");
+627c628
+<     FileContextTestHelper.createFile(fcView, "/missingDir/foo");
+---
+>     fileContextTestHelper.createFile(fcView, "/missingDir/foo");
+632c633
+<     FileContextTestHelper.createFile(fcView, "/missingDir/miss2/foo");
+---
+>     fileContextTestHelper.createFile(fcView, "/missingDir/miss2/foo");
+638c639
+<     FileContextTestHelper.createFile(fcView, "/internalDir/miss2/foo");
+---
+>     fileContextTestHelper.createFile(fcView, "/internalDir/miss2/foo");

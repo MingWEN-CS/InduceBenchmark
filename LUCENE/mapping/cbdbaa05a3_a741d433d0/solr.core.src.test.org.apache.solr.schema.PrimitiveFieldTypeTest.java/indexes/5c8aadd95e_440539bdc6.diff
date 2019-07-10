@@ -1,0 +1,30 @@
+65a66,68
+>     TrieLongField tl;
+>     TrieFloatField tf;
+>     TrieDoubleField td;
+85a89,100
+>     tl = new TrieLongField();
+>     tl.init(schema, initMap);
+>     assertFalse(tl.hasProperty(FieldType.OMIT_NORMS));
+> 
+>     tf = new TrieFloatField();
+>     tf.init(schema, initMap);
+>     assertFalse(tf.hasProperty(FieldType.OMIT_NORMS));
+> 
+>     td = new TrieDoubleField();
+>     td.init(schema, initMap);
+>     assertFalse(td.hasProperty(FieldType.OMIT_NORMS));
+> 
+115a131,142
+>     tl = new TrieLongField();
+>     tl.init(schema, initMap);
+>     assertTrue(tl.hasProperty(FieldType.OMIT_NORMS));
+> 
+>     tf = new TrieFloatField();
+>     tf.init(schema, initMap);
+>     assertTrue(tf.hasProperty(FieldType.OMIT_NORMS));
+> 
+>     td = new TrieDoubleField();
+>     td.init(schema, initMap);
+>     assertTrue(td.hasProperty(FieldType.OMIT_NORMS));
+> 

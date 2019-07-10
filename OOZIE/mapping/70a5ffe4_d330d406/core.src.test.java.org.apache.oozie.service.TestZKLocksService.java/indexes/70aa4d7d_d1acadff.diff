@@ -1,0 +1,18 @@
+492d491
+< 
+494c493,501
+<             sleep(2000);
+---
+> 
+>             waitFor(10000, new Predicate() {
+>                 @Override
+>                 public boolean evaluate() throws Exception {
+>                     Stat stat = getClient().checkExists().forPath(ZKLocksService.LOCKS_NODE);
+>                     return stat.getNumChildren() == 0;
+>                 }
+>             });
+> 
+496c503
+<             assertEquals(stat.getNumChildren(), 0);
+---
+>             assertEquals(0, stat.getNumChildren());

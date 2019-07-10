@@ -1,0 +1,42 @@
+2919,2920c2919,2926
+< 
+<       } catch (RuntimeException E) {
+---
+>       } catch (CompactionCanceledException cce) {
+>         log.debug("Major compaction canceled, extent = " + getExtent());
+>         failed = true;
+>       } catch (IOException ioe) {
+>         log.error("MajC Failed, extent = " + getExtent(), ioe);
+>         failed = true;
+>       } catch (RuntimeException e) {
+>         log.error("MajC Unexpected exception, extent = " + getExtent(), e);
+3422,3423c3428
+<   private CompactionStats majorCompact(MajorCompactionReason reason) {
+< 
+---
+>   private CompactionStats majorCompact(MajorCompactionReason reason) throws IOException, CompactionCanceledException {
+3441c3446
+<       Trace.on("majorCompaction");
+---
+>       span = Trace.on("majorCompaction");
+3448,3454d3452
+<     } catch (CompactionCanceledException mcce) {
+<       log.debug("Major compaction canceled, extent = " + getExtent());
+<       throw new RuntimeException(mcce);
+<     } catch (Throwable t) {
+<       log.error("MajC Failed, extent = " + getExtent());
+<       log.error("MajC Failed, message = " + (t.getMessage() == null ? t.getClass().getName() : t.getMessage()), t);
+<       throw new RuntimeException(t);
+3463,3468d3460
+<       Span curr = Trace.currentTrace();
+<       curr.data("extent", "" + getExtent());
+<       if (majCStats != null) {
+<         curr.data("read", "" + majCStats.getEntriesRead());
+<         curr.data("written", "" + majCStats.getEntriesWritten());
+<       }
+3469a3462,3466
+>         span.data("extent", "" + getExtent());
+>         if (majCStats != null) {
+>           span.data("read", "" + majCStats.getEntriesRead());
+>           span.data("written", "" + majCStats.getEntriesWritten());
+>         }

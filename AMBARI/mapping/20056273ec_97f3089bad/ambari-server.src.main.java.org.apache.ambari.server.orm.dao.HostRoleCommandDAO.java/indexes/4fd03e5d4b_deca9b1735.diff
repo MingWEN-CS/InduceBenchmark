@@ -1,0 +1,183 @@
+21,23d20
+< import static org.apache.ambari.server.orm.DBAccessor.DbType.ORACLE;
+< import static org.apache.ambari.server.orm.dao.DaoUtils.ORACLE_LIST_LIMIT;
+< 
+30a28
+> import java.util.concurrent.TimeUnit;
+51a50,51
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+52a53,55
+> import com.google.common.cache.CacheBuilder;
+> import com.google.common.cache.CacheLoader;
+> import com.google.common.cache.LoadingCache;
+56a60
+> import com.google.inject.name.Named;
+58a63,65
+> import static org.apache.ambari.server.orm.DBAccessor.DbType.ORACLE;
+> import static org.apache.ambari.server.orm.dao.DaoUtils.ORACLE_LIST_LIMIT;
+> 
+61a69,70
+>   private static final Logger LOG = LoggerFactory.getLogger(HostRoleCommandDAO.class);
+> 
+94a104,117
+>   
+> 
+> 
+> 
+> 
+>   private final LoadingCache<Long, Map<Long, HostRoleCommandStatusSummaryDTO>> hrcStatusSummaryCache;
+> 
+>   
+> 
+> 
+> 
+>   private final boolean hostRoleCommandStatusSummaryCacheEnabled;
+> 
+> 
+100a124,219
+>   public final static String HRC_STATUS_SUMMARY_CACHE_SIZE =  "hostRoleCommandStatusSummaryCacheSize";
+>   public final static String HRC_STATUS_SUMMARY_CACHE_EXPIRY_DURATION_MINUTES = "hostRoleCommandStatusCacheExpiryDurationMins";
+>   public final static String HRC_STATUS_SUMMARY_CACHE_ENABLED =  "hostRoleCommandStatusSummaryCacheEnabled";
+> 
+>   
+> 
+> 
+> 
+>   protected void invalidateHostRoleCommandStatusSummaryCache(Long requestId) {
+>     if (!hostRoleCommandStatusSummaryCacheEnabled )
+>       return;
+> 
+>     LOG.debug("Invalidating host role command status summary cache for request {} !", requestId);
+>     hrcStatusSummaryCache.invalidate(requestId);
+> 
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+>   protected void invalidateHostRoleCommandStatusCache(HostRoleCommandEntity hostRoleCommandEntity) {
+>     if ( !hostRoleCommandStatusSummaryCacheEnabled )
+>       return;
+> 
+>     if (hostRoleCommandEntity != null) {
+>       Long requestId = hostRoleCommandEntity.getRequestId();
+>       if (requestId == null) {
+>         StageEntity stageEntity = hostRoleCommandEntity.getStage();
+>         if (stageEntity != null)
+>           requestId = stageEntity.getRequestId();
+>       }
+> 
+>       if (requestId != null)
+>         invalidateHostRoleCommandStatusSummaryCache(requestId.longValue());
+>     }
+> 
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   @RequiresSession
+>   protected Map<Long, HostRoleCommandStatusSummaryDTO> loadAggregateCounts(Long requestId) {
+> 
+>     TypedQuery<HostRoleCommandStatusSummaryDTO> query = entityManagerProvider.get().createQuery(
+>       SUMMARY_DTO, HostRoleCommandStatusSummaryDTO.class);
+> 
+>     query.setParameter("requestId", requestId);
+>     query.setParameter("aborted", HostRoleStatus.ABORTED);
+>     query.setParameter("completed", HostRoleStatus.COMPLETED);
+>     query.setParameter("failed", HostRoleStatus.FAILED);
+>     query.setParameter("holding", HostRoleStatus.HOLDING);
+>     query.setParameter("holding_failed", HostRoleStatus.HOLDING_FAILED);
+>     query.setParameter("holding_timedout", HostRoleStatus.HOLDING_TIMEDOUT);
+>     query.setParameter("in_progress", HostRoleStatus.IN_PROGRESS);
+>     query.setParameter("pending", HostRoleStatus.PENDING);
+>     query.setParameter("queued", HostRoleStatus.QUEUED);
+>     query.setParameter("timedout", HostRoleStatus.TIMEDOUT);
+>     query.setParameter("skipped_failed", HostRoleStatus.SKIPPED_FAILED);
+> 
+>     Map<Long, HostRoleCommandStatusSummaryDTO> map = new HashMap<Long, HostRoleCommandStatusSummaryDTO>();
+> 
+>     for (HostRoleCommandStatusSummaryDTO dto : daoUtils.selectList(query)) {
+>       map.put(dto.getStageId(), dto);
+>     }
+> 
+>     return map;
+>   }
+> 
+>   @Inject
+>   public HostRoleCommandDAO(@Named(HRC_STATUS_SUMMARY_CACHE_ENABLED) boolean hostRoleCommandStatusSummaryCacheEnabled, @Named(HRC_STATUS_SUMMARY_CACHE_SIZE) long hostRoleCommandStatusSummaryCacheLimit, @Named(HRC_STATUS_SUMMARY_CACHE_EXPIRY_DURATION_MINUTES) long hostRoleCommandStatusSummaryCacheExpiryDurationMins) {
+>     this.hostRoleCommandStatusSummaryCacheEnabled = hostRoleCommandStatusSummaryCacheEnabled;
+> 
+>     LOG.info("Host role command status summary cache {} !", hostRoleCommandStatusSummaryCacheEnabled ? "enabled" : "disabled");
+> 
+> 
+>     hrcStatusSummaryCache = CacheBuilder.newBuilder()
+>       .maximumSize(hostRoleCommandStatusSummaryCacheLimit)
+>       .expireAfterAccess(hostRoleCommandStatusSummaryCacheExpiryDurationMins, TimeUnit.MINUTES)
+>       .build(new CacheLoader<Long, Map<Long, HostRoleCommandStatusSummaryDTO>>() {
+>         @Override
+>         public Map<Long, HostRoleCommandStatusSummaryDTO> load(Long requestId) throws Exception {
+>           LOG.debug("Cache miss for host role command status summary object for request {}, fetching from JPA", requestId);
+>           Map<Long, HostRoleCommandStatusSummaryDTO> hrcCommandStatusByStageId = loadAggregateCounts(requestId);
+> 
+>           return hrcCommandStatusByStageId;
+>         }
+>       });
+>   }
+> 
+427a547,548
+> 
+>     invalidateHostRoleCommandStatusCache(stageEntity);
+432a554,556
+> 
+>     invalidateHostRoleCommandStatusCache(entity);
+> 
+448a573,574
+> 
+>       invalidateHostRoleCommandStatusCache(entity);
+455a582,583
+> 
+>     invalidateHostRoleCommandStatusCache(stageEntity);
+469,471d596
+< 
+< 
+<   @RequiresSession
+473,496c598,601
+< 
+<     TypedQuery<HostRoleCommandStatusSummaryDTO> query = entityManagerProvider.get().createQuery(
+<         SUMMARY_DTO, HostRoleCommandStatusSummaryDTO.class);
+< 
+<     query.setParameter("requestId", requestId);
+<     query.setParameter("aborted", HostRoleStatus.ABORTED);
+<     query.setParameter("completed", HostRoleStatus.COMPLETED);
+<     query.setParameter("failed", HostRoleStatus.FAILED);
+<     query.setParameter("holding", HostRoleStatus.HOLDING);
+<     query.setParameter("holding_failed", HostRoleStatus.HOLDING_FAILED);
+<     query.setParameter("holding_timedout", HostRoleStatus.HOLDING_TIMEDOUT);
+<     query.setParameter("in_progress", HostRoleStatus.IN_PROGRESS);
+<     query.setParameter("pending", HostRoleStatus.PENDING);
+<     query.setParameter("queued", HostRoleStatus.QUEUED);
+<     query.setParameter("timedout", HostRoleStatus.TIMEDOUT);
+<     query.setParameter("skipped_failed", HostRoleStatus.SKIPPED_FAILED);
+< 
+<     Map<Long, HostRoleCommandStatusSummaryDTO> map = new HashMap<Long, HostRoleCommandStatusSummaryDTO>();
+< 
+<     for (HostRoleCommandStatusSummaryDTO dto : daoUtils.selectList(query)) {
+<       map.put(dto.getStageId(), dto);
+<     }
+< 
+<     return map;
+---
+>     if (hostRoleCommandStatusSummaryCacheEnabled)
+>       return hrcStatusSummaryCache.getUnchecked(requestId);
+>     else
+>       return loadAggregateCounts(requestId); 
+498a604
+> 

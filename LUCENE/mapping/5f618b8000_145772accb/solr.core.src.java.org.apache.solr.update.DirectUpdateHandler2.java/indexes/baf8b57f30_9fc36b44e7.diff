@@ -1,0 +1,8 @@
+53a54
+> import org.apache.solr.schema.IndexSchema;
+159a161
+>         IndexSchema schema = cmd.getReq().getSchema();
+399c401
+<         writer.updateDocument(idTerm, luceneDocument, core.getSchema()
+---
+>         writer.updateDocument(idTerm, luceneDocument, cmd.getReq().getSchema()

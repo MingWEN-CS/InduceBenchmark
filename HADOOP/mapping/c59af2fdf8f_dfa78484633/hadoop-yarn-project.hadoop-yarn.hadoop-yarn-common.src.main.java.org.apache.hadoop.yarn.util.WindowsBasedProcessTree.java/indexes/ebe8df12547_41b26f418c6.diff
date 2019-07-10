@@ -1,0 +1,15 @@
+53a54,56
+>       if (!Shell.hasWinutilsPath()) {
+>         return false;
+>       }
+55c58
+<           new String[] { Shell.WINUTILS, "help" });
+---
+>           new String[] { Shell.getWinutilsPath(), "help" });
+78,79d80
+<     ShellCommandExecutor shellExecutor = new ShellCommandExecutor(
+<         new String[] { Shell.WINUTILS, "task", "processList", taskProcessId });
+80a82,84
+>       ShellCommandExecutor shellExecutor = new ShellCommandExecutor(
+>           new String[] {Shell.getWinutilsFile().getCanonicalPath(),
+>               "task", "processList", taskProcessId });

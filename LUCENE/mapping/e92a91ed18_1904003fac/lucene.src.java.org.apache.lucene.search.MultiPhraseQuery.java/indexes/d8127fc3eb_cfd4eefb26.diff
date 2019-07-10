@@ -1,0 +1,105 @@
+174,175c174,178
+<       DocsAndPositionsEnum[] postings = new DocsAndPositionsEnum[termArrays.size()];
+<       for (int i=0; i<postings.length; i++) {
+---
+>       final Bits delDocs = MultiFields.getDeletedDocs(reader);
+>       
+>       PhraseQuery.PostingsAndFreq[] postingsFreqs = new PhraseQuery.PostingsAndFreq[termArrays.size()];
+> 
+>       for (int i=0; i<postingsFreqs.length; i++) {
+178a182,183
+>         int docFreq;
+> 
+180a186,192
+> 
+>           
+>           
+>           docFreq = 0;
+>           for(int j=0;j<terms.length;j++) {
+>             docFreq += reader.docFreq(terms[i]);
+>           }
+182c194,195
+<           postingsEnum = reader.termPositionsEnum(MultiFields.getDeletedDocs(reader),
+---
+>           final BytesRef text = new BytesRef(terms[0].text());
+>           postingsEnum = reader.termPositionsEnum(delDocs,
+184,185c197
+<                                                   new BytesRef(terms[0].text()));
+<         }
+---
+>                                                   text);
+187,188c199,209
+<         if (postingsEnum == null) {
+<           return null;
+---
+>           if (postingsEnum == null) {
+>             if (MultiFields.getTermDocsEnum(reader, delDocs, terms[0].field(), text) != null) {
+>               
+>               throw new IllegalStateException("field \"" + terms[0].field() + "\" was indexed with Field.omitTermFreqAndPositions=true; cannot run PhraseQuery (term=" + terms[0].text() + ")");
+>             } else {
+>               
+>               return null;
+>             }
+>           }
+> 
+>           docFreq = reader.docFreq(terms[0].field(), text);
+191c212,217
+<         postings[i] = postingsEnum;
+---
+>         postingsFreqs[i] = new PhraseQuery.PostingsAndFreq(postingsEnum, docFreq, positions.get(i).intValue());
+>       }
+> 
+>       
+>       if (slop == 0) {
+>         Arrays.sort(postingsFreqs);
+194,198c220,229
+<       if (slop == 0)
+<         return new ExactPhraseScorer(this, postings, getPositions(), similarity,
+<                                      reader.norms(field));
+<       else
+<         return new SloppyPhraseScorer(this, postings, getPositions(), similarity,
+---
+>       if (slop == 0) {
+>         ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, similarity,
+>                                                     reader.norms(field));
+>         if (s.noDocs) {
+>           return null;
+>         } else {
+>           return s;
+>         }
+>       } else {
+>         return new SloppyPhraseScorer(this, postingsFreqs, similarity,
+199a231
+>       }
+234c266
+<       PhraseScorer scorer = (PhraseScorer) scorer(reader, true, false);
+---
+>       Scorer scorer = (Scorer) scorer(reader, true, false);
+237a270
+> 
+240c273,283
+<       float phraseFreq = (d == doc) ? scorer.currentFreq() : 0.0f;
+---
+>       float phraseFreq;
+>       if (d == doc) {
+>         if (slop == 0) {
+>           phraseFreq = ((ExactPhraseScorer) scorer).currentFreq();
+>         } else {
+>           phraseFreq = ((SloppyPhraseScorer) scorer).currentFreq();
+>         }
+>       } else {
+>         phraseFreq = 0.0f;
+>       }
+> 
+458a502
+>       final BytesRef text = new BytesRef(terms[i].text());
+461c505
+<                                                                     new BytesRef(terms[i].text()));
+---
+>                                                                     text);
+463a508,512
+>       } else {
+>         if (MultiFields.getTermDocsEnum(indexReader, delDocs, terms[i].field(), text) != null) {
+>           
+>           throw new IllegalStateException("field \"" + terms[i].field() + "\" was indexed with Field.omitTermFreqAndPositions=true; cannot run PhraseQuery (term=" + terms[i].text() + ")");
+>         }

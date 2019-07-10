@@ -1,0 +1,9 @@
+483c483,488
+<           int pIndex = payload == null ? -1 : payloadsBytesRefs.append(payload);
+---
+>           final int pIndex;
+>           if (payload == null || payload.length == 0) {
+>             pIndex = -1;
+>           } else {
+>             pIndex = payloadsBytesRefs.append(payload);
+>           }

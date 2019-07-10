@@ -1,0 +1,7 @@
+277,282d276
+<   
+<   public void addTokensToUGI(UserGroupInformation ugi) {
+<     for (Map.Entry<Text, Token<?>> token: tokenMap.entrySet()) {
+<       ugi.addToken(token.getKey(), token.getValue());
+<     }
+<   }

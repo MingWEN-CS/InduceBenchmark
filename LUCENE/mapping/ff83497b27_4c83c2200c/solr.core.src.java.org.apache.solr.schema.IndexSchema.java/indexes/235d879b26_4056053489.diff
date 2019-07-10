@@ -1,0 +1,161 @@
+758c758
+<   private static boolean isValidFieldGlob(String name) {
+---
+>   protected static boolean isValidFieldGlob(String name) {
+938c938
+<   private void registerExplicitSrcAndDestFields(String source, int maxChars, SchemaField destSchemaField, SchemaField sourceSchemaField) {
+---
+>   protected void registerExplicitSrcAndDestFields(String source, int maxChars, SchemaField destSchemaField, SchemaField sourceSchemaField) {
+1110a1111,1112
+>     public DynamicField getDestination() { return destination; }
+> 
+1298c1300
+<   };
+---
+>   }
+1418a1421
+>       copyFields = new ArrayList<>(copyFields);
+1502c1505
+<     return addFields(Collections.singletonList(newField),Collections.EMPTY_MAP,persist );
+---
+>     return addFields(Collections.singletonList(newField), Collections.emptyMap(), persist);
+1564a1568,1605
+>   public IndexSchema deleteFields(Collection<String> names) {
+>     String msg = "This IndexSchema is not mutable.";
+>     log.error(msg);
+>     throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public IndexSchema replaceField(String fieldName, FieldType replacementFieldType, Map<String,?> replacementArgs) {
+>     String msg = "This IndexSchema is not mutable.";
+>     log.error(msg);
+>     throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+1583c1624,1626
+<   public IndexSchema addCopyFields(Map<String, Collection<String>> copyFields, boolean persist){
+---
+> 
+> 
+>   public IndexSchema deleteDynamicFields(Collection<String> fieldNamePatterns) {
+1600a1644,1699
+> 
+> 
+> 
+>   public ManagedIndexSchema replaceDynamicField
+>       (String fieldNamePattern, FieldType replacementFieldType, Map<String,?> replacementArgs) {
+>     String msg = "This IndexSchema is not mutable.";
+>     log.error(msg);
+>     throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+>   }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public IndexSchema addCopyFields(Map<String, Collection<String>> copyFields, boolean persist) {
+>     String msg = "This IndexSchema is not mutable.";
+>     log.error(msg);
+>     throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public IndexSchema deleteCopyFields(Map<String, Collection<String>> copyFields) {
+>     String msg = "This IndexSchema is not mutable.";
+>     log.error(msg);
+>     throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+>   }
+> 
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+1662a1762,1798
+>   public IndexSchema deleteFieldTypes(Collection<String> names) {
+>     String msg = "This IndexSchema is not mutable.";
+>     log.error(msg);
+>     throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public IndexSchema replaceFieldType(String typeName, String replacementClassName, Map<String,Object> replacementArgs) {
+>     String msg = "This IndexSchema is not mutable.";
+>     log.error(msg);
+>     throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 

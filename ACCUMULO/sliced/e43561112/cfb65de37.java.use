@@ -1,0 +1,74 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+31	conf	HTraceConfiguration	param	67	define	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+31	conf	HTraceConfiguration	param	68	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+31	conf	HTraceConfiguration	param	69	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+31	conf	HTraceConfiguration	param	72	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+31	conf	HTraceConfiguration	param	74	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+32	keepers	String	variable	69	define	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+33	timeout	int	variable	72	define	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+32	keepers	String	variable	69	set	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+33	timeout	int	variable	72	set	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+71	ZooTraceClient.zoo	ZooReader	variable	73	set	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+68	ZooTraceClient.path	String	variable	74	set	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+27	TRACER_ZK_HOST		variable	69	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+32	keepers	String	variable	70	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+27	TRACER_ZK_HOST		variable	71	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+29	TRACER_ZK_TIMEOUT		variable	72	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+64	ZooTraceClient.DEFAULT_TIMEOUT	int	variable	72	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+32	keepers	String	variable	73	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+33	timeout	int	variable	73	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+28	TRACER_ZK_PATH		variable	74	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+30	ZTRACERS		variable	74	use	org.apache.accumulo.tracer.ZooTraceClient.configure	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	67	76
+38	data	Map<ByteBuffer,ByteBuffer>	param	58	define	org.apache.accumulo.tracer.ZooTraceClient.getSpanKey	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	58	64
+39	host	String	variable	60	define	org.apache.accumulo.tracer.ZooTraceClient.getSpanKey	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	58	64
+39	host	String	variable	60	set	org.apache.accumulo.tracer.ZooTraceClient.getSpanKey	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	58	64
+66	ZooTraceClient.hosts	List<String>	variable	59	use	org.apache.accumulo.tracer.ZooTraceClient.getSpanKey	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	58	64
+66	ZooTraceClient.hosts	List<String>	variable	60	use	org.apache.accumulo.tracer.ZooTraceClient.getSpanKey	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	58	64
+70	ZooTraceClient.random	Random	variable	60	use	org.apache.accumulo.tracer.ZooTraceClient.getSpanKey	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	58	64
+66	ZooTraceClient.hosts	List<String>	variable	60	use	org.apache.accumulo.tracer.ZooTraceClient.getSpanKey	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	58	64
+39	host	String	variable	61	use	org.apache.accumulo.tracer.ZooTraceClient.getSpanKey	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	58	64
+46	event	WatchedEvent	param	79	define	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+45	ex	Exception	param	88	define	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+45	ex	Exception	param	89	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+69	ZooTraceClient.pathExists	boolean	variable	83	set	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+67	ZooTraceClient.log	Logger	variable	80	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+69	ZooTraceClient.pathExists	boolean	variable	82	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+71	ZooTraceClient.zoo	ZooReader	variable	82	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+68	ZooTraceClient.path	String	variable	82	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+68	ZooTraceClient.path	String	variable	84	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+71	ZooTraceClient.zoo	ZooReader	variable	84	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+68	ZooTraceClient.path	String	variable	84	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+71	ZooTraceClient.zoo	ZooReader	variable	86	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+68	ZooTraceClient.path	String	variable	86	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+67	ZooTraceClient.log	Logger	variable	89	use	org.apache.accumulo.tracer.ZooTraceClient.process	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	79	91
+66	ZooTraceClient.hosts	List<String>	variable	95	use	org.apache.accumulo.tracer.ZooTraceClient.sendSpans	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	94	106
+67	ZooTraceClient.log	Logger	variable	97	use	org.apache.accumulo.tracer.ZooTraceClient.sendSpans	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	94	106
+52	sendQueue		variable	98	use	org.apache.accumulo.tracer.ZooTraceClient.sendSpans	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	94	106
+52	sendQueue		variable	99	use	org.apache.accumulo.tracer.ZooTraceClient.sendSpans	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	94	106
+52	sendQueue		variable	100	use	org.apache.accumulo.tracer.ZooTraceClient.sendSpans	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	94	106
+63	path	String	param	108	define	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+61	children	List<String>	param	108	define	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+55	ex	Exception	param	119	define	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+63	path	String	param	109	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+61	children	List<String>	param	112	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+63	path	String	param	113	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+55	ex	Exception	param	120	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+62	hosts	List<String>	variable	111	define	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+59	child	String	variable	112	define	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+60	data	byte[]	variable	113	define	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+62	hosts	List<String>	variable	111	set	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+60	data	byte[]	variable	113	set	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+67	ZooTraceClient.log	Logger	variable	109	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+71	ZooTraceClient.zoo	ZooReader	variable	113	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+59	child	String	variable	113	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+62	hosts	List<String>	variable	114	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+60	data	byte[]	variable	114	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+58	UTF_8		variable	114	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+66	ZooTraceClient.hosts	List<String>	variable	116	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+66	ZooTraceClient.hosts	List<String>	variable	117	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+62	hosts	List<String>	variable	117	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+67	ZooTraceClient.log	Logger	variable	118	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+66	ZooTraceClient.hosts	List<String>	variable	118	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+67	ZooTraceClient.log	Logger	variable	120	use	org.apache.accumulo.tracer.ZooTraceClient.updateHosts	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	108	122
+22	millis	long	param	53	define	org.apache.accumulo.tracer.ZooTraceClient.ZooTraceClient	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	53	55
+22	millis	long	param	54	use	org.apache.accumulo.tracer.ZooTraceClient.ZooTraceClient	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/e43561112/cfb65de37.java	53	55

@@ -1,0 +1,43 @@
+24a25,26
+> import java.util.Arrays;
+> import java.util.HashSet;
+229c231,236
+<             v = new InternalVersionImpl(this, child, child.getName());
+---
+>             
+>             if (child.getState().getMixinTypeNames().contains(NameConstants.REP_BASELINE)) {
+>                 v = new InternalBaselineImpl(this, child, child.getName());
+>             } else {
+>                 v = new InternalVersionImpl(this, child, child.getName());
+>             }
+491c498,499
+<     InternalVersionImpl checkin(Name name, NodeStateEx src)
+---
+> 
+>     InternalVersionImpl checkin(Name name, NodeStateEx src, Set<NodeId> configuration)
+529a538,547
+>         
+>         if (configuration != null) {
+>             vNode.setMixins(new HashSet<Name>(Arrays.asList(NameConstants.REP_BASELINE)));
+>             InternalValue[] values = new InternalValue[configuration.size()];
+>             int i=0;
+>             for (NodeId id: configuration) {
+>                 values[i++] = InternalValue.create(id);
+>             }
+>             vNode.setPropertyValues(NameConstants.REP_BASEVERSIONS, PropertyType.REFERENCE, values, true);
+>         }
+540c558,560
+<         InternalVersionImpl version = new InternalVersionImpl(this, vNode, name);
+---
+>         InternalVersionImpl version = configuration == null
+>                 ? new InternalVersionImpl(this, vNode, name)
+>                 : new InternalBaselineImpl(this, vNode, name);
+586c606
+<         
+---
+> 
+589a610,613
+>         if (nodeState.getNodeTypeName().equals(NameConstants.NT_CONFIGURATION)) {
+>             
+>             vNode.setMixins(new HashSet<Name>(Arrays.asList(NameConstants.REP_BASELINE)));
+>         }

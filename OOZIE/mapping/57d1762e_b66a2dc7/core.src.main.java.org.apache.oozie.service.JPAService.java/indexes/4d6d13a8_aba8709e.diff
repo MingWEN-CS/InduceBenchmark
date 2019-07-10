@@ -1,0 +1,4 @@
+115c115
+<         boolean autoSchemaCreation = conf.getBoolean(CONF_CREATE_DB_SCHEMA, true);
+---
+>         boolean autoSchemaCreation = conf.getBoolean(CONF_CREATE_DB_SCHEMA, false);

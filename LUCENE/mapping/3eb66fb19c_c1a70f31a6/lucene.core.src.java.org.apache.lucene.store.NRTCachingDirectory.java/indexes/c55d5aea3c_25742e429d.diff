@@ -1,0 +1,10 @@
+22a23
+> import java.util.Collections;
+27a29
+> import org.apache.lucene.util.Accountables;
+258a261,265
+>   
+>   @Override
+>   public Iterable<? extends Accountable> getChildResources() {
+>     return Collections.singleton(Accountables.namedAccountable("cache", cache));
+>   }

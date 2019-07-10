@@ -1,0 +1,12 @@
+145a146,151
+>   protected boolean isInstrumentationAccessAllowed(HttpServletRequest request, 
+>       HttpServletResponse response) throws IOException {
+>     return HttpServer2.isInstrumentationAccessAllowed(getServletContext(),
+>         request, response);
+>   }
+>   
+157,158c163
+<       if (!HttpServer2.isInstrumentationAccessAllowed(getServletContext(),
+<                                                      request, response)) {
+---
+>       if (!isInstrumentationAccessAllowed(request, response)) {

@@ -1,0 +1,90 @@
+26a27
+> import org.apache.lucene.search.MatchAllDocsQuery;
+58c59
+<     private final boolean includeSelf;
+---
+>     private final int minLevels;
+71a73,87
+> 
+> 
+> 
+> 
+>     public DescendantSelfAxisQuery(Query context, boolean includeSelf) {
+>         this(context, new MatchAllDocsQuery(), includeSelf);
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+86a103,115
+>         this(context, sub, includeSelf ? 0 : 1);
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     public DescendantSelfAxisQuery(Query context, Query sub, int minLevels) {
+89c118,141
+<         this.includeSelf = includeSelf;
+---
+>         this.minLevels = minLevels;
+>     }
+> 
+>     
+> 
+> 
+>     Query getContextQuery() {
+>         return contextQuery;
+>     }
+> 
+>     
+> 
+> 
+> 
+>     boolean subQueryMatchesAll() {
+>         return subQuery instanceof MatchAllDocsQuery;
+>     }
+> 
+>     
+> 
+> 
+> 
+>     int getMinLevels() {
+>         return minLevels;
+125a178,184
+>         if (contextQuery instanceof DescendantSelfAxisQuery) {
+>             DescendantSelfAxisQuery dsaq = (DescendantSelfAxisQuery) contextQuery;
+>             if (dsaq.subQueryMatchesAll()) {
+>                 return new DescendantSelfAxisQuery(dsaq.getContextQuery(),
+>                         sQuery, dsaq.getMinLevels() + getMinLevels()).rewrite(reader);
+>             }
+>         }
+129c188
+<             return new DescendantSelfAxisQuery(cQuery, sQuery, includeSelf);
+---
+>             return new DescendantSelfAxisQuery(cQuery, sQuery, minLevels);
+157a217,218
+>         
+> 
+333,336c394,395
+<             if (includeSelf) {
+<                 if (contextHits.get(doc)) {
+<                     return true;
+<                 }
+---
+>             if (minLevels == 0 && contextHits.get(doc)) {
+>                 return true;
+346c405
+<             while (parentDoc != -1 && !contextHits.get(parentDoc)) {
+---
+>             while (parentDoc != -1 && (!contextHits.get(parentDoc) || ancestorCount < minLevels)) {

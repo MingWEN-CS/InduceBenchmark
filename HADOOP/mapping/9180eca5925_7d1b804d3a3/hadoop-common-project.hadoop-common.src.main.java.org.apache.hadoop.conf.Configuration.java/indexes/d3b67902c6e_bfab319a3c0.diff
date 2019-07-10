@@ -1,0 +1,26 @@
+350,352c350
+<       if (!keyInfo.accessed) {
+<         LOG.warn(keyInfo.getWarningMessage(name));
+<       }
+---
+>       warnOnceIfDeprecated(name);
+365,369d362
+<       
+<       DeprecatedKeyInfo keyInfo = deprecatedKeyMap.get(deprecatedKey);
+<       if (!keyInfo.accessed) {
+<         LOG.warn(keyInfo.getWarningMessage(deprecatedKey));
+<       }
+665,666c658,663
+<     if (isDeprecated(name)) {
+<       DeprecatedKeyInfo keyInfo = deprecatedKeyMap.get(name);
+---
+>     warnOnceIfDeprecated(name);
+>   }
+> 
+>   private void warnOnceIfDeprecated(String name) {
+>     DeprecatedKeyInfo keyInfo = deprecatedKeyMap.get(name);
+>     if (keyInfo != null && !keyInfo.accessed) {
+670c667
+<   
+---
+> 

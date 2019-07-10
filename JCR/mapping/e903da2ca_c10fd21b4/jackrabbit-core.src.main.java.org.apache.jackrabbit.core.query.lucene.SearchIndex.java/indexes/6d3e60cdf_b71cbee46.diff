@@ -1,0 +1,18 @@
+1205c1205
+<                                         Field.Index.NO_NORMS));
+---
+>                                         Field.Index.NOT_ANALYZED_NO_NORMS));
+1220a1221
+>                             Token t = new Token();
+1224c1225
+<                                 Token t = field.tokenStreamValue().next();
+---
+>                                 t = field.tokenStreamValue().next(t);
+1233c1234
+<                                     t.setTermText(value);
+---
+>                                     t.setTermBuffer(value);
+1238c1239
+<                                             Field.Index.NO_NORMS));
+---
+>                                             Field.Index.NOT_ANALYZED_NO_NORMS));

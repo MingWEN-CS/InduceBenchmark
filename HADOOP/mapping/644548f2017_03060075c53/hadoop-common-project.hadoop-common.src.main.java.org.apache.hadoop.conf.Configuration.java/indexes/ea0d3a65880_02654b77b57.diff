@@ -1,0 +1,12 @@
+1498a1499
+> 
+1500c1501
+<     final String val = get(name);
+---
+>     final String val = getTrimmed(name);
+1601a1603
+> 
+2047c2049
+<     final String address = get(name, defaultAddress);
+---
+>     final String address = getTrimmed(name, defaultAddress);

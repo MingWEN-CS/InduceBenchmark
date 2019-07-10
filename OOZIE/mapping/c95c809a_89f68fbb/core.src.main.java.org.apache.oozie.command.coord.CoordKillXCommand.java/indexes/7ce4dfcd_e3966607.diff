@@ -1,0 +1,8 @@
+31c31
+< import org.apache.oozie.executor.jpa.BulkUpdateInsertJPAExecutor;
+---
+> import org.apache.oozie.executor.jpa.BulkUpdateInsertForCoordActionStatusJPAExecutor;
+163c163
+<             jpaService.execute(new BulkUpdateInsertJPAExecutor(updateList, null));
+---
+>             jpaService.execute(new BulkUpdateInsertForCoordActionStatusJPAExecutor(updateList, null));

@@ -1,0 +1,196 @@
+450a451
+>     long startNS = System.nanoTime();
+627a629,630
+>         
+>         long startOpenReaderNS = System.nanoTime();
+631c634
+<         msg(infoStream, "OK");
+---
+>         msg(infoStream, String.format(Locale.ROOT, "OK [took %.3f sec]", nsToSec(System.nanoTime()-startOpenReaderNS)));
+634a638
+>         long startIntegrityNS = System.nanoTime();
+638c642
+<         msg(infoStream, "OK");
+---
+>         msg(infoStream, String.format(Locale.ROOT, "OK [took %.3f sec]", nsToSec(System.nanoTime()-startIntegrityNS)));
+745a750,751
+>     msg(infoStream, String.format(Locale.ROOT, "Took %.3f sec total.", nsToSec(System.nanoTime()-startNS)));
+> 
+753a760
+>     long startNS = System.nanoTime();
+777c784
+<         msg(infoStream, "OK [" + (status.numDeleted) + " deleted docs]");
+---
+>         msg(infoStream, String.format(Locale.ROOT, "OK [%d deleted docs] [took %.3f sec]", status.numDeleted, nsToSec(System.nanoTime()-startNS)));
+788c795
+<         msg(infoStream, "OK");
+---
+>         msg(infoStream, String.format(Locale.ROOT, "OK [took %.3f sec]", (nsToSec(System.nanoTime()-startNS))));
+809a817
+>     long startNS = System.nanoTime();
+821c829
+<       msg(infoStream, "OK [" + fieldInfos.size() + " fields]");
+---
+>       msg(infoStream, String.format(Locale.ROOT, "OK [%d fields] [took %.3f sec]", fieldInfos.size(), nsToSec(System.nanoTime()-startNS)));
+841a850
+>     long startNS = System.nanoTime();
+860c869
+<       msg(infoStream, "OK [" + status.totFields + " fields]");
+---
+>       msg(infoStream, String.format(Locale.ROOT, "OK [%d fields] [took %.3f sec]", status.totFields, nsToSec(System.nanoTime()-startNS)));
+880a890,895
+>     long startNS;
+>     if (doPrint) {
+>       startNS = System.nanoTime();
+>     } else {
+>       startNS = 0;
+>     }
+923c938
+<       BytesRef bb = terms.getMin();
+---
+>       BytesRef maxTerm;
+925,928c940,942
+<       if (bb != null) {
+<         assert bb.isValid();
+<         minTerm = BytesRef.deepCopyOf(bb);
+<       } else {
+---
+>       if (isVectors) {
+>         
+>         maxTerm = null;
+930,939d943
+<       }
+< 
+<       BytesRef maxTerm;
+<       bb = terms.getMax();
+<       if (bb != null) {
+<         assert bb.isValid();
+<         maxTerm = BytesRef.deepCopyOf(bb);
+<         if (minTerm == null) {
+<           throw new RuntimeException("field \"" + field + "\" has null minTerm but non-null maxTerm");
+<         }
+941,943c945,964
+<         maxTerm = null;
+<         if (minTerm != null) {
+<           throw new RuntimeException("field \"" + field + "\" has non-null minTerm but null maxTerm");
+---
+>         BytesRef bb = terms.getMin();
+>         if (bb != null) {
+>           assert bb.isValid();
+>           minTerm = BytesRef.deepCopyOf(bb);
+>         } else {
+>           minTerm = null;
+>         }
+> 
+>         bb = terms.getMax();
+>         if (bb != null) {
+>           assert bb.isValid();
+>           maxTerm = BytesRef.deepCopyOf(bb);
+>           if (minTerm == null) {
+>             throw new RuntimeException("field \"" + field + "\" has null minTerm but non-null maxTerm");
+>           }
+>         } else {
+>           maxTerm = null;
+>           if (minTerm != null) {
+>             throw new RuntimeException("field \"" + field + "\" has non-null minTerm but null maxTerm");
+>           }
+978c999
+<       
+---
+> 
+1007a1029,1035
+> 
+>         if (isVectors == false) {
+>           if (minTerm == null) {
+>             
+>             assert maxTerm == null;
+>             throw new RuntimeException("field=\"" + field + "\": invalid term: term=" + term + ", minTerm=" + minTerm);
+>           }
+1009,1017c1037,1039
+<         if (minTerm == null) {
+<           
+<           assert maxTerm == null;
+<           throw new RuntimeException("field=\"" + field + "\": invalid term: term=" + term + ", minTerm=" + minTerm);
+<         }
+<         
+<         if (term.compareTo(minTerm) < 0) {
+<           throw new RuntimeException("field=\"" + field + "\": invalid term: term=" + term + ", minTerm=" + minTerm);
+<         }
+---
+>           if (term.compareTo(minTerm) < 0) {
+>             throw new RuntimeException("field=\"" + field + "\": invalid term: term=" + term + ", minTerm=" + minTerm);
+>           }
+1019,1020c1041,1043
+<         if (term.compareTo(maxTerm) > 0) {
+<           throw new RuntimeException("field=\"" + field + "\": invalid term: term=" + term + ", maxTerm=" + maxTerm);
+---
+>           if (term.compareTo(maxTerm) > 0) {
+>             throw new RuntimeException("field=\"" + field + "\": invalid term: term=" + term + ", maxTerm=" + maxTerm);
+>           }
+1245a1269,1273
+> 
+>             if (isVectors) {
+>               
+>               break;
+>             }
+1265a1294,1297
+>             if (isVectors) {
+>               
+>               break;
+>             }
+1411c1443,1444
+<       msg(infoStream, "OK [" + status.termCount + " terms; " + status.totFreq + " terms/docs pairs; " + status.totPos + " tokens]");
+---
+>       msg(infoStream, String.format(Locale.ROOT, "OK [%d terms; %d terms/docs pairs; %d tokens] [took %.3f sec]",
+>                                     status.termCount, status.totFreq, status.totPos, nsToSec(System.nanoTime()-startNS)));
+1478a1512
+>     long startNS = System.nanoTime();
+1503,1504c1537,1540
+<       msg(infoStream, "OK [" + status.totFields + " total field count; avg " + 
+<           NumberFormat.getInstance(Locale.ROOT).format((((float) status.totFields)/status.docCount)) + " fields per doc]");      
+---
+>       msg(infoStream, String.format(Locale.ROOT, "OK [%d total field count; avg %.1f fields per doc] [took %.3f sec]",
+>                                     status.totFields,
+>                                     (((float) status.totFields)/status.docCount),
+>                                     nsToSec(System.nanoTime() - startNS)));
+1525a1562
+>     long startNS = System.nanoTime();
+1546,1551c1583,1591
+<       msg(infoStream, "OK [" + status.totalValueFields + " docvalues fields; "
+<                              + status.totalBinaryFields + " BINARY; " 
+<                              + status.totalNumericFields + " NUMERIC; "
+<                              + status.totalSortedFields + " SORTED; "
+<                              + status.totalSortedNumericFields + " SORTED_NUMERIC; "
+<                              + status.totalSortedSetFields + " SORTED_SET]");
+---
+>       msg(infoStream, String.format(Locale.ROOT,
+>                                     "OK [%d docvalues fields; %d BINARY; %d NUMERIC; %d SORTED; %d SORTED_NUMERIC; %d SORTED_SET] [took %.3f sec]",
+>                                     status.totalValueFields,
+>                                     status.totalBinaryFields,
+>                                     status.totalNumericFields,
+>                                     status.totalSortedFields,
+>                                     status.totalSortedNumericFields,
+>                                     status.totalSortedSetFields,
+>                                     nsToSec(System.nanoTime()-startNS)));
+1799a1840
+>     long startNS = System.nanoTime();
+1842,1843c1883,1887
+<           
+<           checkFields(tfv, onlyDocIsDeleted, 1, fieldInfos, false, true, infoStream, verbose);
+---
+>           if (j == 0) {
+>             
+>             
+>             checkFields(tfv, onlyDocIsDeleted, 1, fieldInfos, false, true, infoStream, verbose);
+>           }
+2008,2009c2052,2053
+<       msg(infoStream, "OK [" + status.totVectors + " total vector count; avg " + 
+<           NumberFormat.getInstance(Locale.ROOT).format(vectorAvg) + " term/freq vector fields per doc]");
+---
+>       msg(infoStream, String.format(Locale.ROOT, "OK [%d total term vector count; avg %.1f term/freq vector fields per doc] [took %.3f sec]",
+>                                     status.totVectors, vectorAvg, nsToSec(System.nanoTime() - startNS)));
+2223a2268,2271
+> 
+>   private static double nsToSec(long ns) {
+>     return ns/1000000000.0;
+>   }

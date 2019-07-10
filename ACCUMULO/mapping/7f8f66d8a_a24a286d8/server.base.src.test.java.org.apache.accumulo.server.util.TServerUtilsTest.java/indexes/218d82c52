@@ -1,0 +1,84 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.accumulo.server.util;
+
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertTrue;
+
+import java.util.concurrent.ExecutorService;
+
+import org.apache.accumulo.server.rpc.TServerUtils;
+import org.apache.thrift.server.TServer;
+import org.apache.thrift.transport.TServerSocket;
+import org.junit.Test;
+
+public class TServerUtilsTest {
+  private static class TServerWithoutES extends TServer {
+    boolean stopCalled;
+
+    TServerWithoutES(TServerSocket socket) {
+      super(new TServer.Args(socket));
+      stopCalled = false;
+    }
+
+    @Override
+    public void serve() {}
+
+    @Override
+    public void stop() {
+      stopCalled = true;
+    }
+  }
+
+  private static class TServerWithES extends TServerWithoutES {
+    final ExecutorService executorService_;
+
+    TServerWithES(TServerSocket socket) {
+      super(socket);
+      executorService_ = createMock(ExecutorService.class);
+      expect(executorService_.shutdownNow()).andReturn(null);
+      replay(executorService_);
+    }
+  }
+
+  @Test
+  public void testStopTServer_ES() {
+    TServerSocket socket = createNiceMock(TServerSocket.class);
+    TServerWithES s = new TServerWithES(socket);
+    TServerUtils.stopTServer(s);
+    assertTrue(s.stopCalled);
+    verify(s.executorService_);
+  }
+
+  @Test
+  public void testStopTServer_NoES() {
+    TServerSocket socket = createNiceMock(TServerSocket.class);
+    TServerWithoutES s = new TServerWithoutES(socket);
+    TServerUtils.stopTServer(s);
+    assertTrue(s.stopCalled);
+  }
+
+  @Test
+  public void testStopTServer_Null() {
+    TServerUtils.stopTServer(null);
+    
+  }
+}

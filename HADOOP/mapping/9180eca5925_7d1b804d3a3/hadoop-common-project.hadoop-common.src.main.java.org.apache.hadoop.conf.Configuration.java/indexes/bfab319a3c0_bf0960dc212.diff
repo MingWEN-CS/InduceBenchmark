@@ -1,0 +1,19 @@
+32a33
+> import java.net.InetSocketAddress;
+70a72
+> import org.apache.hadoop.net.NetUtils;
+1171a1174,1187
+> 
+>   public InetSocketAddress getSocketAddr(
+>       String name, String defaultAddress, int defaultPort) {
+>     final String address = get(name, defaultAddress);
+>     return NetUtils.createSocketAddr(address, defaultPort, name);
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 

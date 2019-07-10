@@ -1,0 +1,16 @@
+37a38
+> import org.apache.oozie.executor.jpa.CoordActionUpdateForInputCheckJPAExecutor;
+101c102
+<                 jpaService.execute(new org.apache.oozie.executor.jpa.CoordActionUpdateForInputCheckJPAExecutor(coordAction));
+---
+>                 jpaService.execute(new CoordActionUpdateForInputCheckJPAExecutor(coordAction));
+141c142,143
+<             if (!missingDeps.equals(nonExistListStr)) {
+---
+>             if (!nonExistListStr.equals(missingDeps) || missingDeps.isEmpty()) {
+>                 
+173,174c175
+<                         jpaService.execute(new org.apache.oozie.executor.jpa.CoordActionUpdateForInputCheckJPAExecutor(
+<                                 coordAction));
+---
+>                         jpaService.execute(new CoordActionUpdateForInputCheckJPAExecutor(coordAction));

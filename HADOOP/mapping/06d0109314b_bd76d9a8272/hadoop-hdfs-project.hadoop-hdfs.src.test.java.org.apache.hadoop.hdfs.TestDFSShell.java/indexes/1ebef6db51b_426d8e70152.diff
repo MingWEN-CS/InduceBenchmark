@@ -1,0 +1,95 @@
+59a60,61
+> import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.FS_TRASH_INTERVAL_KEY;
+> 
+1482a1485,1575
+>   
+> 
+> 
+>   private void deleteFileUsingTrash(
+>       boolean serverTrash, boolean clientTrash) throws Exception {
+>     
+>     Configuration serverConf = new HdfsConfiguration();
+>     if (serverTrash) {
+>       serverConf.setLong(FS_TRASH_INTERVAL_KEY, 1);
+>     }
+> 
+>     MiniDFSCluster cluster = new MiniDFSCluster.Builder(serverConf)
+>       .numDataNodes(1).format(true).build();
+>     Configuration clientConf = new Configuration(serverConf);
+> 
+>     
+>     if (clientTrash) {
+>       clientConf.setLong(FS_TRASH_INTERVAL_KEY, 1);
+>     } else {
+>       clientConf.setLong(FS_TRASH_INTERVAL_KEY, 0);
+>     }
+> 
+>     FsShell shell = new FsShell(clientConf);
+>     FileSystem fs = null;
+> 
+>     try {
+>       
+>       fs = cluster.getFileSystem();
+>       writeFile(fs, new Path(TEST_ROOT_DIR, "foo"));
+>       final String testFile = TEST_ROOT_DIR + "/foo";
+>       final String trashFile = shell.getCurrentTrashDir() + "/" + testFile;
+>       String[] argv = new String[] { "-rm", testFile };
+>       int res = ToolRunner.run(shell, argv);
+>       assertEquals("rm failed", 0, res);
+> 
+>       if (serverTrash) {
+>         
+>         assertTrue("File not in trash", fs.exists(new Path(trashFile)));
+>       } else if (clientTrash) {
+>         
+>         
+>         assertTrue("File not in trashed", fs.exists(new Path(trashFile)));
+>       } else {
+>         
+>         assertFalse("File was not removed", fs.exists(new Path(testFile)));
+>         assertFalse("File was trashed", fs.exists(new Path(trashFile)));
+>       }
+>     } finally {
+>       if (fs != null) {
+>         fs.close();
+>       }
+>       if (cluster != null) {
+>         cluster.shutdown();
+>       }
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+>   @Test
+>   public void testServerConfigRespected() throws Exception {
+>     deleteFileUsingTrash(true, false);
+>   }
+> 
+>   
+> 
+> 
+> 
+>   @Test
+>   public void testServerConfigRespectedWithClient() throws Exception {
+>     deleteFileUsingTrash(true, true);
+>   }
+> 
+>   
+> 
+> 
+> 
+>   @Test
+>   public void testClientConfigRespected() throws Exception {
+>     deleteFileUsingTrash(false, true);
+>   }
+> 
+>   
+> 
+> 
+>   @Test
+>   public void testNoTrashConfig() throws Exception {
+>     deleteFileUsingTrash(false, false);
+>   }

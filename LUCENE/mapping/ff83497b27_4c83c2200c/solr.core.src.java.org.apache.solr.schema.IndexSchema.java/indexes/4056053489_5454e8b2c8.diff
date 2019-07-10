@@ -1,0 +1,16 @@
+592,595c592,593
+<       
+<       for (SchemaAware aware : schemaAware) {
+<         aware.inform(this);
+<       }
+---
+>       postReadInform();
+> 
+608a607,613
+>   
+>   protected void postReadInform() {
+>     
+>     for (SchemaAware aware : schemaAware) {
+>       aware.inform(this);
+>     }
+>   }

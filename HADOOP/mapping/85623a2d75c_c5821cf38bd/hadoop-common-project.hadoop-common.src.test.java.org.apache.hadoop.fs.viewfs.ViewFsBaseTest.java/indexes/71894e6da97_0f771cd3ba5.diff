@@ -1,0 +1,8 @@
+78c78,82
+<   final FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+---
+>   final FileContextTestHelper fileContextTestHelper = createFileContextHelper();
+> 
+>   protected FileContextTestHelper createFileContextHelper() {
+>     return new FileContextTestHelper();
+>   }

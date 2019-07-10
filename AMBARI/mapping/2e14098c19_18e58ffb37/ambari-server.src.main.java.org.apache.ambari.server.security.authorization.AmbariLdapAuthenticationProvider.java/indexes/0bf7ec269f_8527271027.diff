@@ -1,0 +1,5 @@
+198c198,199
+<     if (userEntity == null || !StringUtils.equals(userEntity.getUserName(), userName)) {
+---
+>     
+>     if (userEntity == null) {

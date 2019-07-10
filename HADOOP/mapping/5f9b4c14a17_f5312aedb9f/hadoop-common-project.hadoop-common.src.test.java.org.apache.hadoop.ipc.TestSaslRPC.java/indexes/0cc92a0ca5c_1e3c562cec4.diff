@@ -1,0 +1,6 @@
+315c315
+<       assertTrue(ERROR_MESSAGE.equals(e.getLocalizedMessage()));
+---
+>       assertEquals(ERROR_MESSAGE, e.getLocalizedMessage());
+820a821
+>       LOG.info("trying ugi:"+clientUgi+" tokens:"+clientUgi.getTokens());

@@ -1,0 +1,11 @@
+19a20,21
+> import org.apache.lucene.index.Payload;
+> 
+43a46,52
+> 
+>     if (result != null) {
+>       Payload p = result.getPayload();
+>       if (p != null)
+>         result.setPayload(new Payload(p.toByteArray(), 0, p.length()));
+>     }
+> 

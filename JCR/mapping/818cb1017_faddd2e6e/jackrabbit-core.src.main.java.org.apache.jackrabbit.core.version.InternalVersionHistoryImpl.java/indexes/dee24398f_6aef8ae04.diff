@@ -1,0 +1,8 @@
+112c112
+<     public InternalVersionHistoryImpl(AbstractVersionManager vMgr, NodeStateEx node)
+---
+>     public InternalVersionHistoryImpl(InternalVersionManagerBase vMgr, NodeStateEx node)
+588c588
+<             AbstractVersionManager vMgr, NodeStateEx parent, Name name,
+---
+>             InternalVersionManagerBase vMgr, NodeStateEx parent, Name name,

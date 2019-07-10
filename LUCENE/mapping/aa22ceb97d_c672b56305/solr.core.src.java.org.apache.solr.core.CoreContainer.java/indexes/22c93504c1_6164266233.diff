@@ -1,0 +1,4 @@
+273c273
+<       loader.addToClassLoader(libDir);
+---
+>       loader.addToClassLoader(libDir, null, false);

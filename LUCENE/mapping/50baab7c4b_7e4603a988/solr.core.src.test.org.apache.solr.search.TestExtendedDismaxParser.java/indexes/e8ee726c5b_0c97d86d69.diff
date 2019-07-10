@@ -1,0 +1,158 @@
+62a63,69
+>     assertU(adoc("id", "55", "standardtok", "大"));
+>     assertU(adoc("id", "56", "standardtok", "大亚"));
+>     assertU(adoc("id", "57", "standardtok", "大亚湾"));
+>     assertU(adoc("id", "58", "HTMLstandardtok", "大"));
+>     assertU(adoc("id", "59", "HTMLstandardtok", "大亚"));
+>     assertU(adoc("id", "60", "HTMLstandardtok", "大亚湾"));
+>     assertU(adoc("id", "61", "text_sw", "bazaaa")); 
+776a784,932
+>   
+>   
+> 
+> 
+>   public void testCJK() throws Exception {
+>     assertQ("test cjk (disjunction)",
+>         req("q", "大亚湾",
+>             "qf", "standardtok",
+>             "mm", "0%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (minShouldMatch)",
+>         req("q", "大亚湾",
+>             "qf", "standardtok",
+>             "mm", "67%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (conjunction)",
+>         req("q", "大亚湾",
+>             "qf", "standardtok",
+>             "mm", "100%",
+>             "defType", "edismax")
+>         , "*[count(
+>   }
+>   
+>   
+> 
+> 
+> 
+>   public void testCJKAliasing() throws Exception {
+>     
+>     assertQ("test cjk (aliasing+disjunction)",
+>         req("q", "myalias:大亚湾",
+>             "f.myalias.qf", "standardtok",
+>             "mm", "0%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (aliasing+minShouldMatch)",
+>         req("q", "myalias:大亚湾",
+>             "f.myalias.qf", "standardtok",
+>             "mm", "67%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (aliasing+conjunction)",
+>         req("q", "myalias:大亚湾",
+>             "f.myalias.qf", "standardtok",
+>             "mm", "100%",
+>             "defType", "edismax")
+>         , "*[count(
+>     
+>     assertQ("test cjk (aliasing+disjunction)",
+>         req("q", "myalias:大亚湾",
+>             "f.myalias.qf", "standardtok HTMLstandardtok",
+>             "mm", "0%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (aliasing+minShouldMatch)",
+>         req("q", "myalias:大亚湾",
+>             "f.myalias.qf", "standardtok HTMLstandardtok",
+>             "mm", "67%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (aliasing+conjunction)",
+>         req("q", "myalias:大亚湾",
+>             "f.myalias.qf", "standardtok HTMLstandardtok",
+>             "mm", "100%",
+>             "defType", "edismax")
+>         , "*[count(
+>   }
+>   
+>   
+>   public void testCJKBoosts() throws Exception {
+>     assertQ("test cjk (disjunction)",
+>         req("q", "大亚湾",
+>             "qf", "standardtok^2 HTMLstandardtok",
+>             "mm", "0%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (minShouldMatch)",
+>         req("q", "大亚湾",
+>             "qf", "standardtok^2 HTMLstandardtok",
+>             "mm", "67%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (conjunction)",
+>         req("q", "大亚湾",
+>             "qf", "standardtok^2 HTMLstandardtok",
+>             "mm", "100%",
+>             "defType", "edismax")
+>         , "*[count(
+>     
+>     
+>     assertQ("test cjk (disjunction)",
+>         req("q", "大亚湾",
+>             "qf", "standardtok HTMLstandardtok^2",
+>             "mm", "0%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (minShouldMatch)",
+>         req("q", "大亚湾",
+>             "qf", "standardtok HTMLstandardtok^2",
+>             "mm", "67%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (conjunction)",
+>         req("q", "大亚湾",
+>             "qf", "standardtok HTMLstandardtok^2",
+>             "mm", "100%",
+>             "defType", "edismax")
+>         , "*[count(
+>   }
+>   
+>   
+> 
+> 
+>   public void testCJKStructured() throws Exception {
+>     assertQ("test cjk (disjunction)",
+>         req("q", "大亚湾 OR bogus",
+>             "qf", "standardtok",
+>             "mm", "0%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (minShouldMatch)",
+>         req("q", "大亚湾 OR bogus",
+>             "qf", "standardtok",
+>             "mm", "67%",
+>             "defType", "edismax")
+>         , "*[count(
+>     assertQ("test cjk (conjunction)",
+>         req("q", "大亚湾 OR bogus",
+>             "qf", "standardtok",
+>             "mm", "100%",
+>             "defType", "edismax")
+>         , "*[count(
+>   }
+>   
+>   
+> 
+> 
+> 
+>   public void testSynonyms() throws Exception {
+>     
+>     assertQ("test synonyms",
+>         req("q", "fooaaa",
+>             "qf", "text_sw",
+>             "mm", "100%",
+>             "defType", "edismax")
+>         , "*[count(
+>   }

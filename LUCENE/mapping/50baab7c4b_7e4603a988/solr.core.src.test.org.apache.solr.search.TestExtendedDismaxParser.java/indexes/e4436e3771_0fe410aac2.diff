@@ -1,0 +1,42 @@
+35d34
+< import org.apache.solr.util.AbstractSolrTestCase;
+686c685
+<     assertU(adoc("id", "s3", "phrase_sw", "foo a b c bar", "boost_d", "4.0"));    
+---
+>     assertU(adoc("id", "s3", "phrase_sw", "foo a b c bar", "boost_d", "4.0"));
+708c707
+<     
+---
+> 
+710c709
+<         req("q",   "foo bar", 
+---
+>         req("q",   "foo bar",
+719c718
+<         req("q",   "a b bar", 
+---
+>         req("q",   "a b bar",
+728c727
+<         req("q",   "bar foo", 
+---
+>         req("q",   "bar foo",
+738c737
+<         req("q",   "a bar foo", 
+---
+>         req("q",   "a bar foo",
+747c746
+<     
+---
+> 
+811a811,821
+>     assertQ("phrase field queries spanning multiple fields should be within their own dismax queries",
+>         req("q", "aaaa bbbb cccc",
+>             "qf", "phrase_sw phrase1_sw",
+>             "pf2", "phrase_sw phrase1_sw",
+>             "pf3", "phrase_sw phrase1_sw",
+>             "defType", "edismax",
+>             "debugQuery", "true"),
+>         "
+>         "
+>         "
+>     );

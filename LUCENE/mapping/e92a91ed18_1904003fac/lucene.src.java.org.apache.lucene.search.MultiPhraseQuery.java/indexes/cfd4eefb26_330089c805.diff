@@ -1,0 +1,4 @@
+339c339
+<     if (!field.equals(f)) {
+---
+>     if (field == null || !field.equals(f)) {

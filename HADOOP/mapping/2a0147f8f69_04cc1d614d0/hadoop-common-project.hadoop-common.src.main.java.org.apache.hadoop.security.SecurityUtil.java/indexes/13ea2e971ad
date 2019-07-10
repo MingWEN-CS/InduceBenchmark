@@ -1,0 +1,630 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.security;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.Set;
+
+import javax.security.auth.Subject;
+import javax.security.auth.kerberos.KerberosPrincipal;
+import javax.security.auth.kerberos.KerberosTicket;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.CommonConfigurationKeys;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.net.NetUtils;
+import org.apache.hadoop.security.token.Token;
+import org.apache.hadoop.security.token.TokenInfo;
+
+import com.google.common.annotations.VisibleForTesting;
+
+
+import sun.net.dns.ResolverConfiguration;
+import sun.net.util.IPAddressUtil;
+import sun.security.jgss.krb5.Krb5Util;
+import sun.security.krb5.Credentials;
+import sun.security.krb5.PrincipalName;
+
+@InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
+@InterfaceStability.Evolving
+public class SecurityUtil {
+  public static final Log LOG = LogFactory.getLog(SecurityUtil.class);
+  public static final String HOSTNAME_PATTERN = "_HOST";
+
+  
+  
+  @VisibleForTesting
+  static boolean useIpForTokenService;
+  @VisibleForTesting
+  static HostResolver hostResolver;
+  
+  static {
+    boolean useIp = new Configuration().getBoolean(
+      CommonConfigurationKeys.HADOOP_SECURITY_TOKEN_SERVICE_USE_IP,
+      CommonConfigurationKeys.HADOOP_SECURITY_TOKEN_SERVICE_USE_IP_DEFAULT);
+    setTokenServiceUseIp(useIp);
+  }
+  
+  
+
+
+  @InterfaceAudience.Private
+  static void setTokenServiceUseIp(boolean flag) {
+    useIpForTokenService = flag;
+    hostResolver = !useIpForTokenService
+        ? new QualifiedHostResolver()
+        : new StandardHostResolver();
+  }
+  
+  
+
+
+
+
+
+
+
+  private static KerberosTicket getTgtFromSubject() throws IOException {
+    Subject current = Subject.getSubject(AccessController.getContext());
+    if (current == null) {
+      throw new IOException(
+          "Can't get TGT from current Subject, because it is null");
+    }
+    Set<KerberosTicket> tickets = current
+        .getPrivateCredentials(KerberosTicket.class);
+    for (KerberosTicket t : tickets) {
+      if (isOriginalTGT(t))
+        return t;
+    }
+    throw new IOException("Failed to find TGT from current Subject:"+current);
+  }
+  
+  
+
+
+
+
+  static boolean 
+  isTGSPrincipal(KerberosPrincipal principal) {
+    if (principal == null)
+      return false;
+    if (principal.getName().equals("krbtgt/" + principal.getRealm() + 
+        "@" + principal.getRealm())) {
+      return true;
+    }
+    return false;
+  }
+  
+  
+
+
+
+
+
+  protected static boolean isOriginalTGT(KerberosTicket ticket) {
+    return isTGSPrincipal(ticket.getServer());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static void fetchServiceTicket(URL remoteHost) throws IOException {
+    if(!UserGroupInformation.isSecurityEnabled())
+      return;
+    
+    String serviceName = "host/" + remoteHost.getHost();
+    if (LOG.isDebugEnabled())
+      LOG.debug("Fetching service ticket for host at: " + serviceName);
+    Credentials serviceCred = null;
+    try {
+      PrincipalName principal = new PrincipalName(serviceName,
+          PrincipalName.KRB_NT_SRV_HST);
+      serviceCred = Credentials.acquireServiceCreds(principal
+          .toString(), Krb5Util.ticketToCreds(getTgtFromSubject()));
+    } catch (Exception e) {
+      throw new IOException("Can't get service ticket for: "
+          + serviceName, e);
+    }
+    if (serviceCred == null) {
+      throw new IOException("Can't get service ticket for " + serviceName);
+    }
+    Subject.getSubject(AccessController.getContext()).getPrivateCredentials()
+        .add(Krb5Util.credsToTicket(serviceCred));
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  public static String getServerPrincipal(String principalConfig,
+      String hostname) throws IOException {
+    String[] components = getComponents(principalConfig);
+    if (components == null || components.length != 3
+        || !components[1].equals(HOSTNAME_PATTERN)) {
+      return principalConfig;
+    } else {
+      return replacePattern(components, hostname);
+    }
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static String getServerPrincipal(String principalConfig,
+      InetAddress addr) throws IOException {
+    String[] components = getComponents(principalConfig);
+    if (components == null || components.length != 3
+        || !components[1].equals(HOSTNAME_PATTERN)) {
+      return principalConfig;
+    } else {
+      if (addr == null) {
+        throw new IOException("Can't replace " + HOSTNAME_PATTERN
+            + " pattern since client address is null");
+      }
+      return replacePattern(components, addr.getCanonicalHostName());
+    }
+  }
+  
+  private static String[] getComponents(String principalConfig) {
+    if (principalConfig == null)
+      return null;
+    return principalConfig.split("[/@]");
+  }
+  
+  private static String replacePattern(String[] components, String hostname)
+      throws IOException {
+    String fqdn = hostname;
+    if (fqdn == null || fqdn.equals("") || fqdn.equals("0.0.0.0")) {
+      fqdn = getLocalHostName();
+    }
+    return components[0] + "/" + fqdn.toLowerCase() + "@" + components[2];
+  }
+  
+  static String getLocalHostName() throws UnknownHostException {
+    return InetAddress.getLocalHost().getCanonicalHostName();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  public static void login(final Configuration conf,
+      final String keytabFileKey, final String userNameKey) throws IOException {
+    login(conf, keytabFileKey, userNameKey, getLocalHostName());
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static void login(final Configuration conf,
+      final String keytabFileKey, final String userNameKey, String hostname)
+      throws IOException {
+    
+    if(! UserGroupInformation.isSecurityEnabled()) 
+      return;
+    
+    String keytabFilename = conf.get(keytabFileKey);
+    if (keytabFilename == null || keytabFilename.length() == 0) {
+      throw new IOException("Running in secure mode, but config doesn't have a keytab");
+    }
+
+    String principalConfig = conf.get(userNameKey, System
+        .getProperty("user.name"));
+    String principalName = SecurityUtil.getServerPrincipal(principalConfig,
+        hostname);
+    UserGroupInformation.loginUserFromKeytab(principalName, keytabFilename);
+  }
+
+  
+
+
+
+
+
+
+  public static String buildDTServiceName(URI uri, int defPort) {
+    String authority = uri.getAuthority();
+    if (authority == null) {
+      return null;
+    }
+    InetSocketAddress addr = NetUtils.createSocketAddr(authority, defPort);
+    return buildTokenService(addr).toString();
+   }
+  
+  
+
+
+
+
+  public static String getHostFromPrincipal(String principalName) {
+    return new HadoopKerberosName(principalName).getHostName();
+  }
+
+  private static ServiceLoader<SecurityInfo> securityInfoProviders = 
+    ServiceLoader.load(SecurityInfo.class);
+  private static SecurityInfo[] testProviders = new SecurityInfo[0];
+
+  
+
+
+
+  @InterfaceAudience.Private
+  public static void setSecurityInfoProviders(SecurityInfo... providers) {
+    testProviders = providers;
+  }
+  
+  
+
+
+
+
+
+
+  public static KerberosInfo 
+  getKerberosInfo(Class<?> protocol, Configuration conf) {
+    synchronized (testProviders) {
+      for(SecurityInfo provider: testProviders) {
+        KerberosInfo result = provider.getKerberosInfo(protocol, conf);
+        if (result != null) {
+          return result;
+        }
+      }
+    }
+    
+    synchronized (securityInfoProviders) {
+      for(SecurityInfo provider: securityInfoProviders) {
+        KerberosInfo result = provider.getKerberosInfo(protocol, conf);
+        if (result != null) {
+          return result;
+        }
+      }
+    }
+    return null;
+  }
+ 
+  
+
+
+
+
+
+
+  public static TokenInfo getTokenInfo(Class<?> protocol, Configuration conf) {
+    synchronized (testProviders) {
+      for(SecurityInfo provider: testProviders) {
+        TokenInfo result = provider.getTokenInfo(protocol, conf);
+        if (result != null) {
+          return result;
+        }      
+      }
+    }
+    
+    synchronized (securityInfoProviders) {
+      for(SecurityInfo provider: securityInfoProviders) {
+        TokenInfo result = provider.getTokenInfo(protocol, conf);
+        if (result != null) {
+          return result;
+        }
+      } 
+    }
+    
+    return null;
+  }
+
+  
+
+
+
+
+  public static InetSocketAddress getTokenServiceAddr(Token<?> token) {
+    return NetUtils.createSocketAddr(token.getService().toString());
+  }
+
+  
+
+
+
+
+  public static void setTokenService(Token<?> token, InetSocketAddress addr) {
+    Text service = buildTokenService(addr);
+    if (token != null) {
+      token.setService(service);
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Acquired token "+token);  
+      }
+    } else {
+      LOG.warn("Failed to get token for service "+service);
+    }
+  }
+  
+  
+
+
+
+
+
+  public static Text buildTokenService(InetSocketAddress addr) {
+    String host = null;
+    if (useIpForTokenService) {
+      if (addr.isUnresolved()) { 
+        throw new IllegalArgumentException(
+            new UnknownHostException(addr.getHostName())
+        );
+      }
+      host = addr.getAddress().getHostAddress();
+    } else {
+      host = addr.getHostName().toLowerCase();
+    }
+    return new Text(host + ":" + addr.getPort());
+  }
+
+  
+
+
+
+
+
+  public static Text buildTokenService(URI uri) {
+    return buildTokenService(NetUtils.createSocketAddr(uri.getAuthority()));
+  }
+  
+  
+
+
+
+
+  public static <T> T doAsLoginUserOrFatal(PrivilegedAction<T> action) { 
+    if (UserGroupInformation.isSecurityEnabled()) {
+      UserGroupInformation ugi = null;
+      try { 
+        ugi = UserGroupInformation.getLoginUser();
+      } catch (IOException e) {
+        LOG.fatal("Exception while getting login user", e);
+        e.printStackTrace();
+        Runtime.getRuntime().exit(-1);
+      }
+      return ugi.doAs(action);
+    } else {
+      return action.run();
+    }
+  }
+
+  
+
+
+
+
+
+
+
+  @InterfaceAudience.Private
+  public static
+  InetAddress getByName(String hostname) throws UnknownHostException {
+    return hostResolver.getByName(hostname);
+  }
+  
+  interface HostResolver {
+    InetAddress getByName(String host) throws UnknownHostException;    
+  }
+  
+  
+
+
+  static class StandardHostResolver implements HostResolver {
+    public InetAddress getByName(String host) throws UnknownHostException {
+      return InetAddress.getByName(host);
+    }
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  protected static class QualifiedHostResolver implements HostResolver {
+    @SuppressWarnings("unchecked")
+    private List<String> searchDomains =
+        ResolverConfiguration.open().searchlist();
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+    public InetAddress getByName(String host) throws UnknownHostException {
+      InetAddress addr = null;
+
+      if (IPAddressUtil.isIPv4LiteralAddress(host)) {
+        
+        byte[] ip = IPAddressUtil.textToNumericFormatV4(host);
+        addr = InetAddress.getByAddress(host, ip);
+      } else if (IPAddressUtil.isIPv6LiteralAddress(host)) {
+        
+        byte[] ip = IPAddressUtil.textToNumericFormatV6(host);
+        addr = InetAddress.getByAddress(host, ip);
+      } else if (host.endsWith(".")) {
+        
+        
+        addr = getByExactName(host);
+      } else if (host.contains(".")) {
+        
+        
+        addr = getByExactName(host);
+        if (addr == null) {
+          addr = getByNameWithSearch(host);
+        }
+      } else {
+        
+        
+        InetAddress loopback = InetAddress.getByName(null);
+        if (host.equalsIgnoreCase(loopback.getHostName())) {
+          addr = InetAddress.getByAddress(host, loopback.getAddress());
+        } else {
+          addr = getByNameWithSearch(host);
+          if (addr == null) {
+            addr = getByExactName(host);
+          }
+        }
+      }
+      
+      if (addr == null) {
+        throw new UnknownHostException(host);
+      }
+      return addr;
+    }
+
+    InetAddress getByExactName(String host) {
+      InetAddress addr = null;
+      
+      
+      
+      String fqHost = host;
+      if (!fqHost.endsWith(".")) fqHost += ".";
+      try {
+        addr = getInetAddressByName(fqHost);
+        
+        
+        
+        addr = InetAddress.getByAddress(host, addr.getAddress());
+      } catch (UnknownHostException e) {
+        
+      }
+      return addr;
+    }
+
+    InetAddress getByNameWithSearch(String host) {
+      InetAddress addr = null;
+      if (host.endsWith(".")) { 
+        addr = getByExactName(host); 
+      } else {
+        for (String domain : searchDomains) {
+          String dot = !domain.startsWith(".") ? "." : "";
+          addr = getByExactName(host + dot + domain);
+          if (addr != null) break;
+        }
+      }
+      return addr;
+    }
+
+    
+    InetAddress getInetAddressByName(String host) throws UnknownHostException {
+      return InetAddress.getByName(host);
+    }
+
+    void setSearchDomains(String ... domains) {
+      searchDomains = Arrays.asList(domains);
+    }
+  }
+
+  public static void initKrb5CipherSuites() {
+    if (UserGroupInformation.isSecurityEnabled()) {
+      System.setProperty("https.cipherSuites",
+          Krb5AndCertsSslSocketConnector.KRB5_CIPHER_SUITES.get(0));
+    }
+  }
+}

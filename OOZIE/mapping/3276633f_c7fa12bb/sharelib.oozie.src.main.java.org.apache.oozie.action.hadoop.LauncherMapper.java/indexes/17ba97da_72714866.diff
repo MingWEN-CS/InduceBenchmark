@@ -1,0 +1,29 @@
+213,216c213
+<                     System.out.println("Arguments         :");
+<                     for (String arg : args) {
+<                         System.out.println("                    " + arg);
+<                     }
+---
+>                     printArgs("Arguments         :", args);
+615a613,633
+>     
+> 
+> 
+> 
+> 
+>     public static void printArgs(String banner, String[] args) {
+>         System.out.println(banner);
+>         boolean maskNextArg = false;
+>         for (String arg : args) {
+>             if (maskNextArg) {
+>                 System.out.println("             " + "********");
+>                 maskNextArg = false;
+>             }
+>             else {
+>                 System.out.println("             " + arg);
+>                 if (arg.toLowerCase().contains("password")) {
+>                     maskNextArg = true;
+>                 }
+>             }
+>         }
+>     }

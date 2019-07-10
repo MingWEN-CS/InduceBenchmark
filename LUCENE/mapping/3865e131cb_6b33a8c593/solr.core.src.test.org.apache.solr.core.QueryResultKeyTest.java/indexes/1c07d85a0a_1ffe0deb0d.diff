@@ -1,0 +1,180 @@
+19a20
+> import java.util.Arrays;
+29a31
+> import org.apache.lucene.util._TestUtil;
+36,37c38
+<   @Test
+<   public void testFiltersHashCode() {
+---
+>   public void testFiltersOutOfOrder1() {
+42,45d42
+<     List<Query> filters = new ArrayList<Query>();
+<     filters.add(new TermQuery(new Term("test", "field")));
+<     filters.add(new TermQuery(new Term("test2", "field2")));
+<     
+48a46,47
+>     List<Query> filters = Arrays.<Query>asList(new TermQuery(new Term("test", "field")),
+>                                                new TermQuery(new Term("test2", "field2")));
+51,53c50,51
+<     List<Query> filters2 = new ArrayList<Query>();
+<     filters2.add(new TermQuery(new Term("test2", "field2")));
+<     filters2.add(new TermQuery(new Term("test", "field")));
+---
+>     List<Query> filters2 = Arrays.<Query>asList(new TermQuery(new Term("test2", "field2")),
+>                                                 new TermQuery(new Term("test", "field")));
+55,56c53
+<     
+<     assertEquals(qrk1.hashCode(), qrk2.hashCode());
+---
+>     assertKeyEquals(qrk1, qrk2);
+60c57
+<   public void testQueryResultKeySortedFilters() {
+---
+>   public void testFiltersOutOfOrder2() {
+65,67c62
+<     List<Query> filters = new ArrayList<Query>();
+<     filters.add(fq1);
+<     filters.add(fq2);
+---
+>     List<Query> filters = Arrays.asList(fq1, fq2);
+71,73c66
+<     List<Query> newFilters = new ArrayList<Query>();
+<     newFilters.add(fq2);
+<     newFilters.add(fq1);
+---
+>     List<Query> newFilters = Arrays.asList(fq2, fq1);
+76c69,138
+<     assertEquals(key, newKey);
+---
+>     assertKeyEquals(key, newKey);
+>   }
+> 
+>   public void testQueryResultKeyUnSortedFiltersWithDups() {
+>     Query query = new TermQuery(new Term("main", "val"));
+> 
+>     
+>     
+>     Query fq_aa = new FlatHashTermQuery("fq_a");
+>     Query fq_ab = new FlatHashTermQuery("fq_a");
+>     Query fq_ac = new FlatHashTermQuery("fq_a");
+>     Query fq_zz = new FlatHashTermQuery("fq_z");
+> 
+>     assertEquals(fq_aa.hashCode(), fq_ab.hashCode());
+>     assertEquals(fq_aa.hashCode(), fq_ac.hashCode());
+>     assertEquals(fq_aa.hashCode(), fq_zz.hashCode());
+> 
+>     assertEquals(fq_aa, fq_ab);
+>     assertEquals(fq_aa, fq_ac);
+>     assertEquals(fq_ab, fq_aa);
+>     assertEquals(fq_ab, fq_ac);
+>     assertEquals(fq_ac, fq_aa);
+>     assertEquals(fq_ac, fq_ab);
+> 
+>     assertTrue( ! fq_aa.equals(fq_zz) );
+>     assertTrue( ! fq_ab.equals(fq_zz) );
+>     assertTrue( ! fq_ac.equals(fq_zz) );
+>     assertTrue( ! fq_zz.equals(fq_aa) );
+>     assertTrue( ! fq_zz.equals(fq_ab) );
+>     assertTrue( ! fq_zz.equals(fq_ac) );
+> 
+>     List<Query> filters1 = Arrays.asList(fq_aa, fq_ab);
+>     List<Query> filters2 = Arrays.asList(fq_zz, fq_ac);
+> 
+>     QueryResultKey key1 = new QueryResultKey(query, filters1, null, 0);
+>     QueryResultKey key2 = new QueryResultKey(query, filters2, null, 0);
+>     
+>     assertEquals(key1.hashCode(), key2.hashCode());
+> 
+>     assertKeyNotEquals(key1, key2);
+>   }
+> 
+>   public void testRandomQueryKeyEquality() {
+> 
+> 
+>     final int minIters = atLeast(100 * 1000);
+>     final Query base = new FlatHashTermQuery("base");
+>     
+>     
+>     boolean didEquals = false;
+>     boolean didNotEquals = false;
+>     int iter = 1;
+>     while (iter <= minIters || (! didEquals ) || (! didNotEquals ) ) {
+>       iter++;
+>       int[] numsA = smallArrayOfRandomNumbers();
+>       int[] numsB = smallArrayOfRandomNumbers();
+>       QueryResultKey aa = new QueryResultKey(base, buildFiltersFromNumbers(numsA), null, 0);
+>       QueryResultKey bb = new QueryResultKey(base, buildFiltersFromNumbers(numsB), null, 0);
+>       
+>       Arrays.sort(numsA);
+>       Arrays.sort(numsB);
+>       if (Arrays.equals(numsA, numsB)) {
+>         didEquals = true;
+>         assertKeyEquals(aa, bb);
+>       } else {
+>         didNotEquals = true;
+>         assertKeyNotEquals(aa, bb);
+>       }
+>     }
+>     assert minIters <= iter;
+78a141,201
+>   
+> 
+> 
+>   public void assertKeyEquals(QueryResultKey key1, QueryResultKey key2) {
+>     assertNotNull(key1);
+>     assertNotNull(key2);
+>     assertEquals(key1.hashCode(), key2.hashCode());
+>     assertEquals(key1, key2);
+>     assertEquals(key2, key1);
+>   }
+> 
+>   
+> 
+> 
+>   public void assertKeyNotEquals(QueryResultKey key1, QueryResultKey key2) {
+>     assertTrue( ! key1.equals(key2) );
+>     assertTrue( ! key2.equals(key1) );
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   private int[] smallArrayOfRandomNumbers() {
+>     int size = _TestUtil.nextInt(random(), 1, 5);
+>     int[] result = new int[size];
+>     for (int i=0; i < size; i++) {
+>       result[i] = _TestUtil.nextInt(random(), 1, 5);
+>     }
+>     return result;
+>   }
+> 
+>   
+> 
+> 
+> 
+>   private List<Query> buildFiltersFromNumbers(int[] values) {
+>     ArrayList<Query> filters = new ArrayList<Query>(values.length);
+>     for (int val : values) {
+>       filters.add(new FlatHashTermQuery(String.valueOf(val)));
+>     }
+>     return filters;
+>   }
+> 
+>   
+> 
+> 
+> 
+>   private static class FlatHashTermQuery extends TermQuery {
+>     public FlatHashTermQuery(String val) {
+>       super(new Term("some_field", val));
+>     }
+> 
+>     @Override
+>     public int hashCode() {
+>       return 42;
+>     }
+>   }

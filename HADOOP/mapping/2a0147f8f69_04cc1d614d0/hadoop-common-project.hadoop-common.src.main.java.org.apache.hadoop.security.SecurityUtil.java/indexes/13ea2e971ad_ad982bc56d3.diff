@@ -1,0 +1,63 @@
+19a20,23
+> import java.lang.reflect.Constructor;
+> import java.lang.reflect.Field;
+> import java.lang.reflect.InvocationTargetException;
+> import java.lang.reflect.Method;
+52,54d55
+< import sun.security.jgss.krb5.Krb5Util;
+< import sun.security.krb5.Credentials;
+< import sun.security.krb5.PrincipalName;
+158c159,161
+<     Credentials serviceCred = null;
+---
+>     Object serviceCred = null;
+>     Method credsToTicketMeth;
+>     Class<?> krb5utilClass;
+160,163c163,193
+<       PrincipalName principal = new PrincipalName(serviceName,
+<           PrincipalName.KRB_NT_SRV_HST);
+<       serviceCred = Credentials.acquireServiceCreds(principal
+<           .toString(), Krb5Util.ticketToCreds(getTgtFromSubject()));
+---
+>       Class<?> principalClass;
+>       Class<?> credentialsClass;
+>       
+>       if (System.getProperty("java.vendor").contains("IBM")) {
+>         principalClass = Class.forName("com.ibm.security.krb5.PrincipalName");
+>         
+>         credentialsClass = Class.forName("com.ibm.security.krb5.Credentials");
+>         krb5utilClass = Class.forName("com.ibm.security.jgss.mech.krb5");
+>       } else {
+>         principalClass = Class.forName("sun.security.krb5.PrincipalName");
+>         credentialsClass = Class.forName("sun.security.krb5.Credentials");
+>         krb5utilClass = Class.forName("sun.security.jgss.krb5");
+>       }
+>       @SuppressWarnings("rawtypes")
+>       Constructor principalConstructor = principalClass.getConstructor(String.class, 
+>           int.class);
+>       Field KRB_NT_SRV_HST = principalClass.getDeclaredField("KRB_NT_SRV_HST");
+>       Method acquireServiceCredsMeth = 
+>           credentialsClass.getDeclaredMethod("acquireServiceCreds", 
+>               String.class, credentialsClass);
+>       Method ticketToCredsMeth = krb5utilClass.getDeclaredMethod("ticketToCreds", 
+>           KerberosTicket.class);
+>       credsToTicketMeth = krb5utilClass.getDeclaredMethod("credsToTicket", 
+>           credentialsClass);
+>       
+>       Object principal = principalConstructor.newInstance(serviceName,
+>           KRB_NT_SRV_HST.get(principalClass));
+>       
+>       serviceCred = acquireServiceCredsMeth.invoke(credentialsClass, 
+>           principal.toString(), 
+>           ticketToCredsMeth.invoke(krb5utilClass, getTgtFromSubject()));
+171,172c201,207
+<     Subject.getSubject(AccessController.getContext()).getPrivateCredentials()
+<         .add(Krb5Util.credsToTicket(serviceCred));
+---
+>     try {
+>       Subject.getSubject(AccessController.getContext()).getPrivateCredentials()
+>           .add(credsToTicketMeth.invoke(krb5utilClass, serviceCred));
+>     } catch (Exception e) {
+>       throw new IOException("Can't get service ticket for: "
+>           + serviceName, e);
+>     }

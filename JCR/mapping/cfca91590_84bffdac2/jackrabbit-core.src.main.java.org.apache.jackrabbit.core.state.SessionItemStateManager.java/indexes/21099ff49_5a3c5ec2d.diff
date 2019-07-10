@@ -1,0 +1,204 @@
+23d22
+< import java.util.Iterator;
+25a25,26
+> import java.util.SortedMap;
+> import java.util.TreeMap;
+32d32
+< import org.apache.commons.collections.iterators.IteratorChain;
+384c384
+<     public Iterator<ItemState> getDescendantTransientItemStates(NodeId parentId)
+---
+>     public Collection<ItemState> getDescendantTransientItemStates(ItemId id)
+386,396d385
+<         if (transientStore.isEmpty()) {
+<             List<ItemState> empty = Collections.emptyList();
+<             return empty.iterator();
+<         }
+< 
+<         
+<         
+< 
+<         
+<         
+<         List[] la = new List[10];
+398,407c387,401
+<             HierarchyManager atticAware = getAtticAwareHierarchyMgr();
+<             for (ItemState state : transientStore.values()) {
+<                 
+<                 int depth;
+<                 try {
+<                     depth = atticAware.getShareRelativeDepth(parentId, state.getId());
+<                 } catch (ItemNotFoundException infe) {
+<                     
+< 
+< 
+---
+>             return getDescendantItemStates(
+>                     id, transientStore, getAtticAwareHierarchyMgr());
+>         } catch (ItemNotFoundException e) {
+>             
+>             
+>             
+>             
+>             
+>             
+>             
+>             
+>             throw new InvalidItemStateException(
+>                     "Item seems to have been removed externally", e);
+>         }
+>     }
+408a403
+>     
+414,420d408
+<                     
+<                     
+<                     String msg = state.getId()
+<                             + ": the item seems to have been removed externally.";
+<                     log.debug(msg);
+<                     throw new InvalidItemStateException(msg);
+<                 }
+422,425d409
+<                 if (depth < 1) {
+<                     
+<                     continue;
+<                 }
+427,432d410
+<                 
+<                 if (depth > la.length) {
+<                     List[] old = la;
+<                     la = new List[depth + 10];
+<                     System.arraycopy(old, 0, la, 0, old.length);
+<                 }
+434,464c412,416
+<                 List list = la[depth - 1];
+<                 if (list == null) {
+<                     list = new ArrayList();
+<                     la[depth - 1] = list;
+<                 }
+<                 list.add(state);
+<             }
+<         } catch (RepositoryException re) {
+<             log.warn("inconsistent hierarchy state", re);
+<         }
+<         
+<         
+<         IteratorChain resultIter = new IteratorChain();
+<         for (int i = la.length - 1; i >= 0; i--) {
+<             List list = la[i];
+<             if (list != null) {
+<                 resultIter.addIterator(list.iterator());
+<             }
+<         }
+<         
+< 
+< 
+< 
+< 
+< 
+< 
+<         if (resultIter.getIterators().isEmpty()) {
+<             List<ItemState> empty = Collections.emptyList();
+<             return empty.iterator();
+<         }
+<         return resultIter;
+---
+>     public Iterable<ItemState> getDescendantTransientItemStatesInAttic(
+>             ItemId id) throws RepositoryException {
+>         return getDescendantItemStates(
+>                 id, atticStore,
+>                 new ZombieHierarchyManager(hierMgr, this, getAttic()));
+475,479d426
+<     public Iterator<ItemState> getDescendantTransientItemStatesInAttic(NodeId parentId) {
+<         if (atticStore.isEmpty()) {
+<             List<ItemState> empty = Collections.emptyList();
+<             return empty.iterator();
+<         }
+481,482d427
+<         
+<         
+484,486d428
+<         
+<         ZombieHierarchyManager zombieHierMgr =
+<             new ZombieHierarchyManager(hierMgr, this, getAttic());
+488,499d429
+<         
+<         
+<         List[] la = new List[10];
+<         try {
+<             for (ItemState state : atticStore.values()) {
+<                 
+<                 
+<                 int depth = zombieHierMgr.getShareRelativeDepth(parentId, state.getId());
+<                 if (depth < 1) {
+<                     
+<                     continue;
+<                 }
+500a431,438
+>     private List<ItemState> getDescendantItemStates(
+>             ItemId id, ItemStateStore store, HierarchyManager hierarchyManager)
+>             throws RepositoryException {
+>         if (id.denotesNode() && !store.isEmpty()) {
+>             
+>             SortedMap<Integer, Collection<ItemState>> statesByReverseDepth =
+>                 new TreeMap<Integer, Collection<ItemState>>();
+>             for (ItemState state : store.values()) {
+502,511c440,449
+<                 if (depth > la.length) {
+<                     List[] old = la;
+<                     la = new List[depth + 10];
+<                     System.arraycopy(old, 0, la, 0, old.length);
+<                 }
+< 
+<                 List list = la[depth - 1];
+<                 if (list == null) {
+<                     list = new ArrayList();
+<                     la[depth - 1] = list;
+---
+>                 int depth = hierarchyManager.getShareRelativeDepth(
+>                         (NodeId) id, state.getId());
+>                 if (depth > 0) {
+>                     Collection<ItemState> statesAtDepth =
+>                         statesByReverseDepth.get(-depth);
+>                     if (statesAtDepth == null) {
+>                         statesAtDepth = new ArrayList<ItemState>();
+>                         statesByReverseDepth.put(-depth, statesAtDepth);
+>                     }
+>                     statesAtDepth.add(state);
+513d450
+<                 list.add(state);
+515,531d451
+<         } catch (RepositoryException re) {
+<             log.warn("inconsistent hierarchy state", re);
+<         }
+<         
+<         
+<         IteratorChain resultIter = new IteratorChain();
+<         for (int i = la.length - 1; i >= 0; i--) {
+<             List list = la[i];
+<             if (list != null) {
+<                 resultIter.addIterator(list.iterator());
+<             }
+<         }
+<         
+< 
+< 
+< 
+< 
+533,536c453,461
+< 
+<         if (resultIter.getIterators().isEmpty()) {
+<             List<ItemState> empty = Collections.emptyList();
+<             return empty.iterator();
+---
+>             
+>             List<ItemState> descendants = new ArrayList<ItemState>();
+>             for (Collection<ItemState> statesAtDepth
+>                     : statesByReverseDepth.values()) {
+>                 descendants.addAll(statesAtDepth);
+>             }
+>             return descendants;
+>         } else {
+>             return Collections.emptyList();
+538d462
+<         return resultIter;

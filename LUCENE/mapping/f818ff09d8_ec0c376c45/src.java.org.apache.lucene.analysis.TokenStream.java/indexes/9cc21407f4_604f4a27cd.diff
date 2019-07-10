@@ -1,0 +1,41 @@
+37a38
+> 
+45c46,47
+<     Token result = next(new Token());
+---
+>     final Token reusableToken = new Token();
+>     Token nextToken = next(reusableToken);
+47,48c49,50
+<     if (result != null) {
+<       Payload p = result.getPayload();
+---
+>     if (nextToken != null) {
+>       Payload p = nextToken.getPayload();
+50c52
+<         result.setPayload((Payload) p.clone());
+---
+>         nextToken.setPayload((Payload) p.clone());
+54c56
+<     return result;
+---
+>     return nextToken;
+78c80,90
+<   public Token next(Token result) throws IOException {
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public Token next(final Token reusableToken) throws IOException {
+>     
+>     assert reusableToken != null;
+88a101,105
+> 
+> 
+> 
+> 
+> 

@@ -1,0 +1,52 @@
+18a19,39
+> import java.io.BufferedReader;
+> import java.io.File;
+> import java.io.FileInputStream;
+> import java.io.FileOutputStream;
+> import java.io.IOException;
+> import java.io.InputStream;
+> import java.io.InputStreamReader;
+> import java.io.OutputStreamWriter;
+> import java.io.Writer;
+> import java.net.MalformedURLException;
+> import java.net.URL;
+> import java.nio.charset.StandardCharsets;
+> import java.nio.file.Paths;
+> import java.util.ArrayList;
+> import java.util.Arrays;
+> import java.util.Collection;
+> import java.util.Date;
+> import java.util.Properties;
+> import java.util.Set;
+> import java.util.concurrent.TimeUnit;
+> 
+41d61
+< import org.apache.solr.common.util.SimpleOrderedMap;
+46d65
+< import org.apache.solr.servlet.SolrDispatchFilter;
+53,73d71
+< import java.io.BufferedReader;
+< import java.io.File;
+< import java.io.FileInputStream;
+< import java.io.FileOutputStream;
+< import java.io.IOException;
+< import java.io.InputStream;
+< import java.io.InputStreamReader;
+< import java.io.OutputStreamWriter;
+< import java.io.Writer;
+< import java.net.MalformedURLException;
+< import java.net.URL;
+< import java.nio.charset.StandardCharsets;
+< import java.nio.file.Paths;
+< import java.util.ArrayList;
+< import java.util.Arrays;
+< import java.util.Collection;
+< import java.util.Date;
+< import java.util.Properties;
+< import java.util.Set;
+< import java.util.concurrent.TimeUnit;
+< 
+805c803
+<     CoreContainer cores = ((SolrDispatchFilter) jetty.getDispatchFilter().getFilter()).getCores();
+---
+>     CoreContainer cores = jetty.getCoreContainer();

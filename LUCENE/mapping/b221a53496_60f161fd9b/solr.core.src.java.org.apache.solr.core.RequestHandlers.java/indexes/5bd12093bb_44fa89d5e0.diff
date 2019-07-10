@@ -1,0 +1,12 @@
+38c38
+<   final PluginRegistry<SolrRequestHandler> handlers;
+---
+>   final PluginBag<SolrRequestHandler> handlers;
+60c60
+<     handlers =  new PluginRegistry<>(SolrRequestHandler.class, core);
+---
+>     handlers =  new PluginBag<>(SolrRequestHandler.class, core);
+91c91
+<   public PluginRegistry<SolrRequestHandler> getRequestHandlers() {
+---
+>   public PluginBag<SolrRequestHandler> getRequestHandlers() {

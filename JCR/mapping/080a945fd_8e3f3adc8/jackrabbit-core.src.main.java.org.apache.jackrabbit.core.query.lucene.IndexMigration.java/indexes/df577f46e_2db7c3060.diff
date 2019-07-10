@@ -1,0 +1,14 @@
+272c272
+<     private static final class ChainedTermEnum extends TermEnum {
+---
+>     static final class ChainedTermEnum extends TermEnum {
+281a282
+>             boolean newEnum = false;
+287a289,293
+>                 if (newEnum && terms.term() != null) {
+>                     
+>                     
+>                     return true;
+>                 }
+292a299
+>                     newEnum = true;

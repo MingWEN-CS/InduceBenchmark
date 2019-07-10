@@ -1,0 +1,90 @@
+57a58
+> import org.apache.oozie.executor.jpa.CoordJobGetJPAExecutor;
+58a60
+> import org.apache.oozie.executor.jpa.CoordJobUpdateJPAExecutor;
+61a64
+> import org.apache.oozie.executor.jpa.WorkflowJobGetJPAExecutor;
+62a66
+> import org.apache.oozie.executor.jpa.WorkflowJobUpdateJPAExecutor;
+534a539,544
+> 
+>             if (wfId != null) {
+>                 WorkflowJobBean wfJob = jpaService.execute(new WorkflowJobGetJPAExecutor(wfId));
+>                 wfJob.setParentId(jobId);
+>                 jpaService.execute(new WorkflowJobUpdateJPAExecutor(wfJob));
+>             }
+601a612,637
+> 
+>     protected WorkflowJobBean addRecordToWfJobTable(WorkflowJob.Status jobStatus, WorkflowInstance.Status instanceStatus,
+>             String parentId) throws Exception {
+>         WorkflowJobBean subwfBean = addRecordToWfJobTable(jobStatus, instanceStatus);
+>         subwfBean.setParentId(parentId);
+>         try {
+>             JPAService jpaService = Services.get().get(JPAService.class);
+>             assertNotNull(jpaService);
+>             jpaService.execute(new WorkflowJobUpdateJPAExecutor(subwfBean));
+>         }
+>         catch (JPAExecutorException je) {
+>             je.printStackTrace();
+>             fail("Unable to insert the test wf job record to table");
+>             throw je;
+>         }
+>         return subwfBean;
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+781c817,847
+<         BundleActionBean action = createBundleAction(jobId, coordName, pending, status);
+---
+>         BundleActionBean action = createBundleAction(jobId, coordName, coordName, pending, status);
+> 
+>         try {
+>             JPAService jpaService = Services.get().get(JPAService.class);
+>             assertNotNull(jpaService);
+>             BundleActionInsertJPAExecutor bundleActionJPAExecutor = new BundleActionInsertJPAExecutor(action);
+>             jpaService.execute(bundleActionJPAExecutor);
+>         }
+>         catch (JPAExecutorException ex) {
+>             ex.printStackTrace();
+>             fail("Unable to insert the test bundle action record to table");
+>             throw ex;
+>         }
+> 
+>         return action;
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     protected BundleActionBean addRecordToBundleActionTable(String jobId, String coordId, String coordName, int pending,
+>             Job.Status status) throws Exception {
+>         BundleActionBean action = createBundleAction(jobId, coordId, coordName, pending, status);
+787a854,857
+> 
+>             CoordinatorJobBean coordJob = jpaService.execute(new CoordJobGetJPAExecutor(coordId));
+>             coordJob.setBundleId(jobId);
+>             jpaService.execute(new CoordJobUpdateJPAExecutor(coordJob));
+808c878,879
+<     protected BundleActionBean createBundleAction(String jobId, String coordName, int pending, Job.Status status)
+---
+> 
+>     protected BundleActionBean createBundleAction(String jobId, String coordId, String coordName, int pending, Job.Status status)
+814c885
+<         action.setCoordId(coordName);
+---
+>         action.setCoordId(coordId);

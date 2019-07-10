@@ -1,0 +1,4 @@
+358c358
+<       List<Stage> stages = db.getStagesInProgress();
+---
+>       List<Stage> stages = db.getFirstStageInProgressPerRequest();

@@ -1,0 +1,19 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+22	time	long	param	147	define	org.apache.ambari.server.orm.TransactionalLocks.NoOperationLock.tryLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	147	149
+23	unit	TimeUnit	param	147	define	org.apache.ambari.server.orm.TransactionalLocks.NoOperationLock.tryLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	147	149
+28	NoOperationReadWriteLock.m_readLock	Lock	variable	94	use	org.apache.ambari.server.orm.TransactionalLocks.NoOperationReadWriteLock.readLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	93	95
+29	NoOperationReadWriteLock.m_writeLock	Lock	variable	102	use	org.apache.ambari.server.orm.TransactionalLocks.NoOperationReadWriteLock.writeLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	101	103
+35	lockArea	LockArea	param	64	define	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+35	lockArea	LockArea	param	65	use	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+35	lockArea	LockArea	param	67	use	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+35	lockArea	LockArea	param	73	use	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+34	lock	ReadWriteLock	variable	65	define	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+34	lock	ReadWriteLock	variable	65	set	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+34	lock	ReadWriteLock	variable	68	set	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+34	lock	ReadWriteLock	variable	70	set	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+37	TransactionalLocks.m_locks	ConcurrentHashMap<LockArea,ReadWriteLock>	variable	65	use	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+34	lock	ReadWriteLock	variable	66	use	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+36	TransactionalLocks.m_configuration	Configuration	variable	67	use	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+37	TransactionalLocks.m_locks	ConcurrentHashMap<LockArea,ReadWriteLock>	variable	73	use	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+34	lock	ReadWriteLock	variable	73	use	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76
+34	lock	ReadWriteLock	variable	76	use	org.apache.ambari.server.orm.TransactionalLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/365c74b53c/1768dd802f.java	64	76

@@ -1,0 +1,24 @@
+21,22c21,22
+< import static org.mockito.Mockito.mock;
+< import static org.mockito.Mockito.when;
+---
+> import static org.junit.Assert.*;
+> import static org.mockito.Mockito.*;
+25a26
+> import org.apache.hadoop.io.Text;
+28a30,31
+> import org.apache.hadoop.security.UserGroupInformation;
+> import org.apache.hadoop.security.token.Token;
+52a56,67
+>   @Test
+>   public void testUGICredentialsPropogation() throws Exception {
+>     Token<?> token = mock(Token.class);
+>     Text service = new Text("service");
+>     
+>     UserGroupInformation ugi = UserGroupInformation.getCurrentUser();
+>     ugi.addToken(service, token);
+>     
+>     JobConf jobConf = new JobConf();
+>     Job job = new Job(jobConf);
+>     assertSame(token, job.getCredentials().getToken(service));
+>   }

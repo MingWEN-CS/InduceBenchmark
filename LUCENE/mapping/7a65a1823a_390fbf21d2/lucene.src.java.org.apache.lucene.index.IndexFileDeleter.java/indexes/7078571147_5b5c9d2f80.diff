@@ -1,0 +1,26 @@
+136a137,138
+>     final String currentSegmentsFile = segmentInfos.getCurrentSegmentFileName();
+> 
+138c140
+<       message("init: current segments file is \"" + segmentInfos.getCurrentSegmentFileName() + "\"; deletionPolicy=" + policy);
+---
+>       message("init: current segments file is \"" + currentSegmentsFile + "\"; deletionPolicy=" + policy);
+149d150
+<     boolean seenIndexFiles = false;
+161d161
+<         seenIndexFiles = true;
+204,207c204
+<     
+<     
+<     
+<     if (currentCommitPoint == null && seenIndexFiles) {
+---
+>     if (currentCommitPoint == null && currentSegmentsFile != null) {
+217c214
+<         sis.read(directory, segmentInfos.getCurrentSegmentFileName(), codecs);
+---
+>         sis.read(directory, currentSegmentsFile, codecs);
+247c244
+<     if (seenIndexFiles) {
+---
+>     if (currentSegmentsFile != null) {

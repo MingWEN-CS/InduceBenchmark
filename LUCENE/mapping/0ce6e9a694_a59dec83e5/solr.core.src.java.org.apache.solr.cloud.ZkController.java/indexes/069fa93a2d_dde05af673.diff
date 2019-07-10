@@ -1,0 +1,7 @@
+480,483c480
+<       if (m.matches()) {
+<         String prefix = m.group(1);
+<         host = prefix + host;
+<       } else {
+---
+>       if (!m.matches()) {

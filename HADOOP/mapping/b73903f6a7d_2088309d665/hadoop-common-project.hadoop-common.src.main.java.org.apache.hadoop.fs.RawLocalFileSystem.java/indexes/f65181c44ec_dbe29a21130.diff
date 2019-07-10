@@ -1,0 +1,31 @@
+322c322,325
+<     if (pathToFile(src).renameTo(pathToFile(dst))) {
+---
+>     
+>     File srcFile = pathToFile(src);
+>     File dstFile = pathToFile(dst);
+>     if (srcFile.renameTo(dstFile)) {
+324a328,350
+> 
+>     
+>     
+>     
+>     
+>     
+>     if (this.exists(dst)) {
+>       FileStatus sdst = this.getFileStatus(dst);
+>       if (sdst.isDirectory() && dstFile.list().length == 0) {
+>         if (LOG.isDebugEnabled()) {
+>           LOG.debug("Deleting empty destination and renaming " + src + " to " +
+>             dst);
+>         }
+>         if (this.delete(dst, false) && srcFile.renameTo(dstFile)) {
+>           return true;
+>         }
+>       }
+>     }
+> 
+>     
+>     if (LOG.isDebugEnabled()) {
+>       LOG.debug("Falling through to a copy of " + src + " to " + dst);
+>     }

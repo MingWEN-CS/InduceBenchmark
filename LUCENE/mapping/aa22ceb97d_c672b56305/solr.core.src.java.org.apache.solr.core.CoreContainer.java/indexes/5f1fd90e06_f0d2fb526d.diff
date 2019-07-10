@@ -1,0 +1,152 @@
+116a117,118
+>   protected int distribUpdateConnTimeout = 0;
+>   protected int distribUpdateSoTimeout = 0;
+301,302c303,304
+<     int distribUpdateConnTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_DISTRIBUPDATECONNTIMEOUT, 0);
+<     int distribUpdateSoTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_DISTRIBUPDATESOTIMEOUT, 0);
+---
+>     distribUpdateConnTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_DISTRIBUPDATECONNTIMEOUT, 0);
+>     distribUpdateSoTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_DISTRIBUPDATESOTIMEOUT, 0);
+418c420,426
+<           
+---
+> 
+>           if (p.isTransient() || ! p.isLoadOnStartup()) {
+>             
+>             
+>             solrCores.putDynamicDescriptor(rawName, p);
+>           }
+> 
+452,455d459
+<           } else {
+<             
+<             
+<             solrCores.putDynamicDescriptor(rawName, p);
+843c847
+<       SolrCore core = solrCores.getCore(name);
+---
+>       SolrCore core = solrCores.getCoreFromAnyList(name);
+1113d1116
+<     
+1115,1117c1118,1124
+<     if (libDir != null) rootSolrAttribs.put("sharedLib", libDir);
+<     rootSolrAttribs.put("persistent", Boolean.toString(isPersistent()));
+<     
+---
+> 
+>     addAttrib(rootSolrAttribs, ConfigSolr.CfgProp.SOLR_SHAREDLIB, "sharedLib", this.libDir);
+>     addAttrib(rootSolrAttribs, ConfigSolr.CfgProp.SOLR_PERSISTENT, "persistent", Boolean.toString(isPersistent()));
+>     addAttrib(rootSolrAttribs, ConfigSolr.CfgProp.SOLR_CORELOADTHREADS, "coreLoadThreads",
+>         Integer.toString(this.coreLoadThreads), Integer.toString(CORE_LOAD_THREADS));
+>     addAttrib(rootSolrAttribs, ConfigSolr.CfgProp.SOLR_ZKHOST, "zkHost", this.zkHost);
+> 
+1120,1122c1127,1129
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ADMINPATH, "adminPath", this.adminPath, null);
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ADMINHANDLER, "adminHandler", this.adminHandler, null);
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_SHARESCHEMA,"shareSchema",
+---
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ADMINPATH, "adminPath", this.adminPath);
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ADMINHANDLER, "adminHandler", this.adminHandler);
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_SHARESCHEMA, "shareSchema",
+1125c1132
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOST, "host", zkSys.getHost(), null);
+---
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOST, "host", zkSys.getHost());
+1131,1132c1138,1139
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOSTPORT, "hostPort",zkSys.getHostPort(), null);
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ZKCLIENTTIMEOUT, "zkClientTimeout",
+---
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOSTPORT, "hostPort", zkSys.getHostPort());
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_ZKCLIENTTIMEOUT, "zkClientTimeout",
+1135,1137c1142,1144
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOSTCONTEXT, "hostContext",
+<         zkSys.getHostContext(), null);
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_LEADERVOTEWAIT, "leaderVoteWait",
+---
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOSTCONTEXT, "hostContext",
+>         zkSys.getHostContext());
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_LEADERVOTEWAIT, "leaderVoteWait",
+1139,1140d1145
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_CORELOADTHREADS, "coreLoadThreads",
+<         Integer.toString(this.coreLoadThreads), Integer.toString(CORE_LOAD_THREADS));
+1143c1148
+<       addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_TRANSIENTCACHESIZE, "transientCacheSize",
+---
+>       addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_TRANSIENTCACHESIZE, "transientCacheSize",
+1145a1151,1182
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_DISTRIBUPDATECONNTIMEOUT, "distribUpdateConnTimeout",
+>         Integer.toString(this.distribUpdateConnTimeout));
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_DISTRIBUPDATESOTIMEOUT, "distribUpdateSoTimeout",
+>         Integer.toString(this.distribUpdateSoTimeout));
+>     addAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_MANAGEMENTPATH, "managementPath",
+>         this.managementPath);
+> 
+>     
+>     Map<String, String> loggingAttribs = new HashMap<String, String>();
+>     addAttrib(loggingAttribs, ConfigSolr.CfgProp.SOLR_LOGGING_CLASS, "class",
+>         cfg.get(ConfigSolr.CfgProp.SOLR_LOGGING_CLASS, null));
+>     addAttrib(loggingAttribs, ConfigSolr.CfgProp.SOLR_LOGGING_ENABLED, "enabled",
+>         cfg.get(ConfigSolr.CfgProp.SOLR_LOGGING_ENABLED, null));
+> 
+>     Map<String, String> watcherAttribs = new HashMap<String, String>();
+>     addAttrib(watcherAttribs, ConfigSolr.CfgProp.SOLR_LOGGING_WATCHER_SIZE, "size",
+>         cfg.get(ConfigSolr.CfgProp.SOLR_LOGGING_WATCHER_SIZE, null));
+>     addAttrib(watcherAttribs, ConfigSolr.CfgProp.SOLR_LOGGING_WATCHER_THRESHOLD, "threshold",
+>         cfg.get(ConfigSolr.CfgProp.SOLR_LOGGING_WATCHER_THRESHOLD, null));
+> 
+> 
+>     Map<String, String> shardHandlerAttrib = new HashMap<String, String>();
+>     addAttrib(shardHandlerAttrib, ConfigSolr.CfgProp.SOLR_SHARDHANDLERFACTORY_CLASS, "class",
+>         cfg.get(ConfigSolr.CfgProp.SOLR_SHARDHANDLERFACTORY_CLASS, null));
+>     addAttrib(shardHandlerAttrib, ConfigSolr.CfgProp.SOLR_SHARDHANDLERFACTORY_NAME, "name",
+>         cfg.get(ConfigSolr.CfgProp.SOLR_SHARDHANDLERFACTORY_NAME, null));
+> 
+>     Map<String, String> shardHandlerProps = new HashMap<String, String>();
+>     addAttrib(shardHandlerProps, ConfigSolr.CfgProp.SOLR_SHARDHANDLERFACTORY_CONNTIMEOUT, "connTimeout",
+>         cfg.get(ConfigSolr.CfgProp.SOLR_SHARDHANDLERFACTORY_CONNTIMEOUT, null));
+>     addAttrib(shardHandlerProps, ConfigSolr.CfgProp.SOLR_SHARDHANDLERFACTORY_SOCKETTIMEOUT, "socketTimeout",
+>         cfg.get(ConfigSolr.CfgProp.SOLR_SHARDHANDLERFACTORY_SOCKETTIMEOUT, null));
+1148c1185,1186
+<       solrCores.persistCores(origCfg, containerProperties, rootSolrAttribs, coresAttribs, file, configFile, loader);
+---
+>       solrCores.persistCores(origCfg, containerProperties, rootSolrAttribs,coresAttribs,
+>           loggingAttribs, watcherAttribs, shardHandlerAttrib, shardHandlerProps, file, loader);
+1159,1160c1197,1203
+<   private void addCoresAttrib(Map<String,String> coresAttribs, ConfigSolr.CfgProp prop,
+<                               String attribName, String attribValue, String defaultValue) {
+---
+>   private void addAttrib(Map<String, String> attribs, ConfigSolr.CfgProp prop,
+>                          String attribName, String attribValue) {
+>     addAttrib(attribs, prop, attribName, attribValue, null);
+>   }
+> 
+>     private void addAttrib(Map<String, String> attribs, ConfigSolr.CfgProp prop,
+>                          String attribName, String attribValue, String defaultValue) {
+1162c1205
+<       coresAttribs.put(attribName, attribValue);
+---
+>       attribs.put(attribName, attribValue);
+1165c1208
+<     
+---
+> 
+1168c1211
+<       
+---
+> 
+1172c1215
+<         coresAttribs.put(attribName, origValue);
+---
+>         attribs.put(attribName, origValue);
+1174c1217
+<         coresAttribs.put(attribName, attribValue);
+---
+>         attribs.put(attribName, attribValue);
+1178c1221
+<   
+---
+> 
+1197c1240
+<   
+---
+> 

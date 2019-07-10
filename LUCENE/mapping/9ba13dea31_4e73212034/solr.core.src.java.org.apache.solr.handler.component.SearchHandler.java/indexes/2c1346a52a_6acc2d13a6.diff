@@ -1,0 +1,19 @@
+74c74
+<   protected List<SearchComponent> components = null;
+---
+>   protected volatile List<SearchComponent> components;
+194c194,195
+<     if (components == null) {
+---
+>     List<SearchComponent> result = components;  
+>     if (result == null) {
+198a200
+>         result = components;
+201c203
+<     return components;
+---
+>     return result;
+207c209
+<     if (components == null) getComponents();
+---
+>     List<SearchComponent> components  = getComponents();

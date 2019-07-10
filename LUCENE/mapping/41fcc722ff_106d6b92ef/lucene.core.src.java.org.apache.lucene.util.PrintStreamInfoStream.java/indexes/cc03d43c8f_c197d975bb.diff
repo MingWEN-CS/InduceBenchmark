@@ -1,0 +1,20 @@
+22,25c22
+< import java.text.DateFormat;
+< import java.text.SimpleDateFormat;
+< import java.util.Date;
+< import java.util.Locale;
+---
+> import java.time.Instant;
+39,40d35
+<   private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ROOT);
+<   
+54c49
+<     stream.println(component + " " + messageID + " [" + dateFormat.format(new Date()) + "; " + Thread.currentThread().getName() + "]: " + message);    
+---
+>     stream.println(component + " " + messageID + " [" + getTimestamp() + "; " + Thread.currentThread().getName() + "]: " + message);    
+72a68,72
+>   
+>   
+>   protected String getTimestamp() {
+>     return Instant.now().toString();
+>   }  

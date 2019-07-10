@@ -1,0 +1,39 @@
+281c281
+<   public static int getCallId() {
+---
+>   static int getCallId() {
+467c467
+<     public Call(int id, Writable param, Connection connection) {
+---
+>     private Call(int id, Writable param, Connection connection) {
+472c472
+<     public Call(int id, Writable param, Connection connection,
+---
+>     private Call(int id, Writable param, Connection connection,
+485c485
+<       return rpcRequest.toString() + " from " + connection.toString();
+---
+>       return rpcRequest + " from " + connection + " Call#" + callId;
+990,991c990
+<             LOG.debug(getName() + ": responding to #" + call.callId + " from " +
+<                       call.connection);
+---
+>             LOG.debug(getName() + ": responding to " + call);
+1010,1011c1009,1010
+<               LOG.debug(getName() + ": responding to #" + call.callId + " from " +
+<                         call.connection + " Wrote " + numBytes + " bytes.");
+---
+>               LOG.debug(getName() + ": responding to " + call
+>                   + " Wrote " + numBytes + " bytes.");
+1038,1040c1037,1038
+<               LOG.debug(getName() + ": responding to #" + call.callId + " from " +
+<                         call.connection + " Wrote partial " + numBytes + 
+<                         " bytes.");
+---
+>               LOG.debug(getName() + ": responding to " + call
+>                   + " Wrote partial " + numBytes + " bytes.");
+2007,2008c2005
+<             LOG.debug(getName() + ": has Call#" + call.callId + 
+<                 "for RpcKind " + call.rpcKind + " from " + call.connection);
+---
+>             LOG.debug(getName() + ": " + call + " for RpcKind " + call.rpcKind);

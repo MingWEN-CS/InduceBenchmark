@@ -1,0 +1,22 @@
+79a80
+> import org.apache.jackrabbit.core.security.AccessManager;
+1661a1663
+> 
+1680a1683,1699
+>         
+> 
+> 
+> 
+> 
+> 
+> 
+>         AccessManager acMgr = session.getAccessManager();
+>         PathBuilder pb = new PathBuilder(getPrimaryPath());
+>         pb.addLast(srcName.getName(), srcName.getIndex());
+>         Path childPath = pb.getPath();
+>         if (!acMgr.isGranted(childPath, Permission.ADD_NODE | Permission.REMOVE_NODE)) {
+>             String msg = "Not allowed to reorder child node " + session.getJCRPath(childPath) + ".";
+>             log.debug(msg);
+>             throw new AccessDeniedException(msg);
+>         }
+>         

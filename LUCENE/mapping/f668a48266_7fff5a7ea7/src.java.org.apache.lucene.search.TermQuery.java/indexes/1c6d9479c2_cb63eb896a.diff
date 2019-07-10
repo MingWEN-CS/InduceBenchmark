@@ -1,0 +1,5 @@
+80c80,81
+<         new Explanation(idf, "idf(docFreq=" + reader.docFreq(term) + ")");
+---
+>         new Explanation(idf, "idf(docFreq=" + reader.docFreq(term) +
+>             ", numDocs=" + reader.numDocs() + ")");

@@ -1,0 +1,12 @@
+582,583c582,583
+<     assertFalse(cloudClient.getZkStateReader().getAllCollections().contains("corewithnocollection"));
+<     assertFalse(cloudClient.getZkStateReader().getAllCollections().contains("corewithnocollection2"));
+---
+>     assertFalse(cloudClient.getZkStateReader().getClusterState().hasCollection("corewithnocollection"));
+>     assertFalse(cloudClient.getZkStateReader().getClusterState().hasCollection("corewithnocollection2"));
+608,609c608,609
+<     assertTrue(cloudClient.getZkStateReader().getAllCollections().contains("corewithnocollection"));
+<     assertTrue(cloudClient.getZkStateReader().getAllCollections().contains("corewithnocollection2"));
+---
+>     assertTrue( cloudClient.getZkStateReader().getClusterState().hasCollection("corewithnocollection"));
+>     assertTrue(cloudClient.getZkStateReader().getClusterState().hasCollection("corewithnocollection2"));

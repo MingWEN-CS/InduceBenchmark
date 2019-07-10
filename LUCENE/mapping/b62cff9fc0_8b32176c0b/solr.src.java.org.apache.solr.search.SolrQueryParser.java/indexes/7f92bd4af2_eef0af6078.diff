@@ -1,0 +1,15 @@
+132a133
+>   @Override
+164c165,166
+<   protected Query getRangeQuery(String field, String part1, String part2, boolean inclusive) throws ParseException {
+---
+>   @Override
+>   protected Query getRangeQuery(String field, String part1, String part2, boolean startInclusive, boolean endInclusive) throws ParseException {
+170c172
+<             inclusive, inclusive);
+---
+>             startInclusive, endInclusive);
+172a175
+>   @Override
+193a197
+>   @Override

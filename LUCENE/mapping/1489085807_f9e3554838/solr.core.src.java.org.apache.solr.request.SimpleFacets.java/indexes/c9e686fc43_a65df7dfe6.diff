@@ -1,0 +1,57 @@
+20,39d19
+< import java.io.IOException;
+< import java.util.ArrayList;
+< import java.util.Collection;
+< import java.util.Date;
+< import java.util.EnumSet;
+< import java.util.IdentityHashMap;
+< import java.util.List;
+< import java.util.Map;
+< import java.util.Set;
+< import java.util.concurrent.Callable;
+< import java.util.concurrent.ExecutionException;
+< import java.util.concurrent.Executor;
+< import java.util.concurrent.Future;
+< import java.util.concurrent.FutureTask;
+< import java.util.concurrent.RunnableFuture;
+< import java.util.concurrent.Semaphore;
+< import java.util.concurrent.SynchronousQueue;
+< import java.util.concurrent.ThreadPoolExecutor;
+< import java.util.concurrent.TimeUnit;
+< 
+42d21
+< import org.apache.lucene.index.DocValues;
+46d24
+< import org.apache.lucene.index.SortedDocValues;
+64d41
+< import org.apache.lucene.util.UnicodeUtil;
+85d61
+< import org.apache.solr.search.DocIterator;
+99c75,94
+< import org.apache.solr.util.LongPriorityQueue;
+---
+> 
+> import java.io.IOException;
+> import java.util.ArrayList;
+> import java.util.Collection;
+> import java.util.Date;
+> import java.util.EnumSet;
+> import java.util.IdentityHashMap;
+> import java.util.List;
+> import java.util.Map;
+> import java.util.Set;
+> import java.util.concurrent.Callable;
+> import java.util.concurrent.ExecutionException;
+> import java.util.concurrent.Executor;
+> import java.util.concurrent.Future;
+> import java.util.concurrent.FutureTask;
+> import java.util.concurrent.RunnableFuture;
+> import java.util.concurrent.Semaphore;
+> import java.util.concurrent.SynchronousQueue;
+> import java.util.concurrent.ThreadPoolExecutor;
+> import java.util.concurrent.TimeUnit;
+318,319c313
+<     GroupingSpecification groupingSpecification = rb.getGroupingSpec();
+<     String groupField  = groupingSpecification != null ? groupingSpecification.getFields()[0] : null;
+---
+>     String groupField = params.get(GroupParams.GROUP_FIELD);

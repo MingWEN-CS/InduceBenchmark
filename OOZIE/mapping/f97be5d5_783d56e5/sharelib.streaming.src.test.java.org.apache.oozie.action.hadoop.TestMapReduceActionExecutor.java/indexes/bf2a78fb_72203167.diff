@@ -1,0 +1,36 @@
+52a53
+> import java.util.Map;
+346,347c347,349
+< 
+<         assertTrue(LauncherMapperHelper.hasIdSwap(launcherJob));
+---
+>         Map<String, String> actionData = LauncherMapperHelper.getActionData(getFileSystem(), context.getActionDir(),
+>                 new XConfiguration());
+>         assertTrue(LauncherMapperHelper.hasIdSwap(actionData));
+396,397c398,400
+< 
+<         assertTrue(LauncherMapperHelper.hasIdSwap(launcherJob));
+---
+>         Map<String, String> actionData = LauncherMapperHelper.getActionData(getFileSystem(), context.getActionDir(),
+>                 new XConfiguration());
+>         assertTrue(LauncherMapperHelper.hasIdSwap(actionData));
+719,720c722,724
+< 
+<         assertTrue(LauncherMapperHelper.hasIdSwap(launcherJob));
+---
+>         Map<String, String> actionData = LauncherMapperHelper.getActionData(getFileSystem(), context.getActionDir(),
+>                 new XConfiguration());
+>         assertTrue(LauncherMapperHelper.hasIdSwap(actionData));
+794,795c798,800
+< 
+<         assertTrue(LauncherMapperHelper.hasIdSwap(launcherJob));
+---
+>         Map<String, String> actionData = LauncherMapperHelper.getActionData(getFileSystem(), context.getActionDir(),
+>                 new XConfiguration());
+>         assertTrue(LauncherMapperHelper.hasIdSwap(actionData));
+876c881,883
+<         assertTrue(LauncherMapperHelper.hasIdSwap(launcherJob));
+---
+>         Map<String, String> actionData = LauncherMapperHelper.getActionData(getFileSystem(), context.getActionDir(),
+>                 new XConfiguration());
+>         assertTrue(LauncherMapperHelper.hasIdSwap(actionData));

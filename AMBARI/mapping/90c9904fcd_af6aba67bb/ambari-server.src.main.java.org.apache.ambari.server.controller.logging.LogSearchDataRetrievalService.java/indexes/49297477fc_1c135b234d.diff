@@ -1,0 +1,142 @@
+21a22
+> import com.google.common.collect.Sets;
+91a93,102
+> 
+> 
+> 
+>   private final Set<String> currentRequests = Sets.newConcurrentHashSet();
+> 
+> 
+>   
+> 
+> 
+> 
+133c144
+<     String key = generateKey(component, host);
+---
+>     final String key = generateKey(component, host);
+144,145c155,165
+<       LOG.debug("LogFileNames result for key = {} not in cache, queueing up remote request", key);
+<       startLogSearchFileNameRequest(host, component, cluster);
+---
+>       if (currentRequests.contains(key)) {
+>         LOG.debug("LogFileNames request has been made for key = {}, but not completed yet", key);
+>       } else {
+>         LOG.debug("LogFileNames result for key = {} not in cache, queueing up remote request", key);
+>         
+>         
+>         currentRequests.add(key);
+>         startLogSearchFileNameRequest(host, component, cluster);
+>       }
+> 
+> 
+184a205,223
+>   
+> 
+> 
+> 
+> 
+> 
+>   protected void setExecutor(Executor executor) {
+>     this.executor = executor;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+>   protected Set<String> getCurrentRequests() {
+>     return currentRequests;
+>   }
+> 
+186c225
+<     executor.execute(new LogSearchFileNameRequestRunnable(host, component, cluster));
+---
+>     executor.execute(new LogSearchFileNameRequestRunnable(host, component, cluster, logFileNameCache, currentRequests));
+208c247
+<   private class LogSearchFileNameRequestRunnable implements Runnable {
+---
+>   static class LogSearchFileNameRequestRunnable implements Runnable {
+216,217c255,269
+<     private LogSearchFileNameRequestRunnable(String host, String component, String cluster) {
+<       this.host = host;
+---
+>     private final Set<String> currentRequests;
+> 
+>     private final Cache<String, Set<String>> logFileNameCache;
+> 
+>     private LoggingRequestHelperFactory loggingRequestHelperFactory;
+> 
+>     private AmbariManagementController controller;
+> 
+>     LogSearchFileNameRequestRunnable(String host, String component, String cluster, Cache<String, Set<String>> logFileNameCache, Set<String> currentRequests) {
+>       this(host, component, cluster, logFileNameCache, currentRequests, new LoggingRequestHelperFactoryImpl(), AmbariServer.getController());
+>     }
+> 
+>     LogSearchFileNameRequestRunnable(String host, String component, String cluster, Cache<String, Set<String>> logFileNameCache, Set<String> currentRequests,
+>                                                LoggingRequestHelperFactory loggingRequestHelperFactory, AmbariManagementController controller) {
+>       this.host  = host;
+219a272,275
+>       this.logFileNameCache = logFileNameCache;
+>       this.currentRequests = currentRequests;
+>       this.loggingRequestHelperFactory = loggingRequestHelperFactory;
+>       this.controller = controller;
+225,231c281,283
+<       LoggingRequestHelper helper =
+<         new LoggingRequestHelperFactoryImpl().getHelper(getController(), cluster);
+< 
+<       if (helper != null) {
+<         
+<         Set<String> logFileNamesResult =
+<           helper.sendGetLogFileNamesRequest(component, host);
+---
+>       try {
+>         LoggingRequestHelper helper =
+>           loggingRequestHelperFactory.getHelper(controller, cluster);
+233,236c285,298
+<         
+<         if (logFileNamesResult != null) {
+<           LOG.debug("LogSearchFileNameRequestRunnable: request was successful, updating cache");
+<           logFileNameCache.put(generateKey(component, host), logFileNamesResult);
+---
+>         if (helper != null) {
+>           
+>           Set<String> logFileNamesResult =
+>             helper.sendGetLogFileNamesRequest(component, host);
+> 
+>           
+>           if (logFileNamesResult != null) {
+>             LOG.debug("LogSearchFileNameRequestRunnable: request was successful, updating cache");
+>             final String key = generateKey(component, host);
+>             
+>             logFileNameCache.put(key, logFileNamesResult);
+>           } else {
+>             LOG.debug("LogSearchFileNameRequestRunnable: remote request was not successful");
+>           }
+238c300
+<           LOG.debug("LogSearchFileNameRequestRunnable: remote request was not successful");
+---
+>           LOG.debug("LogSearchFileNameRequestRunnable: request helper was null.  This may mean that LogSearch is not available, or could be a potential connection problem.");
+240,241c302,305
+<       } else {
+<         LOG.debug("LogSearchFileNameRequestRunnable: request helper was null.  This may mean that LogSearch is not available, or could be a potential connection problem.");
+---
+>       } finally {
+>         
+>         
+>         currentRequests.remove(generateKey(component, host));
+243a308,317
+> 
+>     protected void setLoggingRequestHelperFactory(LoggingRequestHelperFactory loggingRequestHelperFactory) {
+>       this.loggingRequestHelperFactory = loggingRequestHelperFactory;
+>     }
+> 
+>     protected void setAmbariManagementController(AmbariManagementController controller) {
+>       this.controller = controller;
+>     }
+> 
+> 
+244a319,320
+> 
+> 

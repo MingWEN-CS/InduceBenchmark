@@ -1,0 +1,17 @@
+1249c1249
+<         setSystemProperty(WorkflowAppService.SYSTEM_LIB_PATH, "/user/" + getOozieUser() + "/share/");
+---
+>         setSystemProperty(WorkflowAppService.SYSTEM_LIB_PATH, "/user/" + getTestUser()+ "/share/");
+1250a1251,1256
+>         
+>         WorkflowAppService wps = Services.get().get(WorkflowAppService.class);
+>         Path systemLibPath = new Path(wps.getSystemLibPath(), ShareLibService.SHARED_LIB_PREFIX
+>                 + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()).toString());
+>         Path javaShareLibPath = new Path(systemLibPath, "java-action-executor");
+>         getFileSystem().mkdirs(javaShareLibPath);
+1264a1271
+>             fail();
+1273c1280
+<         setSystemProperty(WorkflowAppService.SYSTEM_LIB_PATH, getNameNodeUri() + "/user/" + getOozieUser() + "/share/");
+---
+>         setSystemProperty(WorkflowAppService.SYSTEM_LIB_PATH, getNameNodeUri() + "/user/" + getTestUser() + "/share/");

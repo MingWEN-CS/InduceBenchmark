@@ -1,0 +1,17 @@
+445,455c445,446
+<           message.getProperties().put(ZkStateReader.CORE_NODE_NAME_PROP, coreNodeName);
+<         } else {
+<           
+<           if (sliceName !=null && collectionExists &&  !"true".equals(state.getCollection(collection).getStr("autoCreated"))) {
+<             Slice slice = state.getSlice(collection, sliceName);
+<             if (slice.getReplica(coreNodeName) == null) {
+<               log.info("core_deleted . Just return");
+<               return state;
+<             }
+<           }
+< 
+---
+>           message.getProperties().put(ZkStateReader.CORE_NODE_NAME_PROP,
+>               coreNodeName);
+456a448
+> 

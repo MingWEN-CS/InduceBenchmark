@@ -1,0 +1,19 @@
+20,21d19
+< import static org.apache.hadoop.fs.CommonConfigurationKeys.HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN;
+< import static org.apache.hadoop.fs.CommonConfigurationKeys.HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN_DEFAULT;
+22a21,23
+> import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN;
+> import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN_DEFAULT;
+> import static org.apache.hadoop.util.PlatformName.IBM_JAVA;
+32a34
+> import java.util.ArrayList;
+47a50
+> import javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
+50d52
+< import javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
+71d72
+< import static org.apache.hadoop.util.PlatformName.IBM_JAVA;
+1418c1419
+<         getCredentialsInternal().getAllTokens());
+---
+>         new ArrayList<Token<?>>(getCredentialsInternal().getAllTokens()));

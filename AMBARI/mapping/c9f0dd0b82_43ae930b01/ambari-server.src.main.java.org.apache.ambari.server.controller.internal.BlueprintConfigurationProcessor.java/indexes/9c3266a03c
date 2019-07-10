@@ -1,0 +1,1492 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.controller.internal;
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
+
+
+
+public class BlueprintConfigurationProcessor {
+
+  
+
+
+  private static Map<String, Map<String, PropertyUpdater>> singleHostTopologyUpdaters =
+      new HashMap<String, Map<String, PropertyUpdater>>();
+
+  
+
+
+  private static Map<String, Map<String, PropertyUpdater>> multiHostTopologyUpdaters =
+      new HashMap<String, Map<String, PropertyUpdater>>();
+
+  
+
+
+  private static Map<String, Map<String, PropertyUpdater>> dbHostTopologyUpdaters =
+      new HashMap<String, Map<String, PropertyUpdater>>();
+
+  
+
+
+  private static Map<String, Map<String, PropertyUpdater>> mPropertyUpdaters =
+      new HashMap<String, Map<String, PropertyUpdater>>();
+
+  
+
+
+
+
+
+  private static Map<String, Map<String, PropertyUpdater>> removePropertyUpdaters =
+    new HashMap<String, Map<String, PropertyUpdater>>();
+
+  
+
+
+  private static Collection<Map<String, Map<String, PropertyUpdater>>> allUpdaters =
+      new ArrayList<Map<String, Map<String, PropertyUpdater>>>();
+
+  
+
+
+  private static Pattern HOSTGROUP_REGEX = Pattern.compile("%HOSTGROUP::(\\S+?)%");
+
+  
+
+
+  private static Pattern HOSTGROUP_PORT_REGEX = Pattern.compile("%HOSTGROUP::(\\S+?)%:?(\\d+)?");
+
+  
+
+
+
+  private static Set<String> configPropertiesWithHASupport =
+    new HashSet<String>(Arrays.asList("fs.defaultFS", "hbase.rootdir", "instance.volumes"));
+
+
+
+  
+
+
+  private Map<String, Map<String, String>> properties;
+
+
+  
+
+
+
+
+  public BlueprintConfigurationProcessor(Map<String, Map<String, String>> properties) {
+    this.properties = properties;
+  }
+
+  
+
+
+
+
+
+
+
+
+  public Map<String, Map<String, String>> doUpdateForClusterCreate(Map<String, ? extends HostGroup> hostGroups, Stack stackDefinition) {
+    for (Map<String, Map<String, PropertyUpdater>> updaterMap : createCollectionOfUpdaters()) {
+      for (Map.Entry<String, Map<String, PropertyUpdater>> entry : updaterMap.entrySet()) {
+        String type = entry.getKey();
+        for (Map.Entry<String, PropertyUpdater> updaterEntry : entry.getValue().entrySet()) {
+          String propertyName = updaterEntry.getKey();
+          PropertyUpdater updater = updaterEntry.getValue();
+
+          Map<String, String> typeMap = properties.get(type);
+          if (typeMap != null && typeMap.containsKey(propertyName)) {
+            typeMap.put(propertyName, updater.updateForClusterCreate(
+                hostGroups, propertyName, typeMap.get(propertyName), properties, stackDefinition));
+          }
+        }
+      }
+    }
+
+    if (isNameNodeHAEnabled()) {
+      
+      if (! isNameNodeHAInitialActiveNodeSet(properties) && ! isNameNodeHAInitialStandbyNodeSet(properties)) {
+        Collection<HostGroup> listOfHostGroups = new LinkedList<HostGroup>();
+        for (String key : hostGroups.keySet()) {
+          listOfHostGroups.add(hostGroups.get(key));
+        }
+
+        Collection<HostGroup> hostGroupsContainingNameNode =
+          getHostGroupsForComponent("NAMENODE", listOfHostGroups);
+        
+        
+        Map<String, String> hadoopEnv = properties.get("hadoop-env");
+        if (hostGroupsContainingNameNode.size() == 2) {
+          List<HostGroup> listOfGroups = new LinkedList<HostGroup>(hostGroupsContainingNameNode);
+          hadoopEnv.put("dfs_ha_initial_namenode_active", listOfGroups.get(0).getHostInfo().iterator().next());
+          hadoopEnv.put("dfs_ha_initial_namenode_standby", listOfGroups.get(1).getHostInfo().iterator().next());
+        } else {
+          
+          if (hostGroupsContainingNameNode.size() == 1) {
+            List<String> listOfInfo = new LinkedList<String>(hostGroupsContainingNameNode.iterator().next().getHostInfo());
+            
+            hadoopEnv.put("dfs_ha_initial_namenode_active", listOfInfo.get(0));
+            hadoopEnv.put("dfs_ha_initial_namenode_standby", listOfInfo.get(1));
+          }
+        }
+      }
+    }
+
+    return properties;
+  }
+
+  
+
+
+
+
+
+
+
+  private Collection<Map<String, Map<String, PropertyUpdater>>> createCollectionOfUpdaters() {
+    return (isNameNodeHAEnabled()) ? addHAUpdaters(allUpdaters) : allUpdaters;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  private Collection<Map<String, Map<String, PropertyUpdater>>> addHAUpdaters(Collection<Map<String, Map<String, PropertyUpdater>>> updaters) {
+    Collection<Map<String, Map<String, PropertyUpdater>>> highAvailabilityUpdaters =
+      new LinkedList<Map<String, Map<String, PropertyUpdater>>>();
+
+    
+    
+    highAvailabilityUpdaters.addAll(updaters);
+
+    
+    highAvailabilityUpdaters.add(createMapOfHAUpdaters());
+
+    return highAvailabilityUpdaters;
+  }
+
+  
+
+
+
+
+
+
+
+  public Map<String, Map<String, String>> doUpdateForBlueprintExport(Collection<? extends HostGroup> hostGroups) {
+    doSingleHostExportUpdate(hostGroups, singleHostTopologyUpdaters);
+    doSingleHostExportUpdate(hostGroups, dbHostTopologyUpdaters);
+
+    if (isNameNodeHAEnabled()) {
+      doNameNodeHAUpdate(hostGroups);
+    }
+
+    doMultiHostExportUpdate(hostGroups, multiHostTopologyUpdaters);
+
+    doRemovePropertyExport(removePropertyUpdaters);
+
+    return properties;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  private void doRemovePropertyExport(Map<String, Map<String, PropertyUpdater>> updaters) {
+    for (Map.Entry<String, Map<String, PropertyUpdater>> entry : updaters.entrySet()) {
+      String type = entry.getKey();
+      for (String propertyName : entry.getValue().keySet()) {
+        Map<String, String> typeProperties = properties.get(type);
+        if ( (typeProperties != null) && (typeProperties.containsKey(propertyName)) ) {
+          typeProperties.remove(propertyName);
+        }
+      }
+    }
+  }
+
+  
+
+
+
+
+
+
+
+  public void doNameNodeHAUpdate(Collection<? extends HostGroup> hostGroups) {
+    Map<String, Map<String, PropertyUpdater>> highAvailabilityUpdaters = createMapOfHAUpdaters();
+
+    
+    if (highAvailabilityUpdaters.get("hdfs-site").size() > 0) {
+      doSingleHostExportUpdate(hostGroups, highAvailabilityUpdaters);
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+  private Map<String, Map<String, PropertyUpdater>> createMapOfHAUpdaters() {
+    Map<String, Map<String, PropertyUpdater>> highAvailabilityUpdaters = new HashMap<String, Map<String, PropertyUpdater>>();
+    Map<String, PropertyUpdater> hdfsSiteUpdatersForAvailability = new HashMap<String, PropertyUpdater>();
+    highAvailabilityUpdaters.put("hdfs-site", hdfsSiteUpdatersForAvailability);
+
+    Map<String, String> hdfsSiteConfig = properties.get("hdfs-site");
+    
+    for (String nameService : parseNameServices(hdfsSiteConfig)) {
+      for (String nameNode : parseNameNodes(nameService, hdfsSiteConfig)) {
+        final String httpsPropertyName = "dfs.namenode.https-address." + nameService + "." + nameNode;
+        hdfsSiteUpdatersForAvailability.put(httpsPropertyName, new SingleHostTopologyUpdater("NAMENODE"));
+        final String httpPropertyName = "dfs.namenode.http-address." + nameService + "." + nameNode;
+        hdfsSiteUpdatersForAvailability.put(httpPropertyName, new SingleHostTopologyUpdater("NAMENODE"));
+        final String rpcPropertyName = "dfs.namenode.rpc-address." + nameService + "." + nameNode;
+        hdfsSiteUpdatersForAvailability.put(rpcPropertyName, new SingleHostTopologyUpdater("NAMENODE"));
+      }
+    }
+    return highAvailabilityUpdaters;
+  }
+
+  
+
+
+
+
+
+  boolean isNameNodeHAEnabled() {
+    return isNameNodeHAEnabled(properties);
+  }
+
+  
+
+
+
+
+
+  static boolean isNameNodeHAEnabled(Map<String, Map<String, String>> configProperties) {
+    return configProperties.containsKey("hdfs-site") && configProperties.get("hdfs-site").containsKey("dfs.nameservices");
+  }
+
+
+  
+
+
+
+
+
+  static boolean isYarnResourceManagerHAEnabled(Map<String, Map<String, String>> configProperties) {
+    return configProperties.containsKey("yarn-site") && configProperties.get("yarn-site").containsKey("yarn.resourcemanager.ha.enabled")
+      && configProperties.get("yarn-site").get("yarn.resourcemanager.ha.enabled").equals("true");
+  }
+
+  
+
+
+
+
+
+  static boolean isOozieServerHAEnabled(Map<String, Map<String, String>> configProperties) {
+    return configProperties.containsKey("oozie-site") && configProperties.get("oozie-site").containsKey("oozie.services.ext")
+      && configProperties.get("oozie-site").get("oozie.services.ext").contains("org.apache.oozie.service.ZKLocksService");
+  }
+
+  
+
+
+
+
+
+  static boolean isHiveServerHAEnabled(Map<String, Map<String, String>> configProperties) {
+    return configProperties.containsKey("hive-site") && configProperties.get("hive-site").containsKey("hive.server2.support.dynamic.service.discovery")
+      && configProperties.get("hive-site").get("hive.server2.support.dynamic.service.discovery").equals("true");
+  }
+
+  
+
+
+
+
+
+
+
+
+  static boolean isNameNodeHAInitialActiveNodeSet(Map<String, Map<String, String>> configProperties) {
+    return configProperties.containsKey("hadoop-env") && configProperties.get("hadoop-env").containsKey("dfs_ha_initial_namenode_active");
+  }
+
+
+  
+
+
+
+
+
+
+
+
+  static boolean isNameNodeHAInitialStandbyNodeSet(Map<String, Map<String, String>> configProperties) {
+    return configProperties.containsKey("hadoop-env") && configProperties.get("hadoop-env").containsKey("dfs_ha_initial_namenode_standby");
+  }
+
+
+  
+
+
+
+
+
+
+  static String[] parseNameServices(Map<String, String> properties) {
+    final String nameServices = properties.get("dfs.nameservices");
+    return splitAndTrimStrings(nameServices);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  static String[] parseNameNodes(String nameService, Map<String, String> properties) {
+    final String nameNodes = properties.get("dfs.ha.namenodes." + nameService);
+    return splitAndTrimStrings(nameNodes);
+  }
+
+  
+
+
+
+
+
+  private void doSingleHostExportUpdate(Collection<? extends HostGroup> hostGroups,
+                                        Map<String, Map<String, PropertyUpdater>> updaters) {
+
+    for (Map.Entry<String, Map<String, PropertyUpdater>> entry : updaters.entrySet()) {
+      String type = entry.getKey();
+      for (String propertyName : entry.getValue().keySet()) {
+        boolean matchedHost = false;
+
+        Map<String, String> typeProperties = properties.get(type);
+        if (typeProperties != null && typeProperties.containsKey(propertyName)) {
+          String propValue = typeProperties.get(propertyName);
+          for (HostGroup group : hostGroups) {
+            Collection<String> hosts = group.getHostInfo();
+            for (String host : hosts) {
+              
+              if (propValue.contains(host)) {
+                matchedHost = true;
+                typeProperties.put(propertyName, propValue.replace(
+                    host, "%HOSTGROUP::" + group.getName() + "%"));
+                break;
+              }
+            }
+            if (matchedHost) {
+              break;
+            }
+          }
+          
+          
+          
+          
+          
+          if (! matchedHost &&
+              ! isNameServiceProperty(propertyName) &&
+              ! isSpecialNetworkAddress(propValue)  &&
+              ! isUndefinedAddress(propValue)) {
+
+            typeProperties.remove(propertyName);
+          }
+        }
+      }
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+  private static boolean isNameServiceProperty(String propertyName) {
+    return configPropertiesWithHASupport.contains(propertyName);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  private static boolean isSpecialNetworkAddress(String propertyValue) {
+    return propertyValue.contains("0.0.0.0");
+  }
+
+  
+
+
+
+
+
+
+  private static boolean isUndefinedAddress(String propertyValue) {
+    return propertyValue.contains("undefined");
+  }
+
+  
+
+
+
+
+
+  private void doMultiHostExportUpdate(Collection<? extends HostGroup> hostGroups,
+                                       Map<String, Map<String, PropertyUpdater>> updaters) {
+
+    for (Map.Entry<String, Map<String, PropertyUpdater>> entry : updaters.entrySet()) {
+      String type = entry.getKey();
+      for (String propertyName : entry.getValue().keySet()) {
+        Map<String, String> typeProperties = properties.get(type);
+        if (typeProperties != null && typeProperties.containsKey(propertyName)) {
+          String propValue = typeProperties.get(propertyName);
+          for (HostGroup group : hostGroups) {
+            Collection<String> hosts = group.getHostInfo();
+            for (String host : hosts) {
+              propValue = propValue.replaceAll(host + "\\b", "%HOSTGROUP::" + group.getName() + "%");
+            }
+          }
+          Collection<String> addedGroups = new HashSet<String>();
+          String[] toks = propValue.split(",");
+          boolean inBrackets = propValue.startsWith("[");
+
+          StringBuilder sb = new StringBuilder();
+          if (inBrackets) {
+            sb.append('[');
+          }
+          boolean firstTok = true;
+          for (String tok : toks) {
+            tok = tok.replaceAll("[\\[\\]]", "");
+
+            if (addedGroups.add(tok)) {
+              if (! firstTok) {
+                sb.append(',');
+              }
+              sb.append(tok);
+            }
+            firstTok = false;
+          }
+
+          if (inBrackets) {
+            sb.append(']');
+          }
+          typeProperties.put(propertyName, sb.toString());
+        }
+      }
+    }
+  }
+
+  
+
+
+
+
+
+
+
+  private static Collection<HostGroup> getHostGroupsForComponent(String component,
+                                                                 Collection<? extends HostGroup> hostGroups) {
+
+    Collection<HostGroup> resultGroups = new LinkedHashSet<HostGroup>();
+    for (HostGroup group : hostGroups ) {
+      if (group.getComponents().contains(component)) {
+        resultGroups.add(group);
+      }
+    }
+    return resultGroups;
+  }
+
+  
+
+
+
+
+
+
+
+  private static Collection<String> getHostStrings(Map<String, ? extends HostGroup> hostGroups,
+                                                   String val) {
+
+    Collection<String> hosts = new LinkedHashSet<String>();
+    Matcher m = HOSTGROUP_PORT_REGEX.matcher(val);
+    while (m.find()) {
+      String groupName = m.group(1);
+      String port = m.group(2);
+
+
+      HostGroup hostGroup = hostGroups.get(groupName);
+      if (hostGroup == null) {
+        throw new IllegalArgumentException(
+            "Unable to match blueprint host group token to a host group: " + groupName);
+      }
+      for (String host : hostGroup.getHostInfo()) {
+        if (port != null) {
+          host += ":" + port;
+        }
+        hosts.add(host);
+      }
+    }
+    return hosts;
+  }
+
+  
+
+
+
+
+
+
+
+
+  private static String[] splitAndTrimStrings(String propertyName) {
+    List<String> namesWithoutWhitespace = new LinkedList<String>();
+    for (String service : propertyName.split(",")) {
+      namesWithoutWhitespace.add(service.trim());
+    }
+
+    return namesWithoutWhitespace.toArray(new String[namesWithoutWhitespace.size()]);
+  }
+
+  
+
+
+  public interface PropertyUpdater {
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+                                         String propertyName, String origValue, Map<String, Map<String, String>> properties, Stack stackDefinition
+    );
+  }
+
+  
+
+
+
+  static class SingleHostTopologyUpdater implements PropertyUpdater {
+    
+
+
+    private String component;
+
+    
+
+
+
+
+    public SingleHostTopologyUpdater(String component) {
+      this.component = component;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    @Override
+    public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+                                         String propertyName,
+                                         String origValue,
+                                         Map<String, Map<String, String>> properties,
+                                         Stack stackDefinition)  {
+
+      Matcher m = HOSTGROUP_REGEX.matcher(origValue);
+      if (m.find()) {
+        String hostGroupName = m.group(1);
+        HostGroup hostGroup = hostGroups.get(hostGroupName);
+        
+        return origValue.replace(m.group(0), hostGroup.getHostInfo().iterator().next());
+      } else {
+        Collection<HostGroup> matchingGroups = getHostGroupsForComponent(component, hostGroups.values());
+        if (matchingGroups.size() == 1) {
+          return origValue.replace("localhost", matchingGroups.iterator().next().getHostInfo().iterator().next());
+        } else {
+          Cardinality cardinality = stackDefinition.getCardinality(component);
+          
+          
+          
+          
+          
+          if (matchingGroups.isEmpty() && cardinality.isValidCount(0)) {
+            return origValue;
+          } else {
+            if (isNameNodeHAEnabled(properties) && isComponentNameNode() && (matchingGroups.size() == 2)) {
+              
+              
+              if (properties.containsKey("core-site") && properties.get("core-site").get("fs.defaultFS").equals(origValue)) {
+                return origValue;
+              }
+
+              if (properties.containsKey("hbase-site") && properties.get("hbase-site").get("hbase.rootdir").equals(origValue)) {
+                
+                
+                return origValue;
+              }
+
+              if (properties.containsKey("accumulo-site") && properties.get("accumulo-site").get("instance.volumes").equals(origValue)) {
+                
+                
+                return origValue;
+              }
+
+              if (!origValue.contains("localhost")) {
+                
+                return origValue;
+              }
+
+            }
+
+            if (isNameNodeHAEnabled(properties) && isComponentSecondaryNameNode() && (matchingGroups.isEmpty())) {
+              
+              
+              return origValue;
+            }
+
+            if (isYarnResourceManagerHAEnabled(properties) && isComponentResourceManager() && (matchingGroups.size() == 2)) {
+              if (!origValue.contains("localhost")) {
+                
+                return origValue;
+              }
+            }
+
+            if ((isOozieServerHAEnabled(properties)) && isComponentOozieServer() && (matchingGroups.size() > 1))     {
+              if (!origValue.contains("localhost")) {
+                
+                return origValue;
+              }
+            }
+
+            if ((isHiveServerHAEnabled(properties)) && isComponentHiveServer() && (matchingGroups.size() > 1)) {
+              if (!origValue.contains("localhost")) {
+                
+                return origValue;
+              }
+            }
+
+            if ((isComponentHiveMetaStoreServer()) && matchingGroups.size() > 1) {
+              if (!origValue.contains("localhost")) {
+                
+                return origValue;
+              }
+            }
+
+
+            throw new IllegalArgumentException("Unable to update configuration property " + "'" + propertyName + "'"+ " with topology information. " +
+              "Component '" + component + "' is not mapped to any host group or is mapped to multiple groups.");
+          }
+        }
+      }
+    }
+
+    
+
+
+
+
+
+
+    private boolean isComponentNameNode() {
+      return component.equals("NAMENODE");
+    }
+
+    
+
+
+
+
+
+
+    private boolean isComponentSecondaryNameNode() {
+      return component.equals("SECONDARY_NAMENODE");
+    }
+
+    
+
+
+
+
+
+
+    private boolean isComponentResourceManager() {
+      return component.equals("RESOURCEMANAGER");
+    }
+
+    
+
+
+
+
+
+
+    private boolean isComponentOozieServer() {
+      return component.equals("OOZIE_SERVER");
+    }
+
+    
+
+
+
+
+
+
+    private boolean isComponentHiveServer() {
+      return component.equals("HIVE_SERVER");
+    }
+
+    
+
+
+
+
+
+
+    private boolean isComponentHiveMetaStoreServer() {
+      return component.equals("HIVE_METASTORE");
+    }
+
+    
+
+
+
+
+
+    public String getComponentName() {
+      return component;
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  private static class OptionalSingleHostTopologyUpdater extends SingleHostTopologyUpdater {
+
+    public OptionalSingleHostTopologyUpdater(String component) {
+      super(component);
+    }
+
+    @Override
+    public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups, String propertyName, String origValue, Map<String, Map<String, String>> properties, Stack stackDefinition) {
+      try {
+        return super.updateForClusterCreate(hostGroups, propertyName, origValue, properties, stackDefinition);
+      } catch (IllegalArgumentException illegalArgumentException) {
+        
+        return origValue;
+      }
+    }
+  }
+
+  
+
+
+
+
+  private static class DBTopologyUpdater extends SingleHostTopologyUpdater {
+    
+
+
+    private final String configPropertyType;
+
+    
+
+
+    private final String conditionalPropertyName;
+
+    
+
+
+
+
+
+
+    private DBTopologyUpdater(String component, String conditionalPropertyType,
+                              String conditionalPropertyName) {
+      super(component);
+      configPropertyType = conditionalPropertyType;
+      this.conditionalPropertyName = conditionalPropertyName;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Override
+    public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+                                         String propertyName,
+                                         String origValue, Map<String, Map<String, String>> properties,
+                                         Stack stackDefinition) {
+
+      if (isDatabaseManaged(properties)) {
+        return super.updateForClusterCreate(hostGroups, propertyName, origValue, properties, stackDefinition);
+      } else {
+        return origValue;
+      }
+    }
+
+    
+
+
+
+
+    private boolean isDatabaseManaged(Map<String, Map<String, String>> properties) {
+      
+      return properties.get(configPropertyType).
+          get(conditionalPropertyName).startsWith("New");
+    }
+  }
+
+  
+
+
+
+  private static class MultipleHostTopologyUpdater implements PropertyUpdater {
+
+
+    private static final Character DEFAULT_SEPARATOR = ',';
+
+    
+
+
+    private final String component;
+
+    
+
+
+    private final Character separator;
+
+    
+
+
+
+
+    private final boolean usePrefixForEachHost;
+
+    private final Set<String> setOfKnownURLSchemes = Collections.singleton("thrift:
+
+    
+
+
+
+
+    public MultipleHostTopologyUpdater(String component) {
+      this(component, DEFAULT_SEPARATOR, false);
+    }
+
+    
+
+
+
+
+
+
+    public MultipleHostTopologyUpdater(String component, Character separator, boolean userPrefixForEachHost) {
+      this.component = component;
+      this.separator = separator;
+      this.usePrefixForEachHost = userPrefixForEachHost;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    @Override
+    public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+                                         String propertyName,
+                                         String origValue,
+                                         Map<String, Map<String, String>> properties,
+                                         Stack stackDefinition) {
+      StringBuilder sb = new StringBuilder();
+
+      if (!origValue.contains("%HOSTGROUP") &&
+        (!origValue.contains("localhost"))) {
+        
+        
+        return origValue;
+      }
+
+      String prefix = null;
+      Collection<String> hostStrings = getHostStrings(hostGroups, origValue);
+      if (hostStrings.isEmpty()) {
+        
+        String port = null;
+        for (String urlScheme : setOfKnownURLSchemes) {
+          if (origValue.startsWith(urlScheme)) {
+            prefix = urlScheme;
+          }
+        }
+
+        if (prefix != null) {
+          String valueWithoutPrefix = origValue.substring(prefix.length());
+          port = calculatePort(valueWithoutPrefix);
+          sb.append(prefix);
+        } else {
+          port = calculatePort(origValue);
+        }
+
+
+        Collection<HostGroup> matchingGroups = getHostGroupsForComponent(component, hostGroups.values());
+        for (HostGroup group : matchingGroups) {
+          for (String host : group.getHostInfo()) {
+            if (port != null) {
+              host += ":" + port;
+            }
+            hostStrings.add(host);
+          }
+        }
+      }
+
+
+
+      String suffix = null;
+
+      
+      Matcher matcher = HOSTGROUP_PORT_REGEX.matcher(origValue);
+      if (matcher.find()) {
+        int indexOfStart = matcher.start();
+        
+        if ((indexOfStart > 0) && (!origValue.substring(0, indexOfStart).equals("['"))) {
+          
+          prefix = origValue.substring(0, indexOfStart);
+          sb.append(prefix);
+        }
+
+        
+        int indexOfEnd = -1;
+        while (matcher.find()) {
+          indexOfEnd = matcher.end();
+        }
+
+        if ((indexOfEnd > -1) && (indexOfEnd < (origValue.length() - 1))) {
+          suffix = origValue.substring(indexOfEnd);
+        }
+
+      }
+
+      
+      boolean firstHost = true;
+      for (String host : hostStrings) {
+        if (!firstHost) {
+          sb.append(separator);
+          
+          if (usePrefixForEachHost && (prefix != null)) {
+            sb.append(prefix);
+          }
+        } else {
+          firstHost = false;
+        }
+
+
+
+        sb.append(host);
+      }
+
+      if ((suffix != null) && (!suffix.equals("']"))) {
+        sb.append(suffix);
+      }
+
+
+      return sb.toString();
+    }
+
+    private static String calculatePort(String origValue) {
+      if (origValue.contains(":")) {
+        
+        return origValue.substring(origValue.indexOf(":") + 1);
+      }
+
+      return null;
+    }
+  }
+
+  
+
+
+
+  private static class MPropertyUpdater implements PropertyUpdater {
+    
+
+
+
+
+
+
+
+
+
+
+    @Override
+    public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+                                         String propertyName,
+                                         String origValue, Map<String,
+                                         Map<String, String>> properties,
+                                         Stack stackDefinition) {
+
+      return origValue.endsWith("m") ? origValue : origValue + 'm';
+    }
+  }
+
+  
+
+
+  private abstract static class AbstractPropertyValueDecorator implements PropertyUpdater {
+    PropertyUpdater propertyUpdater;
+
+    
+
+
+
+
+    public AbstractPropertyValueDecorator(PropertyUpdater propertyUpdater) {
+      this.propertyUpdater = propertyUpdater;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    @Override
+    public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroupMap,
+                                         String propertyName,
+                                         String origValue,
+                                         Map<String, Map<String, String>> properties,
+                                         Stack stackDefinition) {
+
+      return doFormat(propertyUpdater.updateForClusterCreate(hostGroupMap, propertyName, origValue, properties, stackDefinition));
+    }
+
+    
+
+
+
+
+
+
+    public abstract String doFormat(String originalValue);
+  }
+
+  
+
+
+  private static class YamlMultiValuePropertyDecorator extends AbstractPropertyValueDecorator {
+
+    public YamlMultiValuePropertyDecorator(PropertyUpdater propertyUpdater) {
+      super(propertyUpdater);
+    }
+
+    
+
+
+
+
+
+
+    @Override
+    public String doFormat(String origValue) {
+      StringBuilder sb = new StringBuilder();
+      if (origValue != null) {
+        sb.append("[");
+        boolean isFirst = true;
+        for (String value : origValue.split(",")) {
+          if (!isFirst) {
+            sb.append(",");
+          } else {
+            isFirst = false;
+          }
+          sb.append("'");
+          sb.append(value);
+          sb.append("'");
+        }
+        sb.append("]");
+      }
+      return sb.toString();
+    }
+  }
+
+  
+
+
+
+
+
+
+  private static class OriginalValuePropertyUpdater implements PropertyUpdater {
+    @Override
+    public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups,
+                                         String propertyName, String origValue,
+                                         Map<String, Map<String, String>> properties,
+                                         Stack stackDefinition) {
+      
+      return origValue;
+    }
+  }
+
+
+  
+
+
+
+
+
+
+
+
+  private static class TempletonHivePropertyUpdater implements PropertyUpdater {
+
+    private Map<String, PropertyUpdater> mapOfKeysToUpdaters =
+      new HashMap<String, PropertyUpdater>();
+
+    TempletonHivePropertyUpdater() {
+      
+      
+      mapOfKeysToUpdaters.put("hive.metastore.uris", new MultipleHostTopologyUpdater("HIVE_METASTORE", ',', true));
+    }
+
+    @Override
+    public String updateForClusterCreate(Map<String, ? extends HostGroup> hostGroups, String propertyName, String origValue, Map<String, Map<String, String>> properties, Stack stackDefinition) {
+      
+      if (!origValue.contains("%HOSTGROUP") &&
+        (!origValue.contains("localhost"))) {
+        
+        
+        return origValue;
+      }
+
+      StringBuffer updatedResult = new StringBuffer();
+
+      
+      String[] keyValuePairs = origValue.split(",");
+      boolean firstValue = true;
+      for (String keyValuePair : keyValuePairs) {
+        if (!firstValue) {
+          updatedResult.append(",");
+        } else {
+          firstValue = false;
+        }
+
+        String key = keyValuePair.split("=")[0];
+        if (mapOfKeysToUpdaters.containsKey(key)) {
+          String result = mapOfKeysToUpdaters.get(key).updateForClusterCreate(hostGroups, key, keyValuePair.split("=")[1], properties, stackDefinition);
+          
+          
+          updatedResult.append(key + "=" + result.replaceAll(",", Matcher.quoteReplacement("\\,")));
+        } else {
+          updatedResult.append(keyValuePair);
+        }
+      }
+
+      return updatedResult.toString();
+    }
+  }
+
+  
+
+
+  static {
+
+    allUpdaters.add(singleHostTopologyUpdaters);
+    allUpdaters.add(multiHostTopologyUpdaters);
+    allUpdaters.add(dbHostTopologyUpdaters);
+    allUpdaters.add(mPropertyUpdaters);
+
+    Map<String, PropertyUpdater> hdfsSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> mapredSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> coreSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> hbaseSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> yarnSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> hiveSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> oozieSiteOriginalValueMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> oozieSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> stormSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> accumuloSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> falconStartupPropertiesMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> kafkaBrokerMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> mapredEnvMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> hadoopEnvMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> hbaseEnvMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> hiveEnvMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> oozieEnvMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> oozieEnvOriginalValueMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiWebhcatSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiHbaseSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiStormSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiCoreSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiHdfsSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiHiveSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiKafkaBrokerMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiSliderClientMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiYarnSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiOozieSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> multiAccumuloSiteMap = new HashMap<String, PropertyUpdater>();
+    Map<String, PropertyUpdater> dbHiveSiteMap = new HashMap<String, PropertyUpdater>();
+
+
+    singleHostTopologyUpdaters.put("hdfs-site", hdfsSiteMap);
+    singleHostTopologyUpdaters.put("mapred-site", mapredSiteMap);
+    singleHostTopologyUpdaters.put("core-site", coreSiteMap);
+    singleHostTopologyUpdaters.put("hbase-site", hbaseSiteMap);
+    singleHostTopologyUpdaters.put("yarn-site", yarnSiteMap);
+    singleHostTopologyUpdaters.put("hive-site", hiveSiteMap);
+    singleHostTopologyUpdaters.put("oozie-site", oozieSiteMap);
+    singleHostTopologyUpdaters.put("storm-site", stormSiteMap);
+    singleHostTopologyUpdaters.put("accumulo-site", accumuloSiteMap);
+    singleHostTopologyUpdaters.put("falcon-startup.properties", falconStartupPropertiesMap);
+    singleHostTopologyUpdaters.put("hive-env", hiveEnvMap);
+    singleHostTopologyUpdaters.put("oozie-env", oozieEnvMap);
+    singleHostTopologyUpdaters.put("kafka-broker", kafkaBrokerMap);
+
+    mPropertyUpdaters.put("hadoop-env", hadoopEnvMap);
+    mPropertyUpdaters.put("hbase-env", hbaseEnvMap);
+    mPropertyUpdaters.put("mapred-env", mapredEnvMap);
+
+    multiHostTopologyUpdaters.put("webhcat-site", multiWebhcatSiteMap);
+    multiHostTopologyUpdaters.put("hbase-site", multiHbaseSiteMap);
+    multiHostTopologyUpdaters.put("storm-site", multiStormSiteMap);
+    multiHostTopologyUpdaters.put("core-site", multiCoreSiteMap);
+    multiHostTopologyUpdaters.put("hdfs-site", multiHdfsSiteMap);
+    multiHostTopologyUpdaters.put("hive-site", multiHiveSiteMap);
+    multiHostTopologyUpdaters.put("kafka-broker", multiKafkaBrokerMap);
+    multiHostTopologyUpdaters.put("slider-client", multiSliderClientMap);
+    multiHostTopologyUpdaters.put("yarn-site", multiYarnSiteMap);
+    multiHostTopologyUpdaters.put("oozie-site", multiOozieSiteMap);
+    multiHostTopologyUpdaters.put("accumulo-site", multiAccumuloSiteMap);
+
+    dbHostTopologyUpdaters.put("hive-site", dbHiveSiteMap);
+
+    removePropertyUpdaters.put("oozie-env", oozieEnvOriginalValueMap);
+    removePropertyUpdaters.put("oozie-site", oozieSiteOriginalValueMap);
+
+    
+    hdfsSiteMap.put("dfs.http.address", new SingleHostTopologyUpdater("NAMENODE"));
+    hdfsSiteMap.put("dfs.https.address", new SingleHostTopologyUpdater("NAMENODE"));
+    coreSiteMap.put("fs.default.name", new SingleHostTopologyUpdater("NAMENODE"));
+    hdfsSiteMap.put("dfs.namenode.http-address", new SingleHostTopologyUpdater("NAMENODE"));
+    hdfsSiteMap.put("dfs.namenode.https-address", new SingleHostTopologyUpdater("NAMENODE"));
+    hdfsSiteMap.put("dfs.namenode.rpc-address", new SingleHostTopologyUpdater("NAMENODE"));
+    coreSiteMap.put("fs.defaultFS", new SingleHostTopologyUpdater("NAMENODE"));
+    hbaseSiteMap.put("hbase.rootdir", new SingleHostTopologyUpdater("NAMENODE"));
+    accumuloSiteMap.put("instance.volumes", new SingleHostTopologyUpdater("NAMENODE"));
+    
+    multiHdfsSiteMap.put("dfs.namenode.shared.edits.dir", new MultipleHostTopologyUpdater("JOURNALNODE", ';', false));
+
+    
+    hdfsSiteMap.put("dfs.secondary.http.address", new SingleHostTopologyUpdater("SECONDARY_NAMENODE"));
+    hdfsSiteMap.put("dfs.namenode.secondary.http-address", new SingleHostTopologyUpdater("SECONDARY_NAMENODE"));
+
+    
+    mapredSiteMap.put("mapred.job.tracker", new SingleHostTopologyUpdater("JOBTRACKER"));
+    mapredSiteMap.put("mapred.job.tracker.http.address", new SingleHostTopologyUpdater("JOBTRACKER"));
+    mapredSiteMap.put("mapreduce.history.server.http.address", new SingleHostTopologyUpdater("JOBTRACKER"));
+
+
+    
+    yarnSiteMap.put("yarn.log.server.url", new SingleHostTopologyUpdater("HISTORYSERVER"));
+    mapredSiteMap.put("mapreduce.jobhistory.webapp.address", new SingleHostTopologyUpdater("HISTORYSERVER"));
+    mapredSiteMap.put("mapreduce.jobhistory.address", new SingleHostTopologyUpdater("HISTORYSERVER"));
+
+    
+    yarnSiteMap.put("yarn.resourcemanager.hostname", new SingleHostTopologyUpdater("RESOURCEMANAGER"));
+    yarnSiteMap.put("yarn.resourcemanager.resource-tracker.address", new SingleHostTopologyUpdater("RESOURCEMANAGER"));
+    yarnSiteMap.put("yarn.resourcemanager.webapp.address", new SingleHostTopologyUpdater("RESOURCEMANAGER"));
+    yarnSiteMap.put("yarn.resourcemanager.scheduler.address", new SingleHostTopologyUpdater("RESOURCEMANAGER"));
+    yarnSiteMap.put("yarn.resourcemanager.address", new SingleHostTopologyUpdater("RESOURCEMANAGER"));
+    yarnSiteMap.put("yarn.resourcemanager.admin.address", new SingleHostTopologyUpdater("RESOURCEMANAGER"));
+
+    
+    yarnSiteMap.put("yarn.timeline-service.address", new SingleHostTopologyUpdater("APP_TIMELINE_SERVER"));
+    yarnSiteMap.put("yarn.timeline-service.webapp.address", new SingleHostTopologyUpdater("APP_TIMELINE_SERVER"));
+    yarnSiteMap.put("yarn.timeline-service.webapp.https.address", new SingleHostTopologyUpdater("APP_TIMELINE_SERVER"));
+
+
+    
+    multiHiveSiteMap.put("hive.metastore.uris", new MultipleHostTopologyUpdater("HIVE_METASTORE", ',', true));
+    dbHiveSiteMap.put("javax.jdo.option.ConnectionURL",
+        new DBTopologyUpdater("MYSQL_SERVER", "hive-env", "hive_database"));
+    multiCoreSiteMap.put("hadoop.proxyuser.hive.hosts", new MultipleHostTopologyUpdater("HIVE_SERVER"));
+    multiCoreSiteMap.put("hadoop.proxyuser.HTTP.hosts", new MultipleHostTopologyUpdater("WEBHCAT_SERVER"));
+    multiCoreSiteMap.put("hadoop.proxyuser.hcat.hosts", new MultipleHostTopologyUpdater("WEBHCAT_SERVER"));
+    multiWebhcatSiteMap.put("templeton.hive.properties", new TempletonHivePropertyUpdater());
+    multiWebhcatSiteMap.put("templeton.kerberos.principal", new MultipleHostTopologyUpdater("WEBHCAT_SERVER"));
+    hiveEnvMap.put("hive_hostname", new SingleHostTopologyUpdater("HIVE_SERVER"));
+    multiHiveSiteMap.put("hive.zookeeper.quorum", new MultipleHostTopologyUpdater("ZOOKEEPER_SERVER"));
+    multiHiveSiteMap.put("hive.cluster.delegation.token.store.zookeeper.connectString", new MultipleHostTopologyUpdater("ZOOKEEPER_SERVER"));
+
+    
+    oozieSiteMap.put("oozie.base.url", new SingleHostTopologyUpdater("OOZIE_SERVER"));
+    oozieSiteMap.put("oozie.authentication.kerberos.principal", new SingleHostTopologyUpdater("OOZIE_SERVER"));
+    oozieSiteMap.put("oozie.service.HadoopAccessorService.kerberos.principal", new SingleHostTopologyUpdater("OOZIE_SERVER"));
+    oozieEnvMap.put("oozie_hostname", new SingleHostTopologyUpdater("OOZIE_SERVER"));
+    multiCoreSiteMap.put("hadoop.proxyuser.oozie.hosts", new MultipleHostTopologyUpdater("OOZIE_SERVER"));
+
+    
+    oozieEnvOriginalValueMap.put("oozie_existing_mysql_host", new OriginalValuePropertyUpdater());
+    oozieSiteOriginalValueMap.put("oozie.service.JPAService.jdbc.url", new OriginalValuePropertyUpdater());
+
+    
+    multiHbaseSiteMap.put("hbase.zookeeper.quorum", new MultipleHostTopologyUpdater("ZOOKEEPER_SERVER"));
+    multiWebhcatSiteMap.put("templeton.zookeeper.hosts", new MultipleHostTopologyUpdater("ZOOKEEPER_SERVER"));
+    multiCoreSiteMap.put("ha.zookeeper.quorum", new MultipleHostTopologyUpdater("ZOOKEEPER_SERVER"));
+    multiYarnSiteMap.put("hadoop.registry.zk.quorum", new MultipleHostTopologyUpdater("ZOOKEEPER_SERVER"));
+    multiSliderClientMap.put("slider.zookeeper.quorum", new MultipleHostTopologyUpdater("ZOOKEEPER_SERVER"));
+    multiKafkaBrokerMap.put("zookeeper.connect", new MultipleHostTopologyUpdater("ZOOKEEPER_SERVER"));
+    multiAccumuloSiteMap.put("instance.zookeeper.host", new MultipleHostTopologyUpdater("ZOOKEEPER_SERVER"));
+
+    
+    stormSiteMap.put("nimbus.host", new SingleHostTopologyUpdater("NIMBUS"));
+    stormSiteMap.put("worker.childopts", new OptionalSingleHostTopologyUpdater("GANGLIA_SERVER"));
+    stormSiteMap.put("supervisor.childopts", new OptionalSingleHostTopologyUpdater("GANGLIA_SERVER"));
+    stormSiteMap.put("nimbus.childopts", new OptionalSingleHostTopologyUpdater("GANGLIA_SERVER"));
+    multiStormSiteMap.put("storm.zookeeper.servers",
+        new YamlMultiValuePropertyDecorator(new MultipleHostTopologyUpdater("ZOOKEEPER_SERVER")));
+
+    
+    falconStartupPropertiesMap.put("*.broker.url", new SingleHostTopologyUpdater("FALCON_SERVER"));
+    falconStartupPropertiesMap.put("*.falcon.service.authentication.kerberos.principal", new SingleHostTopologyUpdater("FALCON_SERVER"));
+    falconStartupPropertiesMap.put("*.falcon.http.authentication.kerberos.principal", new SingleHostTopologyUpdater("FALCON_SERVER"));
+
+    
+    kafkaBrokerMap.put("kafka.ganglia.metrics.host", new OptionalSingleHostTopologyUpdater("GANGLIA_SERVER"));
+
+    
+    multiCoreSiteMap.put("hadoop.proxyuser.knox.hosts", new MultipleHostTopologyUpdater("KNOX_GATEWAY"));
+    multiWebhcatSiteMap.put("webhcat.proxyuser.knox.hosts", new MultipleHostTopologyUpdater("KNOX_GATEWAY"));
+    multiOozieSiteMap.put("hadoop.proxyuser.knox.hosts", new MultipleHostTopologyUpdater("KNOX_GATEWAY"));
+    multiOozieSiteMap.put("oozie.service.ProxyUserService.proxyuser.knox.hosts", new MultipleHostTopologyUpdater("KNOX_GATEWAY"));
+
+
+    
+    
+    hadoopEnvMap.put("namenode_heapsize", new MPropertyUpdater());
+    hadoopEnvMap.put("namenode_opt_newsize", new MPropertyUpdater());
+    hadoopEnvMap.put("namenode_opt_maxnewsize", new MPropertyUpdater());
+    hadoopEnvMap.put("namenode_opt_permsize", new MPropertyUpdater());
+    hadoopEnvMap.put("namenode_opt_maxpermsize", new MPropertyUpdater());
+    hadoopEnvMap.put("dtnode_heapsize", new MPropertyUpdater());
+    mapredEnvMap.put("jtnode_opt_newsize", new MPropertyUpdater());
+    mapredEnvMap.put("jtnode_opt_maxnewsize", new MPropertyUpdater());
+    mapredEnvMap.put("jtnode_heapsize", new MPropertyUpdater());
+    hbaseEnvMap.put("hbase_master_heapsize", new MPropertyUpdater());
+    hbaseEnvMap.put("hbase_regionserver_heapsize", new MPropertyUpdater());
+  }
+}

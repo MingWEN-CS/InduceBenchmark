@@ -1,0 +1,276 @@
+23d22
+< import java.nio.file.Path;
+259,420d257
+<   @Deprecated
+<   public CloudSolrClient(String zkHost) {
+<     this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+<       this.clientIsInternal = true;
+<       this.myClient = HttpClientUtil.createClient(null);
+<       this.lbClient = new LBHttpSolrClient.Builder()
+<           .withHttpClient(myClient)
+<           .build();
+<       this.lbClient.setRequestWriter(new BinaryRequestWriter());
+<       this.lbClient.setParser(new BinaryResponseParser());
+<       this.updatesToLeaders = true;
+<       this.directUpdatesToLeadersOnly = false;
+<       shutdownLBHttpSolrServer = true;
+<       lbClient.addQueryParams(STATE_VERSION);
+<   }
+< 
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public CloudSolrClient(String zkHost, HttpClient httpClient) {
+<     this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+<     this.clientIsInternal = httpClient == null;
+<     this.myClient = httpClient == null ? HttpClientUtil.createClient(null) : httpClient;
+<     this.lbClient = createLBHttpSolrClient(myClient);
+<     this.updatesToLeaders = true;
+<     this.directUpdatesToLeadersOnly = false;
+<     shutdownLBHttpSolrServer = true;
+<     lbClient.addQueryParams(STATE_VERSION);
+<   }
+<   
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public CloudSolrClient(Collection<String> zkHosts, String chroot) {
+<     this(zkHosts, chroot, null);
+<   }
+< 
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public CloudSolrClient(Collection<String> zkHosts, String chroot, HttpClient httpClient) {
+<     this.stateProvider = new ZkClientClusterStateProvider(zkHosts, chroot);
+<     this.clientIsInternal = httpClient == null;
+<     this.myClient = httpClient == null ? HttpClientUtil.createClient(null) : httpClient;
+<     this.lbClient = createLBHttpSolrClient(myClient);
+<     this.updatesToLeaders = true;
+<     this.directUpdatesToLeadersOnly = false;
+<     shutdownLBHttpSolrServer = true;
+<   }
+<   
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public CloudSolrClient(Collection<String> zkHosts, String chroot, HttpClient httpClient, LBHttpSolrClient lbSolrClient, boolean updatesToLeaders) {
+<     this(zkHosts, chroot, null, httpClient, lbSolrClient, null, updatesToLeaders, false, null);
+<   }
+< 
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+470,509d306
+<   
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public CloudSolrClient(String zkHost, boolean updatesToLeaders) {
+<     this(zkHost, updatesToLeaders, null);
+<   }
+< 
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public CloudSolrClient(String zkHost, boolean updatesToLeaders, HttpClient httpClient) {
+<     this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+<     this.clientIsInternal = httpClient == null;
+<     this.myClient = httpClient == null ? HttpClientUtil.createClient(null) : httpClient;
+<     this.lbClient = new LBHttpSolrClient.Builder()
+<         .withHttpClient(myClient)
+<         .build();
+<     this.lbClient.setRequestWriter(new BinaryRequestWriter());
+<     this.lbClient.setParser(new BinaryResponseParser());
+<     this.updatesToLeaders = updatesToLeaders;
+<     this.directUpdatesToLeadersOnly = false;
+<     shutdownLBHttpSolrServer = true;
+<     lbClient.addQueryParams(STATE_VERSION);
+<   }
+518,551d314
+< 
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public CloudSolrClient(String zkHost, LBHttpSolrClient lbClient) {
+<     this(zkHost, lbClient, true);
+<   }
+<   
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public CloudSolrClient(String zkHost, LBHttpSolrClient lbClient, boolean updatesToLeaders) {
+<     this.lbClient = lbClient;
+<     this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+<     this.updatesToLeaders = updatesToLeaders;
+<     this.directUpdatesToLeadersOnly = false;
+<     shutdownLBHttpSolrServer = false;
+<     this.clientIsInternal = false;
+<     lbClient.addQueryParams(STATE_VERSION);
+<   }
+663,681d425
+<   
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public void uploadConfig(Path configPath, String configName) throws IOException {
+<     stateProvider.connect();
+<     assertZKStateProvider().uploadConfig(configPath, configName);
+<   }
+< 
+689d432
+< 
+691,702d433
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   @Deprecated
+<   public void downloadConfig(String configName, Path downloadPath) throws IOException {
+<     assertZKStateProvider().downloadConfig(configName, downloadPath);
+<   }
+< 

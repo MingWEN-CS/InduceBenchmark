@@ -1,0 +1,112 @@
+30a31
+> import javax.jcr.ItemNotFoundException;
+125,128d125
+<         if (node.hasPropertyName(JCR_VERSIONHISTORY)) {
+<             String message = null;
+<             NodeId nid = node.getNodeId();
+<             NodeId vhid = null;
+130,131c127,129
+<             try {
+<                 log.debug("Checking version history of node {}", nid);
+---
+>         String message = null;
+>         NodeId nid = node.getNodeId();
+>         boolean isVersioned = node.hasPropertyName(JCR_VERSIONHISTORY);
+133,134c131
+<                 String intro = "Removing references to an inconsistent version history of node "
+<                     + nid;
+---
+>         NodeId vhid = null;
+136,142c133,147
+<                 message = intro + " (getting the VersionInfo)";
+<                 VersionHistoryInfo vhi = versionManager.getVersionHistoryInfoForNode(node);
+<                 if (vhi != null) {
+<                     
+<                     
+<                     vhid = vhi.getVersionHistoryId();
+<                 }
+---
+>         try {
+>             String type = isVersioned ? "in-use" : "candidate";
+>             
+>             log.debug("Checking " + type + " version history of node {}", nid);
+> 
+>             String intro = "Removing references to an inconsistent " + type
+>                     + " version history of node " + nid;
+> 
+>             message = intro + " (getting the VersionInfo)";
+>             VersionHistoryInfo vhi = versionManager.getVersionHistoryInfoForNode(node);
+>             if (vhi != null) {
+>                 
+>                 
+>                 vhid = vhi.getVersionHistoryId();
+>             }
+144,145c149
+<                 message = intro + " (getting the InternalVersionHistory)";
+<                 InternalVersionHistory vh = versionManager.getVersionHistoryOfNode(nid);
+---
+>             message = intro + " (getting the InternalVersionHistory)";
+146a151,168
+>             InternalVersionHistory vh = null;
+>             
+>             try {
+>                 vh = versionManager.getVersionHistoryOfNode(nid);
+>             }
+>             catch (ItemNotFoundException ex) {
+>                 
+>                 if (isVersioned) {
+>                     throw ex;
+>                 }
+>             }
+> 
+>             if (vh == null) {
+>                 if (isVersioned) {
+>                     message = intro + "getVersionHistoryOfNode returned null";
+>                     throw new InconsistentVersioningState(message);    
+>                 }
+>             } else { 
+165,166c187
+<                         throw new InconsistentVersioningState("frozen node of "
+<                                 + v.getId() + " is missing.");
+---
+>                         throw new InconsistentVersioningState(message);
+172c193
+<                     throw new InconsistentVersioningState("root version of " + nid +" is missing.");
+---
+>                     throw new InconsistentVersioningState(message);
+174,182c195,202
+<             } catch (InconsistentVersioningState e) {
+<                 log.info(message, e);
+<                 NodeId nvhid = e.getVersionHistoryNodeId();
+<                 if (nvhid != null) {
+<                     if (vhid != null && !nvhid.equals(vhid)) {
+<                         log.error("vhrid returned with InconsistentVersioningState does not match the id we already had: "
+<                                 + vhid + " vs " + nvhid);
+<                     }
+<                     vhid = nvhid; 
+---
+>             }
+>         } catch (InconsistentVersioningState e) {
+>             log.info(message, e);
+>             NodeId nvhid = e.getVersionHistoryNodeId();
+>             if (nvhid != null) {
+>                 if (vhid != null && !nvhid.equals(vhid)) {
+>                     log.error("vhrid returned with InconsistentVersioningState does not match the id we already had: "
+>                             + vhid + " vs " + nvhid);
+184,187c204
+<                 removeVersionHistoryReferences(node, vhid);
+<             } catch (Exception e) {
+<                 log.info(message, e);
+<                 removeVersionHistoryReferences(node, vhid);
+---
+>                 vhid = nvhid; 
+188a206,209
+>             removeVersionHistoryReferences(node, vhid);
+>         } catch (Exception e) {
+>             log.info(message, e);
+>             removeVersionHistoryReferences(node, vhid);
+192c213,214
+<     private void removeVersionHistoryReferences(NodeState node, NodeId vhid) {
+---
+>     
+>     private void removeVersionHistoryReferences(NodeState node,  NodeId vhid) {

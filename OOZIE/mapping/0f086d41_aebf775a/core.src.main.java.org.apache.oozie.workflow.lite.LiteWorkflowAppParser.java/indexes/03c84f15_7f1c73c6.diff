@@ -1,0 +1,21 @@
+22a23
+> import org.apache.oozie.action.hadoop.FsActionExecutor;
+739a741,745
+>         
+>         
+>         
+>         
+>         
+740a747
+>                 FsActionExecutor.ACTION_TYPE.equals(actionElement.getName()) ||
+747a755
+>                         FsActionExecutor.ACTION_TYPE.equals(actionElement.getName()) ||
+752c760,761
+<             if (actionElement.getChild(JOB_TRACKER, actionNs) == null) {
+---
+>             if (actionElement.getChild(JOB_TRACKER, actionNs) == null &&
+>                     !FsActionExecutor.ACTION_TYPE.equals(actionElement.getName())) {
+763a773,775
+>         
+>         
+>         

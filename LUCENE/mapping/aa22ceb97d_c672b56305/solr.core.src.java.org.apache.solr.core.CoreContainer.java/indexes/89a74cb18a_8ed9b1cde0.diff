@@ -1,0 +1,25 @@
+428a429,438
+>                   if (isZooKeeperAware()) {
+>                     try {
+>                       zkSys.zkController.unregister(name, p);
+>                     } catch (InterruptedException e) {
+>                       Thread.currentThread().interrupt();
+>                       SolrException.log(log, null, e);
+>                     } catch (KeeperException e) {
+>                       SolrException.log(log, null, e);
+>                     }
+>                   }
+990a1001,1013
+>       
+>       
+>       
+>       if (isZooKeeperAware()) {
+>         try {
+>           getZkController().unregister(name, desc);
+>         } catch (InterruptedException e) {
+>           Thread.currentThread().interrupt();
+>           SolrException.log(log, null, e);
+>         } catch (KeeperException e) {
+>           SolrException.log(log, null, e);
+>         }
+>       }

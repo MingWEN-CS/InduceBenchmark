@@ -1,0 +1,46 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.api.services.ldap;
+
+import java.util.Map;
+
+
+
+
+public class AmbariConfiguration {
+
+  
+
+
+  private String type;
+
+  private Map<String, Object> properties = null;
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public Map<String, Object> getProperties() {
+    return properties;
+  }
+
+  public void setProperties(Map<String, Object> data) {
+    this.properties = data;
+  }
+}

@@ -1,0 +1,42 @@
+197d196
+<         verifyDBState();
+234c233
+<         postUpgradeTasks(sqlFile, run, false);
+---
+>         postUpgradeTasksFor40(sqlFile, run);
+407a407,441
+>     private void postUpgradeTasksFor40(String sqlFile, boolean run) throws Exception {
+>         PrintWriter writer = new PrintWriter(new FileWriter(sqlFile, true));
+>         writer.println();
+>         Connection conn = (run) ? createConnection() : null;
+>         try {
+>             if (!getDBVendor().equals("derby")) {
+>                 String  updateMissingDependenciesQuery;
+>                 if (getDBVendor().equals("sqlserver")){
+>                     updateMissingDependenciesQuery = UPDATE_DELIMITER_VER_TWO_MSSQL;
+>                 } else {
+>                     updateMissingDependenciesQuery = UPDATE_DELIMITER_VER_TWO;
+>                 }
+> 
+>                 writer.println(updateMissingDependenciesQuery + ";");
+>                 System.out.println("Post-upgrade MISSING_DEPENDENCIES column");
+>                 if (run) {
+>                     Statement st = conn.createStatement();
+>                     st.executeUpdate(updateMissingDependenciesQuery);
+>                     st.close();
+>                 }
+>             }
+>             else {
+>                 System.out.println("Post-upgrade MISSING_DEPENDENCIES column in Derby");
+>                 replaceForDerby(";", "!!");
+>             }
+>             System.out.println("DONE");
+>             writer.close();
+>         }
+>         finally {
+>             if (run) {
+>                 conn.close();
+>             }
+>       }
+>     }
+> 

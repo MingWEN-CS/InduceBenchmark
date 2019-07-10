@@ -1,0 +1,144 @@
+168c168,170
+<                 LOG.debug("file [{}] added to local cache.", fileName);
+---
+>                 LOG.debug(
+>                     "file [{}] doesn't exists. adding to local cache using inputstream.",
+>                     fileName);
+170a173,175
+>                 LOG.debug(
+>                     "file [{}] doesn't exists. returning transient file [{}].",
+>                     fileName, transFile.getAbsolutePath());
+174d178
+<             
+175a180,182
+>             LOG.debug(
+>                 "file [{}]  exists. adding to local cache using inputstream.",
+>                 fileName);
+178c185
+<         cache.tryPurge();
+---
+>         tryPurge();
+217c224,225
+<     public AsyncUploadCacheResult store(String fileName, File src, boolean tryForAsyncUpload) throws IOException {
+---
+>     public AsyncUploadCacheResult store(String fileName, File src,
+>             boolean tryForAsyncUpload) throws IOException {
+226c234,235
+<             || (src.exists() && !dest.exists() && !src.equals(dest) && canAdmitFile(src.length())
+---
+>             || (src.exists() && !dest.exists() && !src.equals(dest)
+>                 && canAdmitFile(src.length())
+230a240,241
+>             LOG.debug("file [{}]  exists= [{}] and adding to local cache.",
+>                 fileName, destExists);
+232d242
+<             LOG.debug("file [{}] added to local cache.", fileName);
+236a247,249
+>         } else {
+>             LOG.info("file [{}] exists= [{}] not added to local cache.",
+>                 fileName, destExists);
+238c251
+<         cache.tryPurge();
+---
+>         tryPurge();
+264d276
+<             cache.put(fileName, f.length());
+265a278
+>             cache.get(fileName);
+354,355c367,369
+<         for (String n : new ArrayList<String>(toBeDeleted)) {
+<             if (tryDelete(n)) {
+---
+>         for (String fileName : new ArrayList<String>(toBeDeleted)) {
+>             fileName = fileName.replace("\\", "/");
+>             if( cache.remove(fileName) != null) {
+399a414,435
+>     
+>     
+> 
+> 
+> 
+> 
+>     synchronized void tryPurge() {
+>         if (!isInPurgeMode()
+>             && cache.currentSizeInBytes > cache.cachePurgeTrigSize) {
+>             setPurgeMode(true);
+>             LOG.info(
+>                 "cache.entries = [{}], currentSizeInBytes=[{}]  exceeds cachePurgeTrigSize=[{}]",
+>                 new Object[] { cache.size(), cache.currentSizeInBytes,
+>                     cache.cachePurgeTrigSize });
+>             new Thread(new PurgeJob()).start();
+>         } else {
+>             LOG.debug(
+>                 "currentSizeInBytes=[{}],cachePurgeTrigSize=[{}], isInPurgeMode =[{}]",
+>                 new Object[] { cache.currentSizeInBytes,
+>                     cache.cachePurgeTrigSize, isInPurgeMode() });
+>         }
+>     }
+464a501,503
+>             } else {
+>                 LOG.info("not able to remove cache entry [{}], size [{}]", key,
+>                     super.get(key));
+470,475c509,522
+<         public synchronized Long put(final String fileName, final Long value) {
+<             Long oldValue = cache.get(fileName);
+<             if (oldValue == null) {
+<                 long flength = value.longValue();
+<                 currentSizeInBytes += flength;
+<                 return super.put(fileName.replace("\\", "/"), value);
+---
+>         public Long put(final String fileName, final Long value) {
+>             if( isInPurgeMode()) {
+>                 LOG.debug("cache is purge mode: put is no-op");
+>                 return null;
+>             }
+>             synchronized (this) {
+>                 Long oldValue = cache.get(fileName);
+>                 if (oldValue == null) {
+>                     long flength = value.longValue();
+>                     currentSizeInBytes += flength;
+>                     return super.put(fileName.replace("\\", "/"), value);
+>                 }
+>                 toBeDeleted.remove(fileName);
+>                 return oldValue;
+477,478d523
+<            toBeDeleted.remove(fileName);
+<            return oldValue;
+480d524
+< 
+482,497c526,533
+< 
+< 
+< 
+< 
+<         synchronized void tryPurge() {
+<             if (currentSizeInBytes > cachePurgeTrigSize && !isInPurgeMode()) {
+<                 setPurgeMode(true);
+<                 LOG.info(
+<                     "currentSizeInBytes=[{}]  exceeds cachePurgeTrigSize=[{}]",
+<                     cache.currentSizeInBytes, cache.cachePurgeTrigSize);
+<                 new Thread(new PurgeJob()).start();
+<             } else {
+<                 LOG.debug(
+<                     "currentSizeInBytes=[{}],cachePurgeTrigSize=[{}], isInPurgeMode =[{}]",
+<                     new Object[] { cache.currentSizeInBytes,
+<                         cache.cachePurgeTrigSize, isInPurgeMode() });
+---
+>         @Override
+>         public Long get(Object key) {
+>             if( isInPurgeMode()) {
+>                 LOG.debug("cache is purge mode: get is no-op");
+>                 return null;
+>             }
+>             synchronized (this) {
+>                 return super.get(key);
+500a537
+>         
+527d563
+<                     LOG.info(" cache purge job started");
+529a566
+>                     LOG.info(" cache purge job started. initial cache entries = [{}]", initialSize);
+539d575
+< 
+544d579
+< 

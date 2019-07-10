@@ -1,0 +1,32 @@
+46a47,57
+>   @Deprecated
+>   public abstract void initialize(Configuration conf, FileSystem fs, Path home);
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+109a121,139
+> 
+> 
+>   @Deprecated
+>   public static TrashPolicy getInstance(Configuration conf, FileSystem fs, Path home) {
+>     Class<? extends TrashPolicy> trashClass = conf.getClass(
+>         "fs.trash.classname", TrashPolicyDefault.class, TrashPolicy.class);
+>     TrashPolicy trash = ReflectionUtils.newInstance(trashClass, conf);
+>     trash.initialize(conf, fs, home); 
+>     return trash;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 

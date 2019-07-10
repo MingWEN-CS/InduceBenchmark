@@ -1,0 +1,10 @@
+60a61
+> import org.apache.lucene.util.CharsRefBuilder;
+483c484
+<     CharsRef charsRef = new CharsRef();
+---
+>     CharsRefBuilder charsRef = new CharsRefBuilder();
+702c703
+<     CharsRef charsRef = new CharsRef(10);
+---
+>     CharsRefBuilder charsRef = new CharsRefBuilder();

@@ -1,0 +1,76 @@
+18a19,21
+> import java.lang.invoke.MethodHandles;
+> import java.util.concurrent.ExecutorService;
+> 
+20d22
+< import org.apache.http.conn.ClientConnectionManager;
+22,25c24
+< import org.apache.http.impl.client.DefaultHttpClient;
+< import org.apache.http.impl.conn.PoolingClientConnectionManager;
+< import org.apache.http.impl.conn.SchemeRegistryFactory;
+< import org.apache.solr.client.solrj.impl.HttpClientConfigurer;
+---
+> import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+31d29
+< import org.apache.solr.common.util.IOUtils;
+33d30
+< import org.apache.solr.core.NodeConfig;
+37,39d33
+< import java.lang.invoke.MethodHandles;
+< import java.util.concurrent.ExecutorService;
+< 
+57,58d50
+<   private PoolingClientConnectionManager clientConnectionManager;
+<   
+61c53
+<   private final UpdateShardHandlerConfig cfg;
+---
+>   private final PoolingHttpClientConnectionManager clientConnectionManager;
+64,65c56
+<     this.cfg = cfg;
+<     clientConnectionManager = new PoolingClientConnectionManager(SchemeRegistryFactory.createSystemDefault());
+---
+>     clientConnectionManager = new PoolingHttpClientConnectionManager(HttpClientUtil.getSchemaRegisteryProvider().getSchemaRegistry());
+71c62
+<     ModifiableSolrParams clientParams = getClientParams();
+---
+>     ModifiableSolrParams clientParams = new ModifiableSolrParams();
+75,90d65
+< 
+<   protected ModifiableSolrParams getClientParams() {
+<     ModifiableSolrParams clientParams = new ModifiableSolrParams();
+<     if (cfg != null) {
+<       clientParams.set(HttpClientUtil.PROP_SO_TIMEOUT,
+<           cfg.getDistributedSocketTimeout());
+<       clientParams.set(HttpClientUtil.PROP_CONNECTION_TIMEOUT,
+<           cfg.getDistributedConnectionTimeout());
+<     }
+<     
+<     
+<     
+<     clientParams.set(HttpClientUtil.PROP_USE_RETRY, true);
+<     return clientParams;
+<   }
+<   
+95,103d69
+< 
+<   public void reconfigureHttpClient(HttpClientConfigurer configurer) {
+<     log.info("Reconfiguring the default client with: " + configurer);
+<     configurer.configure((DefaultHttpClient)client, getClientParams());
+<   }
+< 
+<   public ClientConnectionManager getConnectionManager() {
+<     return clientConnectionManager;
+<   }
+114a81,85
+> 
+>   public PoolingHttpClientConnectionManager getConnectionManager() {
+>     return clientConnectionManager;
+>   }
+> 
+134,135c105,106
+<       IOUtils.closeQuietly(client);
+<       clientConnectionManager.shutdown();
+---
+>       HttpClientUtil.close(client);
+>       clientConnectionManager.close();

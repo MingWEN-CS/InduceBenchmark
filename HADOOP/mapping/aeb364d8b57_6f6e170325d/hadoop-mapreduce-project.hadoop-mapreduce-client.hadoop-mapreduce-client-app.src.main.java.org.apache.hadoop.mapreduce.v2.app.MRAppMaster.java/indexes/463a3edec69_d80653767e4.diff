@@ -1,0 +1,4 @@
+490c490
+<         fsTokens.addTokensToUGI(currentUser); 
+---
+>         currentUser.addCredentials(fsTokens); 

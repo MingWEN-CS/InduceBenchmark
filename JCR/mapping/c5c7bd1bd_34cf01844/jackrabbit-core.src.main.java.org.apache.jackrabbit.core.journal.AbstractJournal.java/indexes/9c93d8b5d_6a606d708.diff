@@ -1,0 +1,12 @@
+330,332c330,336
+<         doUnlock(successful);
+< 
+<         rwLock.writeLock().release();
+---
+>     	try {
+>     		doUnlock(successful);
+>     	} finally {
+>     		
+>     		
+>             rwLock.writeLock().release();
+>     	}

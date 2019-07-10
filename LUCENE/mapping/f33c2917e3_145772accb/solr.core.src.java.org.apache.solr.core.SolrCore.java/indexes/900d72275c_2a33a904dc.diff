@@ -1,0 +1,4 @@
+500c500
+<         SolrIndexWriter writer = SolrIndexWriter.create("SolrCore.initIndex", indexDir, getDirectoryFactory(), true, schema, solrConfig.indexConfig, solrDelPolicy, codec, false);
+---
+>         SolrIndexWriter writer = SolrIndexWriter.create("SolrCore.initIndex", indexDir, getDirectoryFactory(), true, schema, solrConfig.indexConfig, solrDelPolicy, codec);

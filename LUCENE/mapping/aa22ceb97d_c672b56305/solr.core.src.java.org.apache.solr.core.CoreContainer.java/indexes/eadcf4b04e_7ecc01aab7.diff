@@ -1,0 +1,263 @@
+500d499
+< 
+591d589
+< 
+610c608
+<           
+---
+> 
+1034a1033
+>       name = checkDefault(name);
+1036d1034
+<       name= checkDefault(name);
+1041,1043c1039,1041
+<       CoreDescriptor cd = core.getCoreDescriptor();
+<   
+<       File instanceDir = new File(cd.getInstanceDir());
+---
+>       try {
+>         coreMaps.waitAddPendingCoreOps(name);
+>         CoreDescriptor cd = core.getCoreDescriptor();
+1045,1054c1043,1053
+<       log.info("Reloading SolrCore '{}' using instanceDir: {}", 
+<                cd.getName(), instanceDir.getAbsolutePath());
+<     
+<       SolrResourceLoader solrLoader;
+<       if(zkController == null) {
+<         solrLoader = new SolrResourceLoader(instanceDir.getAbsolutePath(), libLoader, SolrProperties.getCoreProperties(instanceDir.getAbsolutePath(), cd));
+<       } else {
+<         try {
+<           String collection = cd.getCloudDescriptor().getCollectionName();
+<           zkController.createCollectionZkNode(cd.getCloudDescriptor());
+---
+>         File instanceDir = new File(cd.getInstanceDir());
+> 
+>         log.info("Reloading SolrCore '{}' using instanceDir: {}",
+>                  cd.getName(), instanceDir.getAbsolutePath());
+>         SolrResourceLoader solrLoader;
+>         if(zkController == null) {
+>           solrLoader = new SolrResourceLoader(instanceDir.getAbsolutePath(), libLoader, SolrProperties.getCoreProperties(instanceDir.getAbsolutePath(), cd));
+>         } else {
+>           try {
+>             String collection = cd.getCloudDescriptor().getCollectionName();
+>             zkController.createCollectionZkNode(cd.getCloudDescriptor());
+1056,1058c1055,1070
+<           String zkConfigName = zkController.readConfigName(collection);
+<           if (zkConfigName == null) {
+<             log.error("Could not find config name for collection:" + collection);
+---
+>             String zkConfigName = zkController.readConfigName(collection);
+>             if (zkConfigName == null) {
+>               log.error("Could not find config name for collection:" + collection);
+>               throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+>                                            "Could not find config name for collection:" + collection);
+>             }
+>             solrLoader = new ZkSolrResourceLoader(instanceDir.getAbsolutePath(), zkConfigName, libLoader,
+>                 SolrProperties.getCoreProperties(instanceDir.getAbsolutePath(), cd), zkController);
+>           } catch (KeeperException e) {
+>             log.error("", e);
+>             throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+>                                          "", e);
+>           } catch (InterruptedException e) {
+>             
+>             Thread.currentThread().interrupt();
+>             log.error("", e);
+1060c1072
+<                                          "Could not find config name for collection:" + collection);
+---
+>                                          "", e);
+1062,1073d1073
+<           solrLoader = new ZkSolrResourceLoader(instanceDir.getAbsolutePath(), zkConfigName, libLoader,
+<               SolrProperties.getCoreProperties(instanceDir.getAbsolutePath(), cd), zkController);
+<         } catch (KeeperException e) {
+<           log.error("", e);
+<           throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<                                        "", e);
+<         } catch (InterruptedException e) {
+<           
+<           Thread.currentThread().interrupt();
+<           log.error("", e);
+<           throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<                                        "", e);
+1074a1075,1080
+>         SolrCore newCore = core.reload(solrLoader, core);
+>         
+>         coreMaps.removeCoreToOrigName(newCore, core);
+>         registerCore(false, name, newCore, false);
+>       } finally {
+>         coreMaps.removeFromPendingOps(name);
+1076,1081d1081
+<       SolrCore newCore = core.reload(solrLoader, core);
+<       
+<       coreMaps.removeCoreToOrigName(newCore, core);
+< 
+<       registerCore(false, name, newCore, false);
+< 
+1140c1140,1143
+<     if (core != null) return core;
+---
+>     if (core != null) {
+>       core.open();
+>       return core;
+>     }
+1148c1151,1152
+<     core = coreMaps.waitPendingCoreOps(name); 
+---
+>     
+>     core = coreMaps.waitAddPendingCoreOps(name);
+1152,1154c1156,1157
+< 
+<     if (core == null) {
+<       try {
+---
+>     try {
+>       if (core == null) {
+1158,1161c1161,1162
+<       } catch (Exception ex) {
+<         throw recordAndThrow(name, "Unable to create core: " + name, ex);
+<       } finally {
+<         coreMaps.releasePending(name);
+---
+>       } else {
+>         core.open();
+1162a1164,1167
+>     } catch(Exception ex){
+>       throw recordAndThrow(name, "Unable to create core: " + name, ex);
+>     } finally {
+>       coreMaps.removeFromPendingOps(name);
+1163a1169
+> 
+1373a1380
+> 
+1391c1398,1399
+<   private static final Set<String> pendingDynamicLoads = new TreeSet<String>();
+---
+>   
+>   private static final Set<String> pendingCoreOps = new HashSet<String>();
+1394c1402,1403
+<   private static final List<SolrCore> pendingDynamicCloses = new ArrayList<SolrCore>();
+---
+>   
+>   private static final List<SolrCore> pendingCloses = new ArrayList<SolrCore>();
+1411,1415c1420,1421
+<               SolrCore closeMe = eldest.getValue();
+<               synchronized (locker) {
+<                 pendingDynamicCloses.add(closeMe);
+<                 locker.notifyAll(); 
+<               }
+---
+>               pendingCloses.add(eldest.getValue()); 
+>               locker.notifyAll(); 
+1436c1442
+<     List<SolrCore> pendingClosers;
+---
+>     List<SolrCore> pendingToClose;
+1440c1446
+<       pendingClosers = new ArrayList(pendingDynamicCloses);
+---
+>       pendingToClose = new ArrayList(pendingCloses);
+1469,1470c1475,1480
+<     for (SolrCore core : pendingClosers) {
+<       core.close();
+---
+>     for (SolrCore core : pendingToClose) {
+>       try {
+>         core.close();
+>       } catch (Throwable t) {
+>         SolrException.log(CoreContainer.log, "Error shutting down core", t);
+>       }
+1613c1623
+<     synchronized (locker) { 
+---
+>     synchronized (locker) {
+1616d1625
+<         core.open();    
+1624,1628c1633
+<       core = transientCores.get(name);
+<       if (core != null) {
+<         core.open();  
+<         return core;
+<       }
+---
+>       return transientCores.get(name);
+1630,1632d1634
+< 
+<     return null;
+< 
+1723c1725
+<   protected SolrCore waitPendingCoreOps(String name) {
+---
+>   protected SolrCore waitAddPendingCoreOps(String name) {
+1726,1727d1727
+<     SolrCore ret = null;
+< 
+1731,1737c1731,1733
+<         pending = pendingDynamicLoads.contains(name); 
+<         if (! pending) {
+<           
+<           
+<           
+<           
+<           for (SolrCore core : pendingDynamicCloses) {
+---
+>         pending = pendingCoreOps.contains(name); 
+>         if (! pending) { 
+>           for (SolrCore core : pendingCloses) {
+1744d1739
+< 
+1755,1759c1750,1753
+< 
+<       if (!container.isShutDown()) {
+<         ret = getCoreFromAnyList(name); 
+<         if (ret == null) {
+<           pendingDynamicLoads.add(name); 
+---
+>       
+>       if (! container.isShutDown()) {
+>         if (! pendingCoreOps.add(name)) {
+>           CoreContainer.log.warn("Replaced an entry in pendingCoreOps {}, we should not be doing this", name);
+1760a1755
+>         return getCoreFromAnyList(name); 
+1763,1764c1758
+< 
+<     return ret;
+---
+>     return null;
+1768c1762,1763
+<   protected void releasePending(String name) {
+---
+>   
+>   protected void removeFromPendingOps(String name) {
+1770c1765,1767
+<       pendingDynamicLoads.remove(name);
+---
+>       if (! pendingCoreOps.remove(name)) {
+>         CoreContainer.log.warn("Tried to remove core {} from pendingCoreOps and it wasn't there. ", name);
+>       }
+1774a1772
+> 
+1883a1882
+>   
+1886,1889c1885,1888
+<       if (pendingDynamicCloses.size() == 0) return null; 
+<       
+<       for (SolrCore core : pendingDynamicCloses) {
+<         if (! pendingDynamicLoads.contains(core.getName())) {  
+---
+>       for (SolrCore core : pendingCloses) {
+>         if (! pendingCoreOps.contains(core.getName())) {
+>           pendingCoreOps.add(core.getName());
+>           pendingCloses.remove(core);
+1897,1902c1896
+<   protected void removeClosedFromCloser(SolrCore core) {
+<     synchronized (locker) {
+<       pendingDynamicCloses.remove(core);
+<       locker.notifyAll();
+<     }
+<   }
+---
+> 
+1939c1933
+<           coreMaps.removeClosedFromCloser(removeMe);
+---
+>           coreMaps.removeFromPendingOps(removeMe.getName());

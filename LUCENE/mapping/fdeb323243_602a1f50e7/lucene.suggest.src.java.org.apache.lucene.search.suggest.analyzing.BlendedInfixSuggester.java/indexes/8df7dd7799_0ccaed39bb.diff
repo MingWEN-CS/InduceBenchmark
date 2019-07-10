@@ -1,0 +1,27 @@
+44d43
+< import org.apache.lucene.util.Version;
+100,108c99
+<     this(analyzer.getVersion(), dir, analyzer);
+<   }
+< 
+<   
+< 
+< 
+<   @Deprecated
+<   public BlendedInfixSuggester(Version matchVersion, Directory dir, Analyzer analyzer) throws IOException {
+<     super(matchVersion, dir, analyzer);
+---
+>     super(dir, analyzer);
+125,134c116
+<     this(indexAnalyzer.getVersion(), dir, indexAnalyzer, queryAnalyzer, minPrefixChars, blenderType, numFactor, commitOnBuild);
+<   }
+< 
+<   
+< 
+< 
+<   @Deprecated
+<   public BlendedInfixSuggester(Version matchVersion, Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer,
+<                                int minPrefixChars, BlenderType blenderType, int numFactor, boolean commitOnBuild) throws IOException {
+<     super(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild);
+---
+>     super(dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild);

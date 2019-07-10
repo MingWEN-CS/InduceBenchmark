@@ -1,0 +1,9 @@
+82a83
+> import org.apache.hadoop.fs.Path;
+515c516,519
+<           datafiles.add(new FileRef(entry.getValue().toString(), this.master.fs.getFullPath(FileType.TABLE, entry.getValue().toString())));
+---
+>           
+>           
+>           datafiles.add(new FileRef(entry.getValue().toString(), this.master.fs.getFullPath(FileType.TABLE, Path.SEPARATOR + extent.getTableId()
+>               + entry.getValue().toString())));

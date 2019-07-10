@@ -1,0 +1,76 @@
+38a39
+> import org.apache.ambari.server.state.ConfigHelper;
+39a41
+> import org.apache.ambari.server.state.StackId;
+359c361
+<             
+---
+> 
+421a424
+>     setStackToolsAndFeatures(clusterConfig, configTypesUpdated);
+534c537
+<       authToLocalPerClusterMap = new HashMap<Long, Set<String>>();
+---
+>       authToLocalPerClusterMap = new HashMap<>();
+2189c2192
+<       if (m.matches())
+---
+>       if (m.matches()) {
+2190a2194
+>       }
+2198c2202
+<           if (m.matches())
+---
+>           if (m.matches()) {
+2199a2204
+>           }
+2232a2238
+>     @Override
+2960a2967,3009
+> 
+> 
+>   private void setStackToolsAndFeatures(Configuration configuration, Set<String> configTypesUpdated)
+>       throws ConfigurationTopologyException {
+>     ConfigHelper configHelper = clusterTopology.getAmbariContext().getConfigHelper();
+>     Stack stack = clusterTopology.getBlueprint().getStack();
+>     String stackName = stack.getName();
+>     String stackVersion = stack.getVersion();
+> 
+>     StackId stackId = new StackId(stackName, stackVersion);
+> 
+>     Set<String> properties = Sets.newHashSet(ConfigHelper.CLUSTER_ENV_STACK_NAME_PROPERTY,
+>         ConfigHelper.CLUSTER_ENV_STACK_ROOT_PROPERTY, ConfigHelper.CLUSTER_ENV_STACK_TOOLS_PROPERTY,
+>         ConfigHelper.CLUSTER_ENV_STACK_FEATURES_PROPERTY);
+> 
+>     try {
+>       Map<String, Map<String, String>> defaultStackProperties = configHelper.getDefaultStackProperties(stackId);
+>       Map<String,String> clusterEnvDefaultProperties = defaultStackProperties.get(CLUSTER_ENV_CONFIG_TYPE_NAME);
+> 
+>       for( String property : properties ){
+>         if (defaultStackProperties.containsKey(property)) {
+>           configuration.setProperty(CLUSTER_ENV_CONFIG_TYPE_NAME, property,
+>               clusterEnvDefaultProperties.get(property));
+> 
+>           
+>           configTypesUpdated.add(CLUSTER_ENV_CONFIG_TYPE_NAME);
+>         }
+>       }
+>     } catch( AmbariException ambariException ){
+>       throw new ConfigurationTopologyException("Unable to retrieve the stack tools and features",
+>           ambariException);
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+3102c3151
+<       return !(this.propertyConfigType.equals(configType) &&
+---
+>       return !(propertyConfigType.equals(configType) &&

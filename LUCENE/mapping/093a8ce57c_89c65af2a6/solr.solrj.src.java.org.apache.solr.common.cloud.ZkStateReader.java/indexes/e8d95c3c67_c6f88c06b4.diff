@@ -1,0 +1,39 @@
+447,453d446
+<     for (String coll : interestingCollections) {
+<       if (!result.containsKey(coll) && !watchedCollectionStates.containsKey(coll)) {
+<         new StateWatcher(coll).refreshAndWatch(true);
+<       }
+<     }
+<   
+<     
+1051,1059c1044,1063
+<     try {
+<       Stat stat = new Stat();
+<       byte[] data = zkClient.getData(collectionPath, watcher, stat, true);
+<       ClusterState state = ClusterState.load(stat.getVersion(), data,
+<               Collections.<String>emptySet(), collectionPath);
+<       ClusterState.CollectionRef collectionRef = state.getCollectionStates().get(coll);
+<       return collectionRef == null ? null : collectionRef.get();
+<     } catch (KeeperException.NoNodeException e) {
+<       return null;
+---
+>     while (true) {
+>       try {
+>         Stat stat = new Stat();
+>         byte[] data = zkClient.getData(collectionPath, watcher, stat, true);
+>         ClusterState state = ClusterState.load(stat.getVersion(), data,
+>             Collections.<String>emptySet(), collectionPath);
+>         ClusterState.CollectionRef collectionRef = state.getCollectionStates().get(coll);
+>         return collectionRef == null ? null : collectionRef.get();
+>       } catch (KeeperException.NoNodeException e) {
+>         if (watcher != null) {
+>           
+>           Stat exists = zkClient.exists(collectionPath, watcher, true);
+>           if (exists != null) {
+>             
+>             
+>             continue;
+>           }
+>         }
+>         return null;
+>       }

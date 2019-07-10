@@ -1,0 +1,8 @@
+49c49
+< import org.apache.hadoop.http.HttpServer;
+---
+> import org.apache.hadoop.http.HttpServer2;
+157c157
+<       if (!HttpServer.isInstrumentationAccessAllowed(getServletContext(),
+---
+>       if (!HttpServer2.isInstrumentationAccessAllowed(getServletContext(),

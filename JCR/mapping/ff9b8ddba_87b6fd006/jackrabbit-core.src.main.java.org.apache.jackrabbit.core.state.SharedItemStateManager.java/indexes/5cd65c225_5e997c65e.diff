@@ -1,0 +1,13 @@
+802,803c802,810
+<                     state.setStatus(ItemState.STATUS_EXISTING);
+<                     cache.cache(state);
+---
+>                     
+>                     
+>                     
+>                     
+>                     
+>                     if (!shared.deleted(state.getId())) {
+>                         state.setStatus(ItemState.STATUS_EXISTING);
+>                         cache.cache(state);
+>                     }

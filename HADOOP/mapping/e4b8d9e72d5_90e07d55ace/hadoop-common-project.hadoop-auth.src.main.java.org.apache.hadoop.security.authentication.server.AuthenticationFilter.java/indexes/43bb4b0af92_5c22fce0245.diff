@@ -1,0 +1,8 @@
+282d281
+<       String signatureSecret = config.getProperty(SIGNATURE_SECRET, null);
+288,289d286
+<       } else if (signatureSecret != null) {
+<         providerClassName = StringSignerSecretProvider.class.getName();
+298,299d294
+<       } else if ("string".equals(signerSecretProviderName)) {
+<         providerClassName = StringSignerSecretProvider.class.getName();

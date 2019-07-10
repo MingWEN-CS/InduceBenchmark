@@ -1,0 +1,23 @@
+41,42d40
+< import org.apache.jackrabbit.core.nodetype.PropDefId;
+< import org.apache.jackrabbit.core.nodetype.PropertyDefinitionImpl;
+49a48
+> import org.apache.jackrabbit.spi.QPropertyDefinition;
+140d138
+<             persistentState.setDefinitionId(transientState.getDefinitionId());
+165d162
+<         thisState.setDefinitionId(transientState.getDefinitionId());
+171,177c168,170
+<     protected void onRedefine(PropDefId defId) throws RepositoryException {
+<         PropertyDefinitionImpl newDef =
+<                 session.getNodeTypeManager().getPropertyDefinition(defId);
+<         
+<         PropertyState thisState = (PropertyState) getOrCreateTransientItemState();
+<         
+<         thisState.setDefinitionId(defId);
+---
+>     protected void onRedefine(QPropertyDefinition def) throws RepositoryException {
+>         org.apache.jackrabbit.spi.commons.nodetype.PropertyDefinitionImpl newDef =
+>                 session.getNodeTypeManager().getPropertyDefinition(def);
+436d428
+<         final PropertyDefinition definition = data.getPropertyDefinition();

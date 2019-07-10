@@ -1,0 +1,21 @@
+694d693
+<           LOG.info("Host:" + host + ", role:" + roleStr + ", actionId:" + s.getActionId() + " timed out");
+696,697c695,705
+<             LOG.warn("Host:" + host + ", role:" + roleStr + ", actionId:" + s.getActionId() + " expired");
+<             db.timeoutHostRole(host, s.getRequestId(), s.getStageId(), c.getRole(), s.isAutoSkipOnFailureSupported());
+---
+>             LOG.warn("Host: {}, role: {}, actionId: {} expired and will be failed", host, roleStr,
+>                 s.getActionId());
+> 
+>             
+>             boolean isSkipSupported = s.isAutoSkipOnFailureSupported();
+>             HostRoleCommand hostRoleCommand = s.getHostRoleCommand(c.getTaskId());
+>             if (isSkipSupported && null != hostRoleCommand) {
+>               isSkipSupported = hostRoleCommand.isFailureAutoSkipped();
+>             }
+> 
+>             db.timeoutHostRole(host, s.getRequestId(), s.getStageId(), c.getRole(), isSkipSupported);
+716a725,727
+>             LOG.info("Host: {}, role: {}, actionId: {} timed out and will be rescheduled", host,
+>                 roleStr, s.getActionId());
+> 

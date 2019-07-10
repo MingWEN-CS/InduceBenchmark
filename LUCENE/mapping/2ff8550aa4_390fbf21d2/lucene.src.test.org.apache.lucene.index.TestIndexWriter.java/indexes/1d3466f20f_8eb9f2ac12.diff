@@ -1,0 +1,29 @@
+42d41
+< import org.apache.lucene.analysis.TeeSinkTokenFilter;
+4185,4210d4183
+< 
+<   
+<   public void testEndOffsetPositionWithTeeSinkTokenFilter() throws Exception {
+<     MockRAMDirectory dir = new MockRAMDirectory();
+<     Analyzer analyzer = new WhitespaceAnalyzer(TEST_VERSION_CURRENT);
+<     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+<     Document doc = new Document();
+<     TeeSinkTokenFilter tee = new TeeSinkTokenFilter(analyzer.tokenStream("field", new StringReader("abcd   ")));
+<     TokenStream sink = tee.newSinkTokenStream();
+<     Field f1 = new Field("field", tee, Field.TermVector.WITH_POSITIONS_OFFSETS);
+<     Field f2 = new Field("field", sink, Field.TermVector.WITH_POSITIONS_OFFSETS);
+<     doc.add(f1);
+<     doc.add(f2);
+<     w.addDocument(doc);
+<     w.close();
+< 
+<     IndexReader r = IndexReader.open(dir, true);
+<     TermVectorOffsetInfo[] termOffsets = ((TermPositionVector) r.getTermFreqVector(0, "field")).getOffsets(0);
+<     assertEquals(2, termOffsets.length);
+<     assertEquals(0, termOffsets[0].getStartOffset());
+<     assertEquals(4, termOffsets[0].getEndOffset());
+<     assertEquals(8, termOffsets[1].getStartOffset());
+<     assertEquals(12, termOffsets[1].getEndOffset());
+<     r.close();
+<     dir.close();
+<   }

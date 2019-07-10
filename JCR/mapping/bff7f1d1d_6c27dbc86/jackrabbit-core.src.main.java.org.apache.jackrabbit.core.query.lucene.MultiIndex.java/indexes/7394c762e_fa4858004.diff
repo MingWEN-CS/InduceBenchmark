@@ -1,0 +1,110 @@
+100c100
+<     private final Set deletable = new HashSet();
+---
+>     private final Set<String> deletable = new HashSet<String>();
+108c108,109
+<     private final List indexes = new ArrayList();
+---
+>     private final List<PersistentIndex> indexes =
+>         new ArrayList<PersistentIndex>();
+196c197
+<     private final Set excludedIDs;
+---
+>     private final Set<NodeId> excludedIDs;
+226,227c227
+<     MultiIndex(SearchIndex handler,
+<                Set excludedIDs) throws IOException {
+---
+>     MultiIndex(SearchIndex handler, Set<NodeId> excludedIDs) throws IOException {
+233c233
+<         this.excludedIDs = new HashSet(excludedIDs);
+---
+>         this.excludedIDs = new HashSet<NodeId>(excludedIDs);
+525,528c525,529
+<     synchronized IndexReader[] getIndexReaders(String[] indexNames, IndexListener listener)
+<             throws IOException {
+<         Set names = new HashSet(Arrays.asList(indexNames));
+<         Map indexReaders = new HashMap();
+---
+>     synchronized IndexReader[] getIndexReaders(
+>             String[] indexNames, IndexListener listener) throws IOException {
+>         Set<String> names = new HashSet<String>(Arrays.asList(indexNames));
+>         Map<ReadOnlyIndexReader, PersistentIndex> indexReaders =
+>             new HashMap<ReadOnlyIndexReader, PersistentIndex>();
+531,532c532
+<             for (Iterator it = indexes.iterator(); it.hasNext();) {
+<                 PersistentIndex index = (PersistentIndex) it.next();
+---
+>             for (PersistentIndex index : indexes) {
+539,541c539,540
+<             for (Iterator it = indexReaders.entrySet().iterator(); it.hasNext();) {
+<                 Map.Entry entry = (Map.Entry) it.next();
+<                 ReadOnlyIndexReader reader = (ReadOnlyIndexReader) entry.getKey();
+---
+>             for (Map.Entry<ReadOnlyIndexReader, PersistentIndex> entry
+>                     : indexReaders.entrySet()) {
+543c542
+<                     reader.release();
+---
+>                     entry.getKey().release();
+547c546
+<                 ((PersistentIndex) entry.getValue()).resetListener();
+---
+>                 entry.getValue().resetListener();
+552c551
+<         return (IndexReader[]) indexReaders.keySet().toArray(new IndexReader[indexReaders.size()]);
+---
+>         return indexReaders.keySet().toArray(new IndexReader[indexReaders.size()]);
+567,568c566
+<         for (Iterator it = indexes.iterator(); it.hasNext();) {
+<             PersistentIndex idx = (PersistentIndex) it.next();
+---
+>         for (PersistentIndex idx : indexes) {
+604,605c602
+<         for (Iterator it = indexes.iterator(); it.hasNext();) {
+<             PersistentIndex idx = (PersistentIndex) it.next();
+---
+>         for (PersistentIndex idx : indexes) {
+628c625
+<                         Collection deleted)
+---
+>                         Collection<Term> deleted)
+649,650c646,647
+<                 Set names = new HashSet(Arrays.asList(obsoleteIndexes));
+<                 for (Iterator it = names.iterator(); it.hasNext();) {
+---
+>                 Set<String> names = new HashSet<String>(Arrays.asList(obsoleteIndexes));
+>                 for (String indexName : names) {
+652d648
+<                     String indexName = (String) it.next();
+665,666c661
+<                 for (Iterator it = deleted.iterator(); it.hasNext();) {
+<                     Term id = (Term) it.next();
+---
+>                 for (Term id : deleted) {
+728c723,724
+<                 List readerList = new ArrayList();
+---
+>                 List<ReadOnlyIndexReader> readerList =
+>                     new ArrayList<ReadOnlyIndexReader>();
+737c733
+<                         (ReadOnlyIndexReader[]) readerList.toArray(new ReadOnlyIndexReader[readerList.size()]);
+---
+>                     readerList.toArray(new ReadOnlyIndexReader[readerList.size()]);
+1085,1087c1081
+<         List children = node.getChildNodeEntries();
+<         for (Iterator it = children.iterator(); it.hasNext();) {
+<             ChildNodeEntry child = (ChildNodeEntry) it.next();
+---
+>         for (ChildNodeEntry child : node.getChildNodeEntries()) {
+1109,1110c1103,1104
+<             for (Iterator it = deletable.iterator(); it.hasNext(); ) {
+<                 String indexName = (String) it.next();
+---
+>             for (Iterator<String> it = deletable.iterator(); it.hasNext(); ) {
+>                 String indexName = it.next();
+1773,1774c1767
+<             for (Iterator it = index.indexes.iterator(); it.hasNext();) {
+<                 PersistentIndex idx = (PersistentIndex) it.next();
+---
+>             for (PersistentIndex idx : index.indexes) {

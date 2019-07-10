@@ -1,0 +1,8 @@
+88c88
+<       public void update(SolrInputDocument document, UpdateRequest req) {
+---
+>       public void update(SolrInputDocument document, UpdateRequest req, Integer commitWithin, Boolean overwrite) {
+139c139
+<       public void update(SolrInputDocument document, UpdateRequest req) {
+---
+>       public void update(SolrInputDocument document, UpdateRequest req, Integer commitWithin, Boolean overwrite) {

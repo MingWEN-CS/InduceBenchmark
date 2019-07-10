@@ -1,0 +1,30 @@
+332c332
+<                 checkIndexingQueue();
+---
+>                 checkIndexingQueue(false);
+1274,1284d1273
+<     private synchronized void checkIndexingQueue() {
+<         checkIndexingQueue(false);
+<     }
+< 
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+1307,1311c1296,1302
+<                     for (NodeId id : finished.keySet()) {
+<                         executeAndLog(new DeleteNode(getTransactionId(), id));
+<                     }
+<                     for (Document document : finished.values()) {
+<                         executeAndLog(new AddNode(getTransactionId(), document));
+---
+>                     synchronized (this) {
+>                         for (NodeId id : finished.keySet()) {
+>                             executeAndLog(new DeleteNode(getTransactionId(), id));
+>                         }
+>                         for (Document document : finished.values()) {
+>                             executeAndLog(new AddNode(getTransactionId(), document));
+>                         }

@@ -1,0 +1,13 @@
+29d28
+< import java.lang.reflect.Field;
+199c198
+<             
+---
+>             Oid oid = KerberosUtil.getOidInstance("NT_GSS_KRB5_PRINCIPAL");
+201,203c200,201
+<                                                         GSSName.NT_HOSTBASED_SERVICE);
+<             Oid oid = KerberosUtil.getOidClassInstance(servicePrincipal, 
+<                 gssManager);
+---
+>                                                         oid);
+>             oid = KerberosUtil.getOidInstance("GSS_KRB5_MECH_OID");

@@ -1,0 +1,35 @@
+451,464c451,469
+<       DocCollection watched = watchedCollectionStates.get(s);
+<       if (watched != null) {
+<         
+<         result.put(s, new ClusterState.CollectionRef(watched));
+<       } else {
+<         
+<         
+<         final String collName = s;
+<         result.put(s, new ClusterState.CollectionRef(null) {
+<           @Override
+<           public DocCollection get() {
+<             return getCollectionLive(ZkStateReader.this, collName);
+<           }
+<         });
+---
+>       synchronized (this) {
+>         if (watchedCollections.contains(s)) {
+>           DocCollection live = getCollectionLive(this, s);
+>           watchedCollectionStates.put(s, live);
+>           
+>           result.put(s, new ClusterState.CollectionRef(live));
+>         } else {
+>           
+>           
+>           
+>           
+>           final String collName = s;
+>           result.put(s, new ClusterState.CollectionRef(null) {
+>             @Override
+>             public DocCollection get() {
+>               return getCollectionLive(ZkStateReader.this, collName);
+>             }
+>           });
+>         }

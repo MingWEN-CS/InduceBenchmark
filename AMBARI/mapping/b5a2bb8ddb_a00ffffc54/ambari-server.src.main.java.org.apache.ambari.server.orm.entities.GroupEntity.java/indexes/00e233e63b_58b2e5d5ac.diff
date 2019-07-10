@@ -1,0 +1,23 @@
+21a22
+> import javax.persistence.Basic;
+24a26,27
+> import javax.persistence.EnumType;
+> import javax.persistence.Enumerated;
+37a41,42
+> import org.apache.ambari.server.security.authorization.GroupType;
+> 
+61a67,71
+>   @Column(name = "group_type")
+>   @Enumerated(EnumType.STRING)
+>   @Basic
+>   private GroupType groupType = GroupType.LOCAL;
+> 
+101a112,119
+>   public GroupType getGroupType() {
+>     return groupType;
+>   }
+> 
+>   public void setgroupType(GroupType groupType) {
+>     this.groupType = groupType;
+>   }
+> 

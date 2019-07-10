@@ -1,0 +1,56 @@
+20,25c20,24
+< import java.io.IOException;
+< import java.io.PrintWriter;
+< import java.lang.management.ManagementFactory;
+< import java.lang.reflect.Array;
+< import java.util.Iterator;
+< import java.util.Set;
+---
+> import org.apache.commons.logging.Log;
+> import org.apache.commons.logging.LogFactory;
+> import org.apache.hadoop.http.HttpServer2;
+> import org.codehaus.jackson.JsonFactory;
+> import org.codehaus.jackson.JsonGenerator;
+46,53c45,50
+< 
+< import org.apache.commons.logging.Log;
+< import org.apache.commons.logging.LogFactory;
+< import org.apache.hadoop.http.HttpServer2;
+< import org.codehaus.jackson.JsonFactory;
+< import org.codehaus.jackson.JsonGenerator;
+< 
+< 
+---
+> import java.io.IOException;
+> import java.io.PrintWriter;
+> import java.lang.management.ManagementFactory;
+> import java.lang.reflect.Array;
+> import java.util.Iterator;
+> import java.util.Set;
+121a119,122
+>   static final String ACCESS_CONTROL_ALLOW_METHODS =
+>       "Access-Control-Allow-Methods";
+>   static final String ACCESS_CONTROL_ALLOW_ORIGIN =
+>       "Access-Control-Allow-Origin";
+125,126d125
+<   private static final String CALLBACK_PARAM = "callback";
+< 
+167d165
+<       String jsonpcb = null;
+172,179c170,172
+<         
+<         jsonpcb = request.getParameter(CALLBACK_PARAM);
+<         if (jsonpcb != null) {
+<           response.setContentType("application/javascript; charset=utf8");
+<           writer.write(jsonpcb + "(");
+<         } else {
+<           response.setContentType("application/json; charset=utf8");
+<         }
+---
+>         response.setContentType("application/json; charset=utf8");
+>         response.setHeader(ACCESS_CONTROL_ALLOW_METHODS, "GET");
+>         response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+212,214d204
+<         if (jsonpcb != null) {
+<            writer.write(");");
+<         }

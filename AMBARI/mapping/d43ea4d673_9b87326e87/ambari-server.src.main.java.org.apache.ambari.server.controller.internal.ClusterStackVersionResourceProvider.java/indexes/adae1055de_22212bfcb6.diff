@@ -1,0 +1,17 @@
+386,387d385
+<         stageName = INSTALL_PACKAGES_FULL_NAME;
+<       } else {
+389a388,389
+>       } else {
+>         stageName = INSTALL_PACKAGES_FULL_NAME;
+417d416
+< 
+553,554c552,556
+<         throw new SystemException(String.format("Exception while accessing component %s of service %s for stack %s",
+<                 component.getServiceName(), component.getServiceComponentName(), stackId));
+---
+>         
+>         
+>         LOG.warn(String.format("Exception while accessing component %s of service %s for stack %s",
+>             component.getServiceComponentName(), component.getServiceName(), stackId));
+>         continue;

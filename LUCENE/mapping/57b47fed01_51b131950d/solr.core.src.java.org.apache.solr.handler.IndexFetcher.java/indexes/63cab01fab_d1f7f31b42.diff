@@ -1,0 +1,43 @@
+433,434c433
+<           LOG.info("Starting download to " + tmpIndexDir + " fullCopy="
+<               + isFullCopyNeeded);
+---
+>           LOG.info("Starting download (fullCopy={}) to {}", isFullCopyNeeded, tmpIndexDir);
+437c436
+<           downloadIndexFiles(isFullCopyNeeded, indexDir, tmpIndexDir, latestGeneration);
+---
+>           long bytesDownloaded = downloadIndexFiles(isFullCopyNeeded, indexDir, tmpIndexDir, latestGeneration);
+439c438
+<             downloadTlogFiles(timestamp, latestGeneration);
+---
+>             bytesDownloaded += downloadTlogFiles(timestamp, latestGeneration);
+441c440,444
+<           LOG.info("Total time taken for download: {} secs", getReplicationTimeElapsed());
+---
+>           final long timeTakenSeconds = getReplicationTimeElapsed();
+>           final Long bytesDownloadedPerSecond = (timeTakenSeconds != 0 ? new Long(bytesDownloaded/timeTakenSeconds) : null);
+>           LOG.info("Total time taken for download (fullCopy={},bytesDownloaded={}) : {} secs ({} bytes/sec) to {}",
+>               isFullCopyNeeded, bytesDownloaded, timeTakenSeconds, bytesDownloadedPerSecond, tmpIndexDir);
+> 
+792c795
+<   private void downloadTlogFiles(String timestamp, long latestGeneration) throws Exception {
+---
+>   private long downloadTlogFiles(String timestamp, long latestGeneration) throws Exception {
+796a800
+>     long bytesDownloaded = 0;
+808a813
+>         bytesDownloaded += localFileFetcher.getBytesDownloaded();
+819a825
+>     return bytesDownloaded;
+830c836,838
+<   private void downloadIndexFiles(boolean downloadCompleteIndex, Directory indexDir, Directory tmpIndexDir, long latestGeneration)
+---
+> 
+> 
+>   private long downloadIndexFiles(boolean downloadCompleteIndex, Directory indexDir, Directory tmpIndexDir, long latestGeneration)
+834a843
+>     long bytesDownloaded = 0;
+844a854
+>         bytesDownloaded += dirFileFetcher.getBytesDownloaded();
+850a861
+>     return bytesDownloaded;

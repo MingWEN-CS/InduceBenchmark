@@ -1,0 +1,35 @@
+550c550
+<     protected RangeInputSplit split;
+---
+>     protected org.apache.accumulo.core.client.mapreduce.RangeInputSplit split;
+570c570
+<       split = (RangeInputSplit) inSplit;
+---
+>       split = (org.apache.accumulo.core.client.mapreduce.RangeInputSplit) inSplit;
+893c893
+<             splits.add(new RangeInputSplit(ke.clip(r), new String[] {location}));
+---
+>             splits.add(new org.apache.accumulo.core.client.mapreduce.RangeInputSplit(ke.clip(r), new String[] {location}));
+908c908
+<         splits.add(new RangeInputSplit(entry.getKey(), entry.getValue().toArray(new String[0])));
+---
+>         splits.add(new org.apache.accumulo.core.client.mapreduce.RangeInputSplit(entry.getKey(), entry.getValue().toArray(new String[0])));
+911c911
+<       RangeInputSplit split = (RangeInputSplit) inputSplit;
+---
+>       org.apache.accumulo.core.client.mapreduce.RangeInputSplit split = (org.apache.accumulo.core.client.mapreduce.RangeInputSplit) inputSplit;
+1321a1322,1335
+>   
+> 
+> 
+>   @Deprecated
+>   public static class RangeInputSplit extends org.apache.accumulo.core.client.mapreduce.RangeInputSplit {
+> 
+>     public RangeInputSplit() {
+>       super();
+>     }
+> 
+>     public RangeInputSplit(Range range, String[] locations) {
+>       super(range, locations);
+>     }
+>   }

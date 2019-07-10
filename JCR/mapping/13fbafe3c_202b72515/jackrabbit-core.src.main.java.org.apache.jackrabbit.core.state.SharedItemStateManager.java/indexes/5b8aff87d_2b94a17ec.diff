@@ -1,0 +1,71 @@
+19a20
+> import java.util.HashSet;
+1698a1700,1707
+> 
+> 
+>     private final Set<ItemId> currentlyLoading = new HashSet<ItemId>();
+> 
+>     
+> 
+> 
+> 
+1700a1710
+>         
+1702c1712,1737
+<         if (state == null) {
+---
+>         if (state != null) {
+>             return state;
+>         }
+> 
+>         
+>         synchronized (this) {
+>             while (currentlyLoading.contains(id)) {
+>                 try {
+>                     wait();
+>                 } catch (InterruptedException e) {
+>                     throw new ItemStateException(
+>                             "Interrupted while waiting for " + id, e);
+>                 }
+>             }
+> 
+>             state = cache.retrieve(id);
+>             if (state != null) {
+>                 return state;
+>             }
+> 
+>             
+>             currentlyLoading.add(id);
+>         }
+> 
+>         try {
+>             
+1705a1741,1749
+>             state.setContainer(this);
+> 
+>             
+>             cache.cache(state);
+> 
+>             return state;
+>         } finally {
+>             
+>             
+1707,1719c1751,1752
+<                 
+<                 
+<                 
+<                 
+<                 ItemState cachedState = cache.retrieve(id);
+<                 if (cachedState == null) {
+<                     
+<                     cache.cache(state);
+<                     
+<                     state.setContainer(this);
+<                 } else {
+<                     state = cachedState;
+<                 }
+---
+>                 currentlyLoading.remove(id);
+>                 notifyAll();
+1722d1754
+<         return state;

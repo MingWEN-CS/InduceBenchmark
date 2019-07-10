@@ -1,0 +1,42 @@
+44,46c44
+<   public List<Document> documents;
+< 
+<   private Map<String, Document> documentCache;
+---
+>   public Document document;
+56,65d53
+<   public Document getDocumentByName(String name) {
+<     if (documentCache == null) {
+<       documentCache = new HashMap<String, Document>();
+<       for (Document document : documents)
+<         documentCache.put(document.name, document);
+<     }
+< 
+<     return documentCache.get(name);
+<   }
+< 
+68,70d55
+<     public String name;
+< 
+<     
+79d63
+<       this.name = getStringAttribute(element, NAME, null);
+225,228c209,213
+<     if (!n.isEmpty())
+<       documents = new ArrayList<Document>();
+<     for (Element element : n)
+<       documents.add(new Document(element));
+---
+>     if (n.isEmpty()) {
+>       throw new DataImportHandlerException(DataImportHandlerException.SEVERE, "DataImportHandler " +
+>               "configuration file must have one <document> node.");
+>     }
+>     document = new Document(n.get(0));
+310,313c295,296
+<     for (Document document : documents)
+<       for (Entity entity : document.entities)
+<         entity.clearCache();
+< 
+---
+>     for (Entity entity : document.entities)
+>       entity.clearCache();

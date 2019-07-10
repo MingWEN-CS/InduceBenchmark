@@ -1,0 +1,115 @@
+24a25
+> import java.util.LinkedList;
+30d30
+< import javax.jcr.nodetype.NoSuchNodeTypeException;
+41d40
+< import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
+44a44,46
+> import org.apache.jackrabbit.spi.Path;
+> import org.apache.jackrabbit.spi.PathFactory;
+> import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
+420,422c422
+<             Iterator iter = transientStore.values().iterator();
+<             while (iter.hasNext()) {
+<                 ItemState state = (ItemState) iter.next();
+---
+>             for (ItemState state : transientStore.values()) {
+571a572,669
+>     public NodeId getIdOfRootTransientNodeState() throws RepositoryException {
+>         if (transientStore.isEmpty()) {
+>             return null;
+>         }
+> 
+>         
+>         if (transientStore.contains(hierMgr.getRootNodeId())) {
+>             return hierMgr.getRootNodeId();
+>         }
+> 
+>         
+>         
+>         
+>         
+> 
+>         
+>         Collection<NodeId> candidateIds = new LinkedList<NodeId>();
+>         try {
+>             HierarchyManager hierMgr = getHierarchyMgr();
+>             for (ItemState state : transientStore.values()) {
+>                 if (state.getStatus() == ItemState.STATUS_EXISTING_MODIFIED) {
+>                     NodeId nodeId;
+>                     if (state.isNode()) {
+>                         nodeId = (NodeId) state.getId();
+>                     } else {
+>                         nodeId = state.getParentId();
+>                     }
+>                     
+>                     boolean skip = false;
+>                     for (NodeId id : candidateIds) {
+>                         if (nodeId.equals(id) || hierMgr.isAncestor(id, nodeId)) {
+>                             
+>                             
+>                             skip = true;
+>                             break;
+>                         }
+>                         if (hierMgr.isAncestor(nodeId, id)) {
+>                             
+>                             candidateIds.remove(id);
+>                         }
+>                     }
+>                     if (!skip) {
+>                         
+>                         candidateIds.add(nodeId);
+>                     }
+>                 }
+>             }
+> 
+>             if (candidateIds.size() == 1) {
+>                 return candidateIds.iterator().next();
+>             }
+> 
+>             
+>             NodeId candidateId = null;
+>             for (NodeId id : candidateIds) {
+>                 if (candidateId == null) {
+>                     candidateId = id;
+>                 } else {
+>                     if (hierMgr.getDepth(id) < hierMgr.getDepth(candidateId)) {
+>                         candidateId = id;
+>                     }
+>                 }
+>             }
+> 
+>             
+>             
+>             NodeState state = (NodeState) getItemState(candidateId);
+>             NodeId parentId = state.getParentId();
+>             boolean continueWithParent = false;
+>             while (parentId != null) {
+>                 for (NodeId id : candidateIds) {
+>                     if (hierMgr.getRelativeDepth(parentId, id) == -1) {
+>                         continueWithParent = true;
+>                         break;
+>                     }
+>                 }
+>                 if (continueWithParent) {
+>                     state = (NodeState) getItemState(candidateId);
+>                     parentId = state.getParentId();
+>                     continueWithParent = false;
+>                 } else {
+>                     break;
+>                 }
+>             }
+>             return parentId;
+>         } catch (ItemStateException e) {
+>             throw new RepositoryException("failed to determine common root of transient changes", e);
+>         }
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 

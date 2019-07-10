@@ -1,0 +1,29 @@
+180d179
+< 
+517c516
+<     
+---
+> 
+520,525c519
+<     FileSystem srcFS = getFSofPath(absSrc, getConf());
+<     FileSystem dstFS = getFSofPath(absDst, getConf());
+<     if (!srcFS.getUri().equals(getUri()) ||
+<         !dstFS.getUri().equals(getUri())) {
+<       throw new IOException("Renames across FileSystems not supported");
+<     }
+---
+> 
+542c536,537
+<           return fs.rename(source, p);
+---
+>           
+>           return doCall(p);
+556d550
+<     
+559,564d552
+<     FileSystem srcFS = getFSofPath(absSrc, getConf());
+<     FileSystem dstFS = getFSofPath(absDst, getConf());
+<     if (!srcFS.getUri().equals(getUri()) ||
+<         !dstFS.getUri().equals(getUri())) {
+<       throw new IOException("Renames across FileSystems not supported");
+<     }

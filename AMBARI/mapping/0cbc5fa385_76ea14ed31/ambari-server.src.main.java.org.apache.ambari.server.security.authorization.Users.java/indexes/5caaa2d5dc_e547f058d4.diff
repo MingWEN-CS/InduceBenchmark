@@ -1,0 +1,9 @@
+45d44
+< import org.springframework.security.authentication.BadCredentialsException;
+171,173c170,171
+<       } catch (BadCredentialsException ex) {
+<         throw new AmbariException("Incorrect password provided for LDAP user " +
+<             currentUserName);
+---
+>       } catch (InvalidUsernamePasswordCombinationException ex) {
+>         throw new AmbariException(ex.getMessage());

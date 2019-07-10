@@ -1,0 +1,7 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+7	eventType	AmbariEventType	param	29	define	org.apache.ambari.server.events.AmbariLdapConfigChangedEvent.AmbariLdapConfigChangedEvent	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/48799d793b.java	29	32
+6	configurationId	Long	param	29	define	org.apache.ambari.server.events.AmbariLdapConfigChangedEvent.AmbariLdapConfigChangedEvent	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/48799d793b.java	29	32
+7	eventType	AmbariEventType	param	30	use	org.apache.ambari.server.events.AmbariLdapConfigChangedEvent.AmbariLdapConfigChangedEvent	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/48799d793b.java	29	32
+6	configurationId	Long	param	31	use	org.apache.ambari.server.events.AmbariLdapConfigChangedEvent.AmbariLdapConfigChangedEvent	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/48799d793b.java	29	32
+9	AmbariLdapConfigChangedEvent.configurationId	Long	variable	31	set	org.apache.ambari.server.events.AmbariLdapConfigChangedEvent.AmbariLdapConfigChangedEvent	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/48799d793b.java	29	32
+9	AmbariLdapConfigChangedEvent.configurationId	Long	variable	35	use	org.apache.ambari.server.events.AmbariLdapConfigChangedEvent.getConfigurationId	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/4fa9ac5505/48799d793b.java	34	36

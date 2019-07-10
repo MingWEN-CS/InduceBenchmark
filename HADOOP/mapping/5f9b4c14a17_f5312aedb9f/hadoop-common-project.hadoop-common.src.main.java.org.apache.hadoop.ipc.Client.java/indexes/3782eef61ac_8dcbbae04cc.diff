@@ -1,0 +1,23 @@
+84a85
+> import org.apache.hadoop.util.StringUtils;
+116,117c117
+<   
+<   final static int PING_CALL_ID = -1;
+---
+>   private final byte[] uuid;
+762,763c762,763
+<       out.write(Server.HEADER.array());
+<       out.write(Server.CURRENT_VERSION);
+---
+>       out.write(RpcConstants.HEADER.array());
+>       out.write(RpcConstants.CURRENT_VERSION);
+840c840
+<           out.writeInt(PING_CALL_ID);
+---
+>           out.writeInt(RpcConstants.PING_CALL_ID);
+895c895
+<          call.rpcKind, OperationProto.RPC_FINAL_PACKET, call.id);
+---
+>          call.rpcKind, OperationProto.RPC_FINAL_PACKET, call.id, uuid);
+1094a1095
+>     this.uuid = StringUtils.getUuidBytes();

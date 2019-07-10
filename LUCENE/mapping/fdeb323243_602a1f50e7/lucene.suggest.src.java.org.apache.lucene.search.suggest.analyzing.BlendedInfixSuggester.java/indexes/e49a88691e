@@ -1,0 +1,324 @@
+package org.apache.lucene.search.suggest.analyzing;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.BinaryDocValues;
+import org.apache.lucene.index.DocsAndPositionsEnum;
+import org.apache.lucene.index.IndexOptions;
+import org.apache.lucene.index.MultiDocValues;
+import org.apache.lucene.index.Terms;
+import org.apache.lucene.index.TermsEnum;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.FieldDoc;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TopFieldDocs;
+import org.apache.lucene.search.suggest.Lookup;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.util.BytesRef;
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class BlendedInfixSuggester extends AnalyzingInfixSuggester {
+
+  
+
+
+  protected static double LINEAR_COEF = 0.10;
+
+  
+
+
+  public static int DEFAULT_NUM_FACTOR = 10;
+
+  
+
+
+  private final int numFactor;
+
+  
+
+
+  private final BlenderType blenderType;
+
+  
+
+
+  public static enum BlenderType {
+    
+
+    CUSTOM,
+    
+    POSITION_LINEAR,
+    
+    POSITION_RECIPROCAL,
+    
+    
+  }
+
+  
+
+
+
+  public BlendedInfixSuggester(Directory dir, Analyzer analyzer) throws IOException {
+    super(dir, analyzer);
+    this.blenderType = BlenderType.POSITION_LINEAR;
+    this.numFactor = DEFAULT_NUM_FACTOR;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  public BlendedInfixSuggester(Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer,
+                               int minPrefixChars, BlenderType blenderType, int numFactor, boolean commitOnBuild) throws IOException {
+    super(dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild);
+    this.blenderType = blenderType;
+    this.numFactor = numFactor;
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+  public BlendedInfixSuggester(Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer,
+                               int minPrefixChars, BlenderType blenderType, int numFactor, 
+                               boolean commitOnBuild, boolean allTermsRequired, boolean highlight) throws IOException {
+    super(dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild, allTermsRequired, highlight);
+    this.blenderType = blenderType;
+    this.numFactor = numFactor;
+  }
+  
+  @Override
+  public List<Lookup.LookupResult> lookup(CharSequence key, Set<BytesRef> contexts, boolean onlyMorePopular, int num) throws IOException {
+    
+    return super.lookup(key, contexts, onlyMorePopular, num * numFactor);
+  }
+
+  @Override
+  public List<Lookup.LookupResult> lookup(CharSequence key, Set<BytesRef> contexts, int num, boolean allTermsRequired, boolean doHighlight) throws IOException {
+    
+    return super.lookup(key, contexts, num * numFactor, allTermsRequired, doHighlight);
+  }
+
+  @Override
+  public List<Lookup.LookupResult> lookup(CharSequence key, Map<BytesRef, BooleanClause.Occur> contextInfo, int num, boolean allTermsRequired, boolean doHighlight) throws IOException {
+    
+    return super.lookup(key, contextInfo, num * numFactor, allTermsRequired, doHighlight);
+  }
+
+  @Override
+  protected FieldType getTextFieldType() {
+    FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
+    ft.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+    ft.setStoreTermVectors(true);
+    ft.setStoreTermVectorPositions(true);
+    ft.setOmitNorms(true);
+
+    return ft;
+  }
+
+  @Override
+  protected List<Lookup.LookupResult> createResults(IndexSearcher searcher, TopFieldDocs hits, int num, CharSequence key,
+                                                    boolean doHighlight, Set<String> matchedTokens, String prefixToken)
+      throws IOException {
+
+    BinaryDocValues textDV = MultiDocValues.getBinaryValues(searcher.getIndexReader(), TEXT_FIELD_NAME);
+    assert textDV != null;
+
+    
+    
+    BinaryDocValues payloadsDV = MultiDocValues.getBinaryValues(searcher.getIndexReader(), "payloads");
+
+    TreeSet<Lookup.LookupResult> results = new TreeSet<>(LOOKUP_COMP);
+
+    
+    int actualNum = num / numFactor;
+
+    for (int i = 0; i < hits.scoreDocs.length; i++) {
+      FieldDoc fd = (FieldDoc) hits.scoreDocs[i];
+
+      final String text = textDV.get(fd.doc).utf8ToString();
+      long weight = (Long) fd.fields[0];
+
+      BytesRef payload;
+      if (payloadsDV != null) {
+        payload = BytesRef.deepCopyOf(payloadsDV.get(fd.doc));
+      } else {
+        payload = null;
+      }
+
+      double coefficient;
+      if (text.startsWith(key.toString())) {
+        
+        coefficient = 1;
+      } else {
+        coefficient = createCoefficient(searcher, fd.doc, matchedTokens, prefixToken);
+      }
+
+      long score = (long) (weight * coefficient);
+
+      LookupResult result;
+      if (doHighlight) {
+        result = new LookupResult(text, highlight(text, matchedTokens, prefixToken), score, payload);
+      } else {
+        result = new LookupResult(text, score, payload);
+      }
+
+      boundedTreeAdd(results, result, actualNum);
+    }
+
+    return new ArrayList<>(results.descendingSet());
+  }
+
+  
+
+
+
+
+
+
+  private static void boundedTreeAdd(TreeSet<Lookup.LookupResult> results, Lookup.LookupResult result, int num) {
+
+    if (results.size() >= num) {
+      if (results.first().value < result.value) {
+        results.pollFirst();
+      } else {
+        return;
+      }
+    }
+
+    results.add(result);
+  }
+
+  
+
+
+
+
+
+
+
+
+  private double createCoefficient(IndexSearcher searcher, int doc, Set<String> matchedTokens, String prefixToken) throws IOException {
+
+    Terms tv = searcher.getIndexReader().getTermVector(doc, TEXT_FIELD_NAME);
+    TermsEnum it = tv.iterator(TermsEnum.EMPTY);
+
+    Integer position = Integer.MAX_VALUE;
+    BytesRef term;
+    
+    while ((term = it.next()) != null) {
+
+      String docTerm = term.utf8ToString();
+
+      if (matchedTokens.contains(docTerm) || (prefixToken != null && docTerm.startsWith(prefixToken))) {
+ 
+        DocsAndPositionsEnum docPosEnum = it.docsAndPositions(null, null, DocsAndPositionsEnum.FLAG_OFFSETS);
+        docPosEnum.nextDoc();
+
+        
+        int p = docPosEnum.nextPosition();
+        if (p < position) {
+          position = p;
+        }
+      }
+    }
+
+    
+    return calculateCoefficient(position);
+  }
+
+  
+
+
+
+
+
+  protected double calculateCoefficient(int position) {
+
+    double coefficient;
+    switch (blenderType) {
+      case POSITION_LINEAR:
+        coefficient = 1 - LINEAR_COEF * position;
+        break;
+
+      case POSITION_RECIPROCAL:
+        coefficient = 1. / (position + 1);
+        break;
+
+      default:
+        coefficient = 1;
+    }
+
+    return coefficient;
+  }
+
+  private static Comparator<Lookup.LookupResult> LOOKUP_COMP = new LookUpComparator();
+
+  private static class LookUpComparator implements Comparator<Lookup.LookupResult> {
+
+    @Override
+    public int compare(Lookup.LookupResult o1, Lookup.LookupResult o2) {
+      
+      if (o1.value > o2.value) {
+        return 1;
+      } else if (o1.value < o2.value) {
+        return -1;
+      }
+
+      
+      return CHARSEQUENCE_COMPARATOR.compare(o1.key, o2.key);
+    }
+  }
+
+}

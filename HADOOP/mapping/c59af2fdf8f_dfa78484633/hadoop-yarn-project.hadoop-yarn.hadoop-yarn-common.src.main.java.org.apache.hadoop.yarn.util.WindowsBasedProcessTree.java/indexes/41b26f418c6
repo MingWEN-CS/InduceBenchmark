@@ -1,0 +1,239 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.yarn.util;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.classification.InterfaceAudience.Private;
+import org.apache.hadoop.util.Shell;
+import org.apache.hadoop.util.Shell.ShellCommandExecutor;
+import org.apache.hadoop.util.StringUtils;
+
+@Private
+public class WindowsBasedProcessTree extends ResourceCalculatorProcessTree {
+
+  static final Log LOG = LogFactory
+      .getLog(WindowsBasedProcessTree.class);
+
+  static class ProcessInfo {
+    String pid; 
+    long vmem; 
+    long workingSet; 
+    long cpuTimeMs; 
+    long cpuTimeMsDelta; 
+    int age = 1;
+  }
+  
+  private String taskProcessId = null;
+  private long cpuTimeMs = UNAVAILABLE;
+  private Map<String, ProcessInfo> processTree =
+      new HashMap<String, ProcessInfo>();
+    
+  public static boolean isAvailable() {
+    if (Shell.WINDOWS) {
+      if (!Shell.hasWinutilsPath()) {
+        return false;
+      }
+      ShellCommandExecutor shellExecutor = new ShellCommandExecutor(
+          new String[] { Shell.getWinutilsPath(), "help" });
+      try {
+        shellExecutor.execute();
+      } catch (IOException e) {
+        LOG.error(StringUtils.stringifyException(e));
+      } finally {
+        String output = shellExecutor.getOutput();
+        if (output != null &&
+            output.contains("Prints to stdout a list of processes in the task")) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public WindowsBasedProcessTree(String pid) {
+    super(pid);
+    taskProcessId = pid;
+  }
+
+  
+  String getAllProcessInfoFromShell() {
+    try {
+      ShellCommandExecutor shellExecutor = new ShellCommandExecutor(
+          new String[] {Shell.getWinutilsFile().getCanonicalPath(),
+              "task", "processList", taskProcessId });
+      shellExecutor.execute();
+      return shellExecutor.getOutput();
+    } catch (IOException e) {
+      LOG.error(StringUtils.stringifyException(e));
+    }
+    return null;
+  }
+
+  
+
+
+
+
+  Map<String, ProcessInfo> createProcessInfo(String processesInfoStr) {
+    String[] processesStr = processesInfoStr.split("\r\n");
+    Map<String, ProcessInfo> allProcs = new HashMap<String, ProcessInfo>();
+    final int procInfoSplitCount = 4;
+    for (String processStr : processesStr) {
+      if (processStr != null) {
+        String[] procInfo = processStr.split(",");
+        if (procInfo.length == procInfoSplitCount) {
+          try {
+            ProcessInfo pInfo = new ProcessInfo();
+            pInfo.pid = procInfo[0];
+            pInfo.vmem = Long.parseLong(procInfo[1]);
+            pInfo.workingSet = Long.parseLong(procInfo[2]);
+            pInfo.cpuTimeMs = Long.parseLong(procInfo[3]);
+            allProcs.put(pInfo.pid, pInfo);
+          } catch (NumberFormatException nfe) {
+            LOG.debug("Error parsing procInfo." + nfe);
+          }
+        } else {
+          LOG.debug("Expected split length of proc info to be "
+              + procInfoSplitCount + ". Got " + procInfo.length);
+        }
+      }
+    }
+    return allProcs;
+  }
+  
+  @Override
+  public void updateProcessTree() {
+    if(taskProcessId != null) {
+      
+      String processesInfoStr = getAllProcessInfoFromShell();
+      if (processesInfoStr != null && processesInfoStr.length() > 0) {
+        Map<String, ProcessInfo> allProcessInfo = createProcessInfo(processesInfoStr);
+
+        for (Map.Entry<String, ProcessInfo> entry : allProcessInfo.entrySet()) {
+          String pid = entry.getKey();
+          ProcessInfo pInfo = entry.getValue();
+          ProcessInfo oldInfo = processTree.get(pid);
+          if (oldInfo != null) {
+            
+            pInfo.age += oldInfo.age;
+            
+            
+            pInfo.cpuTimeMsDelta = pInfo.cpuTimeMs - oldInfo.cpuTimeMs;
+          } else {
+            
+            pInfo.cpuTimeMsDelta = pInfo.cpuTimeMs;
+          }
+        }
+        processTree.clear();
+        processTree = allProcessInfo;
+      } else {
+        
+        processTree.clear();
+      }
+    }
+  }
+
+  @Override
+  public boolean checkPidPgrpidForMatch() {
+    
+    
+    return true;
+  }
+
+  @Override
+  public String getProcessTreeDump() {
+    StringBuilder ret = new StringBuilder();
+    
+    ret.append(String.format("\t|- PID " + "CPU_TIME(MILLIS) "
+        + "VMEM(BYTES) WORKING_SET(BYTES)%n"));
+    for (ProcessInfo p : processTree.values()) {
+      if (p != null) {
+        ret.append(String.format("\t|- %s %d %d %d%n", p.pid,
+            p.cpuTimeMs, p.vmem, p.workingSet));
+      }
+    }
+    return ret.toString();
+  }
+
+  @Override
+  public long getVirtualMemorySize(int olderThanAge) {
+    long total = UNAVAILABLE;
+    for (ProcessInfo p : processTree.values()) {
+      if (p != null) {
+        if (total == UNAVAILABLE) {
+          total = 0;
+        }
+        if (p.age > olderThanAge) {
+          total += p.vmem;
+        }
+      }
+    }
+    return total;
+  }
+  
+  @Override
+  @SuppressWarnings("deprecation")
+  public long getCumulativeVmem(int olderThanAge) {
+    return getVirtualMemorySize(olderThanAge);
+  }
+
+  @Override
+  public long getRssMemorySize(int olderThanAge) {
+    long total = UNAVAILABLE;
+    for (ProcessInfo p : processTree.values()) {
+      if (p != null) {
+        if (total == UNAVAILABLE) {
+          total = 0;
+        }
+        if (p.age > olderThanAge) {
+          total += p.workingSet;
+        }
+      }
+    }
+    return total;
+  }
+  
+  @Override
+  @SuppressWarnings("deprecation")
+  public long getCumulativeRssmem(int olderThanAge) {
+    return getRssMemorySize(olderThanAge);
+  }
+
+  @Override
+  public long getCumulativeCpuTime() {
+    for (ProcessInfo p : processTree.values()) {
+      if (cpuTimeMs == UNAVAILABLE) {
+        cpuTimeMs = 0;
+      }
+      cpuTimeMs += p.cpuTimeMsDelta;
+    }
+    return cpuTimeMs;
+  }
+
+  @Override
+  public float getCpuUsagePercent() {
+    return UNAVAILABLE;
+  }
+
+}

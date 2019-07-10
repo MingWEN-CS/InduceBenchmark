@@ -1,0 +1,16 @@
+33a34
+> import org.apache.jackrabbit.spi.commons.name.NameConstants;
+116a118,123
+>             
+>             if (name.equals(NameConstants.JCR_PRIMARYTYPE)
+>                 || name.equals(NameConstants.JCR_MIXINTYPES)
+>                 || name.equals(NameConstants.JCR_UUID)) {
+>                 continue;
+>             }
+280a288,293
+>             
+>             if (pName.equals(NameConstants.JCR_PRIMARYTYPE)
+>                 || pName.equals(NameConstants.JCR_MIXINTYPES)
+>                 || pName.equals(NameConstants.JCR_UUID)) {
+>                 continue;
+>             }

@@ -1,0 +1,27 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+33	methodInvocation	MethodInvocation	param	64	define	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+33	methodInvocation	MethodInvocation	param	66	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+33	methodInvocation	MethodInvocation	param	78	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+29	annotation	TransactionalLock	variable	66	define	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+31	lockArea	LockArea	variable	69	define	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+32	lockType	LockType	variable	70	define	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+35	rwLock	ReadWriteLock	variable	72	define	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+30	lock	Lock	variable	73	define	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+34	object	Object	variable	78	define	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+29	annotation	TransactionalLock	variable	66	set	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+31	lockArea	LockArea	variable	69	set	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+32	lockType	LockType	variable	70	set	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+35	rwLock	ReadWriteLock	variable	72	set	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+30	lock	Lock	variable	73	set	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+34	object	Object	variable	78	set	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+29	annotation	TransactionalLock	variable	69	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+29	annotation	TransactionalLock	variable	70	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+38	TransactionalLockInterceptor.transactionLocks	TransactionalLocks	variable	72	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+31	lockArea	LockArea	variable	72	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+32	lockType	LockType	variable	73	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+28	READ		variable	73	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+35	rwLock	ReadWriteLock	variable	73	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+35	rwLock	ReadWriteLock	variable	73	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+30	lock	Lock	variable	75	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+34	object	Object	variable	79	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81
+30	lock	Lock	variable	81	use	org.apache.ambari.server.orm.TransactionalLockInterceptor.invoke	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/73ac59fc33/0cf73cb440.java	64	81

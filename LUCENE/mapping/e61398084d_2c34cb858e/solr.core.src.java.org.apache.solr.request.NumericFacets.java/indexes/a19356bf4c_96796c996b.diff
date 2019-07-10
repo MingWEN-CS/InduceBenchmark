@@ -1,0 +1,10 @@
+41a42
+> import org.apache.lucene.util.NumericUtils;
+174c175
+<                 return Float.floatToIntBits(floats.get(docID));
+---
+>                 return NumericUtils.floatToSortableInt(floats.get(docID));
+183c184
+<                 return Double.doubleToLongBits(doubles.get(docID));
+---
+>                 return NumericUtils.doubleToSortableLong(doubles.get(docID));

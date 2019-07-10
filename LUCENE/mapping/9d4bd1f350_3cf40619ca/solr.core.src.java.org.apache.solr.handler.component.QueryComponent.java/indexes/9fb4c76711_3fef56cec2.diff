@@ -1,0 +1,118 @@
+20,34d19
+< import java.io.IOException;
+< import java.io.PrintWriter;
+< import java.io.StringWriter;
+< import java.net.URL;
+< import java.util.ArrayList;
+< import java.util.Arrays;
+< import java.util.Collection;
+< import java.util.HashMap;
+< import java.util.Iterator;
+< import java.util.LinkedHashMap;
+< import java.util.List;
+< import java.util.Locale;
+< import java.util.Map;
+< 
+< import org.apache.lucene.index.LeafReaderContext;
+35a21
+> import org.apache.lucene.index.LeafReaderContext;
+55c41,47
+< import org.apache.solr.common.params.*;
+---
+> import org.apache.solr.common.params.CommonParams;
+> import org.apache.solr.common.params.CursorMarkParams;
+> import org.apache.solr.common.params.GroupParams;
+> import org.apache.solr.common.params.ModifiableSolrParams;
+> import org.apache.solr.common.params.MoreLikeThisParams;
+> import org.apache.solr.common.params.ShardParams;
+> import org.apache.solr.common.params.SolrParams;
+73a66
+> import org.apache.solr.search.RankQuery;
+78d70
+< import org.apache.solr.search.RankQuery;
+98a91
+> import org.apache.solr.search.stats.StatsCache;
+99a93,102
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+> 
+> import java.io.IOException;
+> import java.io.PrintWriter;
+> import java.io.StringWriter;
+> import java.net.URL;
+> import java.util.ArrayList;
+> import java.util.Arrays;
+> import java.util.Collection;
+100a104,109
+> import java.util.HashMap;
+> import java.util.Iterator;
+> import java.util.LinkedHashMap;
+> import java.util.List;
+> import java.util.Locale;
+> import java.util.Map;
+110a120
+>   private static final Logger LOG = LoggerFactory.getLogger(QueryComponent.class);
+273a284,285
+>     LOG.debug("process: {}", rb.req.getParams());
+>   
+281a294,306
+>     StatsCache statsCache = req.getCore().getStatsCache();
+>     
+>     int purpose = params.getInt(ShardParams.SHARDS_PURPOSE, ShardRequest.PURPOSE_GET_TOP_IDS);
+>     if ((purpose & ShardRequest.PURPOSE_GET_TERM_STATS) != 0) {
+>       statsCache.returnLocalStats(rb, searcher);
+>       return;
+>     }
+>     
+>     if ((purpose & ShardRequest.PURPOSE_SET_TERM_STATS) != 0) {
+>       
+>       statsCache.receiveGlobalStats(req);
+>     }
+> 
+331a357,359
+> 
+>     req.getContext().put(SolrIndexSearcher.STATS_SOURCE, statsCache.get(req));
+>     
+482,483c510,511
+<     searcher.search(result,cmd);
+<     rb.setResult( result );
+---
+>     searcher.search(result, cmd);
+>     rb.setResult(result);
+640c668
+<       createDistributedIdf(rb);
+---
+>       createDistributedStats(rb);
+671c699
+<       createDistributedIdf(rb);
+---
+>       createDistributedStats(rb);
+715a744,747
+>     if ((sreq.purpose & ShardRequest.PURPOSE_GET_TERM_STATS) != 0) {
+>       updateStats(rb, sreq);
+>     }
+> 
+789,790c821,833
+<   private void createDistributedIdf(ResponseBuilder rb) {
+<     
+---
+>   private void createDistributedStats(ResponseBuilder rb) {
+>     StatsCache cache = rb.req.getCore().getStatsCache();
+>     if ( (rb.getFieldFlags() & SolrIndexSearcher.GET_SCORES)!=0 || rb.getSortSpec().includesScore()) {
+>       ShardRequest sreq = cache.retrieveStatsRequest(rb);
+>       if (sreq != null) {
+>         rb.addRequest(this, sreq);
+>       }
+>     }
+>   }
+> 
+>   private void updateStats(ResponseBuilder rb, ShardRequest sreq) {
+>     StatsCache cache = rb.req.getCore().getStatsCache();
+>     cache.mergeToGlobalStats(rb.req, sreq.responses);
+838a882,887
+>     
+>     if ( (rb.getFieldFlags() & SolrIndexSearcher.GET_SCORES)!=0 || rb.getSortSpec().includesScore()) {
+>       sreq.params.set(CommonParams.FL, rb.req.getSchema().getUniqueKeyField().getName() + ",score");
+>       StatsCache statsCache = rb.req.getCore().getStatsCache();
+>       statsCache.sendGlobalStats(rb, sreq);
+>     }

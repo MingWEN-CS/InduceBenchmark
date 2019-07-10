@@ -1,0 +1,6 @@
+101d100
+< import java.util.concurrent.ThreadPoolExecutor;
+1736,1738d1734
+<       if (!schemaField.hasDocValues()) {
+<         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Interval Faceting only on fields with doc values");
+<       }

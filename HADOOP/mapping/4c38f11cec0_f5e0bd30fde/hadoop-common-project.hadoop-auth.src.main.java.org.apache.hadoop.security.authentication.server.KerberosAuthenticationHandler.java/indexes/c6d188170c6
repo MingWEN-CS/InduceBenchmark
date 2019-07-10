@@ -1,0 +1,407 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.security.authentication.server;
+
+import org.apache.hadoop.security.authentication.client.AuthenticationException;
+import org.apache.hadoop.security.authentication.client.KerberosAuthenticator;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.hadoop.security.authentication.util.KerberosName;
+import org.apache.hadoop.security.authentication.util.KerberosUtil;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSManager;
+import org.ietf.jgss.Oid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.security.auth.Subject;
+import javax.security.auth.kerberos.KerberosPrincipal;
+import javax.security.auth.login.AppConfigurationEntry;
+import javax.security.auth.login.Configuration;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static org.apache.hadoop.util.PlatformName.IBM_JAVA;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class KerberosAuthenticationHandler implements AuthenticationHandler {
+  private static Logger LOG = LoggerFactory.getLogger(KerberosAuthenticationHandler.class);
+
+  
+
+
+  private static class KerberosConfiguration extends Configuration {
+    private String keytab;
+    private String principal;
+
+    public KerberosConfiguration(String keytab, String principal) {
+      this.keytab = keytab;
+      this.principal = principal;
+    }
+
+    @Override
+    public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
+      Map<String, String> options = new HashMap<String, String>();
+      if (IBM_JAVA) {
+        options.put("useKeytab",
+            keytab.startsWith("file:
+        options.put("principal", principal);
+        options.put("credsType", "acceptor");
+      } else {
+        options.put("keyTab", keytab);
+        options.put("principal", principal);
+        options.put("useKeyTab", "true");
+        options.put("storeKey", "true");
+        options.put("doNotPrompt", "true");
+        options.put("useTicketCache", "true");
+        options.put("renewTGT", "true");
+        options.put("isInitiator", "false");
+      }
+      options.put("refreshKrb5Config", "true");
+      String ticketCache = System.getenv("KRB5CCNAME");
+      if (ticketCache != null) {
+        if (IBM_JAVA) {
+          options.put("useDefaultCcache", "true");
+          
+          System.setProperty("KRB5CCNAME", ticketCache);
+          options.put("renewTGT", "true");
+          options.put("credsType", "both");
+        } else {
+          options.put("ticketCache", ticketCache);
+        }
+      }
+      if (LOG.isDebugEnabled()) {
+        options.put("debug", "true");
+      }
+
+      return new AppConfigurationEntry[]{
+          new AppConfigurationEntry(KerberosUtil.getKrb5LoginModuleName(),
+                                  AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
+                                  options),};
+    }
+  }
+
+  
+
+
+  public static final String TYPE = "kerberos";
+
+  
+
+
+  public static final String PRINCIPAL = TYPE + ".principal";
+
+  
+
+
+  public static final String KEYTAB = TYPE + ".keytab";
+
+  
+
+
+
+  public static final String NAME_RULES = TYPE + ".name.rules";
+
+  private String type;
+  private String keytab;
+  private GSSManager gssManager;
+  private Subject serverSubject = new Subject();
+  private List<LoginContext> loginContexts = new ArrayList<LoginContext>();
+
+  
+
+
+
+  public KerberosAuthenticationHandler() {
+    this(TYPE);
+  }
+
+  
+
+
+
+
+
+  public KerberosAuthenticationHandler(String type) {
+    this.type = type;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  @Override
+  public void init(Properties config) throws ServletException {
+    try {
+      String principal = config.getProperty(PRINCIPAL);
+      if (principal == null || principal.trim().length() == 0) {
+        throw new ServletException("Principal not defined in configuration");
+      }
+      keytab = config.getProperty(KEYTAB, keytab);
+      if (keytab == null || keytab.trim().length() == 0) {
+        throw new ServletException("Keytab not defined in configuration");
+      }
+      if (!new File(keytab).exists()) {
+        throw new ServletException("Keytab does not exist: " + keytab);
+      }
+      
+      
+      
+      final String[] spnegoPrincipals;
+      if (principal.equals("*")) {
+        spnegoPrincipals = KerberosUtil.getPrincipalNames(
+            keytab, Pattern.compile("HTTP/.*"));
+        if (spnegoPrincipals.length == 0) {
+          throw new ServletException("Principals do not exist in the keytab");
+        }
+      } else {
+        spnegoPrincipals = new String[]{principal};
+      }
+
+      String nameRules = config.getProperty(NAME_RULES, null);
+      if (nameRules != null) {
+        KerberosName.setRules(nameRules);
+      }
+      
+      for (String spnegoPrincipal : spnegoPrincipals) {
+        LOG.info("Login using keytab {}, for principal {}",
+            keytab, spnegoPrincipal);
+        final KerberosConfiguration kerberosConfiguration =
+            new KerberosConfiguration(keytab, spnegoPrincipal);
+        final LoginContext loginContext =
+            new LoginContext("", serverSubject, null, kerberosConfiguration);
+        try {
+          loginContext.login();
+        } catch (LoginException le) {
+          LOG.warn("Failed to login as [{}]", spnegoPrincipal, le);
+          throw new AuthenticationException(le);          
+        }
+        loginContexts.add(loginContext);
+      }
+      try {
+        gssManager = Subject.doAs(serverSubject, new PrivilegedExceptionAction<GSSManager>() {
+
+          @Override
+          public GSSManager run() throws Exception {
+            return GSSManager.getInstance();
+          }
+        });
+      } catch (PrivilegedActionException ex) {
+        throw ex.getException();
+      }
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+  }
+
+  
+
+
+
+
+  @Override
+  public void destroy() {
+    keytab = null;
+    serverSubject = null;
+    for (LoginContext loginContext : loginContexts) {
+      try {
+        loginContext.logout();
+      } catch (LoginException ex) {
+        LOG.warn(ex.getMessage(), ex);
+      }
+    }
+    loginContexts.clear();
+  }
+
+  
+
+
+
+
+
+  @Override
+  public String getType() {
+    return type;
+  }
+
+  
+
+
+
+
+  protected Set<KerberosPrincipal> getPrincipals() {
+    return serverSubject.getPrincipals(KerberosPrincipal.class);
+  }
+
+  
+
+
+
+
+  protected String getKeytab() {
+    return keytab;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  @Override
+  public boolean managementOperation(AuthenticationToken token,
+                                     HttpServletRequest request,
+                                     HttpServletResponse response)
+    throws IOException, AuthenticationException {
+    return true;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  @Override
+  public AuthenticationToken authenticate(HttpServletRequest request, final HttpServletResponse response)
+    throws IOException, AuthenticationException {
+    AuthenticationToken token = null;
+    String authorization = request.getHeader(KerberosAuthenticator.AUTHORIZATION);
+
+    if (authorization == null || !authorization.startsWith(KerberosAuthenticator.NEGOTIATE)) {
+      response.setHeader(WWW_AUTHENTICATE, KerberosAuthenticator.NEGOTIATE);
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      if (authorization == null) {
+        LOG.trace("SPNEGO starting");
+      } else {
+        LOG.warn("'" + KerberosAuthenticator.AUTHORIZATION + "' does not start with '" +
+            KerberosAuthenticator.NEGOTIATE + "' :  {}", authorization);
+      }
+    } else {
+      authorization = authorization.substring(KerberosAuthenticator.NEGOTIATE.length()).trim();
+      final Base64 base64 = new Base64(0);
+      final byte[] clientToken = base64.decode(authorization);
+      final String serverName = InetAddress.getByName(request.getServerName())
+                                           .getCanonicalHostName();
+      try {
+        token = Subject.doAs(serverSubject, new PrivilegedExceptionAction<AuthenticationToken>() {
+
+          @Override
+          public AuthenticationToken run() throws Exception {
+            AuthenticationToken token = null;
+            GSSContext gssContext = null;
+            GSSCredential gssCreds = null;
+            try {
+              gssCreds = gssManager.createCredential(
+                  gssManager.createName(
+                      KerberosUtil.getServicePrincipal("HTTP", serverName),
+                      KerberosUtil.getOidInstance("NT_GSS_KRB5_PRINCIPAL")),
+                  GSSCredential.INDEFINITE_LIFETIME,
+                  new Oid[]{
+                    KerberosUtil.getOidInstance("GSS_SPNEGO_MECH_OID"),
+                    KerberosUtil.getOidInstance("GSS_KRB5_MECH_OID")},
+                  GSSCredential.ACCEPT_ONLY);
+              gssContext = gssManager.createContext(gssCreds);
+              byte[] serverToken = gssContext.acceptSecContext(clientToken, 0, clientToken.length);
+              if (serverToken != null && serverToken.length > 0) {
+                String authenticate = base64.encodeToString(serverToken);
+                response.setHeader(KerberosAuthenticator.WWW_AUTHENTICATE,
+                                   KerberosAuthenticator.NEGOTIATE + " " + authenticate);
+              }
+              if (!gssContext.isEstablished()) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                LOG.trace("SPNEGO in progress");
+              } else {
+                String clientPrincipal = gssContext.getSrcName().toString();
+                KerberosName kerberosName = new KerberosName(clientPrincipal);
+                String userName = kerberosName.getShortName();
+                token = new AuthenticationToken(userName, clientPrincipal, getType());
+                response.setStatus(HttpServletResponse.SC_OK);
+                LOG.trace("SPNEGO completed for principal [{}]", clientPrincipal);
+              }
+            } finally {
+              if (gssContext != null) {
+                gssContext.dispose();
+              }
+              if (gssCreds != null) {
+                gssCreds.dispose();
+              }
+            }
+            return token;
+          }
+        });
+      } catch (PrivilegedActionException ex) {
+        if (ex.getException() instanceof IOException) {
+          throw (IOException) ex.getException();
+        }
+        else {
+          throw new AuthenticationException(ex.getException());
+        }
+      }
+    }
+    return token;
+  }
+
+}

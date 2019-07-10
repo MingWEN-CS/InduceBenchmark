@@ -1,0 +1,39 @@
+41a42,43
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+83a86,87
+>   protected final static Logger LOG = LoggerFactory.getLogger(TopologyManager.class);
+> 
+177c181
+<         System.out.printf("TopologyManager: Queueing available host %s\n", hostName);
+---
+>         LOG.info("TopologyManager: Queueing available host {}", hostName);
+503c507
+<       System.out.println("TopologyManager.ConfigureClusterTask: Entering");
+---
+>       LOG.info("TopologyManager.ConfigureClusterTask: Entering");
+523c527
+<           System.out.println("TopologyManager.ConfigureClusterTask: Setting Configuration on cluster");
+---
+>           LOG.info("TopologyManager.ConfigureClusterTask: Setting Configuration on cluster");
+528,529c532,533
+<           System.out.println("TopologyManager.ConfigureClusterTask: " +
+<               "An exception occurred while attempting to process cluster configs and set on cluster");
+---
+>           LOG.error("TopologyManager.ConfigureClusterTask: " +
+>               "An exception occurred while attempting to process cluster configs and set on cluster: " + e);
+534c538
+<           System.out.println("TopologyManager.ConfigureClusterTask: Setting configure complete flag to true");
+---
+>           LOG.info("TopologyManager.ConfigureClusterTask: Setting configure complete flag to true");
+541c545
+<       System.out.println("TopologyManager.ConfigureClusterTask: Exiting");
+---
+>       LOG.info("TopologyManager.ConfigureClusterTask: Exiting");
+553,554c557,559
+<         System.out.println("Caught an error from Config Processor: " + e);
+<         throw e;
+---
+>         LOG.error("An exception occurred while attempting to determine required host groups for config update " + e);
+>         e.printStackTrace();
+>         requiredHostGroups = Collections.emptyList();

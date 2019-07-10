@@ -1,0 +1,33 @@
+19d18
+< import java.io.Closeable;
+1786,1815d1784
+< 
+<   interface ClusterStateProvider extends Closeable {
+< 
+<     
+< 
+< 
+< 
+<     ClusterState.CollectionRef getState(String collection);
+< 
+<     
+< 
+< 
+<     Set<String> liveNodes();
+< 
+<     String getAlias(String collection);
+< 
+<     String getCollectionName(String name);
+< 
+<     
+< 
+< 
+<     Object getClusterProperty(String propertyName);
+< 
+<     
+< 
+< 
+<     Object getClusterProperty(String propertyName, String def);
+< 
+<     void connect();
+<   }

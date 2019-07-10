@@ -1,0 +1,101 @@
+41a42
+> 
+103,104c104,107
+<         
+<         in.readUTF();
+---
+>         if (version < BundleBinding.VERSION_3) {
+>             
+>             in.readUTF();
+>         }
+140c143,145
+<         if (version >= BundleBinding.VERSION_1) {
+---
+>         if (version >= BundleBinding.VERSION_3) {
+>             bundle.setModCount((short) readInt());
+>         } else if (version >= BundleBinding.VERSION_1) {
+169,173c174,207
+<         
+<         int type = in.readInt();
+<         entry.setModCount((short) ((type >> 16) & 0x0ffff));
+<         type &= 0x0ffff;
+<         entry.setType(type);
+---
+> 
+>         int count = 1;
+>         if (version >= BundleBinding.VERSION_3) {
+>             int b = in.readUnsignedByte();
+> 
+>             entry.setType(b & 0x0f);
+> 
+>             int len = b >>> 4;
+>             if (len != 0) {
+>                 entry.setMultiValued(true);
+>                 if (len == 0x0f) {
+>                     count = readInt() + 0x0f - 1;
+>                 } else {
+>                     count = len - 1;
+>                 }
+>             }
+> 
+>             entry.setModCount((short) readInt());
+>         } else {
+>             
+>             int type = in.readInt();
+>             entry.setModCount((short) ((type >> 16) & 0x0ffff));
+>             type &= 0x0ffff;
+>             entry.setType(type);
+> 
+>             
+>             entry.setMultiValued(in.readBoolean());
+> 
+>             
+>             in.readUTF();
+> 
+>             
+>             count = in.readInt();
+>         }
+176,180d209
+<         entry.setMultiValued(in.readBoolean());
+<         
+<         in.readUTF();
+<         
+<         int count = in.readInt();   
+185c214
+<             switch (type) {
+---
+>             switch (entry.getType()) {
+240c269,274
+<                     int len = in.readInt();
+---
+>                     int len;
+>                     if (version >= BundleBinding.VERSION_3) {
+>                         len = readInt();
+>                     } else {
+>                         len = in.readInt();
+>                     }
+243c277,278
+<                     val = InternalValue.valueOf(new String(bytes, "UTF-8"), type);
+---
+>                     val = InternalValue.valueOf(
+>                             new String(bytes, "UTF-8"), entry.getType());
+327,328d361
+< 
+< 
+358a392,407
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+>     private int readInt() throws IOException {
+>         int b = in.readUnsignedByte();
+>         if ((b & 0x80) == 0) {
+>             return b;
+>         } else {
+>             return readInt() << 7 | b & 0x7f;
+>         }
+>     }
+> 

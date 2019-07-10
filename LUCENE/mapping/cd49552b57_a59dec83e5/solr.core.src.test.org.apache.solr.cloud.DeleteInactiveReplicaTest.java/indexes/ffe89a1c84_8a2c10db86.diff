@@ -1,0 +1,96 @@
+58,62c58,64
+<   private void deleteInactiveReplicaTest() throws Exception{
+<     String COLL_NAME = "delDeadColl";
+< 
+<     createColl(COLL_NAME, client);
+< 
+---
+>   private void deleteInactiveReplicaTest() throws Exception {
+>     String collectionName = "delDeadColl";
+>     
+>     createCollection(collectionName, client);
+>     
+>     waitForRecoveriesToFinish(collectionName, false);
+>     
+66c68
+<     Replica replica1=null;
+---
+>     Replica replica1 = null;
+68,70c70,74
+<     DocCollection testcoll = getCommonCloudSolrServer().getZkStateReader().getClusterState().getCollection(COLL_NAME);
+<     for (JettySolrRunner jetty : jettys) sb.append(jetty.getBaseUrl()).append(",");
+< 
+---
+>     DocCollection testcoll = getCommonCloudSolrServer().getZkStateReader()
+>         .getClusterState().getCollection(collectionName);
+>     for (JettySolrRunner jetty : jettys)
+>       sb.append(jetty.getBaseUrl()).append(",");
+>     
+80c84,85
+<           if (baseUrl.toString().startsWith(replica.getStr(ZkStateReader.BASE_URL_PROP))) {
+---
+>           if (baseUrl.toString().startsWith(
+>               replica.getStr(ZkStateReader.BASE_URL_PROP))) {
+90c95
+< 
+---
+>     
+102,106c107,109
+< 
+< 
+< 
+<     if(!stopped){
+<       fail("Could not find jetty to stop in collection "+ testcoll + " jettys: "+sb);
+---
+>     if (!stopped) {
+>       fail("Could not find jetty to stop in collection " + testcoll
+>           + " jettys: " + sb);
+108,109c111,112
+< 
+<     long endAt = System.currentTimeMillis()+3000;
+---
+>     
+>     long endAt = System.currentTimeMillis() + 3000;
+111,114c114,119
+<     while(System.currentTimeMillis() < endAt){
+<       testcoll = getCommonCloudSolrServer().getZkStateReader().getClusterState().getCollection(COLL_NAME);
+<       if(!"active".equals(testcoll.getSlice(shard1.getName()).getReplica(replica1.getName()).getStr(Slice.STATE))  ){
+<         success=true;
+---
+>     while (System.currentTimeMillis() < endAt) {
+>       testcoll = getCommonCloudSolrServer().getZkStateReader()
+>           .getClusterState().getCollection(collectionName);
+>       if (!"active".equals(testcoll.getSlice(shard1.getName())
+>           .getReplica(replica1.getName()).getStr(Slice.STATE))) {
+>         success = true;
+116c121
+<       if(success) break;
+---
+>       if (success) break;
+119,121c124,127
+<     log.info("removed_replicas {}/{} ",shard1.getName(),replica1.getName());
+<     removeAndWaitForReplicaGone(COLL_NAME, client, replica1, shard1.getName());
+< 
+---
+>     log.info("removed_replicas {}/{} ", shard1.getName(), replica1.getName());
+>     removeAndWaitForReplicaGone(collectionName, client, replica1,
+>         shard1.getName());
+>     
+124,131c130,137
+< 
+< 
+<     Map m = makeMap("qt","/admin/cores",
+<         "action", "status");
+< 
+<     NamedList<Object> resp = new HttpSolrServer(replica1.getStr("base_url")).request(new QueryRequest(new MapSolrParams(m)));
+<     assertNull( "The core is up and running again" , ((NamedList)resp.get("status")).get(replica1.getStr("core")));
+< 
+---
+>     
+>     Map m = makeMap("qt", "/admin/cores", "action", "status");
+>     
+>     NamedList<Object> resp = new HttpSolrServer(replica1.getStr("base_url"))
+>         .request(new QueryRequest(new MapSolrParams(m)));
+>     assertNull("The core is up and running again",
+>         ((NamedList) resp.get("status")).get(replica1.getStr("core")));
+>     

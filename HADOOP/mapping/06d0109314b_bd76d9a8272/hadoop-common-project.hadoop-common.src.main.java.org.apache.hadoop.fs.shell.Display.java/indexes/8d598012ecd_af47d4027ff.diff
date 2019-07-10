@@ -1,0 +1,98 @@
+20c20,21
+< import java.io.IOException;
+---
+> import java.io.ByteArrayOutputStream;
+> import java.io.File;
+21a23
+> import java.io.IOException;
+24a27,34
+> import org.apache.avro.file.DataFileReader;
+> import org.apache.avro.file.FileReader;
+> import org.apache.avro.generic.GenericDatumReader;
+> import org.apache.avro.generic.GenericDatumWriter;
+> import org.apache.avro.io.DatumWriter;
+> import org.apache.avro.io.EncoderFactory;
+> import org.apache.avro.io.JsonEncoder;
+> import org.apache.avro.Schema;
+39a50,53
+> import org.codehaus.jackson.JsonEncoding;
+> import org.codehaus.jackson.JsonFactory;
+> import org.codehaus.jackson.JsonGenerator;
+> import org.codehaus.jackson.util.MinimalPrettyPrinter;
+105c119
+<       "The allowed formats are zip and TextRecordInputStream.";
+---
+>       "The allowed formats are zip and TextRecordInputStream and Avro.";
+134a149,155
+>         case 0x4f62: { 
+>           if (i.readByte() == 'j') {
+>             i.close();
+>             return new AvroFileInputStream(item.stat);
+>           }
+>           break;
+>         }
+189a211,274
+> 
+>   
+> 
+> 
+> 
+>   protected static class AvroFileInputStream extends InputStream {
+>     private int pos;
+>     private byte[] buffer;
+>     private ByteArrayOutputStream output;
+>     private FileReader fileReader;
+>     private DatumWriter<Object> writer;
+>     private JsonEncoder encoder;
+> 
+>     public AvroFileInputStream(FileStatus status) throws IOException {
+>       pos = 0;
+>       buffer = new byte[0];
+>       GenericDatumReader<Object> reader = new GenericDatumReader<Object>();
+>       fileReader =
+>         DataFileReader.openReader(new File(status.getPath().toUri()), reader);
+>       Schema schema = fileReader.getSchema();
+>       writer = new GenericDatumWriter<Object>(schema);
+>       output = new ByteArrayOutputStream();
+>       JsonGenerator generator =
+>         new JsonFactory().createJsonGenerator(output, JsonEncoding.UTF8);
+>       MinimalPrettyPrinter prettyPrinter = new MinimalPrettyPrinter();
+>       prettyPrinter.setRootValueSeparator(System.getProperty("line.separator"));
+>       generator.setPrettyPrinter(prettyPrinter);
+>       encoder = EncoderFactory.get().jsonEncoder(schema, generator);
+>     }
+> 
+>     
+> 
+> 
+>     @Override
+>     public int read() throws IOException {
+>       if (pos < buffer.length) {
+>         return buffer[pos++];
+>       }
+>       if (!fileReader.hasNext()) {
+>         return -1;
+>       }
+>       writer.write(fileReader.next(), encoder);
+>       encoder.flush();
+>       if (!fileReader.hasNext()) {
+>         
+>         output.write(System.getProperty("line.separator").getBytes());
+>         output.flush();
+>       }
+>       pos = 0;
+>       buffer = output.toByteArray();
+>       output.reset();
+>       return read();
+>     }
+> 
+>     
+> 
+> 
+>     @Override
+>     public void close() throws IOException {
+>       fileReader.close();
+>       output.close();
+>       super.close();
+>     }
+>   }

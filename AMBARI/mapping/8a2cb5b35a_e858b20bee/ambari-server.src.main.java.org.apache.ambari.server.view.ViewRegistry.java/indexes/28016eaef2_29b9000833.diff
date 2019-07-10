@@ -1,0 +1,23 @@
+467c467
+<     readViewArchives(false, true, ALL_VIEWS_REG_EXP, true);
+---
+>     readViewArchives(false, true, ALL_VIEWS_REG_EXP);
+476c476
+<     readViewArchives(false, false, viewNameRegExp, false);
+---
+>     readViewArchives(false, false, viewNameRegExp);
+1441c1441
+<                                 String viewNameRegExp, boolean removeUndeployed) {
+---
+>                                 String viewNameRegExp) {
+1537a1538,1539
+>       
+>       ClassLoader cl = extractor.extractViewArchive(viewDefinition, archiveFile, extractedArchiveDirFile);
+1542,1544d1543
+<       if (viewConfig == null) {
+<         setViewStatus(viewDefinition, ViewEntity.ViewStatus.ERROR, "View configuration not found");
+<       } 
+1548c1547
+<         setupViewDefinition(viewDefinition, extractor.extractViewArchive(viewDefinition, archiveFile, extractedArchiveDirFile));
+---
+>         setupViewDefinition(viewDefinition, cl);

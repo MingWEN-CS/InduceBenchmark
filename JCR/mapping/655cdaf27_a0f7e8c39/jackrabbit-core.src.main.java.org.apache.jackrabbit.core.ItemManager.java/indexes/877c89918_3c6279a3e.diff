@@ -1,0 +1,14 @@
+241a242,254
+>         
+>         
+>         
+>         
+>         
+>         if (state.getStatus() == ItemState.STATUS_EXISTING_REMOVED
+>                 && state.getName().equals(NameConstants.JCR_UUID)) {
+>             NodeTypeRegistry ntReg = session.getNodeTypeManager().getNodeTypeRegistry();
+>             QPropertyDefinition def = ntReg.getEffectiveNodeType(
+>                     NameConstants.MIX_REFERENCEABLE).getApplicablePropertyDef(
+>                     state.getName(), state.getType());
+>             return session.getNodeTypeManager().getPropertyDefinition(def);
+>         }

@@ -1,0 +1,36 @@
+685,696d684
+<     
+<     try {
+<       Shell.execCommand(Shell.getSymlinkCommand(
+<         Path.getPathWithoutSchemeAndAuthority(target).toString(),
+<         Path.getPathWithoutSchemeAndAuthority(makeAbsolute(link)).toString()));
+<     } catch (IOException x) {
+<       throw new IOException("Unable to create symlink: "+x.getMessage());
+<     }
+<   }
+< 
+<   
+< 
+698,700d685
+< 
+< 
+<   private String readLink(Path p) {
+702,709c687,691
+< 
+< 
+< 
+<     try {
+<       final String path = p.toUri().getPath();
+<       return Shell.execCommand(Shell.READ_LINK_COMMAND, path).trim();
+<     } catch (IOException x) {
+<       return "";
+---
+>     int result = FileUtil.symLink(target.toString(),
+>         makeAbsolute(link).toString());
+>     if (result != 0) {
+>       throw new IOException("Error " + result + " creating symlink " +
+>           link + " to " + target);
+732c714
+<     String target = readLink(f);
+---
+>     String target = FileUtil.readLink(new File(f.toString()));

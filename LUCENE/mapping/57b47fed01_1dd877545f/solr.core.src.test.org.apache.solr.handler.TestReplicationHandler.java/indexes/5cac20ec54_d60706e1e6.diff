@@ -1,0 +1,7 @@
+27a28
+> import java.lang.invoke.MethodHandles;
+70a72,73
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+81a85
+>   private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

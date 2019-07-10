@@ -1,0 +1,9 @@
+37a38
+> import org.apache.lucene.search.BooleanQuery;
+159a161,166
+>   public List<Lookup.LookupResult> lookup(CharSequence key, BooleanQuery contextQuery, int num, boolean allTermsRequired, boolean doHighlight) throws IOException {
+>     
+>     return super.lookup(key, contextQuery, num * numFactor, allTermsRequired, doHighlight);
+>   }
+>   
+>   @Override

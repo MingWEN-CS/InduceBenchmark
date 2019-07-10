@@ -1,0 +1,87 @@
+31c31
+< import org.apache.oozie.executor.jpa.CoordActionUpdateStatusJPAExecutor;
+---
+> import org.apache.oozie.executor.jpa.BulkUpdateInsertJPAExecutor;
+34d33
+< import org.apache.oozie.executor.jpa.CoordJobUpdateJPAExecutor;
+105c104
+<     private void updateCoordAction(CoordinatorActionBean action, boolean makePending) throws CommandException {
+---
+>     private void updateCoordAction(CoordinatorActionBean action, boolean makePending) {
+114,118c113
+<         try {
+<             jpaService.execute(new CoordActionUpdateStatusJPAExecutor(action));
+<         } catch (JPAExecutorException e) {
+<             throw new CommandException(e);
+<         }
+---
+>         updateList.add(action);
+123,125c118,122
+<         try {
+<             if (actionList != null) {
+<                 for (CoordinatorActionBean action : actionList) {
+---
+>         if (actionList != null) {
+>             for (CoordinatorActionBean action : actionList) {
+>                 
+>                 if (action.getExternalId() != null) {
+>                     queue(new KillXCommand(action.getExternalId()));
+127,140c124,133
+<                     if (action.getExternalId() != null) {
+<                         queue(new KillXCommand(action.getExternalId()));
+<                         
+<                         updateCoordAction(action, true);
+<                         LOG.debug(
+<                                 "Killed coord action = [{0}], new status = [{1}], pending = [{2}] and queue KillXCommand for [{3}]",
+<                                 action.getId(), action.getStatus(), action.getPending(), action.getExternalId());
+<                     }
+<                     else {
+<                         
+<                         updateCoordAction(action, false);
+<                         LOG.debug("Killed coord action = [{0}], current status = [{1}], pending = [{2}]",
+<                                 action.getId(), action.getStatus(), action.getPending());
+<                     }
+---
+>                     updateCoordAction(action, true);
+>                     LOG.debug(
+>                             "Killed coord action = [{0}], new status = [{1}], pending = [{2}] and queue KillXCommand for [{3}]",
+>                             action.getId(), action.getStatus(), action.getPending(), action.getExternalId());
+>                 }
+>                 else {
+>                     
+>                     updateCoordAction(action, false);
+>                     LOG.debug("Killed coord action = [{0}], current status = [{1}], pending = [{2}]",
+>                             action.getId(), action.getStatus(), action.getPending());
+142a136
+>         }
+144c138
+<             jpaService.execute(new CoordJobUpdateJPAExecutor(coordJob));
+---
+>         updateList.add(coordJob);
+146,150c140
+<             LOG.debug("Killed coord actions for the coordinator=[{0}]", jobId);
+<         }
+<         catch (JPAExecutorException ex) {
+<             throw new CommandException(ex);
+<         }
+---
+>         LOG.debug("Killed coord actions for the coordinator=[{0}]", jobId);
+163a154,161
+>         updateList.add(coordJob);
+>     }
+> 
+>     
+> 
+> 
+>     @Override
+>     public void performWrites() throws CommandException {
+165c163
+<             jpaService.execute(new CoordJobUpdateJPAExecutor(coordJob));
+---
+>             jpaService.execute(new BulkUpdateInsertJPAExecutor(updateList, null));
+167,168c165,166
+<         catch (JPAExecutorException ex) {
+<             throw new CommandException(ex);
+---
+>         catch (JPAExecutorException e) {
+>             throw new CommandException(e);

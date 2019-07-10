@@ -1,0 +1,10 @@
+1793,1798c1793,1794
+<     switch(fi.getNormType()) {
+<       case NUMERIC:
+<         checkNumericDocValues(fi.name, reader, reader.getNormValues(fi.name), new Bits.MatchAllBits(reader.maxDoc()));
+<         break;
+<       default:
+<         throw new AssertionError("wtf: " + fi.getNormType());
+---
+>     if (fi.hasNorms()) {
+>       checkNumericDocValues(fi.name, reader, reader.getNormValues(fi.name), new Bits.MatchAllBits(reader.maxDoc()));

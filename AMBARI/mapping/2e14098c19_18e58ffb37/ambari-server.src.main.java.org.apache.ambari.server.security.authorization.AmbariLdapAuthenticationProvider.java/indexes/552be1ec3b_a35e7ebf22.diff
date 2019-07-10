@@ -1,0 +1,12 @@
+197c197
+<     String userName = authentication.getName();
+---
+>     String userName = AuthorizationHelper.resolveLoginAliasToUserName(authentication.getName());
+203c203
+<       LOG.info("user not found ");
+---
+>       LOG.info("user not found ('{}')", userName);
+208c208
+<       LOG.debug("User account is disabled");
+---
+>       LOG.debug("User account is disabled ('{}')", userName);

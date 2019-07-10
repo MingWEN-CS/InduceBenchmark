@@ -1,0 +1,18 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+7	in	TokenStream	param	39	define	org.apache.solr.analysis.KeepWordFilter.KeepWordFilter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	39	42
+8	words	Set<String>	param	39	define	org.apache.solr.analysis.KeepWordFilter.KeepWordFilter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	39	42
+6	ignoreCase	boolean	param	39	define	org.apache.solr.analysis.KeepWordFilter.KeepWordFilter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	39	42
+7	in	TokenStream	param	40	use	org.apache.solr.analysis.KeepWordFilter.KeepWordFilter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	39	42
+8	words	Set<String>	param	41	use	org.apache.solr.analysis.KeepWordFilter.KeepWordFilter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	39	42
+6	ignoreCase	boolean	param	41	use	org.apache.solr.analysis.KeepWordFilter.KeepWordFilter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	39	42
+16	KeepWordFilter.words	CharArraySet	variable	41	set	org.apache.solr.analysis.KeepWordFilter.KeepWordFilter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	39	42
+15	in	Token	param	45	define	org.apache.solr.analysis.KeepWordFilter.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	45	52
+15	in	Token	param	46	use	org.apache.solr.analysis.KeepWordFilter.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	45	52
+14	token	Token	variable	46	define	org.apache.solr.analysis.KeepWordFilter.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	45	52
+14	token	Token	variable	46	set	org.apache.solr.analysis.KeepWordFilter.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	45	52
+14	token	Token	variable	46	set	org.apache.solr.analysis.KeepWordFilter.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	45	52
+14	token	Token	variable	46	use	org.apache.solr.analysis.KeepWordFilter.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	45	52
+16	KeepWordFilter.words	CharArraySet	variable	47	use	org.apache.solr.analysis.KeepWordFilter.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	45	52
+14	token	Token	variable	47	use	org.apache.solr.analysis.KeepWordFilter.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	45	52
+14	token	Token	variable	47	use	org.apache.solr.analysis.KeepWordFilter.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	45	52
+14	token	Token	variable	48	use	org.apache.solr.analysis.KeepWordFilter.next	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/c7c9ef6a63/5ff2881c92.java	45	52

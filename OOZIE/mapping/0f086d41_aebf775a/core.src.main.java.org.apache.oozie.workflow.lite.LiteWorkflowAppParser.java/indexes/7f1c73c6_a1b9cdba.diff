@@ -1,0 +1,6 @@
+475,476c475,476
+<                         if (!serializedGlobalConf  && elem.getName().equals(SubWorkflowActionExecutor.ACTION_TYPE) &&
+<                                 elem.getChild(("propagate-configuration"), ns) != null) {
+---
+>                         if (!serializedGlobalConf && elem.getName().equals(SubWorkflowActionExecutor.ACTION_TYPE) &&
+>                                 elem.getChild(("propagate-configuration"), ns) != null && gData != null) {

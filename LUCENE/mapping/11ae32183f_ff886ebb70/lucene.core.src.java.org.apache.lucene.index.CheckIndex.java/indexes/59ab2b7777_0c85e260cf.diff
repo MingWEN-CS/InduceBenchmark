@@ -1,0 +1,70 @@
+680c680
+<         comment = "fixIndex() would remove reference to this segment";
+---
+>         comment = "exorciseIndex() would remove reference to this segment";
+2014c2014
+<   public void fixIndex(Status result) throws IOException {
+---
+>   public void exorciseIndex(Status result) throws IOException {
+2016c2016
+<       throw new IllegalArgumentException("can only fix an index that was fully checked (this status checked a subset of segments)");
+---
+>       throw new IllegalArgumentException("can only exorcise an index that was fully checked (this status checked a subset of segments)");
+2067c2067
+<     boolean doFix = false;
+---
+>     boolean doExorcise = false;
+2076,2077c2076,2077
+<       if ("-fix".equals(arg)) {
+<         doFix = true;
+---
+>       if ("-exorcise".equals(arg)) {
+>         doExorcise = true;
+2108c2108
+<       System.out.println("\nUsage: java org.apache.lucene.index.CheckIndex pathToIndex [-fix] [-crossCheckTermVectors] [-segment X] [-segment Y] [-dir-impl X]\n" +
+---
+>       System.out.println("\nUsage: java org.apache.lucene.index.CheckIndex pathToIndex [-exorcise] [-crossCheckTermVectors] [-segment X] [-segment Y] [-dir-impl X]\n" +
+2110c2110
+<                          "  -fix: actually write a new segments_N file, removing any problematic segments\n" +
+---
+>                          "  -exorcise: actually write a new segments_N file, removing any problematic segments\n" +
+2112c2112
+<                          "  -codec X: when fixing, codec to write the new segments_N file with\n" +
+---
+>                          "  -codec X: when exorcising, codec to write the new segments_N file with\n" +
+2116c2116
+<                          "              You can't use this with the -fix option\n" +
+---
+>                          "              You can't use this with the -exorcise option\n" +
+2120c2120
+<                          "**WARNING**: -fix should only be used on an emergency basis as it will cause\n" +
+---
+>                          "**WARNING**: -exorcise *LOSES DATA*. This should only be used on an emergency basis as it will cause\n" +
+2125,2127c2125,2127
+<                          "Run without -fix, this tool will open the index, report version information\n" +
+<                          "and report any exceptions it hits and what action it would take if -fix were\n" +
+<                          "specified.  With -fix, this tool will remove any segments that have issues and\n" + 
+---
+>                          "Run without -exorcise, this tool will open the index, report version information\n" +
+>                          "and report any exceptions it hits and what action it would take if -exorcise were\n" +
+>                          "specified.  With -exorcise, this tool will remove any segments that have issues and\n" + 
+2141,2142c2141,2142
+<     else if (doFix) {
+<       System.out.println("ERROR: cannot specify both -fix and -segment");
+---
+>     else if (doExorcise) {
+>       System.out.println("ERROR: cannot specify both -exorcise and -segment");
+2171,2172c2171,2172
+<       if (!doFix) {
+<         System.out.println("WARNING: would write new segments file, and " + result.totLoseDocCount + " documents would be lost, if -fix were specified\n");
+---
+>       if (!doExorcise) {
+>         System.out.println("WARNING: would write new segments file, and " + result.totLoseDocCount + " documents would be lost, if -exorcise were specified\n");
+2175c2175
+<         System.out.println("NOTE: will write new segments file in 5 seconds; this will remove " + result.totLoseDocCount + " docs from the index. THIS IS YOUR LAST CHANCE TO CTRL+C!");
+---
+>         System.out.println("NOTE: will write new segments file in 5 seconds; this will remove " + result.totLoseDocCount + " docs from the index. YOU WILL LOSE DATA. THIS IS YOUR LAST CHANCE TO CTRL+C!");
+2181c2181
+<         checker.fixIndex(result);
+---
+>         checker.exorciseIndex(result);

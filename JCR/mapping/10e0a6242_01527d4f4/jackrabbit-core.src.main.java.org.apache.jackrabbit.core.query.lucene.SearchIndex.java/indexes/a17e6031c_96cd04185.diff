@@ -1,0 +1,94 @@
+569a570
+>         parser = createParser();
+931,949c932,934
+<     public synchronized Parser getParser() {
+<         if (parser == null) {
+<             URL url = null;
+<             if (tikaConfigPath != null) {
+<                 File file = new File(tikaConfigPath);
+<                 if (file.exists()) {
+<                     try {
+<                         url = file.toURI().toURL();
+<                     } catch (MalformedURLException e) {
+<                         log.warn("Invalid Tika configuration path: " + file, e);
+<                     }
+<                 } else {
+<                     ClassLoader loader = SearchIndex.class.getClassLoader();
+<                     url = loader.getResource(tikaConfigPath);
+<                 }
+<             }
+<             if (url == null) {
+<                 url = SearchIndex.class.getResource("tika-config.xml");
+<             }
+---
+>     public Parser getParser() {
+>         return parser;
+>     }
+951,952c936,940
+<             TikaConfig config = null;
+<             if (url != null) {
+---
+>     private Parser createParser() {
+>         URL url = null;
+>         if (tikaConfigPath != null) {
+>             File file = new File(tikaConfigPath);
+>             if (file.exists()) {
+954,956c942,944
+<                     config = new TikaConfig(url);
+<                 } catch (Exception e) {
+<                     log.warn("Tika configuration not available: " + url, e);
+---
+>                     url = file.toURI().toURL();
+>                 } catch (MalformedURLException e) {
+>                     log.warn("Invalid Tika configuration path: " + file, e);
+957a946,948
+>             } else {
+>                 ClassLoader loader = SearchIndex.class.getClassLoader();
+>                 url = loader.getResource(tikaConfigPath);
+959,961c950,953
+<             if (config == null) {
+<                 config = TikaConfig.getDefaultConfig();
+<             }
+---
+>         }
+>         if (url == null) {
+>             url = SearchIndex.class.getResource("tika-config.xml");
+>         }
+963,971c955,960
+<             if (forkJavaCommand == null) {
+<                 parser = new AutoDetectParser(config);
+<             } else {
+<                 ForkParser forkParser = new ForkParser(
+<                         SearchIndex.class.getClassLoader(),
+<                         new AutoDetectParser(config));
+<                 forkParser.setJavaCommand(forkJavaCommand);
+<                 forkParser.setPoolSize(extractorPoolSize);
+<                 parser = forkParser;
+---
+>         TikaConfig config = null;
+>         if (url != null) {
+>             try {
+>                 config = new TikaConfig(url);
+>             } catch (Exception e) {
+>                 log.warn("Tika configuration not available: " + url, e);
+974c963,976
+<         return parser;
+---
+>         if (config == null) {
+>             config = TikaConfig.getDefaultConfig();
+>         }
+> 
+>         if (forkJavaCommand != null) {
+>             ForkParser forkParser = new ForkParser(
+>                     SearchIndex.class.getClassLoader(),
+>                     new AutoDetectParser(config));
+>             forkParser.setJavaCommand(forkJavaCommand);
+>             forkParser.setPoolSize(extractorPoolSize);
+>             return forkParser;
+>         } else {
+>             return new AutoDetectParser(config);
+>         }
+1182c1184
+<                 getContext().getExecutor(), getParser());
+---
+>                 getContext().getExecutor(), parser);

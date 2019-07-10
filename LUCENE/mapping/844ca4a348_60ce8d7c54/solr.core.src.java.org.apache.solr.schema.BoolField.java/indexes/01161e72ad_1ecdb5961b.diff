@@ -1,0 +1,50 @@
+19a20,22
+> import java.util.ArrayList;
+> import java.util.Collections;
+> import java.util.List;
+24a28,29
+> import org.apache.lucene.document.SortedDocValuesField;
+> import org.apache.lucene.document.SortedSetDocValuesField;
+126c131,135
+<     return indexedToReadable(f.stringValue());
+---
+>     if (f.binaryValue() == null) {
+>       return null;
+>     }
+> 
+>     return indexedToReadable(f.binaryValue().utf8ToString());
+147c156
+<   
+---
+> 
+171a181,210
+> 
+>   @Override
+>   public List<IndexableField> createFields(SchemaField field, Object value, float boost) {
+>     IndexableField fval = createField(field, value, boost);
+> 
+>     if (field.hasDocValues()) {
+>       IndexableField docval;
+>       final BytesRef bytes = new BytesRef(toInternal(value.toString()));
+>       if (field.multiValued()) {
+>         docval = new SortedSetDocValuesField(field.getName(), bytes);
+>       } else {
+>         docval = new SortedDocValuesField(field.getName(), bytes);
+>       }
+> 
+>       
+>       if (fval != null) {
+>         List<IndexableField> fields = new ArrayList<>(2);
+>         fields.add(fval);
+>         fields.add(docval);
+>         return fields;
+>       }
+> 
+>       fval = docval;
+>     }
+>     return Collections.singletonList(fval);
+>   }
+> 
+>   @Override
+>   public void checkSchemaField(final SchemaField field) {
+>   }

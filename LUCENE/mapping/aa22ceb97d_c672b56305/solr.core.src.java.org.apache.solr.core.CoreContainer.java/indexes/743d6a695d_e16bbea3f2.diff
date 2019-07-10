@@ -1,0 +1,91 @@
+1443,1452d1442
+<     synchronized (locker) {
+<       coreNames = new ArrayList(cores.keySet());
+<       transientNames = new ArrayList(transientCores.keySet());
+<       pendingToClose = new ArrayList(pendingCloses);
+<     }
+<     for (String coreName : coreNames) {
+<       SolrCore core = cores.get(coreName);
+<       if (core != null) {
+<         try {
+<           addPersistOneCore(cfg, core, container.loader);
+1454,1459c1444,1471
+<           core.close();
+<         } catch (Throwable t) {
+<           SolrException.log(CoreContainer.log, "Error shutting down core", t);
+<         } finally {
+<           synchronized (locker) {
+<             cores.remove(coreName);
+---
+>     
+>     
+>     
+> 
+>     while (true) {
+>       synchronized (locker) {
+>         coreNames = new ArrayList(cores.keySet());
+>         transientNames = new ArrayList(transientCores.keySet());
+>         pendingToClose = new ArrayList(pendingCloses);
+>       }
+> 
+>       if (coreNames.size() == 0 && transientNames.size() == 0 && pendingToClose.size() == 0) break;
+> 
+>       for (String coreName : coreNames) {
+>         SolrCore core = cores.get(coreName);
+>         if (core == null) {
+>           CoreContainer.log.info("Core " + coreName + " moved from core container list before closing.");
+>         } else {
+>           try {
+>             addPersistOneCore(cfg, core, container.loader);
+> 
+>             core.close();
+>           } catch (Throwable t) {
+>             SolrException.log(CoreContainer.log, "Error shutting down core", t);
+>           } finally {
+>             synchronized (locker) {
+>               cores.remove(coreName);
+>             }
+1463d1474
+<     }
+1465,1467c1476,1494
+<     for (String coreName : transientNames) {
+<       SolrCore core = transientCores.get(coreName);
+<       if (core != null) {
+---
+>       for (String coreName : transientNames) {
+>         SolrCore core = transientCores.get(coreName);
+>         if (core == null) {
+>           CoreContainer.log.info("Core " + coreName + " moved from transient core container list before closing.");
+>         } else {
+>           try {
+>             core.close();
+>           } catch (Throwable t) {
+>             SolrException.log(CoreContainer.log, "Error shutting down core", t);
+>           } finally {
+>             synchronized (locker) {
+>               transientCores.remove(coreName);
+>             }
+>           }
+>         }
+>       }
+> 
+>       
+>       for (SolrCore core : pendingToClose) {
+1474c1501
+<             transientCores.remove(coreName);
+---
+>             pendingCloses.remove(core);
+1479,1491d1505
+< 
+<     
+<     for (SolrCore core : pendingToClose) {
+<       try {
+<         core.close();
+<       } catch (Throwable t) {
+<         SolrException.log(CoreContainer.log, "Error shutting down core", t);
+<       } finally {
+<         synchronized (locker) {
+<           pendingCloses.remove(core);
+<         }
+<       }
+<     }

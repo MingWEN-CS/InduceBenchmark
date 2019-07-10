@@ -1,0 +1,48 @@
+236c236
+<             Config hiveSite = cluster.getDesiredConfigByType("hive-interactive-site");
+---
+>             Config hiveSite = cluster.getDesiredConfigByType(HIVE_INTERACTIVE_SITE);
+247c247
+<                       updateConfigurationProperties("hive-interactive-site", Collections
+---
+>                       updateConfigurationProperties(HIVE_INTERACTIVE_SITE, Collections
+253c253
+<                     updateConfigurationProperties("hive-interactive-site", Collections
+---
+>                     updateConfigurationProperties(HIVE_INTERACTIVE_SITE, Collections
+259c259
+<               updateConfigurationProperties("hive-interactive-site",
+---
+>               updateConfigurationProperties(HIVE_INTERACTIVE_SITE,
+614a615
+>   private static final String HIVE_INTERACTIVE_SITE = "hive-interactive-site";
+623c624
+<           Config hiveInteractiveSite = cluster.getDesiredConfigByType("hive-interactive-site");
+---
+>           Config hiveInteractiveSite = cluster.getDesiredConfigByType(HIVE_INTERACTIVE_SITE);
+625c626
+<             updateConfigurationProperties("hive-interactive-site", Collections.singletonMap("hive.tez.container.size",
+---
+>             updateConfigurationProperties(HIVE_INTERACTIVE_SITE, Collections.singletonMap("hive.tez.container.size",
+628c629
+<             updateConfigurationProperties("hive-interactive-site", Collections.singletonMap("hive.auto.convert.join.noconditionaltask.size",
+---
+>             updateConfigurationProperties(HIVE_INTERACTIVE_SITE, Collections.singletonMap("hive.auto.convert.join.noconditionaltask.size",
+630c631
+<             updateConfigurationProperties("hive-interactive-site",
+---
+>             updateConfigurationProperties(HIVE_INTERACTIVE_SITE,
+632a634,646
+>             String llapRpcPortString = hiveInteractiveSite.getProperties().get("hive.llap.daemon.rpc.port");
+>             if (StringUtils.isNotBlank(llapRpcPortString)) {
+>               try {
+>                 int llapRpcPort = Integer.parseInt(llapRpcPortString);
+>                 if (llapRpcPort == 15001) {
+>                   updateConfigurationProperties(HIVE_INTERACTIVE_SITE,
+>                       Collections.singletonMap("hive.llap.daemon.rpc.port", "only"),
+>                       true, true);
+>                 }
+>               } catch (NumberFormatException e) {
+>                 LOG.warn("Unable to parse llap.rpc.port as integer: " + llapRpcPortString);
+>               }
+>             }

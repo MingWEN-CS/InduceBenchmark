@@ -1,0 +1,111 @@
+21a22
+> import java.util.Collections;
+25d25
+< import org.apache.lucene.codecs.FieldsConsumer;
+28d27
+< import org.apache.lucene.util.IOUtils;
+34a34,77
+>   private void applyDeletes(SegmentWriteState state, Fields fields) throws IOException {
+>     
+>     
+>     if (state.segDeletes != null && state.segDeletes.terms.size() > 0) {
+>       Map<Term,Integer> segDeletes = state.segDeletes.terms;
+>       List<Term> deleteTerms = new ArrayList<Term>(segDeletes.keySet());
+>       Collections.sort(deleteTerms);
+>       String lastField = null;
+>       TermsEnum termsEnum = null;
+>       DocsEnum docsEnum = null;
+>       for(Term deleteTerm : deleteTerms) {
+>         if (deleteTerm.field().equals(lastField) == false) {
+>           lastField = deleteTerm.field();
+>           Terms terms = fields.terms(lastField);
+>           if (terms != null) {
+>             termsEnum = terms.iterator(termsEnum);
+>           }
+>         }
+> 
+>         if (termsEnum != null && termsEnum.seekExact(deleteTerm.bytes())) {
+>           docsEnum = termsEnum.docs(null, docsEnum, 0);
+>           int delDocLimit = segDeletes.get(deleteTerm);
+>           while (true) {
+>             int doc = docsEnum.nextDoc();
+>             if (doc == DocsEnum.NO_MORE_DOCS) {
+>               break;
+>             }
+>             if (doc < delDocLimit) {
+>               if (state.liveDocs == null) {
+>                 state.liveDocs = state.segmentInfo.getCodec().liveDocsFormat().newLiveDocs(state.segmentInfo.getDocCount());
+>               }
+>               if (state.liveDocs.get(doc)) {
+>                 state.delCountOnFlush++;
+>                 state.liveDocs.clear(doc);
+>               }
+>             } else {
+>               break;
+>             }
+>           }
+>         }
+>       }
+>     }
+>   }
+> 
+49a93,94
+>         perField.sortPostings();
+>         assert perField.fieldInfo.isIndexed();
+54,55d98
+<     final int numAllFields = allFields.size();
+< 
+59,68c102
+<     final FieldsConsumer consumer = state.segmentInfo.getCodec().postingsFormat().fieldsConsumer(state);
+< 
+<     boolean success = false;
+< 
+<     try {
+<       TermsHash termsHash = null;
+<       
+<       
+< 
+< 
+---
+>     Fields fields = new FreqProxFields(allFields);
+69a104
+>     applyDeletes(state, fields);
+71,106c106
+< 
+< 
+< 
+< 
+< 
+< 
+<       
+<       for (int fieldNumber = 0; fieldNumber < numAllFields; fieldNumber++) {
+<         final FieldInfo fieldInfo = allFields.get(fieldNumber).fieldInfo;
+<         
+<         final FreqProxTermsWriterPerField fieldWriter = allFields.get(fieldNumber);
+< 
+<         
+<         
+<         fieldWriter.flush(fieldInfo.name, consumer, state);
+<         
+<         TermsHashPerField perField = fieldWriter.termsHashPerField;
+<         assert termsHash == null || termsHash == perField.termsHash;
+<         termsHash = perField.termsHash;
+<         int numPostings = perField.bytesHash.size();
+<         perField.reset();
+<         perField.shrinkHash(numPostings);
+<         fieldWriter.reset();
+<       }
+<       
+<       if (termsHash != null) {
+<         termsHash.reset();
+<       }
+<       success = true;
+<     } finally {
+<       if (success) {
+<         IOUtils.close(consumer);
+<       } else {
+<         IOUtils.closeWhileHandlingException(consumer);
+<       }
+<     }
+---
+>     state.segmentInfo.getCodec().postingsFormat().fieldsConsumer(state).write(fields);

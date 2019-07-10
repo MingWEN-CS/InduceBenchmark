@@ -1,0 +1,174 @@
+20,23c20,31
+< import com.google.gson.Gson;
+< import com.google.inject.Inject;
+< import com.google.inject.Injector;
+< import com.google.inject.Provider;
+---
+> import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.JDK_LOCATION;
+> 
+> import java.util.ArrayList;
+> import java.util.Collection;
+> import java.util.Collections;
+> import java.util.HashMap;
+> import java.util.HashSet;
+> import java.util.Iterator;
+> import java.util.List;
+> import java.util.Map;
+> import java.util.Set;
+> 
+54a63
+> import org.apache.ambari.server.orm.dao.HostComponentStateDAO;
+77,87c86,90
+< import java.util.ArrayList;
+< import java.util.Collection;
+< import java.util.Collections;
+< import java.util.HashMap;
+< import java.util.HashSet;
+< import java.util.Iterator;
+< import java.util.List;
+< import java.util.Map;
+< import java.util.Set;
+< 
+< import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.JDK_LOCATION;
+---
+> import com.google.gson.Gson;
+> import com.google.inject.Inject;
+> import com.google.inject.Injector;
+> import com.google.inject.Provider;
+> import com.google.inject.persist.Transactional;
+104a108
+>   protected static final String CLUSTER_STACK_VERSION_FORCE = "ClusterStackVersions/force";
+143a148
+>       add(CLUSTER_STACK_VERSION_FORCE);
+189a195,197
+>   @Inject
+>   private static HostComponentStateDAO hostComponentStateDAO;
+> 
+642,652c650,653
+<       Map<String, String> args = new HashMap<String, String>();
+<       if (newStateStr.equals(RepositoryVersionState.CURRENT.toString())) {
+<         
+<         args.put(FinalizeUpgradeAction.UPGRADE_DIRECTION_KEY, "upgrade");
+<       } else if (newStateStr.equals(RepositoryVersionState.INSTALLED.toString())) {
+<         
+<         args.put(FinalizeUpgradeAction.UPGRADE_DIRECTION_KEY, "downgrade");
+<       } else {
+<         throw new IllegalArgumentException(
+<           String.format("Invalid desired state %s. Should be either CURRENT or INSTALLED",
+<                   newStateStr));
+---
+>       String forceCurrent = (String) propertyMap.get(CLUSTER_STACK_VERSION_FORCE);
+>       boolean force = false;
+>       if (null != forceCurrent) {
+>         force = Boolean.parseBoolean(forceCurrent);
+655,663c656,678
+<       
+<       String defaultHostName;
+<       ArrayList<Host> hosts = new ArrayList<Host>(cluster.getHosts());
+<       if (!hosts.isEmpty()) {
+<         Collections.sort(hosts);
+<         defaultHostName = hosts.get(0).getHostName();
+<       } else {
+<         throw new AmbariException("Could not find at least one host to set the command for");
+<       }
+---
+>       if (!force) {
+>         Map<String, String> args = new HashMap<String, String>();
+>         if (newStateStr.equals(RepositoryVersionState.CURRENT.toString())) {
+>           
+>           args.put(FinalizeUpgradeAction.UPGRADE_DIRECTION_KEY, "upgrade");
+>         } else if (newStateStr.equals(RepositoryVersionState.INSTALLED.toString())) {
+>           
+>           args.put(FinalizeUpgradeAction.UPGRADE_DIRECTION_KEY, "downgrade");
+>         } else {
+>           throw new IllegalArgumentException(
+>             String.format("Invalid desired state %s. Should be either CURRENT or INSTALLED",
+>                     newStateStr));
+>         }
+> 
+>         
+>         String defaultHostName;
+>         ArrayList<Host> hosts = new ArrayList<Host>(cluster.getHosts());
+>         if (!hosts.isEmpty()) {
+>           Collections.sort(hosts);
+>           defaultHostName = hosts.get(0).getHostName();
+>         } else {
+>           throw new AmbariException("Could not find at least one host to set the command for");
+>         }
+665,666c680,681
+<       args.put(FinalizeUpgradeAction.VERSION_KEY, desiredRepoVersion);
+<       args.put(FinalizeUpgradeAction.CLUSTER_NAME_KEY, clName);
+---
+>         args.put(FinalizeUpgradeAction.VERSION_KEY, desiredRepoVersion);
+>         args.put(FinalizeUpgradeAction.CLUSTER_NAME_KEY, clName);
+668,671c683,696
+<       ExecutionCommand command = new ExecutionCommand();
+<       command.setCommandParams(args);
+<       command.setClusterName(clName);
+<       finalizeUpgradeAction.setExecutionCommand(command);
+---
+>         ExecutionCommand command = new ExecutionCommand();
+>         command.setCommandParams(args);
+>         command.setClusterName(clName);
+>         finalizeUpgradeAction.setExecutionCommand(command);
+> 
+>         HostRoleCommand hostRoleCommand = hostRoleCommandFactory.create(defaultHostName,
+>                 Role.AMBARI_SERVER_ACTION, null, null);
+>         finalizeUpgradeAction.setHostRoleCommand(hostRoleCommand);
+> 
+>         CommandReport report = finalizeUpgradeAction.execute(null);
+> 
+>         LOG.info("Finalize output:");
+>         LOG.info("STDOUT: {}", report.getStdOut());
+>         LOG.info("STDERR: {}", report.getStdErr());
+673,675c698,708
+<       HostRoleCommand hostRoleCommand = hostRoleCommandFactory.create(defaultHostName,
+<               Role.AMBARI_SERVER_ACTION, null, null);
+<       finalizeUpgradeAction.setHostRoleCommand(hostRoleCommand);
+---
+>         if (report.getStatus().equals(HostRoleStatus.COMPLETED.toString())) {
+>           return getRequestStatus(null);
+>         } else {
+>           String detailedOutput = "Finalization failed. More details: \n" +
+>                   "STDOUT: " + report.getStdOut() + "\n" +
+>                   "STDERR: " + report.getStdErr();
+>           throw new SystemException(detailedOutput);
+>         }
+>       } else {
+>         
+>         ClusterVersionEntity current = cluster.getCurrentClusterVersion();
+677c710,712
+<       CommandReport report = finalizeUpgradeAction.execute(null);
+---
+>         if (!current.getRepositoryVersion().equals(rve)) {
+>           updateVersionStates(current.getClusterId(), current.getRepositoryVersion(), rve);
+>         }
+679,681d713
+<       LOG.info("Finalize output:");
+<       LOG.info("STDOUT: {}", report.getStdOut());
+<       LOG.info("STDERR: {}", report.getStdErr());
+683d714
+<       if (report.getStatus().equals(HostRoleStatus.COMPLETED.toString())) {
+685,689d715
+<       } else {
+<         String detailedOutput = "Finalization failed. More details: \n" +
+<                 "STDOUT: " + report.getStdOut() + "\n" +
+<                 "STDERR: " + report.getStdErr();
+<         throw new SystemException(detailedOutput);
+731a758,773
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   @Transactional
+>   protected void updateVersionStates(Long clusterId, RepositoryVersionEntity current,
+>       RepositoryVersionEntity target) {
+> 
+>     hostComponentStateDAO.updateVersions(target.getVersion());
+>     hostVersionDAO.updateVersions(target, current);
+>     clusterVersionDAO.updateVersions(clusterId, target, current);
+>   }
+> 

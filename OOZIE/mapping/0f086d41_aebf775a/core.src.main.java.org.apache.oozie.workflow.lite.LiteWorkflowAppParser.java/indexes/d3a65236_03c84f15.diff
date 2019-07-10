@@ -1,0 +1,160 @@
+20a21,23
+> import org.apache.commons.codec.binary.Base64;
+> import org.apache.hadoop.io.Writable;
+> import org.apache.oozie.action.oozie.SubWorkflowActionExecutor;
+22d24
+< import org.apache.oozie.workflow.WorkflowException;
+29a32
+> import org.apache.oozie.util.WritableUtils;
+30a34
+> import org.apache.oozie.workflow.WorkflowException;
+48a53,58
+> import java.io.ByteArrayOutputStream;
+> import java.io.ByteArrayInputStream;
+> import java.io.DataInputStream;
+> import java.io.DataInput;
+> import java.io.DataOutput;
+> import java.io.DataOutputStream;
+56a67
+> import java.util.zip.*;
+97a109
+>     public static final String OOZIE_GLOBAL = "oozie.wf.globalconf";
+420c432,434
+<         GlobalSectionData gData = null;
+---
+>         GlobalSectionData gData = jobConf.get(OOZIE_GLOBAL) == null ?
+>                 null : getGlobalFromString(jobConf.get(OOZIE_GLOBAL));
+>         boolean serializedGlobalConf = false;
+459a474,478
+>                         if (!serializedGlobalConf  && elem.getName().equals(SubWorkflowActionExecutor.ACTION_TYPE) &&
+>                                 elem.getChild(("propagate-configuration"), ns) != null) {
+>                             serializedGlobalConf = true;
+>                             jobConf.set(OOZIE_GLOBAL, getGlobalString(gData));
+>                         }
+486a506,509
+>                 if(jobConf.get(OOZIE_GLOBAL) != null) {
+>                     gData = getGlobalFromString(jobConf.get(OOZIE_GLOBAL));
+>                     handleDefaultsAndGlobal(gData, null, eNode);
+>                 }
+502a526,566
+>     private GlobalSectionData getGlobalFromString(String globalStr) throws WorkflowException {
+>         GlobalSectionData globalSectionData = new GlobalSectionData();
+>         try {
+>             byte[] data = Base64.decodeBase64(globalStr);
+>             Inflater inflater = new Inflater();
+>             DataInputStream ois = new DataInputStream(new InflaterInputStream(new ByteArrayInputStream(data), inflater));
+>             globalSectionData.readFields(ois);
+>             ois.close();
+>         } catch (Exception ex) {
+>             throw new WorkflowException(ErrorCode.E0700, "Error while processing global section conf");
+>         }
+>         return globalSectionData;
+>     }
+> 
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+>     private String getGlobalString(GlobalSectionData globalSectionData) throws WorkflowException {
+>         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+>         DataOutputStream oos = null;
+>         try {
+>             Deflater def = new Deflater();
+>             oos = new DataOutputStream(new DeflaterOutputStream(baos, def));
+>             globalSectionData.write(oos);
+>             oos.close();
+>         } catch (IOException e) {
+>             throw new WorkflowException(ErrorCode.E0700, "Error while processing global section conf");
+>         }
+>         return Base64.encodeBase64String(baos.toByteArray());
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+573,577c637,644
+<     private class GlobalSectionData {
+<         final String jobTracker;
+<         final String nameNode;
+<         final List<String> jobXmls;
+<         final Configuration conf;
+---
+>     private class GlobalSectionData implements Writable {
+>         String jobTracker;
+>         String nameNode;
+>         List<String> jobXmls;
+>         Configuration conf;
+> 
+>         public GlobalSectionData() {
+>         }
+584a652,688
+> 
+>         @Override
+>         public void write(DataOutput dataOutput) throws IOException {
+>             WritableUtils.writeStr(dataOutput, jobTracker);
+>             WritableUtils.writeStr(dataOutput, nameNode);
+> 
+>             if(jobXmls != null && !jobXmls.isEmpty()) {
+>                 dataOutput.writeInt(jobXmls.size());
+>                 for (String content : jobXmls) {
+>                     WritableUtils.writeStr(dataOutput, content);
+>                 }
+>             } else {
+>                 dataOutput.writeInt(0);
+>             }
+>             if(conf != null) {
+>                 WritableUtils.writeStr(dataOutput, XmlUtils.prettyPrint(conf).toString());
+>             } else {
+>                 WritableUtils.writeStr(dataOutput, null);
+>             }
+>         }
+> 
+>         @Override
+>         public void readFields(DataInput dataInput) throws IOException {
+>             jobTracker = WritableUtils.readStr(dataInput);
+>             nameNode = WritableUtils.readStr(dataInput);
+>             int length = dataInput.readInt();
+>             if (length > 0) {
+>                 jobXmls = new ArrayList<String>();
+>                 for (int i = 0; i < length; i++) {
+>                     jobXmls.add(WritableUtils.readStr(dataInput));
+>                 }
+>             }
+>             String confString = WritableUtils.readStr(dataInput);
+>             if(confString != null) {
+>                 conf = new XConfiguration(new StringReader(confString));
+>             }
+>         }
+627a732
+> 
+629c734
+<         if (ae == null) {
+---
+>         if (ae == null && !GLOBAL.equals(actionElement.getName())) {
+635c740,741
+<         if (ae.requiresNameNodeJobTracker()) {
+---
+>         if (SubWorkflowActionExecutor.ACTION_TYPE.equals(actionElement.getName()) ||
+>                 GLOBAL.equals(actionElement.getName()) || ae.requiresNameNodeJobTracker()) {
+641c747,748
+<                 } else {
+---
+>                 } else if (!(SubWorkflowActionExecutor.ACTION_TYPE.equals(actionElement.getName()) ||
+>                         GLOBAL.equals(actionElement.getName()))) {
+650c757,758
+<                 } else {
+---
+>                 } else if (!(SubWorkflowActionExecutor.ACTION_TYPE.equals(actionElement.getName()) ||
+>                         GLOBAL.equals(actionElement.getName()))) {
+656c764
+<         if (ae.supportsConfigurationJobXML()) {
+---
+>         if ( GLOBAL.equals(actionElement.getName()) || ae.supportsConfigurationJobXML()) {
+709d816
+< 

@@ -1,0 +1,30 @@
+22,23c22,23
+< import org.apache.commons.lang3.builder.EqualsBuilder;
+< import org.apache.commons.lang3.builder.HashCodeBuilder;
+---
+> import org.apache.commons.lang.builder.EqualsBuilder;
+> import org.apache.commons.lang.builder.HashCodeBuilder;
+182c182,184
+<     if (this == o) return true;
+---
+>     if (this == o) {
+>       return true;
+>     }
+184c186,188
+<     if (o == null || getClass() != o.getClass()) return false;
+---
+>     if (o == null || getClass() != o.getClass()) {
+>       return false;
+>     }
+189,190c193,194
+<       .append(configurationMap, that.configurationMap)
+<       .isEquals();
+---
+>         .append(configurationMap, that.configurationMap)
+>         .isEquals();
+196,197c200,201
+<       .append(configurationMap)
+<       .toHashCode();
+---
+>         .append(configurationMap)
+>         .toHashCode();

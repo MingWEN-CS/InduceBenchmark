@@ -1,0 +1,142 @@
+19a20,25
+> import java.io.IOException;
+> import java.util.ArrayList;
+> import java.util.HashMap;
+> import java.util.List;
+> import java.util.Map;
+> 
+30,31d35
+< import org.apache.lucene.util.CharsRef;
+< import org.apache.lucene.util.UnicodeUtil;
+45,50d48
+< import java.io.IOException;
+< import java.util.ArrayList;
+< import java.util.HashMap;
+< import java.util.List;
+< import java.util.Map;
+< 
+113,144c111
+<         ScoreDoc[] scoreDocs = new ScoreDoc[documents.size()];
+<         int j = 0;
+<         for (NamedList<Object> document : documents) {
+<           Object docId = document.get("id");
+<           Object uniqueId = null;
+<           if (docId != null)
+<             uniqueId = docId.toString();
+<           else
+<             log.warn("doc {} has null 'id'", document);
+<           Float score = (Float) document.get("score");
+<           if (score == null) {
+<             score = Float.NaN;
+<           }
+<           Object[] sortValues = null;
+<           Object sortValuesVal = document.get("sortValues");
+<           if (sortValuesVal != null) {
+<             sortValues = ((List) sortValuesVal).toArray();
+<             for (int k = 0; k < sortValues.length; k++) {
+<               SchemaField field = groupSort.getSort()[k].getField() != null ? schema.getFieldOrNull(groupSort.getSort()[k].getField()) : null;
+<               if (field != null) {
+<                 FieldType fieldType = field.getType();
+<                 if (sortValues[k] != null) {
+<                   sortValues[k] = fieldType.unmarshalSortValue(sortValues[k]);
+<                 }
+<               }
+<             }
+<           }
+<           else {
+<             log.warn("doc {} has null 'sortValues'", document);
+<           }
+<           scoreDocs[j++] = new ShardDoc(score, sortValues, uniqueId, shard);
+<         }
+---
+>         ScoreDoc[] scoreDocs = transformToNativeShardDoc(documents, groupSort, shard, schema);
+146c113
+<         if (sortWithinGroup == null) {
+---
+>         if (sortWithinGroup.equals(Sort.RELEVANCE)) {
+170,189c137
+<         ScoreDoc[] scoreDocs = new ScoreDoc[documents.size()];
+<         int j = 0;
+<         for (NamedList<Object> document : documents) {
+<           Object uniqueId = document.get("id").toString();
+<           Float score = (Float) document.get("score");
+<           if (score == null) {
+<             score = Float.NaN;
+<           }
+<           Object[] sortValues = ((List) document.get("sortValues")).toArray();
+<           for (int k = 0; k < sortValues.length; k++) {
+<             SchemaField field = sortWithinGroup.getSort()[k].getField() != null ? schema.getFieldOrNull(sortWithinGroup.getSort()[k].getField()) : null;
+<             if (field != null) {
+<               FieldType fieldType = field.getType();
+<               if (sortValues[k] != null) {
+<                 sortValues[k] = fieldType.unmarshalSortValue(sortValues[k]);
+<               }
+<             }
+<           }
+<           scoreDocs[j++] = new ShardDoc(score, sortValues, uniqueId, shard);
+<         }
+---
+>         ScoreDoc[] scoreDocs = transformToNativeShardDoc(documents, groupSort, shard, schema);
+206a155,191
+>   protected ScoreDoc[] transformToNativeShardDoc(List<NamedList<Object>> documents, Sort groupSort, String shard,
+>                                                  IndexSchema schema) {
+>     ScoreDoc[] scoreDocs = new ScoreDoc[documents.size()];
+>     int j = 0;
+>     for (NamedList<Object> document : documents) {
+>       Object docId = document.get("id");
+>       if (docId != null) {
+>         docId = docId.toString();
+>       } else {
+>         log.error("doc {} has null 'id'", document);
+>       }
+>       Float score = (Float) document.get("score");
+>       if (score == null) {
+>         score = Float.NaN;
+>       }
+>       Object[] sortValues = null;
+>       Object sortValuesVal = document.get("sortValues");
+>       if (sortValuesVal != null) {
+>         sortValues = ((List) sortValuesVal).toArray();
+>         for (int k = 0; k < sortValues.length; k++) {
+>           SchemaField field = groupSort.getSort()[k].getField() != null
+>               ? schema.getFieldOrNull(groupSort.getSort()[k].getField()) : null;
+>           if (field != null) {
+>             FieldType fieldType = field.getType();
+>             if (sortValues[k] != null) {
+>               sortValues[k] = fieldType.unmarshalSortValue(sortValues[k]);
+>             }
+>           }
+>         }
+>       } else {
+>         log.debug("doc {} has null 'sortValues'", document);
+>       }
+>       scoreDocs[j++] = new ShardDoc(score, sortValues, docId, shard);
+>     }
+>     return scoreDocs;
+>   }
+> 
+214d198
+<     CharsRef spare = new CharsRef();
+236c220
+<           continue;
+---
+>           continue; 
+267c251,252
+<     if (rb.getGroupingSpec().isNeedScore()) {
+---
+>     
+>     if (!Float.isNaN(result.getTopDocs().getMaxScore())) {
+275d259
+<     CharsRef spare = new CharsRef();
+282c266
+<       if (rb.getGroupingSpec().isNeedScore())  {
+---
+>       if (!Float.isNaN(scoreDoc.score))  {
+286c270
+<         continue;
+---
+>         continue; 
+294c278
+<         SchemaField field = groupSort.getSort()[j].getField() != null 
+---
+>         SchemaField field = groupSort.getSort()[j].getField() != null

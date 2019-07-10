@@ -1,0 +1,204 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.update;
+
+import java.util.List;
+import java.util.Set;
+
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.StorableField;
+import org.apache.solr.common.SolrException;
+import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.SolrInputField;
+import org.apache.solr.schema.CopyField;
+import org.apache.solr.schema.IndexSchema;
+import org.apache.solr.schema.SchemaField;
+
+
+import com.google.common.collect.Sets;
+
+
+
+
+public class DocumentBuilder {
+
+  private static void addField(Document doc, SchemaField field, Object val, float boost) {
+    if (val instanceof StorableField) {
+      
+      ((Field)val).setBoost(boost);
+      doc.add((Field)val);
+      return;
+    }
+    for (StorableField f : field.getType().createFields(field, val, boost)) {
+      if (f != null) doc.add((Field) f); 
+    }
+  }
+  
+  private static String getID( SolrInputDocument doc, IndexSchema schema )
+  {
+    String id = "";
+    SchemaField sf = schema.getUniqueKeyField();
+    if( sf != null ) {
+      id = "[doc="+doc.getFieldValue( sf.getName() )+"] ";
+    }
+    return id;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static Document toDocument( SolrInputDocument doc, IndexSchema schema )
+  { 
+    Document out = new Document();
+    final float docBoost = doc.getDocumentBoost();
+    Set<String> usedFields = Sets.newHashSet();
+    
+    
+    for( SolrInputField field : doc ) {
+      String name = field.getName();
+      SchemaField sfield = schema.getFieldOrNull(name);
+      boolean used = false;
+
+      
+      
+      if( sfield!=null && !sfield.multiValued() && field.getValueCount() > 1 ) {
+        throw new SolrException( SolrException.ErrorCode.BAD_REQUEST,
+            "ERROR: "+getID(doc, schema)+"multiple values encountered for non multiValued field " + 
+              sfield.getName() + ": " +field.getValue() );
+      }
+      
+      float fieldBoost = field.getBoost();
+      boolean applyBoost = sfield != null && sfield.indexed() && !sfield.omitNorms();
+
+      if (applyBoost == false && fieldBoost != 1.0F) {
+        throw new SolrException( SolrException.ErrorCode.BAD_REQUEST,
+            "ERROR: "+getID(doc, schema)+"cannot set an index-time boost, unindexed or norms are omitted for field " + 
+              sfield.getName() + ": " +field.getValue() );
+      }
+
+      
+      
+      float compoundBoost = fieldBoost * docBoost;
+
+      List<CopyField> copyFields = schema.getCopyFieldsList(name);
+      if( copyFields.size() == 0 ) copyFields = null;
+
+      
+      boolean hasField = false;
+      try {
+        for( Object v : field ) {
+          if( v == null ) {
+            continue;
+          }
+          hasField = true;
+          if (sfield != null) {
+            used = true;
+            addField(out, sfield, v, applyBoost ? compoundBoost : 1f);
+            
+            usedFields.add(sfield.getName());
+          }
+  
+          
+          
+          if( copyFields != null ){
+            for (CopyField cf : copyFields) {
+              SchemaField destinationField = cf.getDestination();
+  
+              final boolean destHasValues = usedFields.contains(destinationField.getName());
+  
+              
+              if (!destinationField.multiValued() && destHasValues) {
+                throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+                        "ERROR: "+getID(doc, schema)+"multiple values encountered for non multiValued copy field " +
+                                destinationField.getName() + ": " + v);
+              }
+    
+              used = true;
+              
+              
+              Object val = v;
+              if( val instanceof String && cf.getMaxChars() > 0 ) {
+                val = cf.getLimitedValue((String)val);
+              }
+  
+              
+              
+              
+              
+              final float destBoost = 
+                (destinationField.indexed() && !destinationField.omitNorms()) ?
+                (destHasValues ? fieldBoost : compoundBoost) : 1.0F;
+              
+              addField(out, destinationField, val, destBoost);
+              
+              usedFields.add(destinationField.getName());
+            }
+            
+            
+            
+            
+            
+            fieldBoost = compoundBoost = 1.0f;
+          }
+        }
+      }
+      catch( SolrException ex ) {
+        throw ex;
+      }
+      catch( Exception ex ) {
+        throw new SolrException( SolrException.ErrorCode.BAD_REQUEST,
+            "ERROR: "+getID(doc, schema)+"Error adding field '" + 
+              field.getName() + "'='" +field.getValue()+"' msg=" + ex.getMessage(), ex );
+      }
+      
+      
+      if( !used && hasField ) {
+        throw new SolrException( SolrException.ErrorCode.BAD_REQUEST,
+            "ERROR: "+getID(doc, schema)+"unknown field '" +name + "'");
+      }
+    }
+    
+        
+    
+    
+    for (SchemaField field : schema.getRequiredFields()) {
+      if (out.getField(field.getName() ) == null) {
+        if (field.getDefaultValue() != null) {
+          addField(out, field, field.getDefaultValue(), 1.0f);
+        } 
+        else {
+          String msg = getID(doc, schema) + "missing required field: " + field.getName();
+          throw new SolrException( SolrException.ErrorCode.BAD_REQUEST, msg );
+        }
+      }
+    }
+    return out;
+  }
+}

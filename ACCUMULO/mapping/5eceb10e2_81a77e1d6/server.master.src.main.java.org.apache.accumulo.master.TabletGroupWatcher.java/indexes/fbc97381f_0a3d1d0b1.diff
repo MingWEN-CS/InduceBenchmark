@@ -1,0 +1,10 @@
+518,519c518,523
+<           datafiles.add(new FileRef(entry.getValue().toString(), this.master.fs.getFullPath(FileType.TABLE, Path.SEPARATOR + extent.getTableId()
+<               + entry.getValue().toString())));
+---
+>           String path = entry.getValue().toString();
+>           if (path.contains(":")) {
+>             datafiles.add(new FileRef(path));
+>           } else {
+>             datafiles.add(new FileRef(path, this.master.fs.getFullPath(FileType.TABLE, Path.SEPARATOR + extent.getTableId() + path)));
+>           }

@@ -1,0 +1,66 @@
+150a151
+>     TableConfiguration conf;
+152,155c153,160
+<       TableConfiguration conf = tableConfigs.get(instanceID).get(tableId);
+<       if (conf == null && Tables.exists(instance, tableId)) {
+<         conf = new TableConfiguration(instance.getInstanceID(), tableId, getNamespaceConfigurationForTable(tableId));
+<         ConfigSanityCheck.validate(conf);
+---
+>       conf = tableConfigs.get(instanceID).get(tableId);
+>     }
+>     
+>     
+>     if (conf == null && Tables.exists(instance, tableId)) {
+>       conf = new TableConfiguration(instance.getInstanceID(), tableId, getNamespaceConfigurationForTable(tableId));
+>       ConfigSanityCheck.validate(conf);
+>       synchronized (tableConfigs) {
+158d162
+<       return conf;
+159a164
+>     return conf;
+167a173
+>     NamespaceConfiguration conf;
+169,173c175,183
+<       NamespaceConfiguration conf = tableParentConfigs.get(instanceID).get(tableId);
+<       if (conf == null) {
+<         
+<         conf = new TableParentConfiguration(tableId, instance, getConfiguration());
+<         ConfigSanityCheck.validate(conf);
+---
+>       conf = tableParentConfigs.get(instanceID).get(tableId);
+>     }
+>     
+>     
+>     if (conf == null) {
+>       
+>       conf = new TableParentConfiguration(tableId, instance, getConfiguration());
+>       ConfigSanityCheck.validate(conf);
+>       synchronized (tableParentConfigs) {
+176d185
+<       return conf;
+177a187
+>     return conf;
+181a192,194
+>     NamespaceConfiguration conf;
+>     
+>     
+183,188c196,203
+<       NamespaceConfiguration conf = namespaceConfigs.get(instanceID).get(namespaceId);
+<       if (conf == null) {
+<         
+<         conf = new NamespaceConfiguration(namespaceId, instance, getConfiguration());
+<         conf.setZooCacheFactory(zcf);
+<         ConfigSanityCheck.validate(conf);
+---
+>       conf = namespaceConfigs.get(instanceID).get(namespaceId);
+>     }
+>     if (conf == null) {
+>       
+>       conf = new NamespaceConfiguration(namespaceId, instance, getConfiguration());
+>       conf.setZooCacheFactory(zcf);
+>       ConfigSanityCheck.validate(conf);
+>       synchronized (namespaceConfigs) {
+191d205
+<       return conf;
+192a207
+>     return conf;

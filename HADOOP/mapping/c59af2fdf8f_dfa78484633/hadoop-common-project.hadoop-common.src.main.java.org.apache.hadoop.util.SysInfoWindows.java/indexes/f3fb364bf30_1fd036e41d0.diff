@@ -1,0 +1,7 @@
+73,74d72
+<     ShellCommandExecutor shellExecutor = new ShellCommandExecutor(
+<         new String[] {Shell.WINUTILS, "systeminfo" });
+75a74,76
+>       ShellCommandExecutor shellExecutor = new ShellCommandExecutor(
+>           new String[] {Shell.getWinutilsFile().getCanonicalPath(),
+>               "systeminfo" });

@@ -1,0 +1,56 @@
+26,30d25
+< import org.apache.hadoop.fs.Trash;
+< 
+< import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.FS_TRASH_INTERVAL_KEY;
+< import static org.junit.Assert.assertFalse;
+< import static org.junit.Assert.assertTrue;
+65,113d59
+< 
+<   
+<   @Test
+<   public void testTrashEnabledServerSide() throws IOException {
+<     Configuration serverConf = new HdfsConfiguration();
+<     Configuration clientConf = new Configuration();
+< 
+<     
+<     serverConf.setLong(FS_TRASH_INTERVAL_KEY, 1);
+<     clientConf.setLong(FS_TRASH_INTERVAL_KEY, 1);
+< 
+<     MiniDFSCluster cluster2 = null;
+<     try {
+<       cluster2 = new MiniDFSCluster.Builder(serverConf).numDataNodes(1).build();
+<       FileSystem fs = cluster2.getFileSystem();
+<       assertTrue(new Trash(fs, clientConf).isEnabled());
+< 
+<       
+<       clientConf.setLong(FS_TRASH_INTERVAL_KEY, 0);
+<       assertTrue(new Trash(fs, clientConf).isEnabled());
+<     } finally {
+<       if (cluster2 != null) cluster2.shutdown();
+<     }
+<   }
+< 
+<   
+<   @Test
+<   public void testTrashEnabledClientSide() throws IOException {
+<     Configuration serverConf = new HdfsConfiguration();
+<     Configuration clientConf = new Configuration();
+<     
+<     
+<     serverConf.setLong(FS_TRASH_INTERVAL_KEY, 0);
+< 
+<     MiniDFSCluster cluster2 = null;
+<     try {
+<       cluster2 = new MiniDFSCluster.Builder(serverConf).numDataNodes(1).build();
+< 
+<       
+<       FileSystem fs = cluster2.getFileSystem();
+<       assertFalse(new Trash(fs, clientConf).isEnabled());
+< 
+<       
+<       clientConf.setLong(FS_TRASH_INTERVAL_KEY, 1);
+<       assertTrue(new Trash(fs, clientConf).isEnabled());
+<     } finally {
+<       if (cluster2 != null) cluster2.shutdown();
+<     }
+<   }

@@ -1,0 +1,12 @@
+65,66d64
+<     public static final long MONTH_MSEC = 30 * DAY_MSEC;
+<     public static final long YEAR_MSEC = 365 * DAY_MSEC;
+1404c1402,1403
+<                 instanceCount[0] = (int) ((effectiveTime.getTime() - datasetInitialInstance.getTime()) / MONTH_MSEC);
+---
+>                 int diffYear = calEffectiveTime.get(Calendar.YEAR) - current.get(Calendar.YEAR);
+>                 instanceCount[0] = diffYear * 12 + calEffectiveTime.get(Calendar.MONTH) - current.get(Calendar.MONTH);
+1407c1406
+<                 instanceCount[0] = (int) ((effectiveTime.getTime() - datasetInitialInstance.getTime()) / YEAR_MSEC);
+---
+>                 instanceCount[0] = calEffectiveTime.get(Calendar.YEAR) - current.get(Calendar.YEAR);

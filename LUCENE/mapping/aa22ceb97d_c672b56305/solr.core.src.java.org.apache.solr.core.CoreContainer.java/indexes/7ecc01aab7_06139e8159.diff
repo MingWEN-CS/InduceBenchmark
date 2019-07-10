@@ -1,0 +1,4 @@
+380c380
+<         cfg = new SolrProperties(this, is, fileName);
+---
+>         cfg = new SolrProperties(this, loader, is, fileName);

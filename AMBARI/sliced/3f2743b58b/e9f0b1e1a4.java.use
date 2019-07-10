@@ -1,0 +1,9 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+9	AmbariConfiguration.properties	Map<String,Object>	variable	40	use	org.apache.ambari.server.api.services.ldap.AmbariConfiguration.getProperties	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/3f2743b58b/e9f0b1e1a4.java	39	41
+10	AmbariConfiguration.type	String	variable	32	use	org.apache.ambari.server.api.services.ldap.AmbariConfiguration.getType	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/3f2743b58b/e9f0b1e1a4.java	31	33
+6	data	Map<String,Object>	param	43	define	org.apache.ambari.server.api.services.ldap.AmbariConfiguration.setProperties	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/3f2743b58b/e9f0b1e1a4.java	43	45
+6	data	Map<String,Object>	param	44	use	org.apache.ambari.server.api.services.ldap.AmbariConfiguration.setProperties	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/3f2743b58b/e9f0b1e1a4.java	43	45
+9	AmbariConfiguration.properties	Map<String,Object>	variable	44	set	org.apache.ambari.server.api.services.ldap.AmbariConfiguration.setProperties	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/3f2743b58b/e9f0b1e1a4.java	43	45
+8	type	String	param	35	define	org.apache.ambari.server.api.services.ldap.AmbariConfiguration.setType	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/3f2743b58b/e9f0b1e1a4.java	35	37
+8	type	String	param	36	use	org.apache.ambari.server.api.services.ldap.AmbariConfiguration.setType	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/3f2743b58b/e9f0b1e1a4.java	35	37
+10	AmbariConfiguration.type	String	variable	36	set	org.apache.ambari.server.api.services.ldap.AmbariConfiguration.setType	/Users/justin/Java/Dataset_InducingBenchmark/AMBARI/sliced/3f2743b58b/e9f0b1e1a4.java	35	37

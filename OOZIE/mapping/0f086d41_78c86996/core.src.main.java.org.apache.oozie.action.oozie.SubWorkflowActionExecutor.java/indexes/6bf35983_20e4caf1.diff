@@ -1,0 +1,50 @@
+21,24c21,26
+< import org.apache.oozie.action.hadoop.OozieJobInfo;
+< import org.apache.oozie.client.OozieClientException;
+< import org.apache.oozie.action.ActionExecutor;
+< import org.apache.oozie.action.ActionExecutorException;
+---
+> import java.io.IOException;
+> import java.io.StringReader;
+> import java.util.HashSet;
+> import java.util.Set;
+> 
+> import org.apache.hadoop.conf.Configuration;
+28,31c30,32
+< import org.apache.oozie.command.wf.ActionStartXCommand;
+< import org.apache.oozie.service.ConfigurationService;
+< import org.apache.oozie.service.DagEngineService;
+< import org.apache.oozie.client.WorkflowAction;
+---
+> import org.apache.oozie.action.ActionExecutor;
+> import org.apache.oozie.action.ActionExecutorException;
+> import org.apache.oozie.action.hadoop.OozieJobInfo;
+32a34,35
+> import org.apache.oozie.client.OozieClientException;
+> import org.apache.oozie.client.WorkflowAction;
+34a38,41
+> import org.apache.oozie.command.wf.ActionStartXCommand;
+> import org.apache.oozie.service.ConfigurationService;
+> import org.apache.oozie.service.DagEngineService;
+> import org.apache.oozie.service.Services;
+38d44
+< import org.apache.oozie.util.XmlUtils;
+41,42c47
+< import org.apache.oozie.service.Services;
+< import org.apache.hadoop.conf.Configuration;
+---
+> import org.apache.oozie.util.XmlUtils;
+46,50d50
+< import java.io.StringReader;
+< import java.io.IOException;
+< import java.util.Set;
+< import java.util.HashSet;
+< 
+289,290c289,292
+<             OozieClient oozieClient = getWorkflowClient(context, oozieUri);
+<             oozieClient.kill(subWorkflowId);
+---
+>             if (subWorkflowId != null && oozieUri != null) {
+>                 OozieClient oozieClient = getWorkflowClient(context, oozieUri);
+>                 oozieClient.kill(subWorkflowId);
+>             }

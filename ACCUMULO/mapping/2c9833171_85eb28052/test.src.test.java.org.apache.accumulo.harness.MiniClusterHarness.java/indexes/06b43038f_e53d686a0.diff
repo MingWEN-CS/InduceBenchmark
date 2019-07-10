@@ -1,0 +1,9 @@
+73c73,78
+<     return create(testBase.getClass().getName(), testBase.testName.getMethodName(), token, kdc);
+---
+>     return create(testBase, token, kdc, MiniClusterConfigurationCallback.NO_CALLBACK);
+>   }
+> 
+>   public MiniAccumuloClusterImpl create(AccumuloIT testBase, AuthenticationToken token, TestingKdc kdc, MiniClusterConfigurationCallback configCallback)
+>       throws Exception {
+>     return create(testBase.getClass().getName(), testBase.testName.getMethodName(), token, configCallback, kdc);

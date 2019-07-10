@@ -1,0 +1,21 @@
+50c50,54
+< final class CompressingStoredFieldsWriter extends StoredFieldsWriter {
+---
+> 
+> 
+> 
+> 
+> public final class CompressingStoredFieldsWriter extends StoredFieldsWriter {
+82c86,87
+<   public CompressingStoredFieldsWriter(Directory directory, SegmentInfo si, IOContext context,
+---
+>   
+>   public CompressingStoredFieldsWriter(Directory directory, SegmentInfo si, String segmentSuffix, IOContext context,
+97c102
+<     IndexOutput indexStream = directory.createOutput(IndexFileNames.segmentFileName(segment, "", FIELDS_INDEX_EXTENSION), context);
+---
+>     IndexOutput indexStream = directory.createOutput(IndexFileNames.segmentFileName(segment, segmentSuffix, FIELDS_INDEX_EXTENSION), context);
+99c104
+<       fieldsStream = directory.createOutput(IndexFileNames.segmentFileName(segment, "", FIELDS_EXTENSION), context);
+---
+>       fieldsStream = directory.createOutput(IndexFileNames.segmentFileName(segment, segmentSuffix, FIELDS_EXTENSION), context);

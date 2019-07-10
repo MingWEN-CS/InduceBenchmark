@@ -1,0 +1,223 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+18	name	String	param	177	define	org.apache.hadoop.ipc.CallQueueManager.addResponseTime	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	177	180
+19	priorityLevel	int	param	177	define	org.apache.hadoop.ipc.CallQueueManager.addResponseTime	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	177	180
+21	queueTime	int	param	177	define	org.apache.hadoop.ipc.CallQueueManager.addResponseTime	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	177	180
+20	processingTime	int	param	178	define	org.apache.hadoop.ipc.CallQueueManager.addResponseTime	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	177	180
+18	name	String	param	179	use	org.apache.hadoop.ipc.CallQueueManager.addResponseTime	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	177	180
+19	priorityLevel	int	param	179	use	org.apache.hadoop.ipc.CallQueueManager.addResponseTime	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	177	180
+21	queueTime	int	param	179	use	org.apache.hadoop.ipc.CallQueueManager.addResponseTime	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	177	180
+20	processingTime	int	param	179	use	org.apache.hadoop.ipc.CallQueueManager.addResponseTime	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	177	180
+128	CallQueueManager.scheduler	RpcScheduler	variable	179	use	org.apache.hadoop.ipc.CallQueueManager.addResponseTime	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	177	180
+8	backingClass	Class<? extends BlockingQueue>	param	63	define	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+15	schedulerClass	Class<? extends RpcScheduler>	param	64	define	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+10	clientBackOffEnabled	boolean	param	65	define	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+12	maxQueueSize	int	param	65	define	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+13	namespace	String	param	65	define	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+11	conf	Configuration	param	66	define	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+13	namespace	String	param	67	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+11	conf	Configuration	param	67	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+15	schedulerClass	Class<? extends RpcScheduler>	param	68	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+13	namespace	String	param	69	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+11	conf	Configuration	param	69	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+8	backingClass	Class<? extends BlockingQueue>	param	70	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+12	maxQueueSize	int	param	71	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+13	namespace	String	param	71	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+11	conf	Configuration	param	71	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+10	clientBackOffEnabled	boolean	param	72	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+8	backingClass	Class<? extends BlockingQueue>	param	75	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+15	schedulerClass	Class<? extends RpcScheduler>	param	76	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+14	priorityLevels	int	variable	67	define	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+9	bq	BlockingQueue<E>	variable	70	define	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+14	priorityLevels	int	variable	67	set	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+128	CallQueueManager.scheduler	RpcScheduler	variable	68	set	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+9	bq	BlockingQueue<E>	variable	70	set	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+126	CallQueueManager.clientBackOffEnabled	volatile boolean	variable	72	set	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+127	CallQueueManager.putRef	AtomicReference<BlockingQueue>	variable	73	set	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+129	CallQueueManager.takeRef	AtomicReference<BlockingQueue>	variable	74	set	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+14	priorityLevels	int	variable	68	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+14	priorityLevels	int	variable	71	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+9	bq	BlockingQueue<E>	variable	73	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+9	bq	BlockingQueue<E>	variable	74	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+125	CallQueueManager.LOG	Log	variable	75	use	org.apache.hadoop.ipc.CallQueueManager.CallQueueManager	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	63	77
+25	queueClass	Class<?>	param	44	define	org.apache.hadoop.ipc.CallQueueManager.convertQueueClass	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	43	46
+24	elementClass	Class<E>	param	44	define	org.apache.hadoop.ipc.CallQueueManager.convertQueueClass	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	43	46
+25	queueClass	Class<?>	param	45	use	org.apache.hadoop.ipc.CallQueueManager.convertQueueClass	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	43	46
+27	schedulerClass	Class<?>	param	50	define	org.apache.hadoop.ipc.CallQueueManager.convertSchedulerClass	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	49	52
+27	schedulerClass	Class<?>	param	51	use	org.apache.hadoop.ipc.CallQueueManager.convertSchedulerClass	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	49	52
+51	theClass	Class<T>	param	123	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+50	priorityLevels	int	param	123	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+48	maxLen	int	param	123	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+49	ns	String	param	123	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+44	conf	Configuration	param	124	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+33	e	RuntimeException	param	131	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+35	e	InvocationTargetException	param	133	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+36	e	Exception	param	136	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+37	e	RuntimeException	param	143	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+38	e	InvocationTargetException	param	145	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+39	e	Exception	param	148	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+40	e	RuntimeException	param	155	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+41	e	InvocationTargetException	param	157	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+42	e	Exception	param	160	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+51	theClass	Class<T>	param	128	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+50	priorityLevels	int	param	130	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+48	maxLen	int	param	130	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+49	ns	String	param	130	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+44	conf	Configuration	param	130	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+33	e	RuntimeException	param	132	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+51	theClass	Class<T>	param	134	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+35	e	InvocationTargetException	param	135	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+51	theClass	Class<T>	param	141	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+48	maxLen	int	param	142	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+37	e	RuntimeException	param	144	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+51	theClass	Class<T>	param	146	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+38	e	InvocationTargetException	param	147	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+51	theClass	Class<T>	param	153	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+40	e	RuntimeException	param	156	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+51	theClass	Class<T>	param	158	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+41	e	InvocationTargetException	param	159	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+51	theClass	Class<T>	param	164	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+45	ctor	Constructor<T>	variable	128	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+46	ctor	Constructor<T>	variable	141	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+47	ctor	Constructor<T>	variable	153	define	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+45	ctor	Constructor<T>	variable	128	set	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+46	ctor	Constructor<T>	variable	141	set	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+47	ctor	Constructor<T>	variable	153	set	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+43	class		variable	128	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+43	class		variable	129	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+43	class		variable	129	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+43	class		variable	129	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+45	ctor	Constructor<T>	variable	130	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+43	class		variable	141	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+46	ctor	Constructor<T>	variable	142	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+47	ctor	Constructor<T>	variable	154	use	org.apache.hadoop.ipc.CallQueueManager.createCallQueueInstance	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	122	165
+69	theClass	Class<T>	param	80	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+68	priorityLevels	int	param	80	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+67	ns	String	param	80	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+63	conf	Configuration	param	80	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+54	e	RuntimeException	param	86	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+55	e	InvocationTargetException	param	88	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+56	e	Exception	param	91	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+57	e	RuntimeException	param	97	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+58	e	InvocationTargetException	param	99	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+59	e	Exception	param	102	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+60	e	RuntimeException	param	109	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+61	e	InvocationTargetException	param	111	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+62	e	Exception	param	114	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+69	theClass	Class<T>	param	83	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+68	priorityLevels	int	param	85	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+67	ns	String	param	85	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+63	conf	Configuration	param	85	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+54	e	RuntimeException	param	87	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+69	theClass	Class<T>	param	89	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+55	e	InvocationTargetException	param	90	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+69	theClass	Class<T>	param	95	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+68	priorityLevels	int	param	96	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+57	e	RuntimeException	param	98	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+69	theClass	Class<T>	param	100	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+58	e	InvocationTargetException	param	101	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+69	theClass	Class<T>	param	107	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+60	e	RuntimeException	param	110	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+69	theClass	Class<T>	param	112	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+61	e	InvocationTargetException	param	113	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+69	theClass	Class<T>	param	118	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+64	ctor	Constructor<T>	variable	83	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+65	ctor	Constructor<T>	variable	95	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+66	ctor	Constructor<T>	variable	107	define	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+64	ctor	Constructor<T>	variable	83	set	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+65	ctor	Constructor<T>	variable	95	set	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+66	ctor	Constructor<T>	variable	107	set	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+43	class		variable	83	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+43	class		variable	84	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+43	class		variable	84	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+64	ctor	Constructor<T>	variable	85	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+43	class		variable	95	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+65	ctor	Constructor<T>	variable	96	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+66	ctor	Constructor<T>	variable	108	use	org.apache.hadoop.ipc.CallQueueManager.createScheduler	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	79	119
+73	e	Schedulable	param	184	define	org.apache.hadoop.ipc.CallQueueManager.getPriorityLevel	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	184	186
+73	e	Schedulable	param	185	use	org.apache.hadoop.ipc.CallQueueManager.getPriorityLevel	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	184	186
+128	CallQueueManager.scheduler	RpcScheduler	variable	185	use	org.apache.hadoop.ipc.CallQueueManager.getPriorityLevel	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	184	186
+126	CallQueueManager.clientBackOffEnabled	volatile boolean	variable	169	use	org.apache.hadoop.ipc.CallQueueManager.isClientBackoffEnabled	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	168	170
+78	e	E	param	206	define	org.apache.hadoop.ipc.CallQueueManager.offer	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	206	208
+78	e	E	param	207	use	org.apache.hadoop.ipc.CallQueueManager.offer	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	206	208
+127	CallQueueManager.putRef	AtomicReference<BlockingQueue>	variable	207	use	org.apache.hadoop.ipc.CallQueueManager.offer	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	206	208
+85	ns	String	param	234	define	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+84	conf	Configuration	param	234	define	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+84	conf	Configuration	param	238	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+85	ns	String	param	238	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+84	conf	Configuration	param	241	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+85	ns	String	param	241	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+85	ns	String	param	245	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+85	ns	String	param	246	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+86	retval	int	variable	238	define	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+86	retval	int	variable	238	set	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+86	retval	int	variable	241	set	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+86	retval	int	variable	240	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+83	IPC_SCHEDULER_PRIORITY_LEVELS_KEY		variable	242	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+82	IPC_SCHEDULER_PRIORITY_LEVELS_DEFAULT_KEY		variable	243	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+125	CallQueueManager.LOG	Log	variable	245	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+83	IPC_SCHEDULER_PRIORITY_LEVELS_KEY		variable	247	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+86	retval	int	variable	249	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+86	retval	int	variable	252	use	org.apache.hadoop.ipc.CallQueueManager.parseNumLevels	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	234	252
+89	e	E	param	197	define	org.apache.hadoop.ipc.CallQueueManager.put	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	197	199
+89	e	E	param	198	use	org.apache.hadoop.ipc.CallQueueManager.put	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	197	199
+127	CallQueueManager.putRef	AtomicReference<BlockingQueue>	variable	198	use	org.apache.hadoop.ipc.CallQueueManager.put	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	197	199
+95	q	BlockingQueue<?>	param	293	define	org.apache.hadoop.ipc.CallQueueManager.queueIsReallyEmpty	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	293	305
+93	ie	InterruptedException	param	297	define	org.apache.hadoop.ipc.CallQueueManager.queueIsReallyEmpty	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	293	305
+95	q	BlockingQueue<?>	param	300	use	org.apache.hadoop.ipc.CallQueueManager.queueIsReallyEmpty	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	293	305
+94	i	int	variable	294	define	org.apache.hadoop.ipc.CallQueueManager.queueIsReallyEmpty	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	293	305
+94	i	int	variable	294	set	org.apache.hadoop.ipc.CallQueueManager.queueIsReallyEmpty	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	293	305
+94	i	int	variable	294	use	org.apache.hadoop.ipc.CallQueueManager.queueIsReallyEmpty	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	293	305
+124	CallQueueManager.CHECKPOINT_NUM	int	variable	294	use	org.apache.hadoop.ipc.CallQueueManager.queueIsReallyEmpty	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	293	305
+123	CallQueueManager.CHECKPOINT_INTERVAL_MS	long	variable	296	use	org.apache.hadoop.ipc.CallQueueManager.queueIsReallyEmpty	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	293	305
+97	value	boolean	param	188	define	org.apache.hadoop.ipc.CallQueueManager.setClientBackoffEnabled	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	188	190
+97	value	boolean	param	189	use	org.apache.hadoop.ipc.CallQueueManager.setClientBackoffEnabled	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	188	190
+126	CallQueueManager.clientBackOffEnabled	volatile boolean	variable	189	set	org.apache.hadoop.ipc.CallQueueManager.setClientBackoffEnabled	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	188	190
+100	e	Schedulable	param	173	define	org.apache.hadoop.ipc.CallQueueManager.shouldBackOff	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	173	175
+100	e	Schedulable	param	174	use	org.apache.hadoop.ipc.CallQueueManager.shouldBackOff	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	173	175
+128	CallQueueManager.scheduler	RpcScheduler	variable	174	use	org.apache.hadoop.ipc.CallQueueManager.shouldBackOff	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	173	175
+129	CallQueueManager.takeRef	AtomicReference<BlockingQueue>	variable	225	use	org.apache.hadoop.ipc.CallQueueManager.size	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	224	226
+107	o	Object	param	307	define	org.apache.hadoop.ipc.CallQueueManager.stringRepr	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	307	309
+107	o	Object	param	308	use	org.apache.hadoop.ipc.CallQueueManager.stringRepr	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	307	309
+107	o	Object	param	308	use	org.apache.hadoop.ipc.CallQueueManager.stringRepr	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	307	309
+118	schedulerClass	Class<? extends RpcScheduler>	param	260	define	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+117	queueClassToUse	Class<? extends BlockingQueue>	param	261	define	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+111	maxSize	int	param	261	define	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+114	ns	String	param	262	define	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+110	conf	Configuration	param	262	define	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+114	ns	String	param	263	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+110	conf	Configuration	param	263	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+118	schedulerClass	Class<? extends RpcScheduler>	param	264	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+114	ns	String	param	265	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+110	conf	Configuration	param	265	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+117	queueClassToUse	Class<? extends BlockingQueue>	param	266	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+111	maxSize	int	param	267	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+114	ns	String	param	267	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+110	conf	Configuration	param	267	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+116	priorityLevels	int	variable	263	define	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+113	newScheduler	RpcScheduler	variable	264	define	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+112	newQ	BlockingQueue<E>	variable	266	define	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+115	oldQ	BlockingQueue<E>	variable	270	define	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+116	priorityLevels	int	variable	263	set	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+113	newScheduler	RpcScheduler	variable	264	set	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+112	newQ	BlockingQueue<E>	variable	266	set	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+115	oldQ	BlockingQueue<E>	variable	270	set	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+128	CallQueueManager.scheduler	RpcScheduler	variable	281	set	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+116	priorityLevels	int	variable	264	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+116	priorityLevels	int	variable	267	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+127	CallQueueManager.putRef	AtomicReference<BlockingQueue>	variable	270	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+127	CallQueueManager.putRef	AtomicReference<BlockingQueue>	variable	273	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+112	newQ	BlockingQueue<E>	variable	273	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+115	oldQ	BlockingQueue<E>	variable	276	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+129	CallQueueManager.takeRef	AtomicReference<BlockingQueue>	variable	279	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+112	newQ	BlockingQueue<E>	variable	279	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+113	newScheduler	RpcScheduler	variable	281	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+125	CallQueueManager.LOG	Log	variable	283	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+115	oldQ	BlockingQueue<E>	variable	283	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+112	newQ	BlockingQueue<E>	variable	284	use	org.apache.hadoop.ipc.CallQueueManager.swapQueue	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	259	284
+122	e	E	variable	215	define	org.apache.hadoop.ipc.CallQueueManager.take	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	214	221
+122	e	E	variable	215	set	org.apache.hadoop.ipc.CallQueueManager.take	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	214	221
+122	e	E	variable	218	set	org.apache.hadoop.ipc.CallQueueManager.take	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	214	221
+122	e	E	variable	217	use	org.apache.hadoop.ipc.CallQueueManager.take	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	214	221
+129	CallQueueManager.takeRef	AtomicReference<BlockingQueue>	variable	218	use	org.apache.hadoop.ipc.CallQueueManager.take	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	214	221
+121	MILLISECONDS		variable	218	use	org.apache.hadoop.ipc.CallQueueManager.take	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	214	221
+122	e	E	variable	221	use	org.apache.hadoop.ipc.CallQueueManager.take	/Users/justin/Java/Dataset_InducingBenchmark/HADOOP/sliced/a2a5cb60b09/7a19217bebc.java	214	221

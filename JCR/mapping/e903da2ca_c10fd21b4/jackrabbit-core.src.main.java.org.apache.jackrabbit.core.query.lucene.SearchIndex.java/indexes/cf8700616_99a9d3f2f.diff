@@ -1,0 +1,137 @@
+22a23
+> import org.apache.jackrabbit.core.HierarchyManager;
+35a37,38
+> import org.apache.jackrabbit.core.state.PropertyState;
+> import org.apache.jackrabbit.core.state.ItemStateException;
+48a52
+> import org.apache.lucene.analysis.Token;
+167a172,176
+>     protected static final PathFactory PATH_FACTORY = PathFactoryImpl.getInstance();
+> 
+>     
+> 
+> 
+176,177c185
+<         PathFactory factory = PathFactoryImpl.getInstance();
+<         ROOT_PATH = factory.create(NameConstants.ROOT);
+---
+>         ROOT_PATH = PATH_FACTORY.create(NameConstants.ROOT);
+179c187
+<             JCR_SYSTEM_PATH = factory.create(ROOT_PATH, NameConstants.JCR_SYSTEM, false);
+---
+>             JCR_SYSTEM_PATH = PATH_FACTORY.create(ROOT_PATH, NameConstants.JCR_SYSTEM, false);
+1170a1179
+>                 ItemStateManager ism = getContext().getItemStateManager();
+1171a1181,1182
+>                     boolean ruleMatched = false;
+>                     
+1173,1174c1184,1201
+<                     if (aggregates == null) {
+<                         continue;
+---
+>                     if (aggregates != null) {
+>                         ruleMatched = true;
+>                         for (int j = 0; j < aggregates.length; j++) {
+>                             Document aDoc = createDocument(aggregates[j],
+>                                     getNamespaceMappings(),
+>                                     index.getIndexFormatVersion());
+>                             
+>                             Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
+>                             if (fulltextFields != null) {
+>                                 for (int k = 0; k < fulltextFields.length; k++) {
+>                                     doc.add(fulltextFields[k]);
+>                                 }
+>                                 doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID,
+>                                         aggregates[j].getNodeId().getUUID().toString(),
+>                                         Field.Store.NO,
+>                                         Field.Index.NO_NORMS));
+>                             }
+>                         }
+1176,1184c1203,1233
+<                     for (int j = 0; j < aggregates.length; j++) {
+<                         Document aDoc = createDocument(aggregates[j],
+<                                 getNamespaceMappings(),
+<                                 index.getIndexFormatVersion());
+<                         
+<                         Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
+<                         if (fulltextFields != null) {
+<                             for (int k = 0; k < fulltextFields.length; k++) {
+<                                 doc.add(fulltextFields[k]);
+---
+>                     
+>                     PropertyState[] propStates = aggregateRules[i].getAggregatedPropertyStates(state);
+>                     if (propStates != null) {
+>                         ruleMatched = true;
+>                         for (int j = 0; j < propStates.length; j++) {
+>                             PropertyState propState = propStates[j];
+>                             String namePrefix = FieldNames.createNamedValue(
+>                                     getNamespaceMappings().translateName(propState.getName()), "");
+>                             NodeState parent = (NodeState) ism.getItemState(propState.getParentId());
+>                             Document aDoc = createDocument(parent, getNamespaceMappings(), getIndex().getIndexFormatVersion());
+>                             
+>                             Fieldable[] fields = aDoc.getFieldables(FieldNames.PROPERTIES);
+>                             for (int k = 0; k < fields.length; k++) {
+>                                 Fieldable field = fields[k];
+>                                 
+>                                 Token t = field.tokenStreamValue().next();
+>                                 String value = new String(t.termBuffer(), 0, t.termLength());
+>                                 if (value.startsWith(namePrefix)) {
+>                                     
+>                                     value = value.substring(namePrefix.length());
+>                                     
+>                                     Path p = getRelativePath(state, propState);
+>                                     String path = getNamespaceMappings().translatePath(p);
+>                                     value = FieldNames.createNamedValue(path, value);
+>                                     t.setTermText(value);
+>                                     doc.add(new Field(field.name(), new SingletonTokenStream(t)));
+>                                     doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID,
+>                                             parent.getNodeId().getUUID().toString(),
+>                                             Field.Store.NO,
+>                                             Field.Index.NO_NORMS));
+>                                 }
+1186,1189d1234
+<                             doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID,
+<                                     aggregates[j].getNodeId().getUUID().toString(),
+<                                     Field.Store.NO,
+<                                     Field.Index.NO_NORMS));
+1191a1237
+> 
+1193c1239,1241
+<                     break;
+---
+>                     if (ruleMatched) {
+>                         break;
+>                     }
+1211a1260,1291
+> 
+> 
+>     protected Path getRelativePath(NodeState nodeState, PropertyState propState)
+>             throws RepositoryException, ItemStateException {
+>         HierarchyManager hmgr = getContext().getHierarchyManager();
+>         Path nodePath = hmgr.getPath(nodeState.getId());
+>         Path propPath = hmgr.getPath(propState.getId());
+>         Path p = nodePath.computeRelativePath(propPath);
+>         
+>         boolean clean = true;
+>         Path.Element[] elements = p.getElements();
+>         for (int i = 0; i < elements.length; i++) {
+>             if (elements[i].getIndex() != 0) {
+>                 elements[i] = PATH_FACTORY.createElement(elements[i].getName());
+>                 clean = false;
+>             }
+>         }
+>         if (!clean) {
+>             p = PATH_FACTORY.create(elements);
+>         }
+>         return p;
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 

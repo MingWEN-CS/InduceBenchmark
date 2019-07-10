@@ -1,0 +1,34 @@
+125a126,129
+>     @Column(name = "created_time")
+>     private Timestamp createdTimeTS = null;
+> 
+>     @Basic
+132c136
+<     private java.sql.Timestamp lastCheckTimestamp;
+---
+>     private Timestamp lastCheckTimestamp;
+136c140
+<     private java.sql.Timestamp endTimestamp = null;
+---
+>     private Timestamp endTimestamp = null;
+140c144
+<     private java.sql.Timestamp startTimestamp = null;
+---
+>     private Timestamp startTimestamp = null;
+153c157
+<     private java.sql.Timestamp pendingAgeTimestamp = null;
+---
+>     private Timestamp pendingAgeTimestamp = null;
+872a877,888
+>     public Timestamp getCreatedTimestamp() {
+>         return createdTimeTS;
+>     }
+> 
+>     public Date getCreatedTime() {
+>         return DateUtils.toDate(createdTimeTS);
+>     }
+> 
+>     public void setCreatedTime(Date createdTime) {
+>         this.createdTimeTS = DateUtils.convertDateToTimestamp(createdTime);
+>     }
+> 

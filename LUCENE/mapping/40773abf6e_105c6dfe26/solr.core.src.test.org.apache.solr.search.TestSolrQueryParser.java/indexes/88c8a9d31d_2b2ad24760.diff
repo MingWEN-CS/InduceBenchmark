@@ -1,0 +1,24 @@
+18a19
+> import org.apache.lucene.search.BoostQuery;
+157c158
+<         ,"/debug/parsedquery=='text:x^6.0'"
+---
+>         ,"/debug/parsedquery_toString=='(text:x^2.0)^3.0'"
+164c165
+<         ,"/debug/parsedquery=='text:x^6.0'"
+---
+>         ,"/debug/parsedquery_toString=='(text:x^2.0)^3.0'"
+177,178c178,180
+<     assertTrue( q instanceof ConstantScoreQuery);
+<     assertEquals(3.0, q.getBoost(), 0.0f);
+---
+>     assertTrue( q instanceof BoostQuery);
+>     assertTrue(((BoostQuery) q).getQuery() instanceof ConstantScoreQuery);
+>     assertEquals(3.0, ((BoostQuery) q).getBoost(), 0.0f);
+182,183c184,186
+<     assertTrue( q instanceof ConstantScoreQuery );
+<     assertEquals(-3.0, q.getBoost(), 0.0f);
+---
+>     assertTrue( q instanceof BoostQuery);
+>     assertTrue(((BoostQuery) q).getQuery() instanceof ConstantScoreQuery);
+>     assertEquals(-3.0, ((BoostQuery) q).getBoost(), 0.0f);

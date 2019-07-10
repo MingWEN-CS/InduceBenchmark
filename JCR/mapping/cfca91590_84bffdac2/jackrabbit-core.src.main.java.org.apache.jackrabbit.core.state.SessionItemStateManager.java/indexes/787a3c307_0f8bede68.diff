@@ -1,0 +1,12 @@
+39a40
+> import org.apache.jackrabbit.core.id.NodeIdFactory;
+482c483
+<                         NodeId id = it.next();    
+---
+>                         NodeId id = it.next();
+970a972,976
+> 
+>     public NodeIdFactory getNodeIdFactory() {
+>         return stateMgr.getNodeIdFactory();
+>     }
+> 

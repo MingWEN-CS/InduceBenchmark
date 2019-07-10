@@ -1,0 +1,400 @@
+20a21
+> import org.apache.lucene.index.RandomIndexWriter;
+24d24
+< import org.apache.lucene.index.IndexWriter;
+42,138c42,57
+< public class TestMultiPhraseQuery extends LuceneTestCase
+< {
+<     public TestMultiPhraseQuery(String name) {
+<         super(name);
+<     }
+< 
+<     public void testPhrasePrefix() throws IOException {
+<         MockRAMDirectory indexStore = new MockRAMDirectory();
+<         IndexWriter writer = new IndexWriter(indexStore, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+<         add("blueberry pie", writer);
+<         add("blueberry strudel", writer);
+<         add("blueberry pizza", writer);
+<         add("blueberry chewing gum", writer);
+<         add("bluebird pizza", writer);
+<         add("bluebird foobar pizza", writer);
+<         add("piccadilly circus", writer);
+<         writer.optimize();
+<         writer.close();
+< 
+<         IndexSearcher searcher = new IndexSearcher(indexStore, true);
+< 
+<         
+<         MultiPhraseQuery query1 = new MultiPhraseQuery();
+<         
+<         MultiPhraseQuery query2 = new MultiPhraseQuery();
+<         query1.add(new Term("body", "blueberry"));
+<         query2.add(new Term("body", "strawberry"));
+< 
+<         LinkedList<Term> termsWithPrefix = new LinkedList<Term>();
+<         IndexReader ir = IndexReader.open(indexStore, true);
+< 
+<         
+<         String prefix = "pi";
+<         TermsEnum te = MultiFields.getFields(ir).terms("body").iterator();
+<         te.seek(new BytesRef(prefix));
+<         do {
+<             String s = te.term().utf8ToString();
+<             if (s.startsWith(prefix)) {
+<               termsWithPrefix.add(new Term("body", s));
+<             } else {
+<               break;
+<             }
+<         } while (te.next() != null);
+< 
+<         query1.add(termsWithPrefix.toArray(new Term[0]));
+<         assertEquals("body:\"blueberry (piccadilly pie pizza)\"", query1.toString());
+<         query2.add(termsWithPrefix.toArray(new Term[0]));
+<         assertEquals("body:\"strawberry (piccadilly pie pizza)\"", query2.toString());
+< 
+<         ScoreDoc[] result;
+<         result = searcher.search(query1, null, 1000).scoreDocs;
+<         assertEquals(2, result.length);
+<         result = searcher.search(query2, null, 1000).scoreDocs;
+<         assertEquals(0, result.length);
+< 
+<         
+<         MultiPhraseQuery query3 = new MultiPhraseQuery();
+<         termsWithPrefix.clear();
+<         prefix = "blue";
+<         te.seek(new BytesRef(prefix));
+< 
+<         do {
+<             if (te.term().utf8ToString().startsWith(prefix))
+<             {
+<               termsWithPrefix.add(new Term("body", te.term().utf8ToString()));
+<             }
+<         } while (te.next() != null);
+<         ir.close();
+<         query3.add(termsWithPrefix.toArray(new Term[0]));
+<         query3.add(new Term("body", "pizza"));
+< 
+<         result = searcher.search(query3, null, 1000).scoreDocs;
+<         assertEquals(2, result.length); 
+<         assertEquals("body:\"(blueberry bluebird) pizza\"", query3.toString());
+< 
+<         
+<         query3.setSlop(1);
+<         result = searcher.search(query3, null, 1000).scoreDocs;
+< 
+<         
+<         searcher.explain(query3, 0);
+< 
+<         assertEquals(3, result.length); 
+< 
+<         MultiPhraseQuery query4 = new MultiPhraseQuery();
+<         try {
+<           query4.add(new Term("field1", "foo"));
+<           query4.add(new Term("field2", "foobar"));
+<           fail();
+<         } catch(IllegalArgumentException e) {
+<           
+<         }
+<         
+<         searcher.close();
+<         indexStore.close();
+< 
+<     }
+---
+> public class TestMultiPhraseQuery extends LuceneTestCase {
+>   public TestMultiPhraseQuery(String name) {
+>     super(name);
+>   }
+>   
+>   public void testPhrasePrefix() throws IOException {
+>     MockRAMDirectory indexStore = new MockRAMDirectory();
+>     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore,
+>         new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+>     add("blueberry pie", writer);
+>     add("blueberry strudel", writer);
+>     add("blueberry pizza", writer);
+>     add("blueberry chewing gum", writer);
+>     add("bluebird pizza", writer);
+>     add("bluebird foobar pizza", writer);
+>     add("piccadilly circus", writer);
+140,144c59,60
+<     private void add(String s, IndexWriter writer) throws IOException {
+<       Document doc = new Document();
+<       doc.add(new Field("body", s, Field.Store.YES, Field.Index.ANALYZED));
+<       writer.addDocument(doc);
+<     }
+---
+>     IndexReader reader = writer.getReader();
+>     IndexSearcher searcher = new IndexSearcher(reader);
+146,176c62,130
+<     public void testBooleanQueryContainingSingleTermPrefixQuery() throws IOException {
+<       
+<       
+<       
+<       
+< 
+<       MockRAMDirectory indexStore = new MockRAMDirectory();
+<       IndexWriter writer = new IndexWriter(indexStore, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+<       add("blueberry pie", writer);
+<       add("blueberry chewing gum", writer);
+<       add("blue raspberry pie", writer);
+<       writer.optimize();
+<       writer.close();
+< 
+<       IndexSearcher searcher = new IndexSearcher(indexStore, true);
+<       
+<       BooleanQuery q = new BooleanQuery();
+<       q.add(new TermQuery(new Term("body", "pie")), BooleanClause.Occur.MUST);
+< 
+<       MultiPhraseQuery trouble = new MultiPhraseQuery();
+<       trouble.add(new Term[] {
+<           new Term("body", "blueberry"),
+<           new Term("body", "blue")
+<       });
+<       q.add(trouble, BooleanClause.Occur.MUST);
+< 
+<       
+<       ScoreDoc[] hits = searcher.search(q, null, 1000).scoreDocs;
+< 
+<       assertEquals("Wrong number of hits", 2, hits.length);
+< 
+---
+>     
+>     MultiPhraseQuery query1 = new MultiPhraseQuery();
+>     
+>     MultiPhraseQuery query2 = new MultiPhraseQuery();
+>     query1.add(new Term("body", "blueberry"));
+>     query2.add(new Term("body", "strawberry"));
+>     
+>     LinkedList<Term> termsWithPrefix = new LinkedList<Term>();
+>     
+>     
+>     String prefix = "pi";
+>     TermsEnum te = MultiFields.getFields(reader).terms("body").iterator();
+>     te.seek(new BytesRef(prefix));
+>     do {
+>       String s = te.term().utf8ToString();
+>       if (s.startsWith(prefix)) {
+>         termsWithPrefix.add(new Term("body", s));
+>       } else {
+>         break;
+>       }
+>     } while (te.next() != null);
+>     
+>     query1.add(termsWithPrefix.toArray(new Term[0]));
+>     assertEquals("body:\"blueberry (piccadilly pie pizza)\"", query1.toString());
+>     query2.add(termsWithPrefix.toArray(new Term[0]));
+>     assertEquals("body:\"strawberry (piccadilly pie pizza)\"", query2
+>         .toString());
+>     
+>     ScoreDoc[] result;
+>     result = searcher.search(query1, null, 1000).scoreDocs;
+>     assertEquals(2, result.length);
+>     result = searcher.search(query2, null, 1000).scoreDocs;
+>     assertEquals(0, result.length);
+>     
+>     
+>     MultiPhraseQuery query3 = new MultiPhraseQuery();
+>     termsWithPrefix.clear();
+>     prefix = "blue";
+>     te.seek(new BytesRef(prefix));
+>     
+>     do {
+>       if (te.term().utf8ToString().startsWith(prefix)) {
+>         termsWithPrefix.add(new Term("body", te.term().utf8ToString()));
+>       }
+>     } while (te.next() != null);
+>     
+>     query3.add(termsWithPrefix.toArray(new Term[0]));
+>     query3.add(new Term("body", "pizza"));
+>     
+>     result = searcher.search(query3, null, 1000).scoreDocs;
+>     assertEquals(2, result.length); 
+>     assertEquals("body:\"(blueberry bluebird) pizza\"", query3.toString());
+>     
+>     
+>     query3.setSlop(1);
+>     result = searcher.search(query3, null, 1000).scoreDocs;
+>     
+>     
+>     searcher.explain(query3, 0);
+>     
+>     assertEquals(3, result.length); 
+>                                     
+>     
+>     MultiPhraseQuery query4 = new MultiPhraseQuery();
+>     try {
+>       query4.add(new Term("field1", "foo"));
+>       query4.add(new Term("field2", "foobar"));
+>       fail();
+>     } catch (IllegalArgumentException e) {
+178,181c132,138
+<       searcher.explain(q, 0);
+< 
+<       searcher.close();
+<       indexStore.close();
+---
+>     }
+>     
+>     writer.close();
+>     searcher.close();
+>     reader.close();
+>     indexStore.close();
+>     
+182a140,148
+>   
+>   private void add(String s, RandomIndexWriter writer) throws IOException {
+>     Document doc = new Document();
+>     doc.add(new Field("body", s, Field.Store.YES, Field.Index.ANALYZED));
+>     writer.addDocument(doc);
+>   }
+>   
+>   public void testBooleanQueryContainingSingleTermPrefixQuery()
+>       throws IOException {
+183a150,185
+>     
+>     
+>     
+>     
+>     MockRAMDirectory indexStore = new MockRAMDirectory();
+>     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore,
+>         new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+>     add("blueberry pie", writer);
+>     add("blueberry chewing gum", writer);
+>     add("blue raspberry pie", writer);
+>     
+>     IndexReader reader = writer.getReader();
+>     IndexSearcher searcher = new IndexSearcher(reader);
+>     
+>     BooleanQuery q = new BooleanQuery();
+>     q.add(new TermQuery(new Term("body", "pie")), BooleanClause.Occur.MUST);
+>     
+>     MultiPhraseQuery trouble = new MultiPhraseQuery();
+>     trouble.add(new Term[] {new Term("body", "blueberry"),
+>         new Term("body", "blue")});
+>     q.add(trouble, BooleanClause.Occur.MUST);
+>     
+>     
+>     ScoreDoc[] hits = searcher.search(q, null, 1000).scoreDocs;
+>     
+>     assertEquals("Wrong number of hits", 2, hits.length);
+>     
+>     
+>     searcher.explain(q, 0);
+>     
+>     writer.close();
+>     searcher.close();
+>     reader.close();
+>     indexStore.close();
+>   }
+>   
+186,187c188,189
+<     IndexWriter writer = new IndexWriter(indexStore, new IndexWriterConfig(
+<         TEST_VERSION_CURRENT, new MockAnalyzer()));
+---
+>     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore,
+>         new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+190d191
+<     writer.close();
+192,193c193,195
+<     IndexSearcher searcher = new IndexSearcher(indexStore, true);
+< 
+---
+>     IndexReader reader = writer.getReader();
+>     IndexSearcher searcher = new IndexSearcher(reader);
+>     
+197c199
+< 
+---
+>     
+200c202,203
+<     trouble.add(new Term[] { new Term("body", "test"), new Term("body", "this") });
+---
+>     trouble
+>         .add(new Term[] {new Term("body", "test"), new Term("body", "this")});
+202c205
+< 
+---
+>     
+205a209
+>     writer.close();
+206a211
+>     reader.close();
+209c214
+< 
+---
+>   
+212c217,218
+<     IndexWriter writer = new IndexWriter(indexStore, new MockAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+---
+>     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore,
+>         new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+214,217c220,223
+<     writer.close();
+< 
+<     IndexSearcher searcher = new IndexSearcher(indexStore, true);
+< 
+---
+>     
+>     IndexReader reader = writer.getReader();
+>     IndexSearcher searcher = new IndexSearcher(reader);
+>     
+220,222c226,229
+<     q.add(new Term[] { new Term("body", "nope"), new Term("body", "nope") });
+<     assertEquals("Wrong number of hits", 0, searcher.search(q, null, 1).totalHits);
+< 
+---
+>     q.add(new Term[] {new Term("body", "nope"), new Term("body", "nope")});
+>     assertEquals("Wrong number of hits", 0,
+>         searcher.search(q, null, 1).totalHits);
+>     
+225c232,233
+< 
+---
+>     
+>     writer.close();
+226a235
+>     reader.close();
+230c239
+<   public void testHashCodeAndEquals(){
+---
+>   public void testHashCodeAndEquals() {
+235c244
+<     assertEquals(query1,query2);
+---
+>     assertEquals(query1, query2);
+237c246
+<     Term term1= new Term("someField","someText");
+---
+>     Term term1 = new Term("someField", "someText");
+243c252
+<     assertEquals(query1,query2);
+---
+>     assertEquals(query1, query2);
+245c254
+<     Term term2= new Term("someField","someMoreText");
+---
+>     Term term2 = new Term("someField", "someMoreText");
+249c258
+<     assertFalse(query1.hashCode()==query2.hashCode());
+---
+>     assertFalse(query1.hashCode() == query2.hashCode());
+255c264
+<     assertEquals(query1,query2);
+---
+>     assertEquals(query1, query2);
+257d265
+< 
+259c267,268
+<   private void add(String s, String type, IndexWriter writer) throws IOException {
+---
+>   private void add(String s, String type, RandomIndexWriter writer)
+>       throws IOException {
+265c274
+< 
+---
+>   
+270c279
+< 
+---
+>   

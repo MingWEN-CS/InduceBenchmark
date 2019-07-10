@@ -1,0 +1,41 @@
+103a104
+>             getIdClause(statusClause);
+111,112c112
+<         q.setParameter("jobId", coordJobId);
+<         q.setFirstResult(start - 1);
+---
+>         q.setParameter("jobId", coordJobId);;
+127c127
+<                         sb.append(" and a.statusStr IN (\'" + statusVal + "\'");
+---
+>                         sb.append(" and a.statusStr IN (\'").append(statusVal).append("\'");
+130c130
+<                         sb.append(" and a.statusStr NOT IN (\'" + statusVal + "\'");
+---
+>                         sb.append(" and a.statusStr NOT IN (\'").append(statusVal).append("\'");
+135c135
+<                     sb.append(",\'" + statusVal + "\'");
+---
+>                     sb.append(",\'").append(statusVal).append("\'");
+142a143,163
+>     
+>     private StringBuilder getIdClause(StringBuilder sb) {
+>         if (sb == null) {
+>             sb = new StringBuilder();
+>         }
+>         sb.append("and a.id IN (");
+>         boolean isFirst = true;
+>         for (int i = start; i < start + len; i++) {
+>             if (isFirst) {
+>                 sb.append("\'").append(coordJobId).append("@").append(i).append("\'");
+>                 isFirst = false;
+>             }
+>             else {
+>                 sb.append(", \'").append(coordJobId).append("@").append(i).append("\'");
+>             }
+>         }
+>         sb.append(") ");
+> 
+>         return sb;
+>     }
+> 

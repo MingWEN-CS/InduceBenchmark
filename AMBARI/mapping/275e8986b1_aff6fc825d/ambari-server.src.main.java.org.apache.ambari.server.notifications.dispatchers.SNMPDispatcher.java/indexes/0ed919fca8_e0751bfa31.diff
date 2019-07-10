@@ -1,0 +1,44 @@
+21a22
+> import java.util.HashMap;
+126c127,131
+<   public ConfigValidationResult validateTargetConfig(Map<String, String> properties) {
+---
+>   public ConfigValidationResult validateTargetConfig(Map<String, Object> properties) {
+>     Map<String, String> stringValuesConfig = new HashMap<String, String>(properties.size());
+>     for (Map.Entry<String, Object> propertyEntry : properties.entrySet()) {
+>       stringValuesConfig.put(propertyEntry.getKey(), propertyEntry.getValue().toString());
+>     }
+128,132c133,137
+<       getDispatchProperty(properties, BODY_OID_PROPERTY);
+<       getDispatchProperty(properties, SUBJECT_OID_PROPERTY);
+<       getDispatchProperty(properties, TRAP_OID_PROPERTY);
+<       getDispatchProperty(properties, PORT_PROPERTY);
+<       SnmpVersion snmpVersion = getSnmpVersion(properties);
+---
+>       getDispatchProperty(stringValuesConfig, BODY_OID_PROPERTY);
+>       getDispatchProperty(stringValuesConfig, SUBJECT_OID_PROPERTY);
+>       getDispatchProperty(stringValuesConfig, TRAP_OID_PROPERTY);
+>       getDispatchProperty(stringValuesConfig, PORT_PROPERTY);
+>       SnmpVersion snmpVersion = getSnmpVersion(stringValuesConfig);
+135,136c140,141
+<           getDispatchProperty(properties, SECURITY_USERNAME_PROPERTY);
+<           TrapSecurity securityLevel = getSecurityLevel(properties);
+---
+>           getDispatchProperty(stringValuesConfig, SECURITY_USERNAME_PROPERTY);
+>           TrapSecurity securityLevel = getSecurityLevel(stringValuesConfig);
+139c144,146
+<               getDispatchProperty(properties, SECURITY_PRIV_PASSPHRASE_PROPERTY);
+---
+>               getDispatchProperty(stringValuesConfig, SECURITY_PRIV_PASSPHRASE_PROPERTY);
+>               getDispatchProperty(stringValuesConfig, SECURITY_AUTH_PASSPHRASE_PROPERTY);
+>               break;
+141c148,149
+<               getDispatchProperty(properties, SECURITY_AUTH_PASSPHRASE_PROPERTY);
+---
+>               getDispatchProperty(stringValuesConfig, SECURITY_AUTH_PASSPHRASE_PROPERTY);
+>               break;
+146c154,155
+<           getDispatchProperty(properties, COMMUNITY_PROPERTY);
+---
+>           getDispatchProperty(stringValuesConfig, COMMUNITY_PROPERTY);
+>           break;

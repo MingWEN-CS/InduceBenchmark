@@ -1,0 +1,112 @@
+45a46
+> import org.apache.lucene.util.IOUtils;
+331a333,346
+>   private boolean failFast;
+> 
+>   
+> 
+> 
+>   public void setFailFast(boolean v) {
+>     failFast = v;
+>   }
+> 
+>   
+>   public boolean getFailFast() {
+>     return failFast;
+>   }
+> 
+384a400,402
+>       if (failFast) {
+>         IOUtils.reThrow(t);
+>       }
+419a438,440
+>       if (failFast) {
+>         IOUtils.reThrow(t);
+>       }
+429a451,453
+>       if (failFast) {
+>         IOUtils.reThrow(t);
+>       }
+610c634
+<         segInfoStat.fieldNormStatus = testFieldNorms(reader, infoStream);
+---
+>         segInfoStat.fieldNormStatus = testFieldNorms(reader, infoStream, failFast);
+613c637
+<         segInfoStat.termIndexStatus = testPostings(reader, infoStream, verbose);
+---
+>         segInfoStat.termIndexStatus = testPostings(reader, infoStream, verbose, failFast);
+616c640
+<         segInfoStat.storedFieldStatus = testStoredFields(reader, infoStream);
+---
+>         segInfoStat.storedFieldStatus = testStoredFields(reader, infoStream, failFast);
+619c643
+<         segInfoStat.termVectorStatus = testTermVectors(reader, infoStream, verbose, crossCheckTermVectors);
+---
+>         segInfoStat.termVectorStatus = testTermVectors(reader, infoStream, verbose, crossCheckTermVectors, failFast);
+621c645
+<         segInfoStat.docValuesStatus = testDocValues(reader, infoStream);
+---
+>         segInfoStat.docValuesStatus = testDocValues(reader, infoStream, failFast);
+639a664,666
+>         if (failFast) {
+>           IOUtils.reThrow(t);
+>         }
+681c708
+<   public static Status.FieldNormStatus testFieldNorms(AtomicReader reader, PrintStream infoStream) {
+---
+>   public static Status.FieldNormStatus testFieldNorms(AtomicReader reader, PrintStream infoStream, boolean failFast) throws IOException {
+701a729,731
+>       if (failFast) {
+>         IOUtils.reThrow(e);
+>       }
+827a858
+>       long upto = 0;
+835c866
+<         
+---
+> 
+1270,1271c1301,1302
+<   public static Status.TermIndexStatus testPostings(AtomicReader reader, PrintStream infoStream) {
+<     return testPostings(reader, infoStream, false);
+---
+>   public static Status.TermIndexStatus testPostings(AtomicReader reader, PrintStream infoStream) throws IOException {
+>     return testPostings(reader, infoStream, false, false);
+1278c1309
+<   public static Status.TermIndexStatus testPostings(AtomicReader reader, PrintStream infoStream, boolean verbose) {
+---
+>   public static Status.TermIndexStatus testPostings(AtomicReader reader, PrintStream infoStream, boolean verbose, boolean failFast) throws IOException {
+1301a1333,1335
+>       if (failFast) {
+>         IOUtils.reThrow(e);
+>       }
+1317c1351
+<   public static Status.StoredFieldStatus testStoredFields(AtomicReader reader, PrintStream infoStream) {
+---
+>   public static Status.StoredFieldStatus testStoredFields(AtomicReader reader, PrintStream infoStream, boolean failFast) throws IOException {
+1344a1379,1381
+>       if (failFast) {
+>         IOUtils.reThrow(e);
+>       }
+1360c1397,1398
+<                                                      PrintStream infoStream) {
+---
+>                                                      PrintStream infoStream,
+>                                                      boolean failFast) throws IOException {
+1387a1426,1428
+>       if (failFast) {
+>         IOUtils.reThrow(e);
+>       }
+1627,1628c1668,1669
+<   public static Status.TermVectorStatus testTermVectors(AtomicReader reader, PrintStream infoStream) {
+<     return testTermVectors(reader, infoStream, false, false);
+---
+>   public static Status.TermVectorStatus testTermVectors(AtomicReader reader, PrintStream infoStream) throws IOException {
+>     return testTermVectors(reader, infoStream, false, false, false);
+1635c1676
+<   public static Status.TermVectorStatus testTermVectors(AtomicReader reader, PrintStream infoStream, boolean verbose, boolean crossCheckTermVectors) {
+---
+>   public static Status.TermVectorStatus testTermVectors(AtomicReader reader, PrintStream infoStream, boolean verbose, boolean crossCheckTermVectors, boolean failFast) throws IOException {
+1846a1888,1890
+>       if (failFast) {
+>         IOUtils.reThrow(e);
+>       }

@@ -1,0 +1,163 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.core;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.solr.common.util.StrUtils;
+import org.apache.solr.request.SolrRequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+
+public final class RequestHandlers {
+  public static Logger log = LoggerFactory.getLogger(RequestHandlers.class);
+
+  protected final SolrCore core;
+
+  final PluginRegistry<SolrRequestHandler> handlers;
+
+  
+
+
+
+
+
+
+
+
+  public static String normalize( String p )
+  {
+    if(p == null) return "";
+    if( p.endsWith( "/" ) && p.length() > 1 )
+      return p.substring( 0, p.length()-1 );
+    
+    return p;
+  }
+  
+  public RequestHandlers(SolrCore core) {
+      this.core = core;
+    handlers =  new PluginRegistry<>(SolrRequestHandler.class, core);
+  }
+
+  
+
+
+  public SolrRequestHandler get(String handlerName) {
+    return handlers.get(normalize(handlerName));
+  }
+
+  
+
+
+
+
+
+
+
+  public SolrRequestHandler register( String handlerName, SolrRequestHandler handler ) {
+    String norm = normalize(handlerName);
+    if (handler == null) {
+      return handlers.remove(norm);
+    }
+    return handlers.put(norm, handler);
+
+  }
+
+
+  
+
+
+  public PluginRegistry<SolrRequestHandler> getRequestHandlers() {
+    return handlers;
+  }
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  void initHandlersFromConfig(SolrConfig config) {
+    List<PluginInfo> implicits = ImplicitPlugins.getHandlers(core);
+    
+    Map<String, PluginInfo> infoMap= new LinkedHashMap<>();
+    
+    for (PluginInfo info : implicits) infoMap.put(info.name,info);
+    for (PluginInfo info : config.getPluginInfos(SolrRequestHandler.class.getName())) infoMap.put(info.name, info);
+    ArrayList<PluginInfo> infos = new ArrayList<>(infoMap.values());
+
+    List<PluginInfo> modifiedInfos = new ArrayList<>();
+    for (PluginInfo info : infos) {
+      modifiedInfos.add(applyInitParams(config, info));
+    }
+    handlers.init(Collections.emptyMap(),core, modifiedInfos);
+    handlers.alias(handlers.getDefault(), "");
+    log.info("Registered paths: {}" , StrUtils.join(new ArrayList<>(handlers.keySet()) , ',' ));
+    if(!handlers.alias( "/select","")){
+      if(!handlers.alias( "standard","")){
+        log.warn("no default request handler is registered (either '/select' or 'standard')");
+      }
+    }
+
+  }
+
+  private PluginInfo applyInitParams(SolrConfig config, PluginInfo info) {
+    List<InitParams> ags = new ArrayList<>();
+    String p = info.attributes.get(InitParams.TYPE);
+    if(p!=null) {
+      for (String arg : StrUtils.splitSmart(p, ',')) {
+        if(config.getInitParams().containsKey(arg)) ags.add(config.getInitParams().get(arg));
+        else log.warn("INVALID paramSet {} in requestHandler {}", arg, info.toString());
+      }
+    }
+    for (InitParams args : config.getInitParams().values())
+      if(args.matchPath(info.name)) ags.add(args);
+    if(!ags.isEmpty()){
+      info = info.copy();
+      for (InitParams initParam : ags) {
+        initParam.apply(info);
+      }
+    }
+    return info;
+  }
+
+  public void close() {
+    handlers.close();
+  }
+}

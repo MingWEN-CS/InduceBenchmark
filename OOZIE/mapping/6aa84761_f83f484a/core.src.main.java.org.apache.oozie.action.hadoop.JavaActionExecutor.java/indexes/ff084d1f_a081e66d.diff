@@ -1,0 +1,14 @@
+1166a1167,1179
+>                     if (credentialsConf.getCredentials().numberOfSecretKeys() > 0) {
+>                         for (Entry<String, CredentialsProperties> entry : credentialsProperties.entrySet()) {
+>                             CredentialsProperties credProps = entry.getValue();
+>                             if (credProps != null) {
+>                                 Text credName = new Text(credProps.getName());
+>                                 byte[] secKey = credentialsConf.getCredentials().getSecretKey(credName);
+>                                 if (secKey != null) {
+>                                     LOG.debug("ADDING CREDENTIAL: " + credProps.getName());
+>                                     launcherJobConf.getCredentials().addSecretKey(credName, secKey);
+>                                 }
+>                             }
+>                         }
+>                     }

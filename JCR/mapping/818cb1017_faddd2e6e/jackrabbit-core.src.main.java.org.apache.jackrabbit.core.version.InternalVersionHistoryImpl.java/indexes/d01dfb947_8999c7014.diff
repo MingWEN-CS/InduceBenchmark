@@ -1,0 +1,51 @@
+143,144c143
+<                     UUID ref = pState.getValues()[0].getUUID();
+<                     NodeId id = new NodeId(ref);
+---
+>                     NodeId id = pState.getValues()[0].getNodeId();
+148c147
+<                         log.warn("Error while resolving label reference. Version missing: " + ref);
+---
+>                         log.warn("Error while resolving label reference. Version missing: " + id);
+465c464,465
+<                 labelNode.setPropertyValue(label, InternalValue.create(version.getId().getUUID()));
+---
+>                 labelNode.setPropertyValue(
+>                         label, InternalValue.create(version.getId()));
+502c502
+<                 UUID predId = UUID.fromString(preds[i].getString());
+---
+>                 NodeId predId = new NodeId(preds[i].getString());
+504,505c504,506
+<                 if (!nameCache.containsValue(new NodeId(predId))) {
+<                     throw new RepositoryException("invalid predecessor in source node");
+---
+>                 if (!nameCache.containsValue(predId)) {
+>                     throw new RepositoryException(
+>                             "Invalid predecessor in source node: " + predId);
+512c513
+<             Iterator iter = nameCache.values().iterator();
+---
+>             Iterator<NodeId> iter = nameCache.values().iterator();
+515c516
+<                 last = (NodeId) iter.next();
+---
+>                 last = iter.next();
+521c522
+<             predecessors = new InternalValue[]{InternalValue.create(last.getUUID())};
+---
+>             predecessors = new InternalValue[]{InternalValue.create(last)};
+586c587
+<             pNode.setPropertyValue(NameConstants.JCR_COPIEDFROM, InternalValue.create(copiedFrom.getUUID(), true));
+---
+>             pNode.setPropertyValue(NameConstants.JCR_COPIEDFROM, InternalValue.create(copiedFrom, true));
+606,607c607,608
+<         Set mixins = nodeState.getMixinTypeNames();
+<         if (mixins.size() > 0) {
+---
+>         Set<Name> mixins = nodeState.getMixinTypeNames();
+>         if (!mixins.isEmpty()) {
+609c610
+<             Iterator iter = mixins.iterator();
+---
+>             Iterator<Name> iter = mixins.iterator();

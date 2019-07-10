@@ -1,0 +1,90 @@
+409c409,410
+< 
+---
+>     boolean exists = params.getFieldBool(field, FacetParams.FACET_EXISTS, false);
+>     
+425c426
+<     }else{
+---
+>     } else {
+431c432,434
+<     FacetMethod appliedFacetMethod = selectFacetMethod(sf, requestedMethod, mincount);
+---
+>     FacetMethod appliedFacetMethod = selectFacetMethod(field,
+>                                 sf, requestedMethod, mincount,
+>                                 exists);
+449c452,453
+<           counts = getFacetTermEnumCounts(searcher, docs, field, offset, limit, mincount,missing,sort,prefix, contains, ignoreCase, params);
+---
+>           counts = getFacetTermEnumCounts(searcher, docs, field, offset, limit, mincount,missing,sort,prefix, contains, ignoreCase, 
+>                                           exists);
+540a545,567
+>    
+> 
+> 
+>   static FacetMethod selectFacetMethod(String fieldName, 
+>                                        SchemaField field, FacetMethod method, Integer mincount,
+>                                        boolean existsRequested) {
+>     if (existsRequested) {
+>       checkMincountOnExists(fieldName, mincount);
+>       if (method == null) {
+>         method = FacetMethod.ENUM;
+>       }
+>     }
+>     final FacetMethod facetMethod = selectFacetMethod(field, method, mincount);
+>     
+>     if (existsRequested && facetMethod!=FacetMethod.ENUM) {
+>       throw new SolrException (ErrorCode.BAD_REQUEST, 
+>           FacetParams.FACET_EXISTS + "=true is requested, but "+
+>           FacetParams.FACET_METHOD+"="+FacetParams.FACET_METHOD_enum+ " can't be used with "+fieldName
+>       );
+>     }
+>     return facetMethod;
+>   }
+>     
+814c841,842
+<   public NamedList<Integer> getFacetTermEnumCounts(SolrIndexSearcher searcher, DocSet docs, String field, int offset, int limit, int mincount, boolean missing, String sort, String prefix, String contains, boolean ignoreCase, SolrParams params)
+---
+>   public NamedList<Integer> getFacetTermEnumCounts(SolrIndexSearcher searcher, DocSet docs, String field, int offset, int limit, int mincount, boolean missing, 
+>                                       String sort, String prefix, String contains, boolean ignoreCase, boolean intersectsCheck)
+904c932,936
+<               c = searcher.numDocs(docs, deState);
+---
+>               if (intersectsCheck) {
+>                 c = searcher.intersects(docs, deState) ? 1 : 0;
+>               } else {
+>                 c = searcher.numDocs(docs, deState);
+>               }
+918a951,952
+>                 
+>                 SEGMENTS_LOOP:
+925c959,965
+<                     if (fastForRandomSet.exists(docid + base)) c++;
+---
+>                     if (fastForRandomSet.exists(docid + base)) {
+>                       c++;
+>                       if (intersectsCheck) {
+>                         assert c==1;
+>                         break SEGMENTS_LOOP;
+>                       }
+>                     }
+931c971,977
+<                   if (fastForRandomSet.exists(docid)) c++;
+---
+>                   if (fastForRandomSet.exists(docid)) {
+>                     c++;
+>                     if (intersectsCheck) {
+>                       assert c==1;
+>                       break;
+>                     }
+>                   }
+971a1018,1026
+>   public static void checkMincountOnExists(String fieldName, int mincount) {
+>     if (mincount > 1) {
+>         throw new SolrException (ErrorCode.BAD_REQUEST,
+>             FacetParams.FACET_MINCOUNT + "="+mincount+" exceed 1 that's not supported with " + 
+>                 FacetParams.FACET_EXISTS + "=true for " + fieldName
+>         );
+>       }
+>   }
+> 

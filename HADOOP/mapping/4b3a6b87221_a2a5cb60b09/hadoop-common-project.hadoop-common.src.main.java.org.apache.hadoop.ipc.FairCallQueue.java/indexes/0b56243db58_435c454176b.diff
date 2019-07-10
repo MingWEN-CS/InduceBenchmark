@@ -1,0 +1,59 @@
+47c47
+<   
+---
+>   @Deprecated
+48a49
+>   @Deprecated
+70,72d70
+<   private RpcScheduler scheduler;
+< 
+<   
+86,87c84,90
+<   public FairCallQueue(int capacity, String ns, Configuration conf) {
+<     int numQueues = parseNumQueues(ns, conf);
+---
+>   public FairCallQueue(int priorityLevels, int capacity, String ns,
+>       Configuration conf) {
+>     if(priorityLevels < 1) {
+>       throw new IllegalArgumentException("Number of Priority Levels must be " +
+>           "at least 1");
+>     }
+>     int numQueues = priorityLevels;
+98d100
+<     this.scheduler = new DecayRpcScheduler(numQueues, ns, conf);
+100d101
+< 
+111,124d111
+<   private static int parseNumQueues(String ns, Configuration conf) {
+<     int retval = conf.getInt(ns + "." + IPC_CALLQUEUE_PRIORITY_LEVELS_KEY,
+<       IPC_CALLQUEUE_PRIORITY_LEVELS_DEFAULT);
+<     if(retval < 1) {
+<       throw new IllegalArgumentException("numQueues must be at least 1");
+<     }
+<     return retval;
+<   }
+< 
+<   
+< 
+< 
+< 
+< 
+157c144
+<     int priorityLevel = scheduler.getPriorityLevel(e);
+---
+>     int priorityLevel = e.getPriorityLevel();
+188c175
+<     int priorityLevel = scheduler.getPriorityLevel(e);
+---
+>     int priorityLevel = e.getPriorityLevel();
+199c186
+<     int priorityLevel = scheduler.getPriorityLevel(e);
+---
+>     int priorityLevel = e.getPriorityLevel();
+439,444d425
+<   
+<   @VisibleForTesting
+<   public void setScheduler(RpcScheduler newScheduler) {
+<     this.scheduler = newScheduler;
+<   }
+< 

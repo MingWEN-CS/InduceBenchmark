@@ -1,0 +1,21 @@
+194d193
+<       hashes = new int[pieces];
+196c195
+<       if (key.endsWith("!"))
+---
+>       if (key.endsWith("!") && pieces < 3)
+197a197,198
+>       hashes = new int[pieces];
+> 
+207c208
+<       for (int i = 0; i < parts.length; i++) {
+---
+>       for (int i = 0; i < pieces; i++) {
+216c217,221
+<         hashes[i] = Hash.murmurhash3_x86_32(parts[i], 0, parts[i].length(), 0);
+---
+>         
+>         if(i >= parts.length)
+>           hashes[i] = Hash.murmurhash3_x86_32("", 0, "".length(), 0);
+>         else
+>           hashes[i] = Hash.murmurhash3_x86_32(parts[i], 0, parts[i].length(), 0);

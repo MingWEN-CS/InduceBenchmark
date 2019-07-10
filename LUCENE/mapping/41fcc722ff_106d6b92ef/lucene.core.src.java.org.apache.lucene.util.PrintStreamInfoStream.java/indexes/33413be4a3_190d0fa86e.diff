@@ -1,0 +1,12 @@
+21a22,23
+> import java.text.DateFormat;
+> import java.text.SimpleDateFormat;
+22a25
+> import java.util.Locale;
+34a38,39
+> 
+>   private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ROOT);
+49c54
+<     stream.println(component + " " + messageID + " [" + new Date() + "; " + Thread.currentThread().getName() + "]: " + message);    
+---
+>     stream.println(component + " " + messageID + " [" + dateFormat.format(new Date()) + "; " + Thread.currentThread().getName() + "]: " + message);    

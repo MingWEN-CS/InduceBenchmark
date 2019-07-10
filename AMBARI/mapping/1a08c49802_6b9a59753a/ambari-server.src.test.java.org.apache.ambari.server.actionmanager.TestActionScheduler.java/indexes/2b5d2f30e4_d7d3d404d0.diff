@@ -1,0 +1,227 @@
+213d212
+<     List<Stage> stages = new ArrayList<>();
+216d214
+<     stages.add(s);
+217a216
+>     List<Stage> stages = Collections.singletonList(s);
+219c218
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+310d308
+<     List<Stage> stages = new ArrayList<>();
+317c315
+<     stages.add(s);
+---
+>     List<Stage> stages = Collections.singletonList(s);
+323c321
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+400d397
+<     final List<Stage> stages = new ArrayList<>();
+403c400,401
+<     stages.add(s);
+---
+> 
+>     List<Stage> stages = Collections.singletonList(s);
+412c410
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+487d484
+<     final List<Stage> stages = new ArrayList<>();
+494c491
+<     stages.add(stage);
+---
+>     final List<Stage> stages = Collections.singletonList(stage);
+503c500
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+609d605
+<     List<Stage> stages = new ArrayList<>();
+612c608
+<     stages.add(s);
+---
+>     List<Stage> stages = Collections.singletonList(s);
+623c619
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+740c736
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+769d764
+<     List<Stage> stages = new ArrayList<>();
+773c768
+<     stages.add(s);
+---
+>     List<Stage> stages = Collections.singletonList(s);
+784c779
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+984d978
+<     List<Stage> stages = new ArrayList<>();
+988c982
+<     stages.add(s);
+---
+>     List<Stage> stages = Collections.singletonList(s);
+999c993
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+1149c1143
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+1241c1235
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+1318c1312
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+1359a1354
+> 
+1362a1358,1360
+> 
+>     List<Stage> firstStageInProgress = Collections.singletonList(stages.get(0));
+> 
+1379c1377
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(firstStageInProgress);
+1520,1521d1517
+<     final List<Stage> stages = new ArrayList<>();
+< 
+1548c1544
+<     stages.add(stage);
+---
+>     final List<Stage> stages = Collections.singletonList(stage);
+1575c1571
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+1742a1739
+> 
+1743a1741
+>     List<Stage> stageInProgress = Collections.singletonList(stage);
+1761,1762c1759,1760
+<     when(db.getCommandsInProgressCount()).thenReturn(stages.size());
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getCommandsInProgressCount()).thenReturn(stageInProgress.size());
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stageInProgress);
+2016c2014
+<     when(db.getStagesInProgress()).thenReturn(Collections.singletonList(s1));
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(Collections.singletonList(s1));
+2033c2031
+<     when(db.getStagesInProgress()).thenReturn(Collections.singletonList(s2));
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(Collections.singletonList(s2));
+2086d2083
+<     final List<Stage> stages = new ArrayList<>();
+2093c2090
+<     stages.add(stage1);
+---
+>     final List<Stage> stages = Collections.singletonList(stage1);
+2102c2099
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+2158d2154
+<     List<Stage> stages = new ArrayList<>();
+2161c2157
+<     stages.add(s);
+---
+>     List<Stage> stages = Collections.singletonList(s);
+2172c2168
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stages);
+2261a2258
+>     final List<Stage> firstStageInProgress = new ArrayList<>();
+2281a2279
+>     firstStageInProgress.add(stageWithTask);
+2322c2320
+<     when(db.getStagesInProgress()).thenReturn(stagesInProgress);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(stagesInProgress);
+2460a2459
+>     final List<Stage> firstStageInProgressByRequest = new ArrayList<>();
+2463,2479d2461
+<     stagesInProgress.add(
+<             getStageWithSingleTask(
+<                     hostname1, "cluster1", Role.NAMENODE, RoleCommand.START,
+<                     Service.Type.HDFS, namenodeCmdTaskId, 1, (int) requestId1));
+<     stagesInProgress.add(
+<             getStageWithSingleTask(
+<                     hostname1, "cluster1", Role.DATANODE, RoleCommand.START,
+<                     Service.Type.HDFS, 2, 2, (int) requestId1));
+<     stagesInProgress.add(
+<             getStageWithSingleTask(
+<                     hostname2, "cluster1", Role.DATANODE, RoleCommand.STOP, 
+<                     Service.Type.HDFS, 3, 3, (int) requestId2));
+< 
+<     stagesInProgress.add(
+<             getStageWithSingleTask(
+<                     hostname3, "cluster1", Role.DATANODE, RoleCommand.START,
+<                     Service.Type.HDFS, 4, 4, (int) requestId3));
+2480a2463,2486
+>     Stage request1Stage1 = getStageWithSingleTask(hostname1, "cluster1", Role.NAMENODE,
+>         RoleCommand.START,
+>         Service.Type.HDFS, namenodeCmdTaskId, 1, (int) requestId1);
+> 
+>     Stage request1Stage2 = getStageWithSingleTask(hostname1, "cluster1", Role.DATANODE,
+>         RoleCommand.START,
+>         Service.Type.HDFS, 2, 2, (int) requestId1);
+> 
+>     Stage request2Stage1 = getStageWithSingleTask(hostname2, "cluster1", Role.DATANODE,
+>         RoleCommand.STOP, 
+>         Service.Type.HDFS, 3, 3, (int) requestId2);
+> 
+>     Stage request3Stage1 = getStageWithSingleTask(hostname3, "cluster1", Role.DATANODE,
+>         RoleCommand.START,
+>         Service.Type.HDFS, 4, 4, (int) requestId3);
+> 
+>     firstStageInProgressByRequest.add(request1Stage1);
+>     firstStageInProgressByRequest.add(request2Stage1);
+>     firstStageInProgressByRequest.add(request3Stage1);
+> 
+>     stagesInProgress.add(request1Stage1);
+>     stagesInProgress.add(request1Stage2);
+>     stagesInProgress.add(request2Stage1);
+>     stagesInProgress.add(request3Stage1);
+2501c2507
+<     when(db.getStagesInProgress()).thenReturn(stagesInProgress);
+---
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(firstStageInProgressByRequest);
+2587a2594,2597
+>     firstStageInProgressByRequest.clear();
+>     firstStageInProgressByRequest.add(request1Stage2);
+>     firstStageInProgressByRequest.add(request2Stage1);
+>     firstStageInProgressByRequest.add(request3Stage1);
+2597a2608,2610
+>     firstStageInProgressByRequest.clear();
+>     firstStageInProgressByRequest.add(request2Stage1);
+>     firstStageInProgressByRequest.add(request3Stage1);
+2607a2621,2622
+>     firstStageInProgressByRequest.clear();
+>     firstStageInProgressByRequest.add(request3Stage1);
+2717a2733
+>     final List<Stage> firstStageInProgress = new ArrayList<>();
+2737a2754,2756
+>     
+>     firstStageInProgress.add(stage);
+> 
+2746,2747c2765,2766
+<     when(db.getCommandsInProgressCount()).thenReturn(stages.size());
+<     when(db.getStagesInProgress()).thenReturn(stages);
+---
+>     when(db.getCommandsInProgressCount()).thenReturn(firstStageInProgress.size());
+>     when(db.getFirstStageInProgressPerRequest()).thenReturn(firstStageInProgress);

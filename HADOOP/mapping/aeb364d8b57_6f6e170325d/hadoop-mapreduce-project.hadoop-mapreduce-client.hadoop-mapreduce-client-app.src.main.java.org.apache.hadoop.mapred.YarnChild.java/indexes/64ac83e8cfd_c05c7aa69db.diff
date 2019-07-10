@@ -1,0 +1,4 @@
+144c144
+<       job.getCredentials().addTokensToUGI(childUGI);
+---
+>       childUGI.addCredentials(credentials);

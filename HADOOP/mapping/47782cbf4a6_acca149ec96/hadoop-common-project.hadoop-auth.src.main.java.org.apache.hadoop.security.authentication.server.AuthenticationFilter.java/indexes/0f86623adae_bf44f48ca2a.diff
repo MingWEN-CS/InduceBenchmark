@@ -1,0 +1,40 @@
+166a167,172
+>   public static final String COOKIE_PERSISTENT = "cookie.persistent";
+> 
+>   
+> 
+> 
+> 
+189a196
+>   private boolean isCookiePersistent;
+230a238,240
+>     isCookiePersistent = Boolean.parseBoolean(
+>             config.getProperty(COOKIE_PERSISTENT, "false"));
+> 
+378a389,397
+>   protected boolean isCookiePersistent() {
+>     return isCookiePersistent;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+552c571,572
+<                     getCookiePath(), token.getExpires(), isHttps);
+---
+>                     getCookiePath(), token.getExpires(),
+>                     isCookiePersistent(), isHttps);
+572c592
+<                 getCookiePath(), 0, isHttps);
+---
+>                 getCookiePath(), 0, isCookiePersistent(), isHttps);
+621a642
+> 
+623a645
+>                                       boolean isCookiePersistent,
+639c661
+<     if (expires >= 0) {
+---
+>     if (expires >= 0 && isCookiePersistent) {

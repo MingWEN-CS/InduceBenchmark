@@ -1,0 +1,77 @@
+202,214c202
+<             Class<? extends Service>[] serviceClasses = (Class<? extends Service>[]) conf.getClasses(
+<                     CONF_SERVICE_CLASSES);
+<             if (serviceClasses != null) {
+<                 for (Class<? extends Service> serviceClass : serviceClasses) {
+<                     setService(serviceClass);
+<                 }
+<             }
+<             serviceClasses = (Class<? extends Service>[]) conf.getClasses(CONF_SERVICE_EXT_CLASSES);
+<             if (serviceClasses != null) {
+<                 for (Class<? extends Service> serviceClass : serviceClasses) {
+<                     setService(serviceClass);
+<                 }
+<             }
+---
+>             loadServices();
+239a228,287
+> 
+> 
+> 
+> 
+> 
+>     private void loadServices(Class[] classes, List<Service> list) throws ServiceException {
+>         XLog log = new XLog(LogFactory.getLog(getClass()));
+>         for (Class klass : classes) {
+>             try {
+>                 Service service = (Service) klass.newInstance();
+>                 log.debug("Loading service [{}] implementation [{}]", service.getInterface(),
+>                         service.getClass());
+>                 if (!service.getInterface().isInstance(service)) {
+>                     throw new ServiceException(ErrorCode.E0101, klass, service.getInterface().getName());
+>                 }
+>                 list.add(service);
+>             } catch (ServiceException ex) {
+>                 throw ex;
+>             } catch (Exception ex) {
+>                 throw new ServiceException(ErrorCode.E0102, klass, ex.getMessage(), ex);
+>             }
+>         }
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+>     private void loadServices() throws ServiceException {
+>         XLog log = new XLog(LogFactory.getLog(getClass()));
+>         try {
+>             Map<Class, Service> map = new LinkedHashMap<Class, Service>();
+>             Class[] classes = conf.getClasses(CONF_SERVICE_CLASSES);
+>             Class[] classesExt = conf.getClasses(CONF_SERVICE_EXT_CLASSES);
+>             List<Service> list = new ArrayList<Service>();
+>             loadServices(classes, list);
+>             loadServices(classesExt, list);
+> 
+>             
+>             for (Service service : list) {
+>                 if (map.containsKey(service.getInterface())) {
+>                     log.debug("Replacing service [{}] implementation [{}]", service.getInterface(),
+>                             service.getClass());
+>                 }
+>                 map.put(service.getInterface(), service);
+>             }
+>             for (Map.Entry<Class, Service> entry : map.entrySet()) {
+>                 setService(entry.getValue().getClass());
+>             }
+>         } catch (RuntimeException ex) {
+>             throw new ServiceException(ErrorCode.E0103, ex.getMessage(), ex);
+>         }
+>     }
+> 
+>     
+> 
+> 

@@ -1,0 +1,13 @@
+35a36
+> import java.util.Iterator;
+1336c1337,1344
+<     return new Credentials(getCredentialsInternal());
+---
+>     Credentials creds = new Credentials(getCredentialsInternal());
+>     Iterator<Token<?>> iter = creds.getAllTokens().iterator();
+>     while (iter.hasNext()) {
+>       if (iter.next() instanceof Token.PrivateToken) {
+>         iter.remove();
+>       }
+>     }
+>     return creds;

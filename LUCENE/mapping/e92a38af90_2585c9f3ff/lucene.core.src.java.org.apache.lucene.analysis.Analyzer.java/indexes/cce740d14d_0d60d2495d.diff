@@ -1,0 +1,145 @@
+20a21
+> import java.io.IOException;
+21a23
+> import java.io.StringReader;
+24a27,29
+> import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+> import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
+> import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
+25a31,32
+> import org.apache.lucene.util.AttributeFactory;
+> import org.apache.lucene.util.BytesRef;
+70a78,83
+> 
+> 
+> 
+> 
+> 
+> 
+114a128,136
+>   protected TokenStream normalize(String fieldName, TokenStream in) {
+>     return in;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+184c206,264
+<     
+---
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public final BytesRef normalize(final String fieldName, final String text) {
+>     try {
+>       
+>       final String filteredText;
+>       try (Reader reader = new StringReader(text)) {
+>         Reader filterReader = initReaderForNormalization(fieldName, reader);
+>         char[] buffer = new char[64];
+>         StringBuilder builder = new StringBuilder();
+>         for (;;) {
+>           final int read = filterReader.read(buffer, 0, buffer.length);
+>           if (read == -1) {
+>             break;
+>           }
+>           builder.append(buffer, 0, read);
+>         }
+>         filteredText = builder.toString();
+>       } catch (IOException e) {
+>         throw new IllegalStateException("Normalization threw an unexpected exeption", e);
+>       }
+> 
+>       final AttributeFactory attributeFactory = attributeFactory();
+>       try (TokenStream ts = normalize(fieldName,
+>           new StringTokenStream(attributeFactory, filteredText, text.length()))) {
+>         final TermToBytesRefAttribute termAtt = ts.addAttribute(TermToBytesRefAttribute.class);
+>         ts.reset();
+>         if (ts.incrementToken() == false) {
+>           throw new IllegalStateException("The normalization token stream is "
+>               + "expected to produce exactly 1 token, but got 0 for analyzer "
+>               + this + " and input \"" + text + "\"");
+>         }
+>         final BytesRef term = BytesRef.deepCopyOf(termAtt.getBytesRef());
+>         if (ts.incrementToken()) {
+>           throw new IllegalStateException("The normalization token stream is "
+>               + "expected to produce exactly 1 token, but got 2+ for analyzer "
+>               + this + " and input \"" + text + "\"");
+>         }
+>         ts.end();
+>         return term;
+>       }
+>     } catch (IOException e) {
+>       throw new IllegalStateException("Normalization threw an unexpected exeption", e);
+>     }
+>   }
+> 
+202a283,298
+>   protected Reader initReaderForNormalization(String fieldName, Reader reader) {
+>     return reader;
+>   }
+> 
+>   
+> 
+> 
+> 
+>   protected AttributeFactory attributeFactory() {
+>     return AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY;
+>   }
+> 
+>   
+> 
+> 
+> 
+437a534,570
+>   private static final class StringTokenStream extends TokenStream {
+> 
+>     private final String value;
+>     private final int length;
+>     private boolean used = true;
+>     private final CharTermAttribute termAttribute = addAttribute(CharTermAttribute.class);
+>     private final OffsetAttribute offsetAttribute = addAttribute(OffsetAttribute.class);
+> 
+>     StringTokenStream(AttributeFactory attributeFactory, String value, int length) {
+>       super(attributeFactory);
+>       this.value = value;
+>       this.length = length;
+>     }
+> 
+>     @Override
+>     public void reset() {
+>       used = false;
+>     }
+> 
+>     @Override
+>     public boolean incrementToken() {
+>       if (used) {
+>         return false;
+>       }
+>       clearAttributes();
+>       termAttribute.append(value);
+>       offsetAttribute.setOffset(0, length);
+>       used = true;
+>       return true;
+>     }
+> 
+>     @Override
+>     public void end() throws IOException {
+>       super.end();
+>       offsetAttribute.setOffset(length, length);
+>     }
+>   }

@@ -1,0 +1,59 @@
+17d16
+< import java.util.Collections;
+19d17
+< import java.util.Set;
+31,46c29
+<   
+< 
+< 
+<   private String versionTag;
+< 
+<   
+< 
+< 
+<   private Integer version;
+< 
+<   
+< 
+< 
+<   private long createdTs;
+< 
+<   private Set<Map<String, Object>> data = Collections.emptySet();
+---
+>   private Map<String, Object> properties = null;
+56,81c39,40
+<   public Set<Map<String, Object>> getData() {
+<     return data;
+<   }
+< 
+<   public void setData(Set<Map<String, Object>> data) {
+<     this.data = data;
+<   }
+< 
+<   public String getVersionTag() {
+<     return versionTag;
+<   }
+< 
+<   public void setVersionTag(String versionTag) {
+<     this.versionTag = versionTag;
+<   }
+< 
+<   public Integer getVersion() {
+<     return version;
+<   }
+< 
+<   public void setVersion(Integer version) {
+<     this.version = version;
+<   }
+< 
+<   public long getCreatedTs() {
+<     return createdTs;
+---
+>   public Map<String, Object> getProperties() {
+>     return properties;
+84,85c43,44
+<   public void setCreatedTs(long createdTs) {
+<     this.createdTs = createdTs;
+---
+>   public void setProperties(Map<String, Object> data) {
+>     this.properties = data;

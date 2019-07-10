@@ -1,0 +1,20 @@
+127a128,146
+>     protected void addRecordToCoordJobTable(CoordinatorJobBean coordJob) throws Exception {
+>         try {
+>             JPAService jpaService = Services.get().get(JPAService.class);
+>             assertNotNull(jpaService);
+>             CoordJobInsertJPAExecutor coordInsertCmd = new CoordJobInsertJPAExecutor(coordJob);
+>             jpaService.execute(coordInsertCmd);
+>         }
+>         catch (JPAExecutorException je) {
+>             je.printStackTrace();
+>             fail("Unable to insert the test coord job record to table");
+>             throw je;
+>         }
+>     }
+> 
+>     
+> 
+> 
+> 
+> 

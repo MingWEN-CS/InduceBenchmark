@@ -1,0 +1,12 @@
+2535c2535
+<     requestScheduleEntity.setCreateUser("createduser"); 
+---
+>     requestScheduleEntity.setCreateUser("createdUser");
+2541c2541
+<     userEntity.setUserName("createduser"); 
+---
+>     userEntity.setUserName("createdUser");
+2545c2545
+<     expect(users.getUserIfUnique("createduser")).andReturn(user).once();
+---
+>     expect(users.getUserIfUnique("createdUser")).andReturn(user).once();

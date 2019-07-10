@@ -1,0 +1,36 @@
+176a177,181
+>     public static final int DEFAULT_INDEX_MERGER_POOL_SIZE = 2;
+> 
+>     
+> 
+> 
+449a455,459
+>     private int indexMergerPoolSize = DEFAULT_INDEX_MERGER_POOL_SIZE;
+> 
+>     
+> 
+> 
+734a745,746
+> 
+> 
+2173a2186,2205
+> 
+>     public int getIndexMergerPoolSize() {
+>         return indexMergerPoolSize;
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+>     public void setIndexMergerPoolSize(int indexMergerPoolSize) {
+>         if (indexMergerPoolSize <= 0) {
+>             throw new IllegalArgumentException("must be greater than 0");
+>         }
+>         this.indexMergerPoolSize = indexMergerPoolSize;
+>     }
+> 
+>     
+> 

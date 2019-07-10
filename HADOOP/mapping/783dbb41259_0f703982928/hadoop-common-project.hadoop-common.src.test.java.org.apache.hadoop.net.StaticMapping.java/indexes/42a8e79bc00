@@ -1,0 +1,128 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.net;
+
+import org.apache.hadoop.conf.Configuration;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+
+
+
+
+
+
+
+
+
+
+public class StaticMapping extends AbstractDNSToSwitchMapping  {
+
+  
+
+
+
+
+
+
+
+  public static final String KEY_HADOOP_CONFIGURED_NODE_MAPPING =
+      "hadoop.configured.node.mapping";
+
+  
+
+
+
+
+  @Override
+  public void setConf(Configuration conf) {
+    super.setConf(conf);
+    if (conf != null) {
+      String[] mappings = conf.getStrings(KEY_HADOOP_CONFIGURED_NODE_MAPPING);
+      if (mappings != null) {
+        for (String str : mappings) {
+          String host = str.substring(0, str.indexOf('='));
+          String rack = str.substring(str.indexOf('=') + 1);
+          addNodeToRack(host, rack);
+        }
+      }
+    }
+  }
+
+  
+
+
+
+
+  public void setconf(Configuration conf) {
+    setConf(conf);
+  }
+
+  
+  private static final Map<String, String> nameToRackMap = new HashMap<String, String>();
+
+  
+
+
+
+
+
+  public static void addNodeToRack(String name, String rackId) {
+    synchronized (nameToRackMap) {
+      nameToRackMap.put(name, rackId);
+    }
+  }
+
+  @Override
+  public List<String> resolve(List<String> names) {
+    List<String> m = new ArrayList<String>();
+    synchronized (nameToRackMap) {
+      for (String name : names) {
+        String rackId;
+        if ((rackId = nameToRackMap.get(name)) != null) {
+          m.add(rackId);
+        } else {
+          m.add(NetworkTopology.DEFAULT_RACK);
+        }
+      }
+      return m;
+    }
+  }
+
+  
+
+
+
+  @Override
+  public boolean isSingleSwitch() {
+    return false;
+  }
+
+  
+
+
+  public static void resetMap() {
+    synchronized (nameToRackMap) {
+      nameToRackMap.clear();
+    }
+  }
+}

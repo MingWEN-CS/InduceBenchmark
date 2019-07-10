@@ -1,0 +1,8 @@
+424c424
+<     public ConfigValidationResult validateTargetConfig(Map<String, String> properties) {
+---
+>     public ConfigValidationResult validateTargetConfig(Map<String, Object> properties) {
+471c471
+<         Map<String, String> properties) {
+---
+>         Map<String, Object> properties) {

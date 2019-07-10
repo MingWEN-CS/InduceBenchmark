@@ -1,0 +1,21 @@
+55c55
+<   protected volatile UpdateLog ulog;
+---
+>   protected UpdateLog ulog;
+75,76c75,77
+<   private void initLog(PluginInfo ulogPluginInfo) {
+<     if (ulogPluginInfo != null && ulogPluginInfo.isEnabled()) {
+---
+>   private void initLog(PluginInfo ulogPluginInfo, UpdateLog existingUpdateLog) {
+>     ulog = existingUpdateLog;
+>     if (ulog == null && ulogPluginInfo != null && ulogPluginInfo.isEnabled()) {
+81a83
+>     
+133,137c135
+<     if (updateLog == null) {
+<       initLog(ulogPluginInfo);
+<     } else {
+<       this.ulog = updateLog;
+<     }
+---
+>     initLog(ulogPluginInfo, updateLog);

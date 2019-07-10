@@ -1,0 +1,650 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.data;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.jackrabbit.util.TransientFileFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+
+
+
+
+
+public class LocalCache {
+
+    
+
+
+    static final Logger LOG = LoggerFactory.getLogger(LocalCache.class);
+
+    
+
+
+    final Set<String> toBeDeleted = new HashSet<String>();
+
+    
+
+
+    LRUCache cache;
+
+    
+
+
+    private final File directory;
+
+    
+
+
+    private final File tmp;
+
+    
+
+
+
+    private volatile boolean purgeMode;
+    
+    private AsyncUploadCache asyncUploadCache;
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public LocalCache(String path, String tmpPath, long maxSizeInBytes, double cachePurgeTrigFactor,
+            double cachePurgeResizeFactor, AsyncUploadCache asyncUploadCache) {
+        directory = new File(path);
+        tmp = new File(tmpPath);
+        LOG.info(
+            "cachePurgeTrigFactor =[{}], cachePurgeResizeFactor =[{}],  " +
+            "cachePurgeTrigFactorSize =[{}], cachePurgeResizeFactorSize =[{}]",
+            new Object[] { cachePurgeTrigFactor, cachePurgeResizeFactor,
+                (cachePurgeTrigFactor * maxSizeInBytes), 
+                (cachePurgeResizeFactor * maxSizeInBytes) });
+        cache = new LRUCache(maxSizeInBytes, cachePurgeTrigFactor, cachePurgeResizeFactor);
+        this.asyncUploadCache = asyncUploadCache;
+        long startTime = System.currentTimeMillis();
+        ArrayList<File> allFiles = new ArrayList<File>();
+        Iterator<File> it = FileUtils.iterateFiles(directory, null, true);
+        while (it.hasNext()) {
+            File f = it.next();
+            allFiles.add(f);
+        }
+        long t1 = System.currentTimeMillis();
+        LOG.debug("Time taken to recursive [{}] took [{}] sec",
+            allFiles.size(), ((t1 - startTime) / 1000));
+        Collections.sort(allFiles, new Comparator<File>() {
+            public int compare(File o1, File o2) {
+                long l1 = o1.lastModified(), l2 = o2.lastModified();
+                return l1 < l2 ? -1 : l1 > l2 ? 1 : 0;
+            }
+        });
+        long t2 = System.currentTimeMillis();
+        LOG.debug("Time taken to sort [{}] took [{}] sec",
+            allFiles.size(), ((t2 - t1) / 1000));
+        new Thread(new CacheBuildJob(allFiles)).start();
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public InputStream store(String fileName, final InputStream in)
+            throws IOException {
+        fileName = fileName.replace("\\", "/");
+        File f = getFile(fileName);
+        long length = 0;
+        if (!f.exists() || isInPurgeMode()) {
+            OutputStream out = null;
+            File transFile = null;
+            try {
+                TransientFileFactory tff = TransientFileFactory.getInstance();
+                transFile = tff.createTransientFile("s3-", "tmp", tmp);
+                out = new BufferedOutputStream(new FileOutputStream(transFile));
+                length = IOUtils.copyLarge(in, out);
+            } finally {
+                IOUtils.closeQuietly(out);
+            }
+            
+            if (canAdmitFile(length)
+                && (f.getParentFile().exists() || f.getParentFile().mkdirs())
+                && transFile.renameTo(f) && f.exists()) {
+                if (transFile.exists() && transFile.delete()) {
+                    LOG.info("tmp file [{}] not deleted successfully",
+                        transFile.getAbsolutePath());
+                }
+                transFile = null;
+                LOG.debug(
+                    "file [{}] doesn't exists. adding to local cache using inputstream.",
+                    fileName);
+                cache.put(fileName, f.length());
+            } else {
+                LOG.debug(
+                    "file [{}] doesn't exists. returning transient file [{}].",
+                    fileName, transFile.getAbsolutePath());
+                f = transFile;
+            }
+        } else {
+            f.setLastModified(System.currentTimeMillis());
+            LOG.debug(
+                "file [{}]  exists. adding to local cache using inputstream.",
+                fileName);
+            cache.put(fileName, f.length());
+        }
+        tryPurge();
+        return new LazyFileInputStream(f);
+    }
+
+    
+
+
+
+
+
+
+
+    public File store(String fileName, final File src) {
+        try {
+            return store(fileName, src, false).getFile();
+        } catch (IOException ioe) {
+            LOG.warn("Exception in addding file [" + fileName + "] to local cache.", ioe);
+        }
+        return null;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public AsyncUploadCacheResult store(String fileName, File src,
+            boolean tryForAsyncUpload) throws IOException {
+        fileName = fileName.replace("\\", "/");
+        File dest = getFile(fileName);
+        File parent = dest.getParentFile();
+        AsyncUploadCacheResult result = new AsyncUploadCacheResult();
+        result.setFile(src);
+        result.setAsyncUpload(false);
+        boolean destExists = false;
+        if ((destExists = dest.exists())
+            || (src.exists() && !dest.exists() && !src.equals(dest)
+                && canAdmitFile(src.length())
+                && (parent.exists() || parent.mkdirs()) && (src.renameTo(dest)))) {
+            if (destExists) {
+                dest.setLastModified(System.currentTimeMillis());
+            }
+            LOG.debug("file [{}]  exists= [{}] and adding to local cache.",
+                fileName, destExists);
+            cache.put(fileName, dest.length());
+            result.setFile(dest);
+            if (tryForAsyncUpload) {
+                result.setAsyncUpload(asyncUploadCache.add(fileName).canAsyncUpload());
+            }
+        } else {
+            LOG.info("file [{}] exists= [{}] not added to local cache.",
+                fileName, destExists);
+        }
+        tryPurge();
+        return result;
+    }
+    
+
+
+
+
+
+    public InputStream getIfStored(String fileName) throws IOException {
+        File file = getFileIfStored(fileName);
+        return file == null ? null : new LazyFileInputStream(file);
+    }
+
+    public File getFileIfStored(String fileName) throws IOException {
+        fileName = fileName.replace("\\", "/");
+        File f = getFile(fileName);
+        
+        
+        if (!f.exists() || (isInPurgeMode() && !asyncUploadCache.hasEntry(fileName, false))) {
+            LOG.debug(
+                "getFileIfStored returned: purgeMode=[{}], file=[{}] exists=[{}]",
+                new Object[] { isInPurgeMode(), fileName, f.exists() });
+            return null;
+        } else {
+            
+            f.setLastModified(System.currentTimeMillis());
+            cache.get(fileName);
+            return f;
+        }
+    }
+
+    
+
+
+
+
+
+    public void delete(String fileName) {
+        if (isInPurgeMode()) {
+            LOG.debug("purgeMode true :delete returned");
+            return;
+        }
+        fileName = fileName.replace("\\", "/");
+        cache.remove(fileName);
+    }
+
+    
+
+
+
+    public Long getFileLength(String fileName) {
+        Long length = null;
+        try {
+            length = cache.get(fileName);
+            if( length == null ) {
+                File f = getFileIfStored(fileName);
+                if (f != null) {
+                    length = f.length();
+                }
+            }
+        } catch (IOException ignore) {
+
+        }
+        return length;
+    }
+
+    
+
+
+
+
+    public void close() {
+        LOG.debug("close");
+        deleteOldFiles();
+    }
+
+    
+
+
+
+
+    private boolean canAdmitFile(final long length) {
+      
+        boolean value = !isInPurgeMode() && (cache.canAdmitFile(length));
+        if (!value) {
+            LOG.debug("cannot admit file of length=[{}] and currentSizeInBytes=[{}] ",
+                length, cache.currentSizeInBytes);
+        }
+        return value;
+    }
+
+    
+
+
+    synchronized boolean isInPurgeMode() {
+        return purgeMode;
+    }
+
+    
+
+
+
+
+
+    synchronized void setPurgeMode(final boolean purgeMode) {
+        this.purgeMode = purgeMode;
+    }
+
+    File getFile(final String fileName) {
+        return new File(directory, fileName);
+    }
+
+    private void deleteOldFiles() {
+        int initialSize = toBeDeleted.size();
+        int count = 0;
+        for (String fileName : new ArrayList<String>(toBeDeleted)) {
+            fileName = fileName.replace("\\", "/");
+            if( cache.remove(fileName) != null) {
+                count++;
+            }
+        }
+        LOG.info("deleted [{}]/[{}] files.", count, initialSize);
+    }
+
+    
+
+
+
+
+
+
+    boolean tryDelete(final String fileName) {
+        LOG.debug("try deleting file [{}]", fileName);
+        File f = getFile(fileName);
+        if (f.exists() && f.delete()) {
+            LOG.debug("File [{}]  deleted successfully", fileName);
+            toBeDeleted.remove(fileName);
+            while (true) {
+                f = f.getParentFile();
+                if (f.equals(directory) || f.list().length > 0) {
+                    break;
+                }
+                
+                f.delete();
+            }
+            return true;
+        } else if (f.exists()) {
+            LOG.info("not able to delete file [{}]", f.getAbsolutePath());
+            toBeDeleted.add(fileName);
+            return false;
+        }
+        return true;
+    }
+
+    static int maxSizeElements(final long bytes) {
+        
+        
+        int count = (int) (bytes / 65535);
+        count = Math.max(1024, count);
+        count = Math.min(64 * 1024, count);
+        return count;
+    }
+    
+    
+
+
+
+
+    synchronized void tryPurge() {
+        if (!isInPurgeMode()
+            && cache.currentSizeInBytes > cache.cachePurgeTrigSize) {
+            setPurgeMode(true);
+            LOG.info(
+                "cache.entries = [{}], currentSizeInBytes=[{}]  exceeds cachePurgeTrigSize=[{}]",
+                new Object[] { cache.size(), cache.currentSizeInBytes,
+                    cache.cachePurgeTrigSize });
+            new Thread(new PurgeJob()).start();
+        } else {
+            LOG.debug(
+                "currentSizeInBytes=[{}],cachePurgeTrigSize=[{}], isInPurgeMode =[{}]",
+                new Object[] { cache.currentSizeInBytes,
+                    cache.cachePurgeTrigSize, isInPurgeMode() });
+        }
+    }
+
+    
+
+
+
+    private class LRUCache extends LinkedHashMap<String, Long> {
+        private static final long serialVersionUID = 1L;
+
+        volatile long currentSizeInBytes;
+
+        final long maxSizeInBytes;
+
+        final long cachePurgeResize;
+        
+        final long cachePurgeTrigSize;
+
+        LRUCache(final long maxSizeInBytes,
+                final double cachePurgeTrigFactor,
+                final double cachePurgeResizeFactor) {
+            super(maxSizeElements(maxSizeInBytes), (float) 0.75, true);
+            this.maxSizeInBytes = maxSizeInBytes;
+            this.cachePurgeTrigSize = new Double(cachePurgeTrigFactor
+                * maxSizeInBytes).longValue();
+            this.cachePurgeResize = new Double(cachePurgeResizeFactor
+                * maxSizeInBytes).longValue();
+        }
+
+        
+
+
+
+        @Override
+        public synchronized Long remove(final Object key) {
+            String fileName = (String) key;
+            fileName = fileName.replace("\\", "/");
+            try {
+                
+                
+                if (asyncUploadCache.hasEntry(fileName, false)) {
+                    LOG.info(
+                        "AsyncUploadCache upload contains file [{}]. Not removing it from LocalCache.",
+                        fileName);
+                    return null;
+                }
+            } catch (IOException e) {
+                LOG.debug("error: ", e);
+                return null;
+            }
+            Long flength = null;
+            if (tryDelete(fileName)) {
+                flength = super.remove(key);
+                if (flength != null) {
+                    LOG.debug("cache entry [{}], with size [{}] removed.",
+                        fileName, flength);
+                    currentSizeInBytes -= flength.longValue();
+                }
+            } else if (!getFile(fileName).exists()) {
+                
+                flength = super.remove(key);
+                if (flength != null) {
+                    LOG.debug(
+                        "file not exists. cache entry [{}], with size [{}] removed.",
+                        fileName, flength);
+                    currentSizeInBytes -= flength.longValue();
+                }
+            } else {
+                LOG.info("not able to remove cache entry [{}], size [{}]", key,
+                    super.get(key));
+            }
+            return flength;
+        }
+
+        @Override
+        public Long put(final String fileName, final Long value) {
+            if( isInPurgeMode()) {
+                LOG.debug("cache is purge mode: put is no-op");
+                return null;
+            }
+            synchronized (this) {
+                Long oldValue = cache.get(fileName);
+                if (oldValue == null) {
+                    long flength = value.longValue();
+                    currentSizeInBytes += flength;
+                    return super.put(fileName.replace("\\", "/"), value);
+                }
+                toBeDeleted.remove(fileName);
+                return oldValue;
+            }
+        }
+        
+        @Override
+        public Long get(Object key) {
+            if( isInPurgeMode()) {
+                LOG.debug("cache is purge mode: get is no-op");
+                return null;
+            }
+            synchronized (this) {
+                return super.get(key);
+            }
+        }
+        
+        
+
+
+
+
+        synchronized boolean canAdmitFile(final long length) {
+            return cache.currentSizeInBytes + length < cache.maxSizeInBytes;
+        }
+    }
+
+    
+
+
+
+    private class PurgeJob implements Runnable {
+        public PurgeJob() {
+            
+        }
+
+        
+
+
+
+        @Override
+        public void run() {
+            try {
+                synchronized (cache) {
+                    
+                    int initialSize = cache.size();
+                    LOG.info(" cache purge job started. initial cache entries = [{}]", initialSize);
+                    for (String fileName : new ArrayList<String>(toBeDeleted)) {
+                        cache.remove(fileName);
+                    }
+                    Iterator<Map.Entry<String, Long>> itr = cache.entrySet().iterator();
+                    while (itr.hasNext()) {
+                        Map.Entry<String, Long> entry = itr.next();
+                        if (entry.getKey() != null) {
+                            if (cache.currentSizeInBytes > cache.cachePurgeResize) {
+                                cache.remove(entry.getKey());
+                                itr = cache.entrySet().iterator();
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    LOG.info(
+                        " cache purge job completed: cleaned [{}] files and currentSizeInBytes = [{}]",
+                        (initialSize - cache.size()), cache.currentSizeInBytes);
+                }
+            } catch (Exception e) {
+                LOG.error("error in purge jobs:", e);
+            } finally {
+                setPurgeMode(false);
+            }
+        }
+    }
+    
+    
+
+
+
+    private class CacheBuildJob implements Runnable {
+
+        List<File> allFiles ;
+        
+        private CacheBuildJob(List<File> allFiles) {
+            this.allFiles = allFiles;
+        }
+        public void run() {
+            long startTime = System.currentTimeMillis();
+            String dataStorePath = directory.getAbsolutePath();
+            LOG.info("directoryPath = " + dataStorePath);
+            dataStorePath = dataStorePath.replace("\\", "/");
+            String tmpPath = tmp.getAbsolutePath();
+            LOG.debug("tmp path [{}]", tmpPath); 
+            long time = System.currentTimeMillis();
+            int count = 0;
+            for (File f : allFiles) {
+                if (f.exists()) {
+                    count++;
+                    String name = f.getPath();
+                    String filePath = f.getAbsolutePath();
+                    
+                    if(filePath.startsWith(tmpPath) ) {
+                        LOG.info    ("tmp file [{}] skipped ", filePath);
+                        continue;
+                    }
+                    if (name.startsWith(dataStorePath)) {
+                        name = name.substring(dataStorePath.length());
+                    }
+                    
+                    name = name.replace("\\", "/");
+                    if (name.startsWith("/") || name.startsWith("\\")) {
+                        name = name.substring(1);
+                    }
+                    store(name, f);
+                    long now = System.currentTimeMillis();
+                    if (now > time + 10000) {
+                        LOG.info("Processed {" + (count) + "}/{" + allFiles.size() + "}");
+                        time = now;
+                    }
+                }
+            }
+            LOG.debug(
+                "Processed [{}]/[{}], currentSizeInBytes = [{}], maxSizeInBytes = [{}], cache.filecount = [{}]",
+                new Object[] { count, allFiles.size(),
+                    cache.currentSizeInBytes, cache.maxSizeInBytes,
+                    cache.size() });
+            long t3 = System.currentTimeMillis();
+            LOG.info("Time to build cache of  [{}] files took [{}] sec",
+                allFiles.size(), ((t3 - startTime) / 1000));
+        }
+    }
+}

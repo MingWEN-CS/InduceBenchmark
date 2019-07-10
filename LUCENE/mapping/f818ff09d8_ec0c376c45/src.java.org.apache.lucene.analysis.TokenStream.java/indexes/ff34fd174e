@@ -1,0 +1,376 @@
+package org.apache.lucene.analysis;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+
+import org.apache.lucene.analysis.tokenattributes.FlagsAttribute;
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
+import org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
+import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+import org.apache.lucene.analysis.tokenattributes.TermAttribute;
+import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
+import org.apache.lucene.util.Attribute;
+import org.apache.lucene.util.AttributeImpl;
+import org.apache.lucene.util.AttributeSource;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public abstract class TokenStream extends AttributeSource {
+
+  
+  private static final AttributeFactory DEFAULT_TOKEN_WRAPPER_ATTRIBUTE_FACTORY
+    = new TokenWrapperAttributeFactory(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
+  
+  
+  private static final Class[] METHOD_NO_PARAMS = new Class[0];
+
+  
+  private static final Class[] METHOD_TOKEN_PARAM = new Class[]{Token.class};
+  
+  
+  private final TokenWrapper tokenWrapper;
+  
+  
+  private static boolean onlyUseNewAPI = false;
+
+  
+  private final boolean
+    hasIncrementToken = isMethodOverridden("incrementToken", METHOD_NO_PARAMS),
+    hasReusableNext = onlyUseNewAPI ? false : isMethodOverridden("next", METHOD_TOKEN_PARAM),
+    hasNext = onlyUseNewAPI ? false : isMethodOverridden("next", METHOD_NO_PARAMS);
+  
+  
+  private boolean isMethodOverridden(String name, Class[] params) {
+    try {
+      return this.getClass().getMethod(name, params).getDeclaringClass() != TokenStream.class;
+    } catch (NoSuchMethodException e) {
+      
+      throw new RuntimeException(e);
+    }
+  }
+  
+  
+  private static final class TokenWrapperAttributeFactory extends AttributeFactory {
+    private final AttributeFactory delegate;
+  
+    private TokenWrapperAttributeFactory(AttributeFactory delegate) {
+      this.delegate = delegate;
+    }
+  
+    public AttributeImpl createAttributeInstance(Class attClass) {
+      return attClass.isAssignableFrom(TokenWrapper.class)
+        ? new TokenWrapper()
+        : delegate.createAttributeInstance(attClass);
+    }
+    
+    
+    
+    public boolean equals(Object other) {
+      if (this == other) return true;
+      if (other instanceof TokenWrapperAttributeFactory) {
+        final TokenWrapperAttributeFactory af = (TokenWrapperAttributeFactory) other;
+        return this.delegate.equals(af.delegate);
+      }
+      return false;
+    }
+  }
+
+  
+
+
+  protected TokenStream() {
+    super(onlyUseNewAPI
+      ? AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY
+      : TokenStream.DEFAULT_TOKEN_WRAPPER_ATTRIBUTE_FACTORY
+    );
+    tokenWrapper = initTokenWrapper(null);
+    check();
+  }
+  
+  
+
+
+  protected TokenStream(AttributeSource input) {
+    super(input);
+    tokenWrapper = initTokenWrapper(input);
+    check();
+  }
+  
+  
+
+
+  protected TokenStream(AttributeFactory factory) {
+    super(onlyUseNewAPI
+      ? factory
+      : new TokenWrapperAttributeFactory(factory)
+    );
+    tokenWrapper = initTokenWrapper(null);
+    check();
+  }
+
+  
+  private TokenWrapper initTokenWrapper(AttributeSource input) {
+    if (onlyUseNewAPI) {
+      
+      return null;
+    } else {
+      
+      if (input instanceof TokenStream && ((TokenStream) input).tokenWrapper != null) {
+        return ((TokenStream) input).tokenWrapper;
+      }
+      
+      final AttributeImpl att = addAttribute(TermAttribute.class);
+      if (att instanceof TokenWrapper &&
+        addAttribute(TypeAttribute.class) == att &&
+        addAttribute(PositionIncrementAttribute.class) == att &&
+        addAttribute(FlagsAttribute.class) == att &&
+        addAttribute(OffsetAttribute.class) == att &&
+        addAttribute(PayloadAttribute.class) == att
+      ) {
+        return (TokenWrapper) att;
+      } else {
+        throw new UnsupportedOperationException(
+          "If onlyUseNewAPI is disabled, all basic Attributes must be implemented by the internal class "+
+          "TokenWrapper. Please make sure, that all TokenStreams/TokenFilters in this chain have been "+
+          "instantiated with this flag disabled and do not add any custom instances for the basic Attributes!"
+        );
+      }
+    }
+  }
+
+  
+  private void check() {
+    if (onlyUseNewAPI && !hasIncrementToken) {
+      throw new UnsupportedOperationException(getClass().getName()+" does not implement incrementToken() which is needed for onlyUseNewAPI.");
+    }
+
+    
+    if (!(hasIncrementToken || hasNext || hasReusableNext)) {
+      throw new UnsupportedOperationException(getClass().getName()+" does not implement any of incrementToken(), next(Token), next().");
+    }
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static void setOnlyUseNewAPI(boolean onlyUseNewAPI) {
+    TokenStream.onlyUseNewAPI = onlyUseNewAPI;
+  }
+  
+  
+
+
+
+
+  public static boolean getOnlyUseNewAPI() {
+    return onlyUseNewAPI;
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public boolean incrementToken() throws IOException {
+    assert !onlyUseNewAPI && tokenWrapper != null;
+    
+    final Token token;
+    if (hasReusableNext) {
+      token = next(tokenWrapper.delegate);
+    } else {
+      assert hasNext;
+      token = next();
+    }
+    if (token == null) return false;
+    tokenWrapper.delegate = token;
+    return true;
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+  public void end() throws IOException {
+    
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public Token next(final Token reusableToken) throws IOException {
+    assert reusableToken != null;
+    
+    if (onlyUseNewAPI)
+      throw new UnsupportedOperationException("This TokenStream only supports the new Attributes API.");
+    
+    if (hasIncrementToken) {
+      tokenWrapper.delegate = reusableToken;
+      return incrementToken() ? tokenWrapper.delegate : null;
+    } else {
+      assert hasNext;
+      final Token token = next();
+      if (token == null) return null;
+      tokenWrapper.delegate = token;
+      return token;
+    }
+  }
+
+  
+
+
+
+
+
+
+  public Token next() throws IOException {
+    if (onlyUseNewAPI)
+      throw new UnsupportedOperationException("This TokenStream only supports the new Attributes API.");
+    
+    if (hasIncrementToken) {
+      return incrementToken() ? ((Token) tokenWrapper.delegate.clone()) : null;
+    } else {
+      assert hasReusableNext;
+      final Token token = next(tokenWrapper.delegate);
+      if (token == null) return null;
+      tokenWrapper.delegate = token;
+      return (Token) token.clone();
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public void reset() throws IOException {}
+  
+  
+  public void close() throws IOException {}
+  
+}

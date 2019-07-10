@@ -1,0 +1,33 @@
+40a41
+> import org.apache.lucene.index.AtomicReaderContext;
+50a52,53
+> import org.apache.lucene.search.FilterCollector;
+> import org.apache.lucene.search.LeafCollector;
+85a89
+> import org.apache.solr.search.Insanity;
+449c453
+<     String groupField  = groupingSpecification != null ? groupingSpecification.getFields()[0] : null;
+---
+>     final String groupField  = groupingSpecification != null ? groupingSpecification.getFields()[0] : null;
+458,459c462,479
+<     TermGroupFacetCollector collector = TermGroupFacetCollector.createTermGroupFacetCollector(groupField, field, multiToken, prefixBR, 128);
+<     searcher.search(new MatchAllDocsQuery(), base.getTopFilter(), collector);
+---
+>     final TermGroupFacetCollector collector = TermGroupFacetCollector.createTermGroupFacetCollector(groupField, field, multiToken, prefixBR, 128);
+>     
+>     SchemaField sf = searcher.getSchema().getFieldOrNull(groupField);
+>     
+>     if (sf != null && sf.hasDocValues() == false && sf.multiValued() == false && sf.getType().getNumericType() != null) {
+>       
+>       
+>       searcher.search(new MatchAllDocsQuery(), base.getTopFilter(), new FilterCollector(collector) {
+>         @Override
+>         public LeafCollector getLeafCollector(AtomicReaderContext context) throws IOException {
+>           AtomicReader insane = Insanity.wrapInsanity(context.reader(), groupField);
+>           return in.getLeafCollector(insane.getContext());
+>         }
+>       });
+>     } else {
+>       searcher.search(new MatchAllDocsQuery(), base.getTopFilter(), collector);
+>     }
+>     

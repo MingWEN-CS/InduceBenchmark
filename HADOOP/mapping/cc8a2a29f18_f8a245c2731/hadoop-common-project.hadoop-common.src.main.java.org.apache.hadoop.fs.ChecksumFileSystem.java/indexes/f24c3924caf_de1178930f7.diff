@@ -1,0 +1,7 @@
+307,308c307,309
+<     return new FSDataInputStream(
+<         new ChecksumFSInputChecker(this, f, bufferSize));
+---
+>     return verifyChecksum
+>       ? new FSDataInputStream(new ChecksumFSInputChecker(this, f, bufferSize))
+>       : getRawFileSystem().open(f, bufferSize);

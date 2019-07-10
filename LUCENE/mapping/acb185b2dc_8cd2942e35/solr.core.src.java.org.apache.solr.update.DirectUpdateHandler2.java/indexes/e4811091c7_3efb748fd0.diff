@@ -1,0 +1,6 @@
+57a58
+> import org.apache.solr.schema.IndexSchema;
+397c398
+<     return new Term(cmd.isBlock() ? "_root_" : idField.getName(), cmd.getIndexedId());
+---
+>     return new Term(cmd.isBlock() ? IndexSchema.ROOT_FIELD_NAME : idField.getName(), cmd.getIndexedId());

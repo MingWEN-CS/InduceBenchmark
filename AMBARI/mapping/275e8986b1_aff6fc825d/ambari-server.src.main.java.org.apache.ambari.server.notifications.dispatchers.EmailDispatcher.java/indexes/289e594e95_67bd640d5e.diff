@@ -1,0 +1,56 @@
+19a20
+> import java.util.Map;
+23a25
+> import javax.mail.AuthenticationFailedException;
+26a29
+> import javax.mail.NoSuchProviderException;
+37a41
+> import org.apache.ambari.server.state.services.AlertNoticeDispatchService;
+163a168,199
+>   @Override
+>   public ConfigValidationResult validateTargetConfig(Map<String, String> properties) {
+>     try {
+>       Transport transport = getMailTransport(properties);
+>       transport.connect();
+>       transport.close();
+>     } catch(AuthenticationFailedException e) {
+>       LOG.debug("Invalid credentials. Authentication failure.", e);
+>       return ConfigValidationResult.invalid("Invalid credentials. Authentication failure: " + e.getMessage());
+>     } catch(MessagingException e) {
+>       LOG.debug("Invalid config.", e);
+>       return ConfigValidationResult.invalid("Invalid config: " + e.getMessage());
+>     }
+>     return ConfigValidationResult.valid();
+>   }
+> 
+>   protected Transport getMailTransport(Map<String, String> properties) throws NoSuchProviderException {
+>     DispatchCredentials credentials = null;
+>     if (properties.containsKey(AlertNoticeDispatchService.AMBARI_DISPATCH_CREDENTIAL_USERNAME)) {
+>       credentials = new DispatchCredentials();
+>       credentials.UserName = properties.get(AlertNoticeDispatchService.AMBARI_DISPATCH_CREDENTIAL_USERNAME);
+>       credentials.Password = properties.get(AlertNoticeDispatchService.AMBARI_DISPATCH_CREDENTIAL_PASSWORD);
+>     }
+>     Properties props = new Properties();
+>     for (Entry<String, String> entry : properties.entrySet()) {
+>       props.put(entry.getKey(), entry.getValue());
+>     }
+>     Session session = Session.getInstance(props, new EmailAuthenticator(credentials));
+>     return session.getTransport();
+>   }
+> 
+>   
+165c201,203
+<   private static final class EmailAuthenticator extends Authenticator{
+---
+> 
+> 
+>   private static final class EmailAuthenticator extends Authenticator {
+183,184c221,225
+<       return new PasswordAuthentication(m_credentials.UserName,
+<           m_credentials.Password);
+---
+>       if (m_credentials != null) {
+>         return new PasswordAuthentication(m_credentials.UserName,
+>             m_credentials.Password);
+>       }
+>       return null;

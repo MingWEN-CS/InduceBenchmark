@@ -1,0 +1,15 @@
+606c606
+<       fp = new PerField(fi, invert);
+---
+>       fp = new PerField(docWriter.getIndexCreatedVersionMajor(), fi, invert);
+635a636
+>     final int indexCreatedVersionMajor;
+662c663,664
+<     public PerField(FieldInfo fieldInfo, boolean invert) {
+---
+>     public PerField(int indexCreatedVersionMajor, FieldInfo fieldInfo, boolean invert) {
+>       this.indexCreatedVersionMajor = indexCreatedVersionMajor;
+671c673
+<       invertState = new FieldInvertState(fieldInfo.name);
+---
+>       invertState = new FieldInvertState(indexCreatedVersionMajor, fieldInfo.name);

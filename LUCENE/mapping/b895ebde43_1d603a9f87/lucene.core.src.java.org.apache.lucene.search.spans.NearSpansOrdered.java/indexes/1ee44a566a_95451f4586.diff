@@ -1,0 +1,26 @@
+24a25
+> import org.apache.lucene.util.InPlaceMergeSorter;
+75c76,82
+<   private final Comparator<Spans> spanDocComparator = new Comparator<Spans>() {
+---
+>   
+>   
+>   private final InPlaceMergeSorter sorter = new InPlaceMergeSorter() {
+>     @Override
+>     protected void swap(int i, int j) {
+>       ArrayUtil.swap(subSpansByDoc, i, j);
+>     }
+77,78c84,85
+<     public int compare(Spans o1, Spans o2) {
+<       return o1.doc() - o2.doc();
+---
+>     protected int compare(int i, int j) {
+>       return subSpansByDoc[i].doc() - subSpansByDoc[j].doc();
+81c88
+<   
+---
+> 
+207c214
+<     ArrayUtil.timSort(subSpansByDoc, spanDocComparator);
+---
+>     sorter.sort(0, subSpansByDoc.length);

@@ -1,0 +1,2281 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.core;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.lang.reflect.Constructor;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.lucene.codecs.Codec;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexDeletionPolicy;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.IOContext;
+import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.store.LockObtainFailedException;
+import org.apache.solr.cloud.CloudDescriptor;
+import org.apache.solr.common.SolrException;
+import org.apache.solr.common.params.CommonParams;
+import org.apache.solr.common.params.CommonParams.EchoParamStyle;
+import org.apache.solr.common.params.SolrParams;
+import org.apache.solr.common.util.ExecutorUtil;
+import org.apache.solr.common.util.NamedList;
+import org.apache.solr.common.util.SimpleOrderedMap;
+import org.apache.solr.core.DirectoryFactory.DirContext;
+import org.apache.solr.handler.SnapPuller;
+import org.apache.solr.handler.admin.ShowFileRequestHandler;
+import org.apache.solr.handler.component.DebugComponent;
+import org.apache.solr.handler.component.FacetComponent;
+import org.apache.solr.handler.component.HighlightComponent;
+import org.apache.solr.handler.component.MoreLikeThisComponent;
+import org.apache.solr.handler.component.QueryComponent;
+import org.apache.solr.handler.component.RealTimeGetComponent;
+import org.apache.solr.handler.component.SearchComponent;
+import org.apache.solr.handler.component.StatsComponent;
+import org.apache.solr.request.SolrQueryRequest;
+import org.apache.solr.request.SolrRequestHandler;
+import org.apache.solr.response.BinaryResponseWriter;
+import org.apache.solr.response.CSVResponseWriter;
+import org.apache.solr.response.JSONResponseWriter;
+import org.apache.solr.response.PHPResponseWriter;
+import org.apache.solr.response.PHPSerializedResponseWriter;
+import org.apache.solr.response.PythonResponseWriter;
+import org.apache.solr.response.QueryResponseWriter;
+import org.apache.solr.response.RawResponseWriter;
+import org.apache.solr.response.RubyResponseWriter;
+import org.apache.solr.response.SolrQueryResponse;
+import org.apache.solr.response.XMLResponseWriter;
+import org.apache.solr.response.transform.TransformerFactory;
+import org.apache.solr.schema.FieldType;
+import org.apache.solr.schema.IndexSchema;
+import org.apache.solr.schema.SchemaAware;
+import org.apache.solr.search.QParserPlugin;
+import org.apache.solr.search.SolrFieldCacheMBean;
+import org.apache.solr.search.SolrIndexSearcher;
+import org.apache.solr.search.ValueSourceParser;
+import org.apache.solr.update.DefaultSolrCoreState;
+import org.apache.solr.update.DirectUpdateHandler2;
+import org.apache.solr.update.SolrCoreState;
+import org.apache.solr.update.SolrCoreState.IndexWriterCloser;
+import org.apache.solr.update.SolrIndexWriter;
+import org.apache.solr.update.UpdateHandler;
+import org.apache.solr.update.VersionInfo;
+import org.apache.solr.update.processor.DistributedUpdateProcessorFactory;
+import org.apache.solr.update.processor.LogUpdateProcessorFactory;
+import org.apache.solr.update.processor.RunUpdateProcessorFactory;
+import org.apache.solr.update.processor.UpdateRequestProcessorChain;
+import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
+import org.apache.solr.util.DefaultSolrThreadFactory;
+import org.apache.solr.util.PropertiesInputStream;
+import org.apache.solr.util.RefCounted;
+import org.apache.solr.util.plugin.NamedListInitializedPlugin;
+import org.apache.solr.util.plugin.PluginInfoInitialized;
+import org.apache.solr.util.plugin.SolrCoreAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
+
+
+
+
+public final class SolrCore implements SolrInfoMBean {
+  public static final String version="1.0";  
+
+  
+  public static final AtomicLong numOpens = new AtomicLong();
+  public static final AtomicLong numCloses = new AtomicLong();
+  public static Map<SolrCore,Exception> openHandles = Collections.synchronizedMap(new IdentityHashMap<SolrCore, Exception>());
+
+  
+  public static Logger log = LoggerFactory.getLogger(SolrCore.class);
+
+  private String name;
+  private String logid; 
+  private final CoreDescriptor coreDescriptor;
+
+  private boolean isReloaded = false;
+
+  private final SolrConfig solrConfig;
+  private final SolrResourceLoader resourceLoader;
+  private final IndexSchema schema;
+  private final String dataDir;
+  private final UpdateHandler updateHandler;
+  private final SolrCoreState solrCoreState;
+  
+  private final long startTime;
+  private final RequestHandlers reqHandlers;
+  private final Map<String,SearchComponent> searchComponents;
+  private final Map<String,UpdateRequestProcessorChain> updateProcessorChains;
+  private final Map<String, SolrInfoMBean> infoRegistry;
+  private IndexDeletionPolicyWrapper solrDelPolicy;
+  private DirectoryFactory directoryFactory;
+  private IndexReaderFactory indexReaderFactory;
+  private final Codec codec;
+
+  public long getStartTime() { return startTime; }
+
+  static int boolean_query_max_clause_count = Integer.MIN_VALUE;
+  
+  void booleanQueryMaxClauseCount()  {
+    synchronized(SolrCore.class) {
+      if (boolean_query_max_clause_count == Integer.MIN_VALUE) {
+        boolean_query_max_clause_count = solrConfig.booleanQueryMaxClauseCount;
+        BooleanQuery.setMaxClauseCount(boolean_query_max_clause_count);
+      } else if (boolean_query_max_clause_count != solrConfig.booleanQueryMaxClauseCount ) {
+        log.debug("BooleanQuery.maxClauseCount= " +boolean_query_max_clause_count+ ", ignoring " +solrConfig.booleanQueryMaxClauseCount);
+      }
+    }
+  }
+
+  
+  
+
+
+
+  public SolrResourceLoader getResourceLoader() {
+    return resourceLoader;
+  }
+
+  
+
+
+
+  public String getConfigResource() {
+    return solrConfig.getResourceName();
+  }
+
+  
+
+
+  public SolrConfig getSolrConfig() {
+    return solrConfig;
+  }
+  
+  
+
+
+
+  public String getSchemaResource() {
+    return schema.getResourceName();
+  }
+
+  
+
+
+  public IndexSchema getSchema() { 
+    return schema;
+  }
+  
+  public String getDataDir() {
+    return dataDir;
+  }
+
+  public String getIndexDir() {
+    synchronized (searcherLock) {
+      if (_searcher == null) return getNewIndexDir();
+      SolrIndexSearcher searcher = _searcher.get();
+      return searcher.getPath() == null ? dataDir + "index/" : searcher
+          .getPath();
+    }
+  }
+
+
+  
+
+
+
+
+
+
+
+  public String getNewIndexDir() {
+    String result = dataDir + "index/";
+    Properties p = new Properties();
+    Directory dir = null;
+    try {
+      dir = getDirectoryFactory().get(getDataDir(), DirContext.META_DATA, getSolrConfig().indexConfig.lockType);
+      if (dir.fileExists(SnapPuller.INDEX_PROPERTIES)){
+        final IndexInput input = dir.openInput(SnapPuller.INDEX_PROPERTIES, IOContext.DEFAULT);
+  
+        final InputStream is = new PropertiesInputStream(input);
+        try {
+          p.load(is);
+          
+          String s = p.getProperty("index");
+          if (s != null && s.trim().length() > 0) {
+              result = dataDir + s;
+          }
+          
+        } catch (Exception e) {
+          log.error("Unable to load " + SnapPuller.INDEX_PROPERTIES, e);
+        } finally {
+          IOUtils.closeQuietly(is);
+        }
+      }
+    } catch (IOException e) {
+      SolrException.log(log, "", e);
+    } finally {
+      if (dir != null) {
+        try {
+          getDirectoryFactory().release(dir);
+        } catch (IOException e) {
+          SolrException.log(log, "", e);
+        }
+      }
+    }
+    if (!result.equals(lastNewIndexDir)) {
+      log.info("New index directory detected: old="+lastNewIndexDir + " new=" + result);
+    }
+    lastNewIndexDir = result;
+    return result;
+  }
+  private String lastNewIndexDir; 
+
+  
+  public DirectoryFactory getDirectoryFactory() {
+    return directoryFactory;
+  }
+  
+  public IndexReaderFactory getIndexReaderFactory() {
+    return indexReaderFactory;
+  }
+  
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String v) {
+    this.name = v;
+    this.logid = (v==null)?"":("["+v+"] ");
+  }
+
+  public String getLogId()
+  {
+    return this.logid;
+  }
+
+  
+
+
+
+
+
+
+
+  public Map<String, SolrInfoMBean> getInfoRegistry() {
+    return infoRegistry;
+  }
+
+   private void initDeletionPolicy() {
+     PluginInfo info = solrConfig.getPluginInfo(IndexDeletionPolicy.class.getName());
+     IndexDeletionPolicy delPolicy = null;
+     if(info != null){
+       delPolicy = createInstance(info.className,IndexDeletionPolicy.class,"Deletion Policy for SOLR");
+       if (delPolicy instanceof NamedListInitializedPlugin) {
+         ((NamedListInitializedPlugin) delPolicy).init(info.initArgs);
+       }
+     } else {
+       delPolicy = new SolrDeletionPolicy();
+     }     
+     solrDelPolicy = new IndexDeletionPolicyWrapper(delPolicy);
+   }
+
+  private void initListeners() {
+    final Class<SolrEventListener> clazz = SolrEventListener.class;
+    final String label = "Event Listener";
+    for (PluginInfo info : solrConfig.getPluginInfos(SolrEventListener.class.getName())) {
+      String event = info.attributes.get("event");
+      if("firstSearcher".equals(event) ){
+        SolrEventListener obj = createInitInstance(info,clazz,label,null);
+        firstSearcherListeners.add(obj);
+        log.info(logid + "Added SolrEventListener for firstSearcher: " + obj);
+      } else if("newSearcher".equals(event) ){
+        SolrEventListener obj = createInitInstance(info,clazz,label,null);
+        newSearcherListeners.add(obj);
+        log.info(logid + "Added SolrEventListener for newSearcher: " + obj);
+      }
+    }
+  }
+
+  final List<SolrEventListener> firstSearcherListeners = new ArrayList<SolrEventListener>();
+  final List<SolrEventListener> newSearcherListeners = new ArrayList<SolrEventListener>();
+
+  
+
+
+
+
+
+
+  public void registerFirstSearcherListener( SolrEventListener listener )
+  {
+    firstSearcherListeners.add( listener );
+  }
+
+  
+
+
+
+
+
+
+  public void registerNewSearcherListener( SolrEventListener listener )
+  {
+    newSearcherListeners.add( listener );
+  }
+
+  
+
+
+
+
+
+
+  public QueryResponseWriter registerResponseWriter( String name, QueryResponseWriter responseWriter ){
+    return responseWriters.put(name, responseWriter);
+  }
+  
+  public SolrCore reload(SolrCore prev) throws IOException,
+      ParserConfigurationException, SAXException {
+    return reload(prev.getResourceLoader(), prev);
+  }
+  
+  public SolrCore reload(SolrResourceLoader resourceLoader, SolrCore prev) throws IOException,
+      ParserConfigurationException, SAXException {
+    
+    SolrConfig config = new SolrConfig(resourceLoader,
+        getSolrConfig().getName(), null);
+    
+    IndexSchema schema = new IndexSchema(config,
+        getSchema().getResourceName(), null);
+    
+    solrCoreState.increfSolrCoreState();
+    
+    if (!getNewIndexDir().equals(getIndexDir())) {
+      
+      prev = null;
+    }
+    
+    SolrCore core = new SolrCore(getName(), getDataDir(), config,
+        schema, coreDescriptor, updateHandler, this.solrDelPolicy, prev);
+    core.solrDelPolicy = this.solrDelPolicy;
+    
+    core.getUpdateHandler().getSolrCoreState().newIndexWriter(core, false);
+    
+    core.getSearcher(true, false, null, true);
+    
+    return core;
+  }
+
+
+  
+  public SolrIndexSearcher newSearcher(String name) throws IOException {
+    return new SolrIndexSearcher(this, getNewIndexDir(), schema, getSolrConfig().indexConfig, name, false, directoryFactory);
+  }
+
+
+   private void initDirectoryFactory() {
+    DirectoryFactory dirFactory;
+    PluginInfo info = solrConfig.getPluginInfo(DirectoryFactory.class.getName());
+    if (info != null) {
+      log.info(info.className);
+      dirFactory = getResourceLoader().newInstance(info.className, DirectoryFactory.class);
+      dirFactory.init(info.initArgs);
+    } else {
+      log.info("solr.NRTCachingDirectoryFactory");
+      dirFactory = new NRTCachingDirectoryFactory();
+    }
+    
+    directoryFactory = dirFactory;
+  }
+
+  private void initIndexReaderFactory() {
+    IndexReaderFactory indexReaderFactory;
+    PluginInfo info = solrConfig.getPluginInfo(IndexReaderFactory.class.getName());
+    if (info != null) {
+      indexReaderFactory = resourceLoader.newInstance(info.className, IndexReaderFactory.class);
+      indexReaderFactory.init(info.initArgs);
+    } else {
+      indexReaderFactory = new StandardIndexReaderFactory();
+    } 
+    this.indexReaderFactory = indexReaderFactory;
+  }
+  
+  
+  private static Set<String> dirs = new HashSet<String>();
+
+  void initIndex(boolean reload) throws IOException {
+ 
+      String indexDir = getNewIndexDir();
+      boolean indexExists = getDirectoryFactory().exists(indexDir);
+      boolean firstTime;
+      synchronized (SolrCore.class) {
+        firstTime = dirs.add(getDirectoryFactory().normalize(indexDir));
+      }
+      boolean removeLocks = solrConfig.unlockOnStartup;
+
+      initIndexReaderFactory();
+
+      if (indexExists && firstTime && !reload) {
+        
+        Directory dir = directoryFactory.get(indexDir, DirContext.DEFAULT,
+            getSolrConfig().indexConfig.lockType);
+        try {
+          if (IndexWriter.isLocked(dir)) {
+            if (removeLocks) {
+              log.warn(
+                  logid
+                      + "WARNING: Solr index directory '{}' is locked.  Unlocking...",
+                  indexDir);
+              IndexWriter.unlock(dir);
+            } else {
+              log.error(logid
+                  + "Solr index directory '{}' is locked.  Throwing exception",
+                  indexDir);
+              throw new LockObtainFailedException(
+                  "Index locked for write for core " + name);
+            }
+            
+          }
+        } finally {
+          directoryFactory.release(dir);
+        }
+      }
+
+      
+      if(!indexExists) {
+        log.warn(logid+"Solr index directory '" + new File(indexDir) + "' doesn't exist."
+                + " Creating new index...");
+
+        SolrIndexWriter writer = SolrIndexWriter.create("SolrCore.initIndex", indexDir, getDirectoryFactory(), true, schema, solrConfig.indexConfig, solrDelPolicy, codec);
+        writer.close();
+      }
+
+ 
+  }
+
+  
+
+
+
+
+
+
+
+  private <T> T createInstance(String className, Class<T> cast, String msg) {
+    Class<? extends T> clazz = null;
+    if (msg == null) msg = "SolrCore Object";
+    try {
+        clazz = getResourceLoader().findClass(className, cast);
+      
+      
+        Constructor[] cons =  clazz.getConstructors();
+        for (Constructor con : cons) {
+          Class[] types = con.getParameterTypes();
+          if(types.length == 1 && types[0] == SolrCore.class){
+            return (T)con.newInstance(this);
+          }
+        }
+        return getResourceLoader().newInstance(className, cast);
+    } catch (SolrException e) {
+      throw e;
+    } catch (Exception e) {
+      
+      
+      if (null != e.getCause() && e.getCause() instanceof SolrException) {
+        SolrException inner = (SolrException) e.getCause();
+        throw inner;
+      }
+
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,"Error Instantiating "+msg+", "+className+ " failed to instantiate " +cast.getName(), e);
+    }
+  }
+  
+  private UpdateHandler createReloadedUpdateHandler(String className, String msg, UpdateHandler updateHandler) {
+    Class<? extends UpdateHandler> clazz = null;
+    if (msg == null) msg = "SolrCore Object";
+    try {
+        clazz = getResourceLoader().findClass(className, UpdateHandler.class);
+      
+      
+        Constructor justSolrCoreCon = null;
+        Constructor[] cons =  clazz.getConstructors();
+        for (Constructor con : cons) {
+          Class[] types = con.getParameterTypes();
+          if(types.length == 2 && types[0] == SolrCore.class && types[1] == UpdateHandler.class){
+            return (UpdateHandler) con.newInstance(this, updateHandler);
+          } 
+        }
+        throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,"Error Instantiating "+msg+", "+className+ " could not find proper constructor for " + UpdateHandler.class.getName());
+    } catch (SolrException e) {
+      throw e;
+    } catch (Exception e) {
+      
+      
+      if (null != e.getCause() && e.getCause() instanceof SolrException) {
+        SolrException inner = (SolrException) e.getCause();
+        throw inner;
+      }
+
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,"Error Instantiating "+msg+", "+className+ " failed to instantiate " + UpdateHandler.class.getName(), e);
+    }
+  }
+
+  public <T extends Object> T createInitInstance(PluginInfo info,Class<T> cast, String msg, String defClassName){
+    if(info == null) return null;
+    T o = createInstance(info.className == null ? defClassName : info.className,cast, msg);
+    if (o instanceof PluginInfoInitialized) {
+      ((PluginInfoInitialized) o).init(info);
+    } else if (o instanceof NamedListInitializedPlugin) {
+      ((NamedListInitializedPlugin) o).init(info.initArgs);
+    }
+    if(o instanceof SearchComponent) {
+      ((SearchComponent) o).setName(info.name);
+    }
+    return o;
+  }
+
+  public SolrEventListener createEventListener(String className) {
+    return createInstance(className, SolrEventListener.class, "Event Listener");
+  }
+
+  public SolrRequestHandler createRequestHandler(String className) {
+    return createInstance(className, SolrRequestHandler.class, "Request Handler");
+  }
+
+  private UpdateHandler createUpdateHandler(String className) {
+    return createInstance(className, UpdateHandler.class, "Update Handler");
+  }
+  
+  private UpdateHandler createUpdateHandler(String className, UpdateHandler updateHandler) {
+    return createReloadedUpdateHandler(className, "Update Handler", updateHandler);
+  }
+
+  private QueryResponseWriter createQueryResponseWriter(String className) {
+    return createInstance(className, QueryResponseWriter.class, "Query Response Writer");
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+  public SolrCore(String name, String dataDir, SolrConfig config, IndexSchema schema, CoreDescriptor cd) {
+    this(name, dataDir, config, schema, cd, null, null, null);
+  }
+
+
+  
+
+
+
+  public SolrCore(String name, CoreDescriptor cd) {
+    this.setName(name);
+    coreDescriptor = cd;
+    this.schema = null;
+    this.dataDir = null;
+    this.solrConfig = null;
+    this.startTime = System.currentTimeMillis();
+    this.maxWarmingSearchers = 2;  
+    this.resourceLoader = null;
+    this.updateHandler = null;
+    this.isReloaded = true;
+    this.reqHandlers = null;
+    this.searchComponents = null;
+    this.updateProcessorChains = null;
+    this.infoRegistry = null;
+    this.codec = null;
+
+    solrCoreState = null;
+  }
+  
+
+
+
+
+
+
+
+
+  public SolrCore(String name, String dataDir, SolrConfig config, IndexSchema schema, CoreDescriptor cd, UpdateHandler updateHandler, IndexDeletionPolicyWrapper delPolicy, SolrCore prev) {
+    coreDescriptor = cd;
+    this.setName( name );
+    resourceLoader = config.getResourceLoader();
+    this.solrConfig = config;
+    
+    if (updateHandler == null) {
+      initDirectoryFactory();
+    }
+    
+    if (dataDir == null) {
+      if (cd.usingDefaultDataDir()) dataDir = config.getDataDir();
+      if (dataDir == null) {
+        dataDir = cd.getDataDir();
+        try {
+          if (!directoryFactory.isAbsolute(dataDir)) {
+            dataDir = directoryFactory.normalize(SolrResourceLoader
+                .normalizeDir(cd.getInstanceDir()) + dataDir);
+          }
+        } catch (IOException e) {
+          throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, null, e);
+        }
+      }
+    }
+
+    dataDir = SolrResourceLoader.normalizeDir(dataDir);
+    log.info(logid+"Opening new SolrCore at " + resourceLoader.getInstanceDir() + ", dataDir="+dataDir);
+
+    if (schema==null) {
+      schema = new IndexSchema(config, IndexSchema.DEFAULT_SCHEMA_FILE, null);
+    }
+
+    if (null != cd && null != cd.getCloudDescriptor()) {
+      
+      
+      
+      
+      
+      
+      
+      
+
+      try {
+        Object ignored = VersionInfo.getAndCheckVersionField(schema);
+      } catch (SolrException e) {
+        throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,
+                                "Schema will not work with SolrCloud mode: " +
+                                e.getMessage(), e);
+      }
+    }
+
+    
+    if (config.jmxConfig.enabled) {
+      infoRegistry = new JmxMonitoredMap<String, SolrInfoMBean>(name, String.valueOf(this.hashCode()), config.jmxConfig);
+    } else  {
+      log.info("JMX monitoring not detected for core: " + name);
+      infoRegistry = new ConcurrentHashMap<String, SolrInfoMBean>();
+    }
+
+    infoRegistry.put("fieldCache", new SolrFieldCacheMBean());
+
+    this.schema = schema;
+    this.dataDir = dataDir;
+    this.startTime = System.currentTimeMillis();
+    this.maxWarmingSearchers = config.maxWarmingSearchers;
+
+    booleanQueryMaxClauseCount();
+  
+    final CountDownLatch latch = new CountDownLatch(1);
+
+    try {
+      
+      initListeners();
+      
+      if (delPolicy == null) {
+        initDeletionPolicy();
+      } else {
+        this.solrDelPolicy = delPolicy;
+      }
+      
+      this.codec = initCodec(solrConfig, schema);
+      
+      if (updateHandler == null) {
+        initDirectoryFactory();
+        solrCoreState = new DefaultSolrCoreState(getDirectoryFactory());
+      } else {
+        solrCoreState = updateHandler.getSolrCoreState();
+        directoryFactory = solrCoreState.getDirectoryFactory();
+        this.isReloaded = true;
+      }
+      
+      initIndex(prev != null);
+      
+      initWriters();
+      initQParsers();
+      initValueSourceParsers();
+      initTransformerFactories();
+      
+      this.searchComponents = Collections
+          .unmodifiableMap(loadSearchComponents());
+      
+      
+      updateProcessorChains = loadUpdateProcessorChains();
+      reqHandlers = new RequestHandlers(this);
+      reqHandlers.initHandlersFromConfig(solrConfig);
+      
+      
+      initDeprecatedSupport();
+      
+      
+      
+      
+      searcherExecutor.submit(new Callable() {
+        @Override
+        public Object call() throws Exception {
+          latch.await();
+          return null;
+        }
+      });
+      
+      
+      RefCounted<IndexWriter> iwRef = null;
+      if (prev != null) {
+        iwRef = prev.getUpdateHandler().getSolrCoreState().getIndexWriter(null);
+        if (iwRef != null) {
+          final IndexWriter iw = iwRef.get();
+          newReaderCreator = new Callable<DirectoryReader>() {
+            @Override
+            public DirectoryReader call() throws Exception {
+              return DirectoryReader.open(iw, true);
+            }
+          };
+        }
+      }
+      
+      
+      
+      
+      
+      
+      
+      try {
+        getSearcher(false, false, null, true);
+      } finally {
+        newReaderCreator = null;
+        if (iwRef != null) iwRef.decref();
+      }
+      
+      String updateHandlerClass = solrConfig.getUpdateHandlerInfo().className;
+      
+      if (updateHandler == null) {
+        this.updateHandler = createUpdateHandler(updateHandlerClass == null ? DirectUpdateHandler2.class
+            .getName() : updateHandlerClass);
+      } else {
+        this.updateHandler = createUpdateHandler(
+            updateHandlerClass == null ? DirectUpdateHandler2.class.getName()
+                : updateHandlerClass, updateHandler);
+      }
+      infoRegistry.put("updateHandler", this.updateHandler);
+      
+      
+      resourceLoader.inform(resourceLoader);
+      resourceLoader.inform(this); 
+    } catch (Throwable e) {
+      latch.countDown();
+      
+      close();
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, 
+                              e.getMessage(), e);
+    } finally {
+      
+      latch.countDown();
+    }
+
+    infoRegistry.put("core", this);
+    
+    
+    
+    
+    
+    
+    
+    resourceLoader.inform(infoRegistry);
+    
+    
+
+
+  }
+
+  private Codec initCodec(SolrConfig solrConfig, final IndexSchema schema) {
+    final PluginInfo info = solrConfig.getPluginInfo(CodecFactory.class.getName());
+    final CodecFactory factory;
+    if (info != null) {
+      factory = schema.getResourceLoader().newInstance(info.className, CodecFactory.class);
+      factory.init(info.initArgs);
+    } else {
+      factory = new CodecFactory() {
+        @Override
+        public Codec getCodec() {
+          return Codec.getDefault();
+        }
+      };
+    }
+    if (factory instanceof SchemaAware) {
+      ((SchemaAware)factory).inform(schema);
+    } else {
+      for (FieldType ft : schema.getFieldTypes().values()) {
+        if (null != ft.getPostingsFormat()) {
+          String msg = "FieldType '" + ft.getTypeName() + "' is configured with a postings format, but the codec does not support it: " + factory.getClass();
+          log.error(msg);
+          throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, msg);
+        }
+        if (null != ft.getDocValuesFormat()) {
+          String msg = "FieldType '" + ft.getTypeName() + "' is configured with a docValues format, but the codec does not support it: " + factory.getClass();
+          log.error(msg);
+          throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, msg);
+        }
+      }
+    }
+    return factory.getCodec();
+  }
+
+  
+
+
+   private Map<String,UpdateRequestProcessorChain> loadUpdateProcessorChains() {
+    Map<String, UpdateRequestProcessorChain> map = new HashMap<String, UpdateRequestProcessorChain>();
+    UpdateRequestProcessorChain def = initPlugins(map,UpdateRequestProcessorChain.class, UpdateRequestProcessorChain.class.getName());
+    if(def == null){
+      def = map.get(null);
+    } 
+    if (def == null) {
+      
+      UpdateRequestProcessorFactory[] factories = new UpdateRequestProcessorFactory[]{
+              new LogUpdateProcessorFactory(),
+              new DistributedUpdateProcessorFactory(),
+              new RunUpdateProcessorFactory()
+      };
+      def = new UpdateRequestProcessorChain(factories, this);
+    }
+    map.put(null, def);
+    map.put("", def);
+    return map;
+  }
+   
+  public SolrCoreState getSolrCoreState() {
+    return solrCoreState;
+  }  
+
+  
+
+    
+  public UpdateRequestProcessorChain getUpdateProcessingChain( final String name )
+  {
+    UpdateRequestProcessorChain chain = updateProcessorChains.get( name );
+    if( chain == null ) {
+      throw new SolrException( SolrException.ErrorCode.BAD_REQUEST,
+          "unknown UpdateRequestProcessorChain: "+name );
+    }
+    return chain;
+  }
+  
+  
+  private final AtomicInteger refCount = new AtomicInteger(1);
+
+  
+  public void open() {
+    refCount.incrementAndGet();
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public void close() {
+    int count = refCount.decrementAndGet();
+    if (count > 0) return; 
+    if (count < 0) {
+      log.error("Too many close [count:{}] on {}. Please report this exception to solr-user@lucene.apache.org", count, this );
+      return;
+    }
+    log.info(logid+" CLOSING SolrCore " + this);
+
+
+    if( closeHooks != null ) {
+       for( CloseHook hook : closeHooks ) {
+         try {
+           hook.preClose( this );
+         } catch (Throwable e) {
+           SolrException.log(log, e);           
+         }
+      }
+    }
+
+
+    try {
+      infoRegistry.clear();
+    } catch (Throwable e) {
+      SolrException.log(log, e);
+    }
+
+    try {
+      if (null != updateHandler) {
+        updateHandler.close();
+      }
+    } catch (Throwable e) {
+      SolrException.log(log,e);
+    }
+    
+    boolean coreStateClosed = false;
+    try {
+      if (solrCoreState != null) {
+        if (updateHandler instanceof IndexWriterCloser) {
+          coreStateClosed = solrCoreState.decrefSolrCoreState((IndexWriterCloser) updateHandler);
+        } else {
+          coreStateClosed = solrCoreState.decrefSolrCoreState(null);
+        }
+      }
+    } catch (Throwable e) {
+      SolrException.log(log, e);
+    }
+    
+    try {
+      ExecutorUtil.shutdownAndAwaitTermination(searcherExecutor);
+    } catch (Throwable e) {
+      SolrException.log(log, e);
+    }
+
+    try {
+      
+      
+      
+      
+      
+      
+      
+      closeSearcher();
+    } catch (Throwable e) {
+      SolrException.log(log,e);
+    }
+    
+    if (coreStateClosed) {
+      
+      try {
+        directoryFactory.close();
+      } catch (Throwable t) {
+        SolrException.log(log, t);
+      }
+      
+    }
+
+    
+    if( closeHooks != null ) {
+       for( CloseHook hook : closeHooks ) {
+         try {
+           hook.postClose( this );
+         } catch (Throwable e) {
+           SolrException.log(log, e);
+         }
+      }
+    }
+    
+    
+
+
+  }
+
+  
+  public int getOpenCount() {
+    return refCount.get();
+  }
+  
+  
+  public boolean isClosed() {
+      return refCount.get() <= 0;
+  }
+  
+  @Override
+  protected void finalize() throws Throwable {
+    try {
+      if (getOpenCount() != 0) {
+        log.error("REFCOUNT ERROR: unreferenced " + this + " (" + getName()
+            + ") has a reference count of " + getOpenCount());
+      }
+    } finally {
+      super.finalize();
+    }
+  }
+
+  private Collection<CloseHook> closeHooks = null;
+
+   
+
+
+   public void addCloseHook( CloseHook hook )
+   {
+     if( closeHooks == null ) {
+       closeHooks = new ArrayList<CloseHook>();
+     }
+     closeHooks.add( hook );
+   }
+
+  
+
+  public static boolean VERBOSE = Boolean.parseBoolean(System.getProperty("tests.verbose","false"));
+  public static void verbose(Object... args) {
+    if (!VERBOSE) return;
+    StringBuilder sb = new StringBuilder("VERBOSE:");
+
+
+    for (Object o : args) {
+      sb.append(' ');
+      sb.append(o==null ? "(null)" : o.toString());
+    }
+    
+    log.info(sb.toString());
+  }
+
+
+  
+  
+  
+
+  
+
+
+
+
+  public SolrRequestHandler getRequestHandler(String handlerName) {
+    return reqHandlers.get(handlerName);
+  }
+
+  
+
+
+  public Map<String,SolrRequestHandler> getRequestHandlers(Class clazz) {
+    return reqHandlers.getAll(clazz);
+  }
+  
+  
+
+
+  public Map<String,SolrRequestHandler> getRequestHandlers() {
+    return reqHandlers.getRequestHandlers();
+  }
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public SolrRequestHandler registerRequestHandler(String handlerName, SolrRequestHandler handler) {
+    return reqHandlers.register(handlerName,handler);
+  }
+  
+  
+
+
+  private Map<String, SearchComponent> loadSearchComponents()
+  {
+    Map<String, SearchComponent> components = new HashMap<String, SearchComponent>();
+    initPlugins(components,SearchComponent.class);
+    for (Map.Entry<String, SearchComponent> e : components.entrySet()) {
+      SearchComponent c = e.getValue();
+      if (c instanceof HighlightComponent) {
+        HighlightComponent hl = (HighlightComponent) c;
+        if(!HighlightComponent.COMPONENT_NAME.equals(e.getKey())){
+          components.put(HighlightComponent.COMPONENT_NAME,hl);
+        }
+        break;
+      }
+    }
+    addIfNotPresent(components,HighlightComponent.COMPONENT_NAME,HighlightComponent.class);
+    addIfNotPresent(components,QueryComponent.COMPONENT_NAME,QueryComponent.class);
+    addIfNotPresent(components,FacetComponent.COMPONENT_NAME,FacetComponent.class);
+    addIfNotPresent(components,MoreLikeThisComponent.COMPONENT_NAME,MoreLikeThisComponent.class);
+    addIfNotPresent(components,StatsComponent.COMPONENT_NAME,StatsComponent.class);
+    addIfNotPresent(components,DebugComponent.COMPONENT_NAME,DebugComponent.class);
+    addIfNotPresent(components,RealTimeGetComponent.COMPONENT_NAME,RealTimeGetComponent.class);
+    return components;
+  }
+  private <T> void addIfNotPresent(Map<String ,T> registry, String name, Class<? extends  T> c){
+    if(!registry.containsKey(name)){
+      T searchComp = resourceLoader.newInstance(c.getName(), c);
+      if (searchComp instanceof NamedListInitializedPlugin){
+        ((NamedListInitializedPlugin)searchComp).init( new NamedList<String>() );
+      }
+      if(searchComp instanceof SearchComponent) {
+        ((SearchComponent)searchComp).setName(name);
+      }
+      registry.put(name, searchComp);
+      if (searchComp instanceof SolrInfoMBean){
+        infoRegistry.put(((SolrInfoMBean)searchComp).getName(), (SolrInfoMBean)searchComp);
+      }
+    }
+  }
+  
+  
+
+
+  public SearchComponent getSearchComponent( String name )
+  {
+    SearchComponent component = searchComponents.get( name );
+    if( component == null ) {
+      throw new SolrException( SolrException.ErrorCode.BAD_REQUEST,
+          "Unknown Search Component: "+name );
+    }
+    return component;
+  }
+
+  
+
+
+
+  public Map<String, SearchComponent> getSearchComponents() {
+    return searchComponents;
+  }
+
+  
+  
+  
+
+  
+
+
+
+  public UpdateHandler getUpdateHandler() {
+    return updateHandler;
+  }
+
+  
+  
+  
+
+  
+  
+  
+  
+  private RefCounted<SolrIndexSearcher> _searcher;
+
+  
+  
+  private final LinkedList<RefCounted<SolrIndexSearcher>> _searchers = new LinkedList<RefCounted<SolrIndexSearcher>>();
+  private final LinkedList<RefCounted<SolrIndexSearcher>> _realtimeSearchers = new LinkedList<RefCounted<SolrIndexSearcher>>();
+
+  final ExecutorService searcherExecutor = Executors.newSingleThreadExecutor(
+      new DefaultSolrThreadFactory("searcherExecutor"));
+  private int onDeckSearchers;  
+  
+  private Object searcherLock = new Object();  
+  private ReentrantLock openSearcherLock = new ReentrantLock(true);     
+  private final int maxWarmingSearchers;  
+
+  private RefCounted<SolrIndexSearcher> realtimeSearcher;
+  private Callable<DirectoryReader> newReaderCreator;
+
+  
+
+
+
+
+
+
+
+  public RefCounted<SolrIndexSearcher> getSearcher() {
+    return getSearcher(false,true,null);
+  }
+
+  
+
+
+  public RefCounted<SolrIndexSearcher> getRegisteredSearcher() {
+    synchronized (searcherLock) {
+      if (_searcher != null) {
+        _searcher.incref();
+      }
+      return _searcher;
+    }
+  }
+
+  
+
+
+
+
+
+  public RefCounted<SolrIndexSearcher> getNewestSearcher(boolean openNew) {
+    synchronized (searcherLock) {
+      if (!_searchers.isEmpty()) {
+        RefCounted<SolrIndexSearcher> newest = _searchers.getLast();
+        newest.incref();
+        return newest;
+      }
+    }
+
+    return openNew ? getRealtimeSearcher() : null;
+  }
+
+  
+
+
+  public RefCounted<SolrIndexSearcher> getRealtimeSearcher() {
+    synchronized (searcherLock) {
+      if (realtimeSearcher != null) {
+        realtimeSearcher.incref();
+        return realtimeSearcher;
+      }
+    }
+
+    
+    openSearcherLock.lock();
+    try {
+
+      
+      synchronized (searcherLock) {
+        if (realtimeSearcher != null) {
+          realtimeSearcher.incref();
+          return realtimeSearcher;
+        }
+      }
+
+      
+      return openNewSearcher(true, true);
+    } finally {
+      openSearcherLock.unlock();
+    }
+  }
+
+
+  public RefCounted<SolrIndexSearcher> getSearcher(boolean forceNew, boolean returnSearcher, final Future[] waitSearcher) {
+    return getSearcher(forceNew, returnSearcher, waitSearcher, false);
+  }
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  public RefCounted<SolrIndexSearcher>  openNewSearcher(boolean updateHandlerReopens, boolean realtime) {
+    SolrIndexSearcher tmp;
+    RefCounted<SolrIndexSearcher> newestSearcher = null;
+    boolean nrt = solrConfig.reopenReaders && updateHandlerReopens;
+
+    openSearcherLock.lock();
+    try {
+      String newIndexDir = getNewIndexDir();
+      String indexDirFile = null;
+      String newIndexDirFile = null;
+
+      
+      if (!nrt) {
+        indexDirFile = getDirectoryFactory().normalize(getIndexDir());
+        newIndexDirFile = getDirectoryFactory().normalize(newIndexDir);
+      }
+
+      synchronized (searcherLock) {
+        newestSearcher = realtimeSearcher;
+        if (newestSearcher != null) {
+          newestSearcher.incref();      
+        }
+      }
+
+      if (newestSearcher != null && solrConfig.reopenReaders
+          && (nrt || indexDirFile.equals(newIndexDirFile))) {
+
+        DirectoryReader newReader;
+        DirectoryReader currentReader = newestSearcher.get().getIndexReader();
+
+        
+        
+        RefCounted<IndexWriter> writer = getUpdateHandler().getSolrCoreState()
+            .getIndexWriter(null);
+        try {
+          if (writer != null) {
+            newReader = DirectoryReader.openIfChanged(currentReader,
+                writer.get(), true);
+          } else {
+            
+            newReader = DirectoryReader.openIfChanged(currentReader);
+            
+            
+          }
+        } finally {
+          if (writer != null) {
+            writer.decref();
+          }
+        }
+
+        if (newReader == null) {
+          
+          if (realtime) {
+            newestSearcher.incref();
+            return newestSearcher;
+          }
+
+          currentReader.incRef();
+          newReader = currentReader;
+        }
+
+       
+        tmp = new SolrIndexSearcher(this, newIndexDir, schema, getSolrConfig().indexConfig, (realtime ? "realtime":"main"), newReader, true, !realtime, true, directoryFactory);
+
+      } else {
+        
+
+        if (newReaderCreator != null) {
+          
+          
+          
+          DirectoryReader newReader = newReaderCreator.call();
+          tmp = new SolrIndexSearcher(this, newIndexDir, schema, getSolrConfig().indexConfig, (realtime ? "realtime":"main"), newReader, true, !realtime, true, directoryFactory);
+        } else {
+         
+        
+        tmp = new SolrIndexSearcher(this, newIndexDir, schema, getSolrConfig().indexConfig, "main", true, directoryFactory);
+        
+        }
+      }
+
+      List<RefCounted<SolrIndexSearcher>> searcherList = realtime ? _realtimeSearchers : _searchers;
+      RefCounted<SolrIndexSearcher> newSearcher = newHolder(tmp, searcherList);    
+
+      
+      
+      
+      newSearcher.incref();
+
+      synchronized (searcherLock) {
+        if (realtimeSearcher != null) {
+          realtimeSearcher.decref();
+        }
+        realtimeSearcher = newSearcher;
+        searcherList.add(realtimeSearcher);
+      }
+
+      return newSearcher;
+
+    } catch (Exception e) {
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "Error opening new searcher", e);
+    }
+    finally {
+      openSearcherLock.unlock();
+      if (newestSearcher != null) {
+        newestSearcher.decref();
+      }
+    }
+
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public RefCounted<SolrIndexSearcher> getSearcher(boolean forceNew, boolean returnSearcher, final Future[] waitSearcher, boolean updateHandlerReopens) {
+    
+    
+    
+
+    synchronized (searcherLock) {
+      
+      if (_searcher!=null && !forceNew) {
+        if (returnSearcher) {
+          _searcher.incref();
+          return _searcher;
+        } else {
+          return null;
+        }
+      }
+
+      
+      if (onDeckSearchers>0 && !forceNew && _searcher==null) {
+        try {
+          searcherLock.wait();
+        } catch (InterruptedException e) {
+          log.info(SolrException.toStr(e));
+        }
+      }
+
+      
+      if (_searcher!=null && !forceNew) {
+        if (returnSearcher) {
+          _searcher.incref();
+          return _searcher;
+        } else {
+          return null;
+        }
+      }
+
+      
+      
+      
+      onDeckSearchers++;
+      if (onDeckSearchers < 1) {
+        
+        log.error(logid+"ERROR!!! onDeckSearchers is " + onDeckSearchers);
+        onDeckSearchers=1;  
+      } else if (onDeckSearchers > maxWarmingSearchers) {
+        onDeckSearchers--;
+        String msg="Error opening new searcher. exceeded limit of maxWarmingSearchers="+maxWarmingSearchers + ", try again later.";
+        log.warn(logid+""+ msg);
+        
+        throw new SolrException(SolrException.ErrorCode.SERVICE_UNAVAILABLE,msg);
+      } else if (onDeckSearchers > 1) {
+        log.warn(logid+"PERFORMANCE WARNING: Overlapping onDeckSearchers=" + onDeckSearchers);
+      }
+    }
+
+    
+    final boolean[] decrementOnDeckCount=new boolean[]{true};
+    RefCounted<SolrIndexSearcher> currSearcherHolder = null;     
+    RefCounted<SolrIndexSearcher> searchHolder = null;
+    boolean success = false;
+
+    openSearcherLock.lock();
+    try {
+      searchHolder = openNewSearcher(updateHandlerReopens, false);
+       
+       
+      if (returnSearcher) {
+        searchHolder.incref();
+      }
+
+
+      final RefCounted<SolrIndexSearcher> newSearchHolder = searchHolder;
+      final SolrIndexSearcher newSearcher = newSearchHolder.get();
+
+
+      boolean alreadyRegistered = false;
+      synchronized (searcherLock) {
+        if (_searcher == null) {
+          
+          
+          if (solrConfig.useColdSearcher) {
+            registerSearcher(newSearchHolder);
+            decrementOnDeckCount[0]=false;
+            alreadyRegistered=true;
+          }
+        } else {
+          
+          currSearcherHolder=_searcher;
+          currSearcherHolder.incref();
+        }
+      }
+
+
+      final SolrIndexSearcher currSearcher = currSearcherHolder==null ? null : currSearcherHolder.get();
+
+      Future future=null;
+
+      
+      
+      if (currSearcher != null) {
+        future = searcherExecutor.submit(
+            new Callable() {
+              @Override
+              public Object call() throws Exception {
+                try {
+                  newSearcher.warm(currSearcher);
+                } catch (Throwable e) {
+                  SolrException.log(log,e);
+                }
+                return null;
+              }
+            }
+        );
+      }
+
+      if (currSearcher==null && firstSearcherListeners.size() > 0) {
+        future = searcherExecutor.submit(
+            new Callable() {
+              @Override
+              public Object call() throws Exception {
+                try {
+                  for (SolrEventListener listener : firstSearcherListeners) {
+                    listener.newSearcher(newSearcher,null);
+                  }
+                } catch (Throwable e) {
+                  SolrException.log(log,null,e);
+                }
+                return null;
+              }
+            }
+        );
+      }
+
+      if (currSearcher!=null && newSearcherListeners.size() > 0) {
+        future = searcherExecutor.submit(
+            new Callable() {
+              @Override
+              public Object call() throws Exception {
+                try {
+                  for (SolrEventListener listener : newSearcherListeners) {
+                    listener.newSearcher(newSearcher, currSearcher);
+                  }
+                } catch (Throwable e) {
+                  SolrException.log(log,null,e);
+                }
+                return null;
+              }
+            }
+        );
+      }
+
+      
+      
+      final RefCounted<SolrIndexSearcher> currSearcherHolderF = currSearcherHolder;
+      if (!alreadyRegistered) {
+        future = searcherExecutor.submit(
+            new Callable() {
+              @Override
+              public Object call() throws Exception {
+                try {
+                  
+                  
+                  registerSearcher(newSearchHolder);
+                } catch (Throwable e) {
+                  SolrException.log(log, e);
+                } finally {
+                  
+                  
+                  if (currSearcherHolderF!=null) currSearcherHolderF.decref();
+                }
+                return null;
+              }
+            }
+        );
+      }
+
+      if (waitSearcher != null) {
+        waitSearcher[0] = future;
+      }
+
+      success = true;
+
+      
+      
+      return returnSearcher ? newSearchHolder : null;
+
+    } catch (Exception e) {
+      if (e instanceof SolrException) throw (SolrException)e;
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, e);
+    } finally {
+
+      if (!success) {
+        synchronized (searcherLock) {
+          onDeckSearchers--;
+
+          if (onDeckSearchers < 0) {
+            
+            log.error(logid+"ERROR!!! onDeckSearchers after decrement=" + onDeckSearchers);
+            onDeckSearchers=0; 
+          }
+          
+          searcherLock.notify();
+        }
+
+        if (currSearcherHolder != null) {
+          currSearcherHolder.decref();
+        }
+
+        if (searchHolder != null) {
+          searchHolder.decref();      
+          if (returnSearcher) {
+            searchHolder.decref();    
+          }
+        }
+      }
+
+      
+      
+      openSearcherLock.unlock();
+
+    }
+
+  }
+
+
+  private RefCounted<SolrIndexSearcher> newHolder(SolrIndexSearcher newSearcher, final List<RefCounted<SolrIndexSearcher>> searcherList) {
+    RefCounted<SolrIndexSearcher> holder = new RefCounted<SolrIndexSearcher>(newSearcher) {
+      @Override
+      public void close() {
+        try {
+          synchronized(searcherLock) {
+            
+            
+            
+            
+            
+            if (refcount.get() > 0) return;
+            searcherList.remove(this);
+          }
+          resource.close();
+        } catch (Throwable e) {
+          
+          
+          SolrException.log(log, "Error closing searcher:" + this, e);
+        }
+      }
+    };
+    holder.incref();  
+    return holder;
+  }
+
+  public boolean isReloaded() {
+    return isReloaded;
+  }
+
+  
+  
+  
+  
+  
+  
+  
+  private void registerSearcher(RefCounted<SolrIndexSearcher> newSearcherHolder) {
+    synchronized (searcherLock) {
+      try {
+        if (_searcher != null) {
+          _searcher.decref();   
+          _searcher=null;
+        }
+
+        _searcher = newSearcherHolder;
+        SolrIndexSearcher newSearcher = newSearcherHolder.get();
+
+        
+
+
+
+
+
+
+
+
+
+
+
+        newSearcher.register(); 
+        log.info(logid+"Registered new searcher " + newSearcher);
+
+      } catch (Throwable e) {
+        
+        log(e);
+      } finally {
+        
+        
+        onDeckSearchers--;
+        searcherLock.notifyAll();
+      }
+    }
+  }
+
+
+
+  public void closeSearcher() {
+    log.info(logid+"Closing main searcher on request.");
+    synchronized (searcherLock) {
+      if (realtimeSearcher != null) {
+        realtimeSearcher.decref();
+        realtimeSearcher = null;
+      }
+      if (_searcher != null) {
+        _searcher.decref();   
+        _searcher = null; 
+        infoRegistry.remove("currentSearcher");
+      }
+    }
+  }
+
+  public void execute(SolrRequestHandler handler, SolrQueryRequest req, SolrQueryResponse rsp) {
+    if (handler==null) {
+      String msg = "Null Request Handler '" +
+        req.getParams().get(CommonParams.QT) + "'";
+      
+      if (log.isWarnEnabled()) log.warn(logid + msg + ":" + req);
+      
+      throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, msg);
+    }
+
+    preDecorateResponse(req, rsp);
+
+    
+    
+    
+
+    handler.handleRequest(req,rsp);
+
+    postDecorateResponse(handler, req, rsp);
+
+    if (log.isInfoEnabled() && rsp.getToLog().size() > 0) {
+      log.info(rsp.getToLogAsString(logid));
+    }
+  }
+
+  public static void preDecorateResponse(SolrQueryRequest req, SolrQueryResponse rsp) {
+    
+    final NamedList<Object> responseHeader = new SimpleOrderedMap<Object>();
+    rsp.add("responseHeader", responseHeader);
+
+    
+    NamedList<Object> toLog = rsp.getToLog();
+
+    
+    
+    toLog.add("webapp", req.getContext().get("webapp"));
+    toLog.add("path", req.getContext().get("path"));
+    toLog.add("params", "{" + req.getParamString() + "}");
+  }
+
+  
+  public static void postDecorateResponse
+      (SolrRequestHandler handler, SolrQueryRequest req, SolrQueryResponse rsp) {
+    
+    NamedList<Object> responseHeader = rsp.getResponseHeader();
+    final int qtime=(int)(rsp.getEndTime() - req.getStartTime());
+    int status = 0;
+    Exception exception = rsp.getException();
+    if( exception != null ){
+      if( exception instanceof SolrException )
+        status = ((SolrException)exception).code();
+      else
+        status = 500;
+    }
+    responseHeader.add("status",status);
+    responseHeader.add("QTime",qtime);
+
+    if (rsp.getToLog().size() > 0) {
+      rsp.getToLog().add("status",status);
+      rsp.getToLog().add("QTime",qtime);
+    }
+
+    SolrParams params = req.getParams();
+    if( null != handler && params.getBool(CommonParams.HEADER_ECHO_HANDLER, false) ) {
+      responseHeader.add("handler", handler.getName() );
+    }
+
+    
+    String ep = params.get( CommonParams.HEADER_ECHO_PARAMS, null );
+    if( ep != null ) {
+      EchoParamStyle echoParams = EchoParamStyle.get( ep );
+      if( echoParams == null ) {
+        throw new SolrException( SolrException.ErrorCode.BAD_REQUEST,"Invalid value '" + ep + "' for " + CommonParams.HEADER_ECHO_PARAMS 
+            + " parameter, use '" + EchoParamStyle.EXPLICIT + "' or '" + EchoParamStyle.ALL + "'" );
+      }
+      if( echoParams == EchoParamStyle.EXPLICIT ) {
+        responseHeader.add("params", req.getOriginalParams().toNamedList());
+      } else if( echoParams == EchoParamStyle.ALL ) {
+        responseHeader.add("params", req.getParams().toNamedList());
+      }
+    }
+  }
+
+  final public static void log(Throwable e) {
+    SolrException.log(log,null,e);
+  }
+
+  
+  
+  private QueryResponseWriter defaultResponseWriter;
+  private final Map<String, QueryResponseWriter> responseWriters = new HashMap<String, QueryResponseWriter>();
+  public static final Map<String ,QueryResponseWriter> DEFAULT_RESPONSE_WRITERS ;
+  static{
+    HashMap<String, QueryResponseWriter> m= new HashMap<String, QueryResponseWriter>();
+    m.put("xml", new XMLResponseWriter());
+    m.put("standard", m.get("xml"));
+    m.put("json", new JSONResponseWriter());
+    m.put("python", new PythonResponseWriter());
+    m.put("php", new PHPResponseWriter());
+    m.put("phps", new PHPSerializedResponseWriter());
+    m.put("ruby", new RubyResponseWriter());
+    m.put("raw", new RawResponseWriter());
+    m.put("javabin", new BinaryResponseWriter());
+    m.put("csv", new CSVResponseWriter());
+    DEFAULT_RESPONSE_WRITERS = Collections.unmodifiableMap(m);
+  }
+  
+  
+
+  private void initWriters() {
+    
+    Map<PluginInfo,QueryResponseWriter> writers = new LinkedHashMap<PluginInfo,QueryResponseWriter>();
+    for (PluginInfo info : solrConfig.getPluginInfos(QueryResponseWriter.class.getName())) {
+      try {
+        QueryResponseWriter writer;
+        String startup = info.attributes.get("startup") ;
+        if( startup != null ) {
+          if( "lazy".equals(startup) ) {
+            log.info("adding lazy queryResponseWriter: " + info.className);
+            writer = new LazyQueryResponseWriterWrapper(this, info.className, info.initArgs );
+          } else {
+            throw new Exception( "Unknown startup value: '"+startup+"' for: "+info.className );
+          }
+        } else {
+          writer = createQueryResponseWriter(info.className);
+        }
+        writers.put(info,writer);
+        QueryResponseWriter old = registerResponseWriter(info.name, writer);
+        if(old != null) {
+          log.warn("Multiple queryResponseWriter registered to the same name: " + info.name + " ignoring: " + old.getClass().getName());
+        }
+        if(info.isDefault()){
+          if(defaultResponseWriter != null)
+            log.warn("Multiple default queryResponseWriter registered, using: " + info.name);
+          defaultResponseWriter = writer;
+        }
+        log.info("created "+info.name+": " + info.className);
+      } catch (Exception ex) {
+          SolrException e = new SolrException
+            (SolrException.ErrorCode.SERVER_ERROR, "QueryResponseWriter init failure", ex);
+          SolrException.log(log,null,e);
+          throw e;
+      }
+    }
+
+    
+    for (Map.Entry<PluginInfo,QueryResponseWriter> entry : writers.entrySet()) {
+      PluginInfo info = entry.getKey();
+      QueryResponseWriter writer = entry.getValue();
+      responseWriters.put(info.name, writer);
+      if (writer instanceof PluginInfoInitialized) {
+        ((PluginInfoInitialized) writer).init(info);
+      } else{
+        writer.init(info.initArgs);
+      }
+    }
+
+    NamedList emptyList = new NamedList();
+    for (Map.Entry<String, QueryResponseWriter> entry : DEFAULT_RESPONSE_WRITERS.entrySet()) {
+      if(responseWriters.get(entry.getKey()) == null) {
+        responseWriters.put(entry.getKey(), entry.getValue());
+        
+        entry.getValue().init(emptyList);
+      }
+    }
+    
+    
+    if (defaultResponseWriter == null) {
+      defaultResponseWriter = responseWriters.get("standard");
+    }
+
+  }
+  
+  
+  public final QueryResponseWriter getQueryResponseWriter(String writerName) {
+    if (writerName != null) {
+        QueryResponseWriter writer = responseWriters.get(writerName);
+        if (writer != null) {
+            return writer;
+        }
+    }
+    return defaultResponseWriter;
+  }
+
+  
+
+
+  public final QueryResponseWriter getQueryResponseWriter(SolrQueryRequest request) {
+    return getQueryResponseWriter(request.getParams().get(CommonParams.WT)); 
+  }
+
+  private final Map<String, QParserPlugin> qParserPlugins = new HashMap<String, QParserPlugin>();
+
+  
+  private void initQParsers() {
+    initPlugins(qParserPlugins,QParserPlugin.class);
+    
+    for (int i=0; i<QParserPlugin.standardPlugins.length; i+=2) {
+     try {
+       String name = (String)QParserPlugin.standardPlugins[i];
+       if (null == qParserPlugins.get(name)) {
+         Class<QParserPlugin> clazz = (Class<QParserPlugin>)QParserPlugin.standardPlugins[i+1];
+         QParserPlugin plugin = clazz.newInstance();
+         qParserPlugins.put(name, plugin);
+         plugin.init(null);
+       }
+     } catch (Exception e) {
+       throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, e);
+     }
+    }
+  }
+
+  public QParserPlugin getQueryPlugin(String parserName) {
+    QParserPlugin plugin = qParserPlugins.get(parserName);
+    if (plugin != null) return plugin;
+    throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Unknown query parser '"+parserName+"'");
+  }
+  
+  private final HashMap<String, ValueSourceParser> valueSourceParsers = new HashMap<String, ValueSourceParser>();
+  
+  
+  private void initValueSourceParsers() {
+    initPlugins(valueSourceParsers,ValueSourceParser.class);
+    
+    for (Map.Entry<String, ValueSourceParser> entry : ValueSourceParser.standardValueSourceParsers.entrySet()) {
+      try {
+        String name = entry.getKey();
+        if (null == valueSourceParsers.get(name)) {
+          ValueSourceParser valueSourceParser = entry.getValue();
+          valueSourceParsers.put(name, valueSourceParser);
+          valueSourceParser.init(null);
+        }
+      } catch (Exception e) {
+        throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, e);
+      }
+    }
+  }
+  
+
+  private final HashMap<String, TransformerFactory> transformerFactories = new HashMap<String, TransformerFactory>();
+  
+  
+  private void initTransformerFactories() {
+    
+    initPlugins(transformerFactories,TransformerFactory.class);
+    
+    
+    for( Map.Entry<String, TransformerFactory> entry : TransformerFactory.defaultFactories.entrySet() ) {
+      try {
+        String name = entry.getKey();
+        if (null == valueSourceParsers.get(name)) {
+          TransformerFactory f = entry.getValue();
+          transformerFactories.put(name, f);
+          
+        }
+      } catch (Exception e) {
+        throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, e);
+      }
+    }
+  }
+  
+  public TransformerFactory getTransformerFactory(String name) {
+    return transformerFactories.get(name);
+  }
+
+  public void addTransformerFactory(String name, TransformerFactory factory){
+    transformerFactories.put(name, factory);
+  }
+  
+
+  
+
+
+
+
+
+  public <T> T initPlugins(Map<String ,T> registry, Class<T> type, String defClassName){
+    return initPlugins(solrConfig.getPluginInfos(type.getName()), registry, type, defClassName);
+  }
+
+  public <T> T initPlugins(List<PluginInfo> pluginInfos, Map<String, T> registry, Class<T> type, String defClassName) {
+    T def = null;
+    for (PluginInfo info : pluginInfos) {
+      T o = createInitInstance(info,type, type.getSimpleName(), defClassName);
+      registry.put(info.name, o);
+      if(info.isDefault()){
+        def = o;
+      }
+    }
+    return def;
+  }
+
+  
+
+
+
+  public <T> List<T> initPlugins(List<PluginInfo> pluginInfos, Class<T> type, String defClassName) {
+    if(pluginInfos.isEmpty()) return Collections.emptyList();
+    List<T> result = new ArrayList<T>();
+    for (PluginInfo info : pluginInfos) result.add(createInitInstance(info,type, type.getSimpleName(), defClassName));
+    return result;
+  }
+
+  
+
+
+
+
+
+  public <T> T initPlugins(Map<String, T> registry, Class<T> type) {
+    return initPlugins(registry, type, null);
+  }
+
+  public ValueSourceParser getValueSourceParser(String parserName) {
+    return valueSourceParsers.get(parserName);
+  }
+  
+  
+
+
+  private void initDeprecatedSupport()
+  {
+    
+    String gettable = solrConfig.get("admin/gettableFiles", null );
+    if( gettable != null ) {
+      log.warn( 
+          "solrconfig.xml uses deprecated <admin/gettableFiles>, Please "+
+          "update your config to use the ShowFileRequestHandler." );
+      if( getRequestHandler( "/admin/file" ) == null ) {
+        NamedList<String> invariants = new NamedList<String>();
+        
+        
+        Set<String> hide = new HashSet<String>();
+
+        for (String file : solrConfig.getResourceLoader().listConfigDir()) {
+          hide.add(file.toUpperCase(Locale.ROOT));
+        }    
+        
+        
+        StringTokenizer st = new StringTokenizer( gettable );
+        while( st.hasMoreTokens() ) {
+          hide.remove( st.nextToken().toUpperCase(Locale.ROOT) );
+        }
+        for( String s : hide ) {
+          invariants.add( ShowFileRequestHandler.HIDDEN, s );
+        }
+        
+        NamedList<Object> args = new NamedList<Object>();
+        args.add( "invariants", invariants );
+        ShowFileRequestHandler handler = new ShowFileRequestHandler();
+        handler.init( args );
+        reqHandlers.register("/admin/file", handler);
+
+        log.warn( "adding ShowFileRequestHandler with hidden files: "+hide );
+      }
+    }
+
+    String facetSort = solrConfig.get("
+    if (facetSort != null) {
+      log.warn( 
+          "solrconfig.xml uses deprecated <bool name='facet.sort'>. Please "+
+          "update your config to use <string name='facet.sort'>.");
+    }
+  } 
+
+  public CoreDescriptor getCoreDescriptor() {
+    return coreDescriptor;
+  }
+
+  public IndexDeletionPolicyWrapper getDeletionPolicy(){
+    return solrDelPolicy;
+  }
+
+  
+  
+  
+
+  @Override
+  public String getVersion() {
+    return SolrCore.version;
+  }
+
+  @Override
+  public String getDescription() {
+    return "SolrCore";
+  }
+
+  @Override
+  public Category getCategory() {
+    return Category.CORE;
+  }
+
+  @Override
+  public String getSource() {
+    return "$URL$";
+  }
+
+  @Override
+  public URL[] getDocs() {
+    return null;
+  }
+
+  @Override
+  public NamedList getStatistics() {
+    NamedList<Object> lst = new SimpleOrderedMap<Object>();
+    lst.add("coreName", name==null ? "(null)" : name);
+    lst.add("startTime", new Date(startTime));
+    lst.add("refCount", getOpenCount());
+    lst.add("indexDir", getIndexDir());
+
+    CoreDescriptor cd = getCoreDescriptor();
+    if (cd != null) {
+      if (null != cd && cd.getCoreContainer() != null) {
+        lst.add("aliases", getCoreDescriptor().getCoreContainer().getCoreNames(this));
+      }
+      CloudDescriptor cloudDesc = cd.getCloudDescriptor();
+      if (cloudDesc != null) {
+        String collection = cloudDesc.getCollectionName();
+        if (collection == null) {
+          collection = "_notset_";
+        }
+        lst.add("collection", collection);
+        String shard = cloudDesc.getShardId();
+        if (shard == null) {
+          shard = "_auto_";
+        }
+        lst.add("shard", shard);
+      }
+    }
+    
+    return lst;
+  }
+  
+  public Codec getCodec() {
+    return codec;
+  }
+
+  public final class LazyQueryResponseWriterWrapper implements QueryResponseWriter {
+    private SolrCore _core;
+    private String _className;
+    private NamedList _args;
+    private QueryResponseWriter _writer;
+
+    public LazyQueryResponseWriterWrapper(SolrCore core, String className, NamedList args) {
+      _core = core;
+      _className = className;
+      _args = args;
+      _writer = null;
+    }
+
+    public synchronized QueryResponseWriter getWrappedWriter()
+    {
+      if( _writer == null ) {
+        try {
+          QueryResponseWriter writer = createQueryResponseWriter(_className);
+          writer.init( _args );
+          _writer = writer;
+        }
+        catch( Exception ex ) {
+          throw new SolrException( SolrException.ErrorCode.SERVER_ERROR, "lazy loading error", ex );
+        }
+      }
+      return _writer;
+    }
+
+
+    @Override
+    public void init(NamedList args) {
+      
+    }
+
+    @Override
+    public void write(Writer writer, SolrQueryRequest request, SolrQueryResponse response) throws IOException {
+      getWrappedWriter().write(writer, request, response);
+    }
+
+    @Override
+    public String getContentType(SolrQueryRequest request, SolrQueryResponse response) {
+      return getWrappedWriter().getContentType(request, response);
+    }
+  }
+}

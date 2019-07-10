@@ -1,0 +1,48 @@
+40,41d39
+< import org.apache.lucene.index.LeafReader;
+< import org.apache.lucene.index.LeafReaderContext;
+43a42,43
+> import org.apache.lucene.index.LeafReader;
+> import org.apache.lucene.index.LeafReaderContext;
+76a77
+> import org.apache.solr.schema.DateRangeField;
+1082a1084,1085
+>     } else if (ft instanceof DateRangeField) {
+>       calc = new DateRangeFieldEndpointCalculator(sf, null);
+1422a1426
+>     private static final String TYPE_ERR_MSG = "SchemaField must use field type extending TrieDateField or DateRangeField";
+1430c1434
+<           ("SchemaField must use field type extending TrieDateField");
+---
+>           (TYPE_ERR_MSG);
+1451a1456,1485
+>   private static class DateRangeFieldEndpointCalculator
+>       extends RangeEndpointCalculator<Date> {
+>     private final Date now;
+>     public DateRangeFieldEndpointCalculator(final SchemaField f,
+>                                        final Date now) {
+>       super(f);
+>       this.now = now;
+>       if (! (field.getType() instanceof DateRangeField) ) {
+>         throw new IllegalArgumentException(DateRangeEndpointCalculator.TYPE_ERR_MSG);
+>       }
+>     }
+>     @Override
+>     public String formatValue(Date val) {
+>       return TrieDateField.formatExternal(val);
+>     }
+>     @Override
+>     protected Date parseVal(String rawval) {
+>       return ((DateRangeField)field.getType()).parseMath(now, rawval);
+>     }
+>     @Override
+>     protected Object parseGap(final String rawval) {
+>       return rawval;
+>     }
+>     @Override
+>     public Date parseAndAddGap(Date value, String gap) throws java.text.ParseException {
+>       final DateMathParser dmp = new DateMathParser();
+>       dmp.setNow(value);
+>       return dmp.parseMath(gap);
+>     }
+>   }

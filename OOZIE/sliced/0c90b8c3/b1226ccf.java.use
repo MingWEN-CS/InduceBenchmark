@@ -1,0 +1,36 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+10	actionId	String	param	43	define	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	43	47
+11	externalStatus	String	param	43	define	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	43	47
+9	actionData	Properties	param	43	define	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	43	47
+12	priority	int	param	43	define	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	43	47
+12	priority	int	param	44	use	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	43	47
+10	actionId	String	param	45	use	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	43	47
+11	externalStatus	String	param	46	use	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	43	47
+42	CompletedActionXCommand.actionId	String	variable	45	set	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	43	47
+43	CompletedActionXCommand.externalStatus	String	variable	46	set	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	43	47
+15	actionId	String	param	49	define	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	49	51
+16	externalStatus	String	param	49	define	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	49	51
+14	actionData	Properties	param	49	define	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	49	51
+15	actionId	String	param	50	use	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	49	51
+16	externalStatus	String	param	50	use	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	49	51
+14	actionData	Properties	param	50	use	org.apache.oozie.command.wf.CompletedActionXCommand.CompletedActionXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	49	51
+23	ex	Exception	param	69	define	org.apache.oozie.command.wf.CompletedActionXCommand.eagerLoadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	64	73
+23	ex	Exception	param	70	use	org.apache.oozie.command.wf.CompletedActionXCommand.eagerLoadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	64	73
+23	ex	Exception	param	70	use	org.apache.oozie.command.wf.CompletedActionXCommand.eagerLoadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	64	73
+44	CompletedActionXCommand.wfactionBean	WorkflowActionBean	variable	66	set	org.apache.oozie.command.wf.CompletedActionXCommand.eagerLoadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	64	73
+24	GET_ACTION_COMPLETED		variable	66	use	org.apache.oozie.command.wf.CompletedActionXCommand.eagerLoadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	64	73
+42	CompletedActionXCommand.actionId	String	variable	67	use	org.apache.oozie.command.wf.CompletedActionXCommand.eagerLoadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	64	73
+22	E0603		variable	70	use	org.apache.oozie.command.wf.CompletedActionXCommand.eagerLoadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	64	73
+44	CompletedActionXCommand.wfactionBean	WorkflowActionBean	variable	72	use	org.apache.oozie.command.wf.CompletedActionXCommand.eagerLoadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	64	73
+44	CompletedActionXCommand.wfactionBean	WorkflowActionBean	variable	82	use	org.apache.oozie.command.wf.CompletedActionXCommand.eagerVerifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	81	85
+27	E0800		variable	83	use	org.apache.oozie.command.wf.CompletedActionXCommand.eagerVerifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	81	85
+42	CompletedActionXCommand.actionId	String	variable	83	use	org.apache.oozie.command.wf.CompletedActionXCommand.eagerVerifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	81	85
+44	CompletedActionXCommand.wfactionBean	WorkflowActionBean	variable	83	use	org.apache.oozie.command.wf.CompletedActionXCommand.eagerVerifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	81	85
+36	executor	ActionExecutor	variable	94	define	org.apache.oozie.command.wf.CompletedActionXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	93	100
+36	executor	ActionExecutor	variable	94	set	org.apache.oozie.command.wf.CompletedActionXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	93	100
+35	class		variable	94	use	org.apache.oozie.command.wf.CompletedActionXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	93	100
+44	CompletedActionXCommand.wfactionBean	WorkflowActionBean	variable	94	use	org.apache.oozie.command.wf.CompletedActionXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	93	100
+36	executor	ActionExecutor	variable	97	use	org.apache.oozie.command.wf.CompletedActionXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	93	100
+43	CompletedActionXCommand.externalStatus	String	variable	97	use	org.apache.oozie.command.wf.CompletedActionXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	93	100
+44	CompletedActionXCommand.wfactionBean	WorkflowActionBean	variable	98	use	org.apache.oozie.command.wf.CompletedActionXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	93	100
+42	CompletedActionXCommand.actionId	String	variable	55	use	org.apache.oozie.command.wf.CompletedActionXCommand.setLogInfo	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/0c90b8c3/b1226ccf.java	54	56

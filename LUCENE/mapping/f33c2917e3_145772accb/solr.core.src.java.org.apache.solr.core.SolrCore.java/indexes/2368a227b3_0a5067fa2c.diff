@@ -1,0 +1,8 @@
+1393c1393
+<         tmp = new SolrIndexSearcher(this, newIndexDir, schema, (realtime ? "realtime":"main"), newReader, true, !realtime, true, directoryFactory);
+---
+>         tmp = new SolrIndexSearcher(this, newIndexDir, schema, getSolrConfig().indexConfig, (realtime ? "realtime":"main"), newReader, true, !realtime, true, directoryFactory);
+1403c1403
+<           tmp = new SolrIndexSearcher(this, newIndexDir, schema, (realtime ? "realtime":"main"), newReader, true, !realtime, true, directoryFactory);
+---
+>           tmp = new SolrIndexSearcher(this, newIndexDir, schema, getSolrConfig().indexConfig, (realtime ? "realtime":"main"), newReader, true, !realtime, true, directoryFactory);

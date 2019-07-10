@@ -1,0 +1,12 @@
+274a275
+>         final Thread currentThread = Thread.currentThread();
+306c307
+<                 while (instance >= checkedInstance) {
+---
+>                 while (instance >= checkedInstance && !currentThread.isInterrupted()) {
+1002a1004
+>         final Thread currentThread = Thread.currentThread();
+1038c1040
+<                 while (nominalInstanceCal.compareTo(initInstance) >= 0) {
+---
+>                 while (nominalInstanceCal.compareTo(initInstance) >= 0 && !currentThread.isInterrupted()) {

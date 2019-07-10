@@ -1,0 +1,6 @@
+807c807,809
+<         this.updateHandler = updateHandler;
+---
+>         this.updateHandler = createUpdateHandler(
+>             updateHandlerClass == null ? DirectUpdateHandler2.class.getName()
+>                 : updateHandlerClass, updateHandler);

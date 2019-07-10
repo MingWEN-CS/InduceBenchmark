@@ -1,0 +1,51 @@
+42d41
+< import org.apache.hadoop.io.Text;
+58d56
+< import org.apache.hadoop.security.token.TokenIdentifier;
+95,96c93,96
+<     Token<JobTokenIdentifier> jt = loadCredentials(defaultConf, address);
+< 
+---
+>     
+>     Credentials credentials =
+>         UserGroupInformation.getCurrentUser().getCredentials();
+>     
+99a100,101
+>     Token<JobTokenIdentifier> jt = TokenCache.getJobToken(credentials);
+>     SecurityUtil.setTokenService(jt, address);
+135,136c137
+<       final JobConf job =
+<         configureTask(task, defaultConf.getCredentials(), jt);
+---
+>       final JobConf job = configureTask(task, credentials, jt);
+143,145c144
+<       for(Token<?> token : UserGroupInformation.getCurrentUser().getTokens()) {
+<         childUGI.addToken(token);
+<       }
+---
+>       job.getCredentials().addTokensToUGI(childUGI);
+209,232d207
+<   private static Token<JobTokenIdentifier> loadCredentials(JobConf conf,
+<       InetSocketAddress address) throws IOException {
+<     
+<     String tokenFileLocation =
+<         System.getenv(ApplicationConstants.CONTAINER_TOKEN_FILE_ENV_NAME);
+<     String jobTokenFile =
+<         new Path(tokenFileLocation).makeQualified(FileSystem.getLocal(conf))
+<             .toUri().getPath();
+<     Credentials credentials =
+<       TokenCache.loadTokens(jobTokenFile, conf);
+<     LOG.debug("loading token. # keys =" +credentials.numberOfSecretKeys() +
+<         "; from file=" + jobTokenFile);
+<     Token<JobTokenIdentifier> jt = TokenCache.getJobToken(credentials);
+<     SecurityUtil.setTokenService(jt, address);
+<     UserGroupInformation current = UserGroupInformation.getCurrentUser();
+<     current.addToken(jt);
+<     for (Token<? extends TokenIdentifier> tok : credentials.getAllTokens()) {
+<       current.addToken(tok);
+<     }
+<     
+<     conf.setCredentials(credentials);
+<     return jt;
+<   }
+< 

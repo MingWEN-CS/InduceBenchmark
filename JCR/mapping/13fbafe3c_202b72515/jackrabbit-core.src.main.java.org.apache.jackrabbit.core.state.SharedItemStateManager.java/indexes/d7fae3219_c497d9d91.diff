@@ -1,0 +1,16 @@
+1701a1702,1704
+>             
+>             state = loadItemState(id);
+>             state.setStatus(ItemState.STATUS_EXISTING);
+1707,1711c1710,1711
+<                 state = cache.retrieve(id);
+<                 if (state == null) {
+<                     
+<                     state = loadItemState(id);
+<                     state.setStatus(ItemState.STATUS_EXISTING);
+---
+>                 ItemState cachedState = cache.retrieve(id);
+>                 if (cachedState == null) {
+1715a1716,1717
+>                 } else {
+>                     state = cachedState;

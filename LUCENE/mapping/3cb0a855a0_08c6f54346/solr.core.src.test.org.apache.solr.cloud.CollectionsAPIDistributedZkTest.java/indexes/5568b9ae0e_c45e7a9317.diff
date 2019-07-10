@@ -1,0 +1,8 @@
+20c20
+< import static org.apache.solr.cloud.OverseerCollectionProcessor.MAX_SHARDS_PER_NODE;
+---
+> import static org.apache.solr.common.cloud.ZkStateReader.MAX_SHARDS_PER_NODE;
+22c22
+< import static org.apache.solr.cloud.OverseerCollectionProcessor.REPLICATION_FACTOR;
+---
+> import static org.apache.solr.common.cloud.ZkStateReader.REPLICATION_FACTOR;

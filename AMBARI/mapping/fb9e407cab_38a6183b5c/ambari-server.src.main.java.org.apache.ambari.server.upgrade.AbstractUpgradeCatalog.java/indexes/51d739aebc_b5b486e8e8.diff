@@ -1,0 +1,14 @@
+20,24d19
+< import javax.persistence.EntityManager;
+< import javax.xml.bind.JAXBException;
+< import javax.xml.parsers.DocumentBuilder;
+< import javax.xml.parsers.DocumentBuilderFactory;
+< 
+47a43
+> import javax.xml.bind.JAXBException;
+399c395,397
+<             if (upgradeBehavior.isDelete()) {
+---
+>             if (property.isDeleted()) {
+>               
+>             } else if (upgradeBehavior.isDelete()) {

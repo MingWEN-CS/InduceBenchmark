@@ -1,0 +1,92 @@
+30a31
+> import org.apache.oozie.client.OozieClient;
+32c33,36
+< import org.apache.oozie.service.URIHandlerService;
+---
+> import org.apache.oozie.command.wf.StartXCommand;
+> import org.apache.oozie.command.wf.SubmitXCommand;
+> import org.apache.oozie.executor.jpa.WorkflowActionQueryExecutor;
+> import org.apache.oozie.executor.jpa.WorkflowActionQueryExecutor.WorkflowActionQuery;
+42a47
+> import java.io.FileWriter;
+51d55
+< import java.util.ArrayList;
+53d56
+< import java.util.List;
+78a82,157
+>     public void testConfigDefaultPropsToAction() throws Exception {
+>         String wfXml = "<workflow-app xmlns=\"uri:oozie:workflow:0.5\" name=\"map-reduce-wf\">"
+>         + "<global>"
+>         + "<job-tracker>${jobTracker}</job-tracker>"
+>         + "<name-node>${nameNode}</name-node>"
+>         + "<configuration><property><name>aa</name><value>AA</value></property></configuration>"
+>         + "</global>"
+>         + "    <start to=\"mr-node\"/>"
+>         + "    <action name=\"mr-node\">"
+>         + "      <map-reduce>"
+>         + "        <prepare>"
+>         + "          <delete path=\"${nameNode}/user/${wf:user()}/mr/${outputDir}\"/>"
+>         + "        </prepare>"
+>         + "        <configuration>"
+>         + "          <property><name>bb</name><value>BB</value></property>"
+>         + "          <property><name>cc</name><value>from_action</value></property>"
+>         + "        </configuration>"
+>         + "      </map-reduce>"
+>         + "    <ok to=\"end\"/>"
+>         + "    <error to=\"fail\"/>"
+>         + "</action>"
+>         + "<kill name=\"fail\">"
+>         + "    <message>Map/Reduce failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>"
+>         + "</kill>"
+>         + "<end name=\"end\"/>"
+>         + "</workflow-app>";
+> 
+>         Writer writer = new FileWriter(getTestCaseDir() + "/workflow.xml");
+>         IOUtils.copyCharStream(new StringReader(wfXml), writer);
+> 
+>         Configuration conf = new XConfiguration();
+>         conf.set("nameNode", getNameNodeUri());
+>         conf.set("jobTracker", getJobTrackerUri());
+>         conf.set(OozieClient.USER_NAME, getTestUser());
+>         conf.set(OozieClient.APP_PATH, "file:
+>         conf.set(OozieClient.LOG_TOKEN, "t");
+> 
+>         OutputStream os = new FileOutputStream(getTestCaseDir() + "/config-default.xml");
+>         XConfiguration defaultConf = new XConfiguration();
+>         defaultConf.set("outputDir", "output-data-dir");
+>         defaultConf.set("mapred.mapper.class", "MM");
+>         defaultConf.set("mapred.reducer.class", "RR");
+>         defaultConf.set("cc", "from_default");
+>         defaultConf.writeXml(os);
+>         os.close();
+> 
+>         String wfId = new SubmitXCommand(conf).call();
+>         new StartXCommand(wfId).call();
+>         sleep(3000);
+> 
+>         WorkflowActionBean mrAction = WorkflowActionQueryExecutor.getInstance().get(WorkflowActionQuery.GET_ACTION,
+>                 wfId + "@mr-node");
+> 
+>         
+>         Element eConf = XmlUtils.parseXml(mrAction.getConf());
+>         eConf = eConf.getChild("name-node", eConf.getNamespace());
+>         assertEquals(getNameNodeUri(), eConf.getText());
+>         eConf = XmlUtils.parseXml(mrAction.getConf());
+>         eConf = eConf.getChild("job-tracker", eConf.getNamespace());
+>         assertEquals(getJobTrackerUri(), eConf.getText());
+> 
+>         
+>         eConf = XmlUtils.parseXml(mrAction.getConf());
+>         eConf = eConf.getChild("configuration", eConf.getNamespace());
+>         Configuration actionConf = new XConfiguration(new StringReader(XmlUtils.prettyPrint(eConf).toString()));
+>         assertEquals("output-data-dir", actionConf.get("outputDir"));
+>         assertEquals("MM", actionConf.get("mapred.mapper.class"));
+>         assertEquals("RR", actionConf.get("mapred.reducer.class"));
+>         
+>         assertEquals("from_action", actionConf.get("cc"));
+>         
+>         assertEquals("AA", actionConf.get("aa"));
+>         assertEquals("BB", actionConf.get("bb"));
+> 
+>     }
+> 

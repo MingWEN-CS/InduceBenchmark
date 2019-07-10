@@ -1,0 +1,915 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.controller;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.ambari.server.AmbariException;
+import org.apache.ambari.server.RoleCommand;
+import org.apache.ambari.server.actionmanager.ActionManager;
+import org.apache.ambari.server.agent.ExecutionCommand;
+import org.apache.ambari.server.api.services.AmbariMetaInfo;
+import org.apache.ambari.server.api.services.LoggingService;
+import org.apache.ambari.server.controller.internal.DeleteStatusMetaData;
+import org.apache.ambari.server.controller.internal.RequestStageContainer;
+import org.apache.ambari.server.controller.logging.LoggingSearchPropertyProvider;
+import org.apache.ambari.server.controller.metrics.MetricPropertyProviderFactory;
+import org.apache.ambari.server.controller.metrics.MetricsCollectorHAManager;
+import org.apache.ambari.server.controller.metrics.timeline.cache.TimelineMetricCacheProvider;
+import org.apache.ambari.server.events.AmbariEvent;
+import org.apache.ambari.server.events.publishers.AmbariEventPublisher;
+import org.apache.ambari.server.metadata.RoleCommandOrder;
+import org.apache.ambari.server.orm.entities.ExtensionLinkEntity;
+import org.apache.ambari.server.scheduler.ExecutionScheduleManager;
+import org.apache.ambari.server.security.authorization.AuthorizationException;
+import org.apache.ambari.server.security.encryption.CredentialStoreService;
+import org.apache.ambari.server.security.ldap.LdapBatchDto;
+import org.apache.ambari.server.security.ldap.LdapSyncDto;
+import org.apache.ambari.server.stageplanner.RoleGraphFactory;
+import org.apache.ambari.server.state.Cluster;
+import org.apache.ambari.server.state.Clusters;
+import org.apache.ambari.server.state.Config;
+import org.apache.ambari.server.state.ConfigHelper;
+import org.apache.ambari.server.state.HostState;
+import org.apache.ambari.server.state.MaintenanceState;
+import org.apache.ambari.server.state.Service;
+import org.apache.ambari.server.state.ServiceComponent;
+import org.apache.ambari.server.state.ServiceComponentFactory;
+import org.apache.ambari.server.state.ServiceComponentHost;
+import org.apache.ambari.server.state.ServiceInfo;
+import org.apache.ambari.server.state.ServiceOsSpecific;
+import org.apache.ambari.server.state.State;
+import org.apache.ambari.server.state.configgroup.ConfigGroupFactory;
+import org.apache.ambari.server.state.scheduler.RequestExecutionFactory;
+
+
+
+
+public interface AmbariManagementController {
+
+  
+
+
+
+
+
+
+  String getAmbariServerURI(String path);
+
+
+  
+
+  
+
+
+
+
+
+
+
+  void createCluster(ClusterRequest request) throws AmbariException, AuthorizationException;
+
+  
+
+
+
+
+
+
+  void createHostComponents(
+      Set<ServiceComponentHostRequest> requests) throws AmbariException, AuthorizationException;
+
+  
+
+
+
+
+
+
+  ConfigurationResponse createConfiguration(ConfigurationRequest request)
+      throws AmbariException, AuthorizationException;
+
+  
+
+
+
+
+  Config createConfig(Cluster cluster, String type, Map<String, String> properties,
+                      String versionTag, Map<String, Map<String, String>> propertiesAttributes);
+
+  
+
+
+
+
+
+
+  void createUsers(Set<UserRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+  void createGroups(Set<GroupRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+  void createMembers(Set<MemberRequest> requests) throws AmbariException;
+
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+  Set<ClusterResponse> getClusters(Set<ClusterRequest> requests)
+      throws AmbariException, AuthorizationException;
+
+  
+
+
+
+
+
+
+
+
+
+  Set<ServiceComponentHostResponse> getHostComponents(
+      Set<ServiceComponentHostRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+  Set<ConfigurationResponse> getConfigurations(
+      Set<ConfigurationRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+  Set<ServiceConfigVersionResponse> getServiceConfigVersions(Set<ServiceConfigVersionRequest> requests)
+      throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+  Set<UserResponse> getUsers(Set<UserRequest> requests)
+      throws AmbariException, AuthorizationException;
+
+  
+
+
+
+
+
+
+
+
+  Set<GroupResponse> getGroups(Set<GroupRequest> requests)
+      throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+  Set<MemberResponse> getMembers(Set<MemberRequest> requests)
+      throws AmbariException;
+
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  RequestStatusResponse updateClusters(Set<ClusterRequest> requests,
+                                              Map<String, String> requestProperties)
+      throws AmbariException, AuthorizationException;
+
+  
+
+
+
+
+
+
+  void updateUsers(Set<UserRequest> requests) throws AmbariException, AuthorizationException;
+
+  
+
+
+
+
+
+
+  void updateGroups(Set<GroupRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+  void updateMembers(Set<MemberRequest> requests) throws AmbariException;
+
+
+  
+
+  
+
+
+
+
+
+
+  void deleteCluster(ClusterRequest request) throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+  DeleteStatusMetaData deleteHostComponents(
+      Set<ServiceComponentHostRequest> requests) throws AmbariException, AuthorizationException;
+
+  
+
+
+
+
+
+
+  void deleteUsers(Set<UserRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+  void deleteGroups(Set<GroupRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+  void deleteMembers(Set<MemberRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+  RequestStatusResponse createAction(ExecuteActionRequest actionRequest, Map<String, String> requestProperties)
+      throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+  Set<StackResponse> getStacks(Set<StackRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+  RequestStatusResponse updateStacks() throws AmbariException;
+
+  
+
+
+
+
+  public void createExtensionLink(ExtensionLinkRequest request) throws AmbariException;
+
+  
+
+
+
+
+  public void updateExtensionLink(ExtensionLinkRequest request) throws AmbariException;
+
+  
+
+
+
+
+  public void updateExtensionLink(ExtensionLinkEntity linkEntity) throws AmbariException;
+
+  
+
+
+
+
+  public void deleteExtensionLink(ExtensionLinkRequest request) throws AmbariException;
+
+  
+
+
+
+
+
+
+  public Set<ExtensionResponse> getExtensions(Set<ExtensionRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+  public Set<ExtensionVersionResponse> getExtensionVersions(Set<ExtensionVersionRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+  Set<StackVersionResponse> getStackVersions(Set<StackVersionRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+  Set<RepositoryResponse> getRepositories(Set<RepositoryRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+  void updateRepositories(Set<RepositoryRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+  void verifyRepositories(Set<RepositoryRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+  Set<StackServiceResponse> getStackServices(Set<StackServiceRequest> requests) throws AmbariException;
+
+
+  
+
+
+
+
+
+
+
+
+  Set<StackConfigurationResponse> getStackConfigurations(Set<StackConfigurationRequest> requests) throws AmbariException;
+
+
+  
+
+
+
+
+
+
+
+
+  Set<StackServiceComponentResponse> getStackComponents(Set<StackServiceComponentRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+  Set<OperatingSystemResponse> getOperatingSystems(Set<OperatingSystemRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+
+  Set<RootServiceResponse> getRootServices(Set<RootServiceRequest> requests) throws AmbariException;
+  
+
+
+
+
+
+
+
+
+  Set<RootServiceComponentResponse> getRootServiceComponents(Set<RootServiceComponentRequest> requests) throws AmbariException;
+
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+  String findServiceName(Cluster cluster, String componentName) throws AmbariException;
+
+  
+
+
+
+
+  Clusters getClusters();
+
+  
+
+
+
+
+  ConfigHelper getConfigHelper();
+
+  
+
+
+
+
+  AmbariMetaInfo getAmbariMetaInfo();
+
+  
+
+
+
+
+  ServiceComponentFactory getServiceComponentFactory();
+
+  
+
+
+
+
+  AbstractRootServiceResponseFactory getRootServiceResponseFactory();
+
+  
+
+
+
+
+  ConfigGroupFactory getConfigGroupFactory();
+
+  
+
+
+
+
+  RoleGraphFactory getRoleGraphFactory();
+
+  
+
+
+
+
+  ActionManager getActionManager();
+
+  
+
+
+
+
+  String getAuthName();
+
+  
+
+
+
+
+  int getAuthId();
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  RequestStatusResponse createAndPersistStages(Cluster cluster, Map<String, String> requestProperties,
+                                                Map<String, String> requestParameters,
+                                                Map<State, List<Service>> changedServices,
+                                                Map<State, List<ServiceComponent>> changedComponents,
+                                                Map<String, Map<State, List<ServiceComponentHost>>> changedHosts,
+                                                Collection<ServiceComponentHost> ignoredHosts,
+                                                boolean runSmokeTest, boolean reconfigureClients)
+                                                throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  RequestStageContainer addStages(RequestStageContainer requestStages, Cluster cluster, Map<String, String> requestProperties,
+                             Map<String, String> requestParameters,
+                             Map<State, List<Service>> changedServices,
+                             Map<State, List<ServiceComponent>> changedComponents,
+                             Map<String, Map<State, List<ServiceComponentHost>>> changedHosts,
+                             Collection<ServiceComponentHost> ignoredHosts,
+                             boolean runSmokeTest, boolean reconfigureClients) throws AmbariException;
+
+  
+
+
+  String getJdkResourceUrl();
+
+  
+
+
+  String getJavaHome();
+
+  
+
+
+  String getJDKName();
+
+  
+
+
+  String getJCEName();
+
+  
+
+
+  String getServerDB();
+
+  
+
+
+  String getOjdbcUrl();
+
+  
+
+
+  String getMysqljdbcUrl();
+
+  
+
+
+
+
+
+
+
+
+  List<String> selectHealthyHosts(Set<String> hostList) throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+
+  String getHealthyHost(Set<String> hostList) throws AmbariException;
+
+
+  
+
+
+
+
+
+
+
+
+
+  Map<String, Map<String,String>> findConfigurationTagsWithOverrides(
+        Cluster cluster, String hostName) throws AmbariException;
+
+  
+
+
+
+
+
+  Map<String, String> getRcaParameters();
+
+  
+
+
+
+  RequestExecutionFactory getRequestExecutionFactory();
+
+  
+
+
+  ExecutionScheduleManager getExecutionScheduleManager();
+
+  
+
+
+
+
+  ClusterResponse getClusterUpdateResults(ClusterRequest clusterRequest);
+
+  
+
+
+
+  @Deprecated
+  String getJobTrackerHost(Cluster cluster);
+
+  
+
+
+
+
+
+  MaintenanceState getEffectiveMaintenanceState(ServiceComponentHost sch)
+      throws AmbariException;
+
+  
+
+
+  RoleCommandOrder getRoleCommandOrder(Cluster cluster);
+
+  
+
+
+
+
+  boolean checkLdapConfigured();
+
+  
+
+
+
+
+
+  LdapSyncDto getLdapSyncInfo() throws AmbariException;
+
+  
+
+
+
+
+
+
+
+
+
+  LdapBatchDto synchronizeLdapUsersAndGroups(
+      LdapSyncRequest userRequest, LdapSyncRequest groupRequest) throws AmbariException;
+
+  
+
+
+
+
+  boolean isLdapSyncInProgress();
+
+  
+
+
+
+
+
+  Set<StackConfigurationResponse> getStackLevelConfigurations(Set<StackLevelConfigurationRequest> requests) throws AmbariException;
+
+  
+
+
+
+
+
+
+  List<ServiceOsSpecific.Package> getPackagesForServiceHost(ServiceInfo serviceInfo,
+                                                            Map<String, String> hostParams, String osFamily);
+
+  
+
+
+
+
+
+
+  void registerRackChange(String clusterName) throws AmbariException;
+
+  
+
+
+
+
+
+
+  void initializeWidgetsAndLayouts(Cluster cluster, Service service) throws AmbariException;
+
+  
+
+
+
+  ExecutionCommand getExecutionCommand(Cluster cluster,
+                                              ServiceComponentHost scHost,
+                                              RoleCommand roleCommand) throws AmbariException;
+
+  
+
+
+
+
+  Set<StackConfigurationDependencyResponse> getStackConfigurationDependencies(Set<StackConfigurationDependencyRequest> requests) throws AmbariException;
+
+  TimelineMetricCacheProvider getTimelineMetricCacheProvider();
+
+  
+
+
+
+
+
+  MetricPropertyProviderFactory getMetricPropertyProviderFactory();
+
+  
+
+
+
+
+  LoggingSearchPropertyProvider getLoggingSearchPropertyProvider();
+
+
+  
+
+
+
+
+
+
+  LoggingService getLoggingService(String clusterName);
+
+
+  
+
+
+
+  KerberosHelper getKerberosHelper();
+
+  
+
+
+
+
+  CredentialStoreService getCredentialStoreService();
+
+  
+
+
+
+
+
+  AmbariEventPublisher getAmbariEventPublisher();
+
+  
+
+
+
+
+  MetricsCollectorHAManager getMetricsCollectorHAManager();
+
+}

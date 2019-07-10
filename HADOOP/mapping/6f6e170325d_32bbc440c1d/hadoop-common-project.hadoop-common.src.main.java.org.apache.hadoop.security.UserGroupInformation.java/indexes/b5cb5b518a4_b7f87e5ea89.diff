@@ -1,0 +1,8 @@
+22a23
+> import java.io.File;
+660a662
+>           
+662c664
+<               new Path("file:
+---
+>               new File(fileLocation), conf);

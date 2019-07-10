@@ -1,0 +1,248 @@
+19d18
+< import java.io.IOException;
+22d20
+< import java.util.Iterator;
+25,26d22
+< import org.apache.thrift.server.TNonblockingServer;
+< import org.apache.thrift.transport.TNonblockingServerTransport;
+29,49d24
+< import org.apache.thrift.transport.TTransportException;
+< import org.slf4j.Logger;
+< import org.slf4j.LoggerFactory;
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+57,60d31
+<   private static final Logger LOGGER = LoggerFactory.getLogger(CustomNonBlockingServer.class);
+<   private SelectAcceptThread selectAcceptThread_;
+<   private volatile boolean stopped_ = false;
+< 
+65,106c36,37
+<   @Override
+<   protected Runnable getRunnable(final FrameBuffer frameBuffer) {
+<     return new Runnable() {
+<       @Override
+<       public void run() {
+<         if (frameBuffer instanceof CustomNonblockingFrameBuffer) {
+<           TNonblockingTransport trans = ((CustomNonblockingFrameBuffer) frameBuffer).getTransport();
+<           if (trans instanceof TNonblockingSocket) {
+<             TNonblockingSocket tsock = (TNonblockingSocket) trans;
+<             Socket sock = tsock.getSocketChannel().socket();
+<             TServerUtils.clientAddress.set(sock.getInetAddress().getHostAddress() + ":" + sock.getPort());
+<           }
+<         }
+<         frameBuffer.invoke();
+<       }
+<     };
+<   }
+< 
+<   @Override
+<   protected boolean startThreads() {
+<     
+<     try {
+<       selectAcceptThread_ = new SelectAcceptThread((TNonblockingServerTransport) serverTransport_);
+<       selectAcceptThread_.start();
+<       return true;
+<     } catch (IOException e) {
+<       LOGGER.error("Failed to start selector thread!", e);
+<       return false;
+<     }
+<   }
+< 
+<   @Override
+<   public void stop() {
+<     stopped_ = true;
+<     if (selectAcceptThread_ != null) {
+<       selectAcceptThread_.wakeupSelector();
+<     }
+<   }
+< 
+<   @Override
+<   public boolean isStopped() {
+<     return selectAcceptThread_.isStopped();
+---
+>   protected FrameBuffer createFrameBuffer(final TNonblockingTransport trans, final SelectionKey selectionKey, final AbstractSelectThread selectThread) {
+>     return new CustomAsyncFrameBuffer(trans, selectionKey, selectThread);
+109,125c40
+<   @Override
+<   protected void joinSelector() {
+<     
+<     try {
+<       selectAcceptThread_.join();
+<     } catch (InterruptedException e) {
+<       
+<       
+<     }
+<   }
+< 
+<   private interface CustomNonblockingFrameBuffer {
+<     TNonblockingTransport getTransport();
+<   }
+< 
+<   private class CustomAsyncFrameBuffer extends AsyncFrameBuffer implements CustomNonblockingFrameBuffer {
+<     private TNonblockingTransport trans;
+---
+>   private class CustomAsyncFrameBuffer extends AsyncFrameBuffer {
+129,169d43
+<       this.trans = trans;
+<     }
+< 
+<     @Override
+<     public TNonblockingTransport getTransport() {
+<       return trans;
+<     }
+<   }
+< 
+<   private class CustomFrameBuffer extends FrameBuffer implements CustomNonblockingFrameBuffer {
+<     private TNonblockingTransport trans;
+< 
+<     public CustomFrameBuffer(TNonblockingTransport trans, SelectionKey selectionKey, AbstractSelectThread selectThread) {
+<       super(trans, selectionKey, selectThread);
+<       this.trans = trans;
+<     }
+< 
+<     @Override
+<     public TNonblockingTransport getTransport() {
+<       return trans;
+<     }
+<   }
+< 
+<   
+<   private class SelectAcceptThread extends AbstractSelectThread {
+< 
+<     
+<     private final TNonblockingServerTransport serverTransport;
+< 
+<     
+< 
+< 
+< 
+<     public SelectAcceptThread(final TNonblockingServerTransport serverTransport)
+<     throws IOException {
+<       this.serverTransport = serverTransport;
+<       serverTransport.registerSelector(selector);
+<     }
+< 
+<     public boolean isStopped() {
+<       return stopped_;
+172,175d45
+<     
+< 
+< 
+< 
+177,237c47,51
+<     public void run() {
+<       try {
+<         if (eventHandler_ != null) {
+<           eventHandler_.preServe();
+<         }
+< 
+<         while (!stopped_) {
+<           select();
+<           processInterestChanges();
+<         }
+<         for (SelectionKey selectionKey : selector.keys()) {
+<           cleanupSelectionKey(selectionKey);
+<         }
+<       } catch (Throwable t) {
+<         LOGGER.error("run() exiting due to uncaught error", t);
+<       } finally {
+<         stopped_ = true;
+<       }
+<     }
+< 
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<     private void select() {
+<       try {
+<         
+<         selector.select();
+< 
+<         
+<         Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
+<         while (!stopped_ && selectedKeys.hasNext()) {
+<           SelectionKey key = selectedKeys.next();
+<           selectedKeys.remove();
+< 
+<           
+<           if (!key.isValid()) {
+<             cleanupSelectionKey(key);
+<             continue;
+<           }
+< 
+<           
+<           
+<           if (key.isAcceptable()) {
+<             handleAccept();
+<           } else if (key.isReadable()) {
+<             
+<             handleRead(key);
+<           } else if (key.isWritable()) {
+<             
+<             handleWrite(key);
+<           } else {
+<             LOGGER.warn("Unexpected state in select! " + key.interestOps());
+<           }
+<         }
+<       } catch (IOException e) {
+<         LOGGER.warn("Got an IOException while selecting!", e);
+---
+>     public void invoke() {
+>       if (trans_ instanceof TNonblockingSocket) {
+>         TNonblockingSocket tsock = (TNonblockingSocket) trans_;
+>         Socket sock = tsock.getSocketChannel().socket();
+>         TServerUtils.clientAddress.set(sock.getInetAddress().getHostAddress() + ":" + sock.getPort());
+238a53
+>       super.invoke();
+239a55
+>   }
+241,268d56
+<     
+< 
+< 
+<     @SuppressWarnings("unused")
+<     private void handleAccept() throws IOException {
+<       SelectionKey clientKey = null;
+<       TNonblockingTransport client = null;
+<       try {
+<         
+<         client = (TNonblockingTransport)serverTransport.accept();
+<         clientKey = client.registerSelector(selector, SelectionKey.OP_READ);
+< 
+<         
+<           FrameBuffer frameBuffer =
+<               processorFactory_.isAsyncProcessor() ? new CustomAsyncFrameBuffer(client, clientKey,SelectAcceptThread.this) :
+<                   new CustomFrameBuffer(client, clientKey,SelectAcceptThread.this);
+< 
+<           clientKey.attach(frameBuffer);
+<       } catch (TTransportException tte) {
+<         
+<         LOGGER.warn("Exception trying to accept!", tte);
+<         tte.printStackTrace();
+<         if (clientKey != null) cleanupSelectionKey(clientKey);
+<         if (client != null) client.close();
+<       }
+<     }
+<   } 
+<   

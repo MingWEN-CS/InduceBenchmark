@@ -1,0 +1,870 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.journal;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.jackrabbit.core.util.db.CheckSchemaOperation;
+import org.apache.jackrabbit.core.util.db.ConnectionFactory;
+import org.apache.jackrabbit.core.util.db.ConnectionHelper;
+import org.apache.jackrabbit.core.util.db.DatabaseAware;
+import org.apache.jackrabbit.core.util.db.DbUtility;
+import org.apache.jackrabbit.core.util.db.StreamWrapper;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Calendar;
+
+import javax.jcr.RepositoryException;
+import javax.sql.DataSource;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class DatabaseJournal extends AbstractJournal implements DatabaseAware {
+
+    
+
+
+    private static final String DEFAULT_JOURNAL_TABLE = "JOURNAL";
+
+    
+
+
+    private static final String LOCAL_REVISIONS_TABLE = "LOCAL_REVISIONS";
+
+    
+
+
+    private static Logger log = LoggerFactory.getLogger(DatabaseJournal.class);
+
+    
+
+
+    private String driver;
+
+    
+
+
+    private String url;
+
+    
+
+
+    private String databaseType;
+
+    
+
+
+    private String user;
+
+    
+
+
+    private String password;
+
+    
+
+
+    private String dataSourceName;
+
+    
+
+
+    private ConnectionHelper conHelper;
+
+    
+
+
+    private int lockLevel;
+
+    
+
+
+    private long lockedRevision;
+
+    
+
+
+    private boolean janitorEnabled = false;
+
+    
+
+
+    private int janitorSleep = 60 * 60 * 24;
+
+    
+
+
+
+    private Calendar janitorNextRun = Calendar.getInstance();
+    {
+        if (janitorNextRun.get(Calendar.HOUR_OF_DAY) >= 3) {
+            janitorNextRun.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        janitorNextRun.set(Calendar.HOUR_OF_DAY, 3);
+        janitorNextRun.set(Calendar.MINUTE, 0);
+        janitorNextRun.set(Calendar.SECOND, 0);
+        janitorNextRun.set(Calendar.MILLISECOND, 0);
+    }
+
+    private Thread janitorThread;
+
+    
+
+
+    private boolean schemaCheckEnabled = true;
+
+    
+
+
+    private DatabaseRevision databaseRevision;
+
+    
+
+
+    protected String selectRevisionsStmtSQL;
+
+    
+
+
+    protected String updateGlobalStmtSQL;
+
+    
+
+
+    protected String selectGlobalStmtSQL;
+
+    
+
+
+    protected String insertRevisionStmtSQL;
+
+    
+
+
+    protected String selectMinLocalRevisionStmtSQL;
+
+    
+
+
+    protected String cleanRevisionStmtSQL;
+    
+    
+
+
+    protected String getLocalRevisionStmtSQL;
+    
+    
+
+
+    protected String insertLocalRevisionStmtSQL;
+
+    
+
+
+    protected String updateLocalRevisionStmtSQL;
+
+    
+
+
+    protected String schemaObjectPrefix;
+
+    
+
+
+    private ConnectionFactory connectionFactory;
+
+    public DatabaseJournal() {
+        databaseType = "default";
+        schemaObjectPrefix = "";
+    }
+
+    
+
+
+    public void setConnectionFactory(ConnectionFactory connnectionFactory) {
+        this.connectionFactory = connnectionFactory;
+    }
+
+    
+
+
+    public void init(String id, NamespaceResolver resolver)
+            throws JournalException {
+
+        super.init(id, resolver);
+
+        init();
+
+        try {
+            conHelper = createConnectionHelper(getDataSource());
+
+            
+            schemaObjectPrefix = conHelper.prepareDbIdentifier(schemaObjectPrefix);
+
+            
+            if (isSchemaCheckEnabled()) {
+                createCheckSchemaOperation().run();
+            }
+
+            
+            if (isSchemaCheckEnabled()) {
+                checkLocalRevisionSchema();
+            }
+
+            buildSQLStatements();
+            initInstanceRevisionAndJanitor();
+        } catch (Exception e) {
+            String msg = "Unable to create connection.";
+            throw new JournalException(msg, e);
+        }
+        log.info("DatabaseJournal initialized.");
+    }
+
+    private DataSource getDataSource() throws Exception {
+        if (getDataSourceName() == null || "".equals(getDataSourceName())) {
+            return connectionFactory.getDataSource(getDriver(), getUrl(), getUser(), getPassword());
+        } else {
+            return connectionFactory.getDataSource(dataSourceName);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+    protected ConnectionHelper createConnectionHelper(DataSource dataSrc) throws Exception {
+        return new ConnectionHelper(dataSrc, false);
+    }
+
+    
+
+
+
+
+
+
+    protected CheckSchemaOperation createCheckSchemaOperation() {
+        InputStream in = DatabaseJournal.class.getResourceAsStream(databaseType + ".ddl");
+        return new CheckSchemaOperation(conHelper, in, schemaObjectPrefix + DEFAULT_JOURNAL_TABLE).addVariableReplacement(
+            CheckSchemaOperation.SCHEMA_OBJECT_PREFIX_VARIABLE, schemaObjectPrefix);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    protected void init() throws JournalException {
+        if (driver == null && dataSourceName == null) {
+            String msg = "Driver not specified.";
+            throw new JournalException(msg);
+        }
+        if (url == null && dataSourceName == null) {
+            String msg = "Connection URL not specified.";
+            throw new JournalException(msg);
+        }
+        if (dataSourceName != null) {
+            try {
+                String configuredDatabaseType = connectionFactory.getDataBaseType(dataSourceName);
+                if (DatabaseJournal.class.getResourceAsStream(configuredDatabaseType + ".ddl") != null) {
+                    setDatabaseType(configuredDatabaseType);
+                }
+            } catch (RepositoryException e) {
+                throw new JournalException("failed to get database type", e);
+            }
+        }
+        if (databaseType == null) {
+            try {
+                databaseType = getDatabaseTypeFromURL(url);
+            } catch (IllegalArgumentException e) {
+                String msg = "Unable to derive database type from URL: " + e.getMessage();
+                throw new JournalException(msg);
+            }
+        }
+    }
+
+    
+
+
+
+
+    protected void initInstanceRevisionAndJanitor() throws Exception {
+        databaseRevision = new DatabaseRevision();
+
+        
+        long localFileRevision = 0L;
+        if (getRevision() != null) {
+            InstanceRevision currentFileRevision = new FileRevision(new File(getRevision()));
+            localFileRevision = currentFileRevision.get();
+            currentFileRevision.close();
+        }
+
+        
+        
+        long localRevision = databaseRevision.init(localFileRevision);
+        log.info("Initialized local revision to " + localRevision);
+
+        
+        if (janitorEnabled) {
+            janitorThread = new Thread(new RevisionTableJanitor(), "Jackrabbit-ClusterRevisionJanitor");
+            janitorThread.setDaemon(true);
+            janitorThread.start();
+            log.info("Cluster revision janitor thread started; first run scheduled at " + janitorNextRun.getTime());
+        } else {
+            log.info("Cluster revision janitor thread not started");
+        }
+    }
+
+    
+
+
+    public InstanceRevision getInstanceRevision() throws JournalException {
+        return databaseRevision;
+    }
+
+    
+
+
+
+
+
+
+
+    private static String getDatabaseTypeFromURL(String url) throws IllegalArgumentException {
+        int start = url.indexOf(':');
+        if (start != -1) {
+            int end = url.indexOf(':', start + 1);
+            if (end != -1) {
+                return url.substring(start + 1, end);
+            }
+        }
+        throw new IllegalArgumentException(url);
+    }
+
+    
+
+
+    public RecordIterator getRecords(long startRevision) throws JournalException {
+        try {
+            return new DatabaseRecordIterator(conHelper.exec(selectRevisionsStmtSQL, new Object[]{new Long(
+                    startRevision)}, false, 0), getResolver(), getNamePathResolver());
+        } catch (SQLException e) {
+            throw new JournalException("Unable to return record iterator.", e);
+        }
+    }
+
+    
+
+
+    public RecordIterator getRecords() throws JournalException {
+        try {
+            return new DatabaseRecordIterator(conHelper.exec(selectRevisionsStmtSQL, new Object[]{new Long(
+                    Long.MIN_VALUE)}, false, 0), getResolver(), getNamePathResolver());
+        } catch (SQLException e) {
+            throw new JournalException("Unable to return record iterator.", e);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    protected void doLock() throws JournalException {
+        ResultSet rs = null;
+        boolean succeeded = false;
+
+        try {
+            if (lockLevel++ == 0) {
+                conHelper.startBatch();
+            }
+        } catch (SQLException e) {
+            throw new JournalException("Unable to set autocommit to false.", e);
+        }
+
+        try {
+            conHelper.exec(updateGlobalStmtSQL);
+            rs = conHelper.exec(selectGlobalStmtSQL, null, false, 0);
+            if (!rs.next()) {
+                 throw new JournalException("No revision available.");
+            }
+            lockedRevision = rs.getLong(1);
+            succeeded = true;
+
+        } catch (SQLException e) {
+            throw new JournalException("Unable to lock global revision table.", e);
+        } finally {
+            DbUtility.close(rs);
+            if (!succeeded) {
+                doUnlock(false);
+            }
+        }
+    }
+
+    
+
+
+    protected void doUnlock(boolean successful) {
+        if (--lockLevel == 0) {
+            try {
+                conHelper.endBatch(successful);;
+            } catch (SQLException e) {
+                log.error("failed to end batch", e);
+            }
+        }
+    }
+
+    
+
+
+
+
+    protected void appending(AppendRecord record) {
+        record.setRevision(lockedRevision);
+    }
+
+    
+
+
+
+
+    protected void append(AppendRecord record, InputStream in, int length)
+            throws JournalException {
+
+        try {
+            conHelper.exec(insertRevisionStmtSQL, record.getRevision(), getId(), record.getProducerId(),
+                new StreamWrapper(in, length));
+
+        } catch (SQLException e) {
+            String msg = "Unable to append revision " + lockedRevision + ".";
+            throw new JournalException(msg, e);
+        }
+    }
+
+    
+
+
+    public void close() {
+        if (janitorThread != null) {
+            janitorThread.interrupt();
+        }
+    }
+
+    
+
+
+
+
+
+    private void checkLocalRevisionSchema() throws Exception {
+        InputStream localRevisionDDLStream = null;
+        InputStream in = DatabaseJournal.class.getResourceAsStream(databaseType + ".ddl");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String sql = reader.readLine();
+            while (sql != null) {
+                
+                
+                if (!sql.startsWith("#") && sql.length() > 0 && sql.indexOf(LOCAL_REVISIONS_TABLE) != -1) {
+                    localRevisionDDLStream = new ByteArrayInputStream(sql.getBytes());
+                    break;
+                }
+                
+                sql = reader.readLine();
+            }
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+        
+        new CheckSchemaOperation(conHelper, localRevisionDDLStream, schemaObjectPrefix
+                + LOCAL_REVISIONS_TABLE).addVariableReplacement(
+            CheckSchemaOperation.SCHEMA_OBJECT_PREFIX_VARIABLE, schemaObjectPrefix).run();
+    }
+
+    
+
+
+
+    protected void buildSQLStatements() {
+        selectRevisionsStmtSQL =
+            "select REVISION_ID, JOURNAL_ID, PRODUCER_ID, REVISION_DATA from "
+            + schemaObjectPrefix + "JOURNAL where REVISION_ID > ? order by REVISION_ID";
+        updateGlobalStmtSQL =
+            "update " + schemaObjectPrefix + "GLOBAL_REVISION"
+            + " set REVISION_ID = REVISION_ID + 1";
+        selectGlobalStmtSQL =
+            "select REVISION_ID from "
+            + schemaObjectPrefix + "GLOBAL_REVISION";
+        insertRevisionStmtSQL =
+            "insert into " + schemaObjectPrefix + "JOURNAL"
+            + " (REVISION_ID, JOURNAL_ID, PRODUCER_ID, REVISION_DATA) "
+            + "values (?,?,?,?)";
+        selectMinLocalRevisionStmtSQL =
+            "select MIN(REVISION_ID) from " + schemaObjectPrefix + "LOCAL_REVISIONS";
+        cleanRevisionStmtSQL =
+            "delete from " + schemaObjectPrefix + "JOURNAL " + "where REVISION_ID < ?";
+        getLocalRevisionStmtSQL =
+            "select REVISION_ID from " + schemaObjectPrefix + "LOCAL_REVISIONS "
+            + "where JOURNAL_ID = ?";
+        insertLocalRevisionStmtSQL =
+            "insert into " + schemaObjectPrefix + "LOCAL_REVISIONS "
+            + "(REVISION_ID, JOURNAL_ID) values (?,?)";
+        updateLocalRevisionStmtSQL =
+            "update " + schemaObjectPrefix + "LOCAL_REVISIONS "
+            + "set REVISION_ID = ? where JOURNAL_ID = ?";
+    }
+
+    
+
+
+    public String getDriver() {
+        return driver;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    
+
+
+
+
+    public String getDatabaseType() {
+        return databaseType;
+    }
+
+    
+
+
+
+
+
+
+    public String getSchema() {
+        return databaseType;
+    }
+
+    public String getSchemaObjectPrefix() {
+        return schemaObjectPrefix;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean getJanitorEnabled() {
+        return janitorEnabled;
+    }
+
+    public int getJanitorSleep() {
+        return janitorSleep;
+    }
+
+    public int getJanitorFirstRunHourOfDay() {
+        return janitorNextRun.get(Calendar.HOUR_OF_DAY);
+    }
+
+    
+
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    
+
+
+
+
+    public void setDatabaseType(String databaseType) {
+        this.databaseType = databaseType;
+    }
+
+    
+
+
+
+
+
+
+    public void setSchema(String databaseType) {
+        this.databaseType = databaseType;
+    }
+
+    public void setSchemaObjectPrefix(String schemaObjectPrefix) {
+        this.schemaObjectPrefix = schemaObjectPrefix.toUpperCase();
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setJanitorEnabled(boolean enabled) {
+        this.janitorEnabled = enabled;
+    }
+
+    public void setJanitorSleep(int sleep) {
+        this.janitorSleep = sleep;
+    }
+
+    public void setJanitorFirstRunHourOfDay(int hourOfDay) {
+        janitorNextRun = Calendar.getInstance();
+        if (janitorNextRun.get(Calendar.HOUR_OF_DAY) >= hourOfDay) {
+            janitorNextRun.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        janitorNextRun.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        janitorNextRun.set(Calendar.MINUTE, 0);
+        janitorNextRun.set(Calendar.SECOND, 0);
+        janitorNextRun.set(Calendar.MILLISECOND, 0);
+    }
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+    }
+
+    
+
+
+    public final boolean isSchemaCheckEnabled() {
+        return schemaCheckEnabled;
+    }
+
+    
+
+
+    public final void setSchemaCheckEnabled(boolean enabled) {
+        schemaCheckEnabled = enabled;
+    }
+
+    
+
+
+
+
+    public class DatabaseRevision implements InstanceRevision {
+
+        
+
+
+        private long localRevision;
+
+        
+
+
+        private boolean initialized = false;
+
+        
+
+
+
+
+
+
+
+        protected synchronized long init(long revision) throws JournalException {
+            ResultSet rs = null;
+            try {
+                
+                rs = conHelper.exec(getLocalRevisionStmtSQL, new Object[]{getId()}, false, 0);
+                boolean exists = rs.next();
+                if (exists) {
+                    revision = rs.getLong(1);
+                }
+
+                
+                if (!exists) {
+                    conHelper.exec(insertLocalRevisionStmtSQL, revision, getId());
+                }
+
+                
+                localRevision = revision;
+                initialized = true;
+                return revision;
+
+            } catch (SQLException e) {
+                log.warn("Failed to initialize local revision.", e);
+                throw new JournalException("Failed to initialize local revision", e);
+            } finally {
+                DbUtility.close(rs);
+            }
+        }
+
+        
+
+
+        public synchronized long get() {
+            if (!initialized) {
+                throw new IllegalStateException("instance has not yet been initialized");
+            }
+            return localRevision;
+        }
+
+        
+
+
+        public synchronized void set(long localRevision) throws JournalException {
+
+            if (!initialized) {
+                throw new IllegalStateException("instance has not yet been initialized");
+            }
+
+            
+            try {
+                conHelper.exec(updateLocalRevisionStmtSQL, localRevision, getId());
+                this.localRevision = localRevision;
+            } catch (SQLException e) {
+                log.warn("Failed to update local revision.", e);
+                throw new JournalException("Failed to update local revision.", e);
+            }
+        }
+        
+        
+
+
+        public void close() {
+        }
+    }
+
+    
+
+
+
+
+    public class RevisionTableJanitor implements Runnable {
+
+        
+
+
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    log.info("Next clean-up run scheduled at " + janitorNextRun.getTime());
+                    long sleepTime = janitorNextRun.getTimeInMillis() - System.currentTimeMillis();
+                    if (sleepTime > 0) {
+                        Thread.sleep(sleepTime);
+                    }
+                    cleanUpOldRevisions();
+                    janitorNextRun.add(Calendar.SECOND, janitorSleep);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            log.info("Interrupted: stopping clean-up task.");
+        }
+        
+        
+
+
+        protected void cleanUpOldRevisions() {
+            ResultSet rs = null;
+            try {
+                long minRevision = 0;
+                rs = conHelper.exec(selectMinLocalRevisionStmtSQL, null, false, 0);
+                boolean cleanUp = rs.next();
+                if (cleanUp) {
+                    minRevision = rs.getLong(1);
+                }
+
+                
+                if (cleanUp) {
+                    conHelper.exec(cleanRevisionStmtSQL, minRevision);
+                    log.info("Cleaned old revisions up to revision " + minRevision + ".");
+                }
+
+            } catch (Exception e) {
+                log.warn("Failed to clean up old revisions.", e);
+            } finally {
+                DbUtility.close(rs);
+            }
+        }
+    }
+}

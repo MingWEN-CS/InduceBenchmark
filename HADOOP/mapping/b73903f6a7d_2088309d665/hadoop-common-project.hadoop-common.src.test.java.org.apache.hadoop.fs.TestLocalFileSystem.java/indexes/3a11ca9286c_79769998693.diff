@@ -1,0 +1,181 @@
+55c55,56
+<     conf = new Configuration();
+---
+>     conf = new Configuration(false);
+>     conf.set("fs.file.impl", LocalFileSystem.class.getName());
+70c71
+<   @Test
+---
+>   @Test(timeout = 1000)
+124c125
+<   @Test
+---
+>   @Test(timeout = 1000)
+126,127c127
+<     Configuration conf = new Configuration();
+<     FileSystem fs = FileSystem.getLocal(conf).getRawFileSystem();
+---
+>     FileSystem fs = fileSys.getRawFileSystem();
+158c158
+<   @Test
+---
+>   @Test(timeout = 1000)
+160,161d159
+<     Configuration conf = new Configuration();
+<     LocalFileSystem fs = FileSystem.getLocal(conf);
+164,172c162,170
+<     writeFile(fs, src, 1);
+<     assertTrue(FileUtil.copy(fs, src, fs, dst, true, false, conf));
+<     assertTrue(!fs.exists(src) && fs.exists(dst));
+<     assertTrue(FileUtil.copy(fs, dst, fs, src, false, false, conf));
+<     assertTrue(fs.exists(src) && fs.exists(dst));
+<     assertTrue(FileUtil.copy(fs, src, fs, dst, true, true, conf));
+<     assertTrue(!fs.exists(src) && fs.exists(dst));
+<     fs.mkdirs(src);
+<     assertTrue(FileUtil.copy(fs, dst, fs, src, false, false, conf));
+---
+>     writeFile(fileSys, src, 1);
+>     assertTrue(FileUtil.copy(fileSys, src, fileSys, dst, true, false, conf));
+>     assertTrue(!fileSys.exists(src) && fileSys.exists(dst));
+>     assertTrue(FileUtil.copy(fileSys, dst, fileSys, src, false, false, conf));
+>     assertTrue(fileSys.exists(src) && fileSys.exists(dst));
+>     assertTrue(FileUtil.copy(fileSys, src, fileSys, dst, true, true, conf));
+>     assertTrue(!fileSys.exists(src) && fileSys.exists(dst));
+>     fileSys.mkdirs(src);
+>     assertTrue(FileUtil.copy(fileSys, dst, fileSys, src, false, false, conf));
+174,177c172,175
+<     assertTrue(fs.exists(tmp) && fs.exists(dst));
+<     assertTrue(FileUtil.copy(fs, dst, fs, src, false, true, conf));
+<     assertTrue(fs.delete(tmp, true));
+<     fs.mkdirs(tmp);
+---
+>     assertTrue(fileSys.exists(tmp) && fileSys.exists(dst));
+>     assertTrue(FileUtil.copy(fileSys, dst, fileSys, src, false, true, conf));
+>     assertTrue(fileSys.delete(tmp, true));
+>     fileSys.mkdirs(tmp);
+179c177
+<       FileUtil.copy(fs, dst, fs, src, true, true, conf);
+---
+>       FileUtil.copy(fileSys, dst, fileSys, src, true, true, conf);
+186c184
+<   @Test
+---
+>   @Test(timeout = 1000)
+188,189d185
+<     Configuration conf = new Configuration();
+<     FileSystem fileSys = FileSystem.getLocal(conf);
+196c192
+<   @Test
+---
+>   @Test(timeout = 1000)
+198,199d193
+<     Configuration conf = new Configuration();
+<     FileSystem fs = FileSystem.getLocal(conf);
+201,204c195,198
+<     writeFile(fs, path, 1);
+<     FileStatus status = fs.getFileStatus(path);
+<     assertEquals(path.makeQualified(fs), status.getPath());
+<     cleanupFile(fs, path);
+---
+>     writeFile(fileSys, path, 1);
+>     FileStatus status = fileSys.getFileStatus(path);
+>     assertEquals(path.makeQualified(fileSys), status.getPath());
+>     cleanupFile(fileSys, path);
+207c201
+<   @Test
+---
+>   @Test(timeout = 1000)
+209,210d202
+<     Configuration conf = new Configuration();
+<     LocalFileSystem fs = FileSystem.getLocal(conf);
+213c205
+<     assertTrue(fs.mkdirs(test_dir));
+---
+>     assertTrue(fileSys.mkdirs(test_dir));
+215c207
+<     writeFile(fs, test_file, 1);
+---
+>     writeFile(fileSys, test_file, 1);
+220c212
+<       fs.mkdirs(bad_dir);
+---
+>       fileSys.mkdirs(bad_dir);
+227c219
+<       fs.mkdirs(null);
+---
+>         fileSys.mkdirs(null);
+235c227
+<   @Test
+---
+>   @Test(timeout = 1000)
+237,238d228
+<     Configuration conf = new Configuration();
+<     LocalFileSystem fs = FileSystem.getLocal(conf);
+243,245c233,235
+<     assertTrue(fs.mkdirs(dir1));
+<     writeFile(fs, file1, 1);
+<     writeFile(fs, file2, 1);
+---
+>     assertTrue(fileSys.mkdirs(dir1));
+>     writeFile(fileSys, file1, 1);
+>     writeFile(fileSys, file2, 1);
+247,249c237,239
+<         fs.delete(file3));
+<     assertTrue("Did not delete file", fs.delete(file1));
+<     assertTrue("Did not delete non-empty dir", fs.delete(dir1));
+---
+>             fileSys.delete(file3));
+>     assertTrue("Did not delete file", fileSys.delete(file1));
+>     assertTrue("Did not delete non-empty dir", fileSys.delete(dir1));
+252c242
+<   @Test
+---
+>   @Test(timeout = 1000)
+254d243
+<     FileSystem.getLocal(new Configuration());
+264c253
+<   @Test
+---
+>   @Test(timeout = 1000)
+266,267d254
+<     Configuration conf = new Configuration();
+<     LocalFileSystem fs = FileSystem.getLocal(conf);
+269c256
+<     writeFile(fs, path, 1);
+---
+>     writeFile(fileSys, path, 1);
+280c267
+<   @Test
+---
+>   @Test(timeout = 1000)
+283,284d269
+<     Configuration conf = new Configuration();
+<     LocalFileSystem fs = FileSystem.getLocal(conf);
+287c272
+<     FileStatus[] stats = fs.listStatus(new Path(TEST_ROOT_DIR));
+---
+>     FileStatus[] stats = fileSys.listStatus(new Path(TEST_ROOT_DIR));
+293c278
+<   @Test
+---
+>   @Test(timeout = 1000)
+365a351,369
+>   @Test(timeout = 1000)
+>   public void testSetTimes() throws Exception {
+>     Path path = new Path(TEST_ROOT_DIR, "set-times");
+>     writeFile(fileSys, path, 1);
+> 
+>     
+>     
+>     long newModTime = 12345000;
+> 
+>     FileStatus status = fileSys.getFileStatus(path);
+>     assertTrue("check we're actually changing something", newModTime != status.getModificationTime());
+>     assertEquals(0, status.getAccessTime());
+> 
+>     fileSys.setTimes(path, newModTime, -1);
+>     status = fileSys.getFileStatus(path);
+>     assertEquals(newModTime, status.getModificationTime());
+>     assertEquals(0, status.getAccessTime());
+> }
+> 

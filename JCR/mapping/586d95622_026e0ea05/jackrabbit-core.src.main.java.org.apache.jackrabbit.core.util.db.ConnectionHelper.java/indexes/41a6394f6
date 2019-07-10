@@ -1,0 +1,481 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.util.db;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class ConnectionHelper {
+
+    static Logger log = LoggerFactory.getLogger(ConnectionHelper.class);
+
+    private static final int RETRIES = 1;
+
+    private static final int SLEEP_BETWEEN_RETRIES_MS = 100;
+
+    final boolean blockOnConnectionLoss;
+
+    private final boolean checkTablesWithUserName;
+
+    protected final DataSource dataSource;
+
+    private ThreadLocal<Connection> batchConnectionTl = new ThreadLocal<Connection>();
+
+    
+
+
+
+
+    public ConnectionHelper(DataSource dataSrc, boolean block) {
+        dataSource = dataSrc;
+        checkTablesWithUserName = false;
+        blockOnConnectionLoss = block;
+    }
+
+    
+
+
+
+
+    protected ConnectionHelper(DataSource dataSrc, boolean checkWithUserName, boolean block) {
+        dataSource = dataSrc;
+        checkTablesWithUserName = checkWithUserName;
+        blockOnConnectionLoss = block;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public final String prepareDbIdentifier(String identifier) throws SQLException {
+        if (identifier == null) {
+            return null;
+        }
+        String legalChars = "ABCDEFGHIJKLMNOPQRSTUVWXZY0123456789_";
+        legalChars += getExtraNameCharacters();
+        String id = identifier.toUpperCase();
+        StringBuffer escaped = new StringBuffer();
+        for (int i = 0; i < id.length(); i++) {
+            char c = id.charAt(i);
+            if (legalChars.indexOf(c) == -1) {
+                replaceCharacter(escaped, c);
+            } else {
+                escaped.append(c);
+            }
+        }
+        return escaped.toString();
+    }
+
+    
+
+
+
+
+
+
+    protected void replaceCharacter(StringBuffer escaped, char c) {
+        escaped.append("_x");
+        String hex = Integer.toHexString(c);
+        escaped.append("0000".toCharArray(), 0, 4 - hex.length());
+        escaped.append(hex);
+        escaped.append("_");
+    }
+
+    
+
+
+
+    protected boolean inBatchMode()
+    {
+      return batchConnectionTl.get() != null;
+    }
+
+    
+
+
+
+
+
+    private String getExtraNameCharacters() throws SQLException {
+        Connection con = dataSource.getConnection();
+        try {
+            DatabaseMetaData metaData = con.getMetaData();
+            return metaData.getExtraNameCharacters();
+        } finally {
+            DbUtility.close(con, null, null);
+        }
+    }
+
+    
+
+
+
+
+
+
+    public final boolean tableExists(String tableName) throws SQLException {
+        Connection con = dataSource.getConnection();
+        ResultSet rs = null;
+        boolean schemaExists = false;
+        String name = tableName;
+        try {
+            DatabaseMetaData metaData = con.getMetaData();
+            if (metaData.storesLowerCaseIdentifiers()) {
+                name = tableName.toLowerCase();
+            } else if (metaData.storesUpperCaseIdentifiers()) {
+                name = tableName.toUpperCase();
+            }
+            String userName = null;
+            if (checkTablesWithUserName) {
+                userName = metaData.getUserName();
+            }
+            rs = metaData.getTables(null, userName, name, null);
+            schemaExists = rs.next();
+        } finally {
+            DbUtility.close(con, null, rs);
+        }
+        return schemaExists;
+    }
+
+    
+
+
+
+
+
+
+    public final void startBatch() throws SQLException {
+        if (inBatchMode()) {
+            throw new SQLException("already in batch mode");
+        }
+        Connection batchConnection = null;
+        try {
+            batchConnection = getConnection();
+            batchConnection.setAutoCommit(false);
+            batchConnectionTl.set(batchConnection);
+        } catch (SQLException e) {
+            
+            if (batchConnection != null) {
+                DbUtility.close(batchConnection, null, null);
+            }
+            batchConnectionTl.remove();
+            throw e;
+        }
+    }
+
+    
+
+
+
+
+
+
+    public final void endBatch(boolean commit) throws SQLException {
+        if (!inBatchMode()) {
+            throw new IllegalStateException("not in batch mode");
+        }
+        try {
+            if (commit) {
+                batchConnectionTl.get().commit();
+            } else {
+                batchConnectionTl.get().rollback();
+            }
+        } finally {
+            DbUtility.close(batchConnectionTl.get(), null, null);
+            batchConnectionTl.set(null);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public final void exec(final String sql, final Object... params) throws SQLException {
+        new RetryManager<Void>() {
+
+            @Override
+            protected Void call() throws SQLException {
+                reallyExec(sql, params);
+                return null;
+            }
+
+        }.doTry();
+    }
+
+    void reallyExec(String sql, Object... params) throws SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            con = getConnection();
+            if (params == null || params.length == 0) {
+                stmt = con.createStatement();
+                stmt.execute(sql);
+            } else {
+                stmt = con.prepareStatement(sql);
+                execute((PreparedStatement) stmt, params);
+            }
+        } finally {
+            closeResources(con, stmt, null);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    public final int update(final String sql, final Object[] params) throws SQLException {
+        return new RetryManager<Integer>() {
+
+            @Override
+            protected Integer call() throws SQLException {
+                return reallyUpdate(sql, params);
+            }
+
+        }.doTry();
+    }
+
+    int reallyUpdate(String sql, Object[] params) throws SQLException {
+        Connection con = null;
+        PreparedStatement stmt = null;
+        try {
+            con = getConnection();
+            stmt = con.prepareStatement(sql);
+            return execute(stmt, params).getUpdateCount();
+        } finally {
+            closeResources(con, stmt, null);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public final ResultSet exec(final String sql, final Object[] params, final boolean returnGeneratedKeys,
+            final int maxRows) throws SQLException {
+        return new RetryManager<ResultSet>() {
+
+            @Override
+            protected ResultSet call() throws SQLException {
+                return reallyExec(sql, params, returnGeneratedKeys, maxRows);
+            }
+
+        }.doTry();
+    }
+
+    ResultSet reallyExec(String sql, Object[] params, boolean returnGeneratedKeys, int maxRows)
+            throws SQLException {
+        Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            if (returnGeneratedKeys) {
+                stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            } else {
+                stmt = con.prepareStatement(sql);
+            }
+            stmt.setMaxRows(maxRows);
+            stmt.setFetchSize(10000);
+            execute(stmt, params);
+            if (returnGeneratedKeys) {
+                rs = stmt.getGeneratedKeys();
+            } else {
+                rs = stmt.getResultSet();
+            }
+            
+            if (rs == null) {
+                return null;
+            }
+            if (inBatchMode()) {
+                return ResultSetWrapper.newInstance(null, stmt, rs);
+            } else {
+                return ResultSetWrapper.newInstance(con, stmt, rs);
+            }
+        } catch (SQLException e) {
+            closeResources(con, stmt, rs);
+            throw e;
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    protected final Connection getConnection() throws SQLException {
+        if (inBatchMode()) {
+            return batchConnectionTl.get();
+        } else {
+            Connection con = dataSource.getConnection();
+            
+            if (!con.getAutoCommit()) {
+                con.setAutoCommit(true);
+            }
+            return con;
+        }
+    }
+
+    
+
+
+
+
+
+
+    protected final void closeResources(Connection con, Statement stmt, ResultSet rs) {
+        if (inBatchMode()) {
+            DbUtility.close(null, stmt, rs);
+        } else {
+            DbUtility.close(con, stmt, rs);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    protected PreparedStatement execute(PreparedStatement stmt, Object[] params) throws SQLException {
+        for (int i = 0; params != null && i < params.length; i++) {
+            Object p = params[i];
+            
+            if (p instanceof StreamWrapper) {
+                StreamWrapper wrapper = (StreamWrapper) p;
+                stmt.setBinaryStream(i + 1, wrapper.getStream(), (int) wrapper.getSize());
+            } else {
+                stmt.setObject(i + 1, p);
+            }
+        }
+        stmt.execute();
+        return stmt;
+    }
+
+    
+
+
+
+
+    public abstract class RetryManager<T> {
+
+        public final T doTry() throws SQLException {
+            if (inBatchMode()) {
+                return call();
+            } else {
+                boolean sleepInterrupted = false;
+                int failures = 0;
+                SQLException lastException = null;
+                while (!sleepInterrupted && (blockOnConnectionLoss || failures <= RETRIES)) {
+                    try {
+                        return call();
+                    } catch (SQLException e) {
+                        lastException = e;
+                    }
+                    log.error("Failed to execute SQL (stacktrace on DEBUG log level)", lastException);
+                    log.debug("Failed to execute SQL", lastException);
+                    failures++;
+                    if (blockOnConnectionLoss || failures <= RETRIES) { 
+                        try {
+                            Thread.sleep(SLEEP_BETWEEN_RETRIES_MS);
+                        } catch (InterruptedException e1) {
+                            Thread.currentThread().interrupt();
+                            sleepInterrupted = true;
+                            log.error("Interrupted: canceling retry");
+                        }
+                    }
+                }
+                throw lastException;
+            }
+        }
+
+        protected abstract T call() throws SQLException;
+    }
+}

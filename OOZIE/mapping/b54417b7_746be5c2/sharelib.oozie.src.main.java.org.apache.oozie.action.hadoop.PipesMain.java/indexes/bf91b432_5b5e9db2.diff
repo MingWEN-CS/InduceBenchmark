@@ -1,0 +1,33 @@
+35,36c35,36
+<     protected RunningJob submitJob(JobConf jobConf) throws Exception {
+<         String value = jobConf.get("oozie.pipes.map");
+---
+>     protected void addActionConf(JobConf jobConf, Configuration actionConf) {
+>         String value = actionConf.get("oozie.pipes.map");
+41c41
+<         value = jobConf.get("oozie.pipes.reduce");
+---
+>         value = actionConf.get("oozie.pipes.reduce");
+46c46
+<         value = jobConf.get("oozie.pipes.inputformat");
+---
+>         value = actionConf.get("oozie.pipes.inputformat");
+51c51
+<         value = jobConf.get("oozie.pipes.partitioner");
+---
+>         value = actionConf.get("oozie.pipes.partitioner");
+55c55
+<         value = jobConf.get("oozie.pipes.writer");
+---
+>         value = actionConf.get("oozie.pipes.writer");
+60c60
+<         value = jobConf.get("oozie.pipes.program");
+---
+>         value = actionConf.get("oozie.pipes.program");
+67a68,73
+>         super.addActionConf(jobConf, actionConf);
+>     }
+> 
+>     @Override
+>     protected RunningJob submitJob(JobConf jobConf) throws Exception {
+> 

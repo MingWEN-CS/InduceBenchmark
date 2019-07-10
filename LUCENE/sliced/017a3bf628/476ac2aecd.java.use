@@ -1,0 +1,71 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+11	termsHashPerField	TermsHashPerField	param	112	define	org.apache.lucene.index.FreqProxTermsWriter.addField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	112	114
+10	fieldInfo	FieldInfo	param	112	define	org.apache.lucene.index.FreqProxTermsWriter.addField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	112	114
+11	termsHashPerField	TermsHashPerField	param	113	use	org.apache.lucene.index.FreqProxTermsWriter.addField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	112	114
+10	fieldInfo	FieldInfo	param	113	use	org.apache.lucene.index.FreqProxTermsWriter.addField	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	112	114
+13	termsHash	TermsHash	param	117	define	org.apache.lucene.index.FreqProxTermsWriter.finishDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	117	118
+40	fieldsToFlush	Map<String,TermsHashConsumerPerField>	param	41	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+42	state	SegmentWriteState	param	41	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+40	fieldsToFlush	Map<String,TermsHashConsumerPerField>	param	47	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+42	state	SegmentWriteState	param	59	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+42	state	SegmentWriteState	param	59	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+42	state	SegmentWriteState	param	85	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+38	allFields	List<FreqProxTermsWriterPerField>	variable	45	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+41	numAllFields	int	variable	54	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+39	consumer	FieldsConsumer	variable	59	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+43	success	boolean	variable	61	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+44	termsHash	TermsHash	variable	64	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+25	f	TermsHashConsumerPerField	variable	47	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+26	perField	FreqProxTermsWriterPerField	variable	48	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+31	fieldNumber	int	variable	78	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+30	fieldInfo	FieldInfo	variable	79	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+32	fieldWriter	FreqProxTermsWriterPerField	variable	81	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+35	perField	TermsHashPerField	variable	87	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+34	numPostings	int	variable	90	define	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+38	allFields	List<FreqProxTermsWriterPerField>	variable	45	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+26	perField	FreqProxTermsWriterPerField	variable	48	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+41	numAllFields	int	variable	54	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+39	consumer	FieldsConsumer	variable	59	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+43	success	boolean	variable	61	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+44	termsHash	TermsHash	variable	64	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+31	fieldNumber	int	variable	78	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+30	fieldInfo	FieldInfo	variable	79	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+32	fieldWriter	FreqProxTermsWriterPerField	variable	81	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+35	perField	TermsHashPerField	variable	87	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+34	numPostings	int	variable	90	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+43	success	boolean	variable	99	set	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+25	f	TermsHashConsumerPerField	variable	48	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+26	perField	FreqProxTermsWriterPerField	variable	49	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+38	allFields	List<FreqProxTermsWriterPerField>	variable	50	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+26	perField	FreqProxTermsWriterPerField	variable	50	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+38	allFields	List<FreqProxTermsWriterPerField>	variable	54	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+38	allFields	List<FreqProxTermsWriterPerField>	variable	57	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+31	fieldNumber	int	variable	78	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+41	numAllFields	int	variable	78	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+38	allFields	List<FreqProxTermsWriterPerField>	variable	79	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+31	fieldNumber	int	variable	79	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+38	allFields	List<FreqProxTermsWriterPerField>	variable	81	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+31	fieldNumber	int	variable	81	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+32	fieldWriter	FreqProxTermsWriterPerField	variable	85	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+30	fieldInfo	FieldInfo	variable	85	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+33	name		variable	85	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+39	consumer	FieldsConsumer	variable	85	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+32	fieldWriter	FreqProxTermsWriterPerField	variable	87	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+37	termsHashPerField		variable	87	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+44	termsHash	TermsHash	variable	88	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+44	termsHash	TermsHash	variable	88	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+35	perField	TermsHashPerField	variable	88	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+36	termsHash		variable	88	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+36	termsHash		variable	89	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+35	perField	TermsHashPerField	variable	89	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+36	termsHash		variable	89	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+35	perField	TermsHashPerField	variable	90	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+35	perField	TermsHashPerField	variable	91	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+35	perField	TermsHashPerField	variable	92	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+34	numPostings	int	variable	92	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+32	fieldWriter	FreqProxTermsWriterPerField	variable	93	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+44	termsHash	TermsHash	variable	96	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+44	termsHash	TermsHash	variable	97	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+43	success	boolean	variable	101	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+39	consumer	FieldsConsumer	variable	102	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104
+39	consumer	FieldsConsumer	variable	104	use	org.apache.lucene.index.FreqProxTermsWriter.flush	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/017a3bf628/476ac2aecd.java	41	104

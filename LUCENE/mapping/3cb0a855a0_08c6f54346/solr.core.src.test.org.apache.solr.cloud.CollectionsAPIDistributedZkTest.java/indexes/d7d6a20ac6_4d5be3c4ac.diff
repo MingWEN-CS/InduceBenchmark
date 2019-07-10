@@ -1,0 +1,16 @@
+387c387
+<     String dataDir = createTempDir().getAbsolutePath();
+---
+>     String dataDir = createTempDir().toFile().getAbsolutePath();
+577c577
+<     String dataDir = createTempDir().getAbsolutePath();
+---
+>     String dataDir = createTempDir().toFile().getAbsolutePath();
+588c588
+<     dataDir = createTempDir().getAbsolutePath();
+---
+>     dataDir = createTempDir().toFile().getAbsolutePath();
+637c637
+<     String dataDir = createTempDir().getAbsolutePath();
+---
+>     String dataDir = createTempDir().toFile().getAbsolutePath();

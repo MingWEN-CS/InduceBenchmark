@@ -1,0 +1,23 @@
+23a24
+> import java.io.InputStream;
+514c515,525
+<         inReader.close();
+---
+>         
+>         
+>         
+>         
+>         
+>         
+>         
+>         InputStream stdout = process.getInputStream();
+>         synchronized (stdout) {
+>           inReader.close();
+>         }
+527c538,541
+<         errReader.close();
+---
+>         InputStream stderr = process.getErrorStream();
+>         synchronized (stderr) {
+>           errReader.close();
+>         }

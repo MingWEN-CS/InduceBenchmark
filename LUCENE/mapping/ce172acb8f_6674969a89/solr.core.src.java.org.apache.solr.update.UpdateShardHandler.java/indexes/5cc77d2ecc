@@ -1,0 +1,110 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.update;
+
+import java.lang.invoke.MethodHandles;
+import java.util.concurrent.ExecutorService;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.solr.client.solrj.impl.HttpClientUtil;
+import org.apache.solr.cloud.RecoveryStrategy;
+import org.apache.solr.common.SolrException;
+import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.util.ExecutorUtil;
+import org.apache.solr.common.util.SolrjNamedThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class UpdateShardHandler {
+  
+  private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+  
+
+
+
+
+
+
+  private ExecutorService updateExecutor = ExecutorUtil.newMDCAwareCachedThreadPool(
+      new SolrjNamedThreadFactory("updateExecutor"));
+  
+  private ExecutorService recoveryExecutor = ExecutorUtil.newMDCAwareCachedThreadPool(
+      new SolrjNamedThreadFactory("recoveryExecutor"));
+  
+  private final CloseableHttpClient client;
+
+  private final PoolingHttpClientConnectionManager clientConnectionManager;
+
+  public UpdateShardHandler(UpdateShardHandlerConfig cfg) {
+    clientConnectionManager = new PoolingHttpClientConnectionManager(HttpClientUtil.getSchemaRegisteryProvider().getSchemaRegistry());
+    if (cfg != null ) {
+      clientConnectionManager.setMaxTotal(cfg.getMaxUpdateConnections());
+      clientConnectionManager.setDefaultMaxPerRoute(cfg.getMaxUpdateConnectionsPerHost());
+    }
+
+    ModifiableSolrParams clientParams = new ModifiableSolrParams();
+    log.info("Creating UpdateShardHandler HTTP client with params: {}", clientParams);
+    client = HttpClientUtil.createClient(clientParams, clientConnectionManager);
+  }
+  
+  public HttpClient getHttpClient() {
+    return client;
+  }
+  
+  
+
+
+
+
+
+  public ExecutorService getUpdateExecutor() {
+    return updateExecutor;
+  }
+  
+
+  public PoolingHttpClientConnectionManager getConnectionManager() {
+    return clientConnectionManager;
+  }
+
+  
+
+
+
+
+
+
+  public ExecutorService getRecoveryExecutor() {
+    return recoveryExecutor;
+  }
+
+  public void close() {
+    try {
+      
+      ExecutorUtil.shutdownWithInterruptAndAwaitTermination(updateExecutor);
+      ExecutorUtil.shutdownAndAwaitTermination(recoveryExecutor);
+    } catch (Exception e) {
+      SolrException.log(log, e);
+    } finally {
+      HttpClientUtil.close(client);
+      clientConnectionManager.close();
+    }
+  }
+
+}

@@ -1,0 +1,141 @@
+24a25
+> import org.apache.hadoop.security.authentication.util.ZKSignerSecretProvider;
+76a78,123
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+118c165,168
+<   public static final String SIGNER_SECRET_PROVIDER_CLASS =
+---
+> 
+> 
+> 
+>   public static final String SIGNER_SECRET_PROVIDER =
+127,128c177,178
+<   public static final String SIGNATURE_PROVIDER_ATTRIBUTE =
+<       "org.apache.hadoop.security.authentication.util.SignerSecretProvider";
+---
+>   public static final String SIGNER_SECRET_PROVIDER_ATTRIBUTE =
+>       "signer.secret.provider.object";
+187c237
+<         getAttribute(SIGNATURE_PROVIDER_ATTRIBUTE);
+---
+>         getAttribute(SIGNER_SECRET_PROVIDER_ATTRIBUTE);
+189,212c239,246
+<       String signerSecretProviderClassName =
+<           config.getProperty(configPrefix + SIGNER_SECRET_PROVIDER_CLASS, null);
+<       if (signerSecretProviderClassName == null) {
+<         String signatureSecret =
+<             config.getProperty(configPrefix + SIGNATURE_SECRET, null);
+<         if (signatureSecret != null) {
+<           secretProvider = new StringSignerSecretProvider(signatureSecret);
+<         } else {
+<           secretProvider = new RandomSignerSecretProvider();
+<           randomSecret = true;
+<         }
+<       } else {
+<         try {
+<           Class<?> klass = Thread.currentThread().getContextClassLoader().
+<               loadClass(signerSecretProviderClassName);
+<           secretProvider = (SignerSecretProvider) klass.newInstance();
+<           customSecretProvider = true;
+<         } catch (ClassNotFoundException ex) {
+<           throw new ServletException(ex);
+<         } catch (InstantiationException ex) {
+<           throw new ServletException(ex);
+<         } catch (IllegalAccessException ex) {
+<           throw new ServletException(ex);
+<         }
+---
+>       Class<? extends SignerSecretProvider> providerClass
+>               = getProviderClass(config);
+>       try {
+>         secretProvider = providerClass.newInstance();
+>       } catch (InstantiationException ex) {
+>         throw new ServletException(ex);
+>       } catch (IllegalAccessException ex) {
+>         throw new ServletException(ex);
+215c249
+<         secretProvider.init(config, validity);
+---
+>         secretProvider.init(config, filterConfig.getServletContext(), validity);
+227a262,297
+>   @SuppressWarnings("unchecked")
+>   private Class<? extends SignerSecretProvider> getProviderClass(Properties config)
+>           throws ServletException {
+>     String providerClassName;
+>     String signerSecretProviderName
+>             = config.getProperty(SIGNER_SECRET_PROVIDER, null);
+>     
+>     if (signerSecretProviderName == null) {
+>       String signatureSecret = config.getProperty(SIGNATURE_SECRET, null);
+>       if (signatureSecret != null) {
+>         providerClassName = StringSignerSecretProvider.class.getName();
+>       } else {
+>         providerClassName = RandomSignerSecretProvider.class.getName();
+>         randomSecret = true;
+>       }
+>     } else {
+>       if ("random".equals(signerSecretProviderName)) {
+>         providerClassName = RandomSignerSecretProvider.class.getName();
+>         randomSecret = true;
+>       } else if ("string".equals(signerSecretProviderName)) {
+>         providerClassName = StringSignerSecretProvider.class.getName();
+>       } else if ("zookeeper".equals(signerSecretProviderName)) {
+>         providerClassName = ZKSignerSecretProvider.class.getName();
+>       } else {
+>         providerClassName = signerSecretProviderName;
+>         customSecretProvider = true;
+>       }
+>     }
+>     try {
+>       return (Class<? extends SignerSecretProvider>) Thread.currentThread().
+>               getContextClassLoader().loadClass(providerClassName);
+>     } catch (ClassNotFoundException ex) {
+>       throw new ServletException(ex);
+>     }
+>   }
+> 

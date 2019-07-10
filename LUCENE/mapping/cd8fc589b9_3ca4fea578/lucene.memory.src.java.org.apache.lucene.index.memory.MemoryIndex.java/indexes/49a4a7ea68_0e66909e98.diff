@@ -1,0 +1,19 @@
+992c992
+<       public PostingsEnum postings(Bits liveDocs, PostingsEnum reuse, int flags) {
+---
+>       public PostingsEnum postings(PostingsEnum reuse, int flags) {
+997c997
+<         return ((MemoryPostingsEnum) reuse).reset(liveDocs, info.sliceArray.start[ord], info.sliceArray.end[ord], info.sliceArray.freq[ord]);
+---
+>         return ((MemoryPostingsEnum) reuse).reset(info.sliceArray.start[ord], info.sliceArray.end[ord], info.sliceArray.freq[ord]);
+1019d1018
+<       private Bits liveDocs;
+1033,1034c1032
+<       public PostingsEnum reset(Bits liveDocs, int start, int end, int freq) {
+<         this.liveDocs = liveDocs;
+---
+>       public PostingsEnum reset(int start, int end, int freq) {
+1052c1050
+<         if (hasNext && (liveDocs == null || liveDocs.get(0))) {
+---
+>         if (hasNext) {

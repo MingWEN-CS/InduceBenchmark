@@ -1,0 +1,15 @@
+21a22
+> import org.apache.hadoop.io.IOUtils;
+269,271c270,277
+<     BufferedFSInputStream bis = new BufferedFSInputStream(
+<         new RawLocalFileSystem().new LocalFSFileInputStream(path), 1024);
+<     assertNotNull(bis.getFileDescriptor());
+---
+>     BufferedFSInputStream bis = null;
+>     try {
+>       bis = new BufferedFSInputStream(new RawLocalFileSystem()
+>         .new LocalFSFileInputStream(path), 1024);
+>       assertNotNull(bis.getFileDescriptor());
+>     } finally {
+>       IOUtils.cleanup(null, bis);
+>     }

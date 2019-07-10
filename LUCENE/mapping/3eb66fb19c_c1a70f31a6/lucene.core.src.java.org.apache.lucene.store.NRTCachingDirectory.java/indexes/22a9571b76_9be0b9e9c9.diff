@@ -1,0 +1,7 @@
+104,107c104
+<       if (!files.add(f)) {
+<         throw new IllegalStateException("file: " + in + " appears both in delegate and in cache: " +
+<                                         "cache=" + Arrays.toString(cache.listAll()) + ",delegate=" + Arrays.toString(in.listAll()));
+<       }
+---
+>       files.add(f);

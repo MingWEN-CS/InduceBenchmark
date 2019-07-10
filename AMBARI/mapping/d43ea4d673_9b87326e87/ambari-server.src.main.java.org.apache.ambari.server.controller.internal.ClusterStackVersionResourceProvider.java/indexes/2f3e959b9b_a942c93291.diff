@@ -1,0 +1,108 @@
+22a23
+> import java.util.Collection;
+71a73
+> import org.apache.ambari.server.state.Clusters;
+73a76
+> import org.apache.ambari.server.state.MaintenanceState;
+303,304d305
+<     Map<String, Host> hostsForCluster;
+< 
+306a308
+> 
+308,309c310,311
+<       cluster = managementController.getClusters().getCluster(clName);
+<       hostsForCluster = managementController.getClusters().getHostsForCluster(clName);
+---
+>       Clusters clusters = managementController.getClusters();
+>       cluster = clusters.getCluster(clName);
+313a316,318
+>     
+>     List<Host> hosts = getHostsForStackDistribution(cluster);
+> 
+353c358
+<     Iterator<Host> hostsForClusterIter = hostsForCluster.values().iterator();
+---
+>     Iterator<Host> hostIterator = hosts.iterator();
+359c364
+<     int hostCount = hostsForCluster.size();
+---
+>     int hostCount = hosts.size();
+397,398c402,403
+<       for (int i = 0; i < maxTasks && hostsForClusterIter.hasNext(); i++) {
+<         Host host = hostsForClusterIter.next();
+---
+>       for (int i = 0; i < maxTasks && hostIterator.hasNext(); i++) {
+>         Host host = hostIterator.next();
+407a413
+> 
+411c417
+<       ClusterVersionEntity existingCSVer = clusterVersionDAO.findByClusterAndStackAndVersion(
+---
+>       ClusterVersionEntity clusterVersionEntity = clusterVersionDAO.findByClusterAndStackAndVersion(
+414c420
+<       if (existingCSVer == null) {
+---
+>       if (clusterVersionEntity == null) {
+420c426,427
+<           existingCSVer = clusterVersionDAO.findByClusterAndStackAndVersion(
+---
+> 
+>           clusterVersionEntity = clusterVersionDAO.findByClusterAndStackAndVersion(
+435c442
+<       cluster.inferHostVersions(existingCSVer);
+---
+>       cluster.transitionHostsToInstalling(clusterVersionEntity);
+440c447,448
+<         transitionHostVersionToInstalled(host, cluster, existingCSVer.getRepositoryVersion().getVersion());
+---
+>         transitionHostVersionToInstalled(host, cluster,
+>             clusterVersionEntity.getRepositoryVersion().getVersion());
+452,456c460,462
+<                                                     Cluster cluster, AmbariManagementController managementController,
+<                                                     AmbariMetaInfo ami,
+<                                                     final StackId stackId,
+<                                                     Map<String, List<RepositoryEntity>> perOsRepos,
+<                                                     Stage stage, Host host) throws SystemException {
+---
+>       Cluster cluster, AmbariManagementController managementController, AmbariMetaInfo ami,
+>       final StackId stackId, Map<String, List<RepositoryEntity>> perOsRepos, Stage stage, Host host)
+>           throws SystemException {
+463a470
+> 
+488a496
+> 
+520,521c528,529
+<   private boolean hostHasVersionableComponents(Cluster cluster, AmbariMetaInfo ami,
+<                                                StackId stackId, Host host) throws SystemException {
+---
+>   private boolean hostHasVersionableComponents(Cluster cluster, AmbariMetaInfo ami, StackId stackId,
+>       Host host) throws SystemException {
+546,547c554
+<   private void transitionHostVersionToInstalled(Host host, Cluster cluster,
+<                                                 String version) {
+---
+>   private void transitionHostVersionToInstalled(Host host, Cluster cluster, String version) {
+693a701,723
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private List<Host> getHostsForStackDistribution(Cluster cluster) {
+>     Collection<Host> hosts = cluster.getHosts();
+>     List<Host> healthyHosts = new ArrayList<>(hosts.size());
+>     for (Host host : hosts) {
+>       if (host.getMaintenanceState(cluster.getClusterId()) == MaintenanceState.OFF) {
+>         healthyHosts.add(host);
+>       }
+>     }
+> 
+>     return healthyHosts;
+>   }

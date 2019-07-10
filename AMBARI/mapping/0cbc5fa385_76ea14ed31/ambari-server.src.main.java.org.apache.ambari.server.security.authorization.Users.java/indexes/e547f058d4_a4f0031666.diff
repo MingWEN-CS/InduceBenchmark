@@ -1,0 +1,10 @@
+285,289c285,287
+<     
+<     userName = StringUtils.lowerCase(userName);
+< 
+<     if (getUser(userName, userType) != null) {
+<       throw new AmbariException("User " + userName + " already exists");
+---
+>     User existingUser = getUser(userName, userType);
+>     if (existingUser != null) {
+>       throw new AmbariException("User " + existingUser.getUserName() + " already exists");

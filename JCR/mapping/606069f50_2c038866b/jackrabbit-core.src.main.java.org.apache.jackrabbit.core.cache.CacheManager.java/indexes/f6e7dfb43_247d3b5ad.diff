@@ -1,0 +1,10 @@
+159c159
+<         if (log.isDebugEnabled()) {
+---
+>         if (log.isInfoEnabled()) {
+165c165
+<                 log.debug(cache.getCacheInfoAsString());
+---
+>                 log.info(cache.getCacheInfoAsString());
+169a170
+> 

@@ -1,0 +1,63 @@
+267c267
+<     RequestStageContainer requestStages = doUpdateResources(null, request, predicate);
+---
+>     RequestStageContainer requestStages = doUpdateResources(null, request, predicate, false);
+346c346
+<       requestStages = doUpdateResources(null, installRequest, installPredicate);
+---
+>       requestStages = doUpdateResources(null, installRequest, installPredicate, true);
+365c365
+<       doUpdateResources(requestStages, startRequest, startPredicate);
+---
+>       doUpdateResources(requestStages, startRequest, startPredicate, true);
+619,620c619,637
+<   private RequestStageContainer doUpdateResources(final RequestStageContainer stages, final Request request, Predicate predicate)
+<       throws UnsupportedPropertyException, SystemException, NoSuchResourceException, NoSuchParentResourceException {
+---
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private RequestStageContainer doUpdateResources(final RequestStageContainer stages, final Request request,
+>                                                   Predicate predicate, boolean performQueryEvaluation)
+>                                                   throws UnsupportedPropertyException,
+>                                                          SystemException,
+>                                                          NoSuchResourceException,
+>                                                          NoSuchParentResourceException {
+637a655,656
+>       if (! performQueryEvaluation || predicate.evaluate(queryResource)) {
+>         Map<String, Object> updateRequestProperties = new HashMap<String, Object>();
+639,642c658,659
+<       Map<String, Object> updateRequestProperties = new HashMap<String, Object>();
+< 
+<       
+<       updateRequestProperties.putAll(PropertyHelper.getProperties(queryResource));
+---
+>         
+>         updateRequestProperties.putAll(PropertyHelper.getProperties(queryResource));
+644,647c661,666
+<       
+<       
+<       if (request.getProperties() != null && request.getProperties().size() != 0) {
+<         updateRequestProperties.putAll(request.getProperties().iterator().next());
+---
+>         
+>         
+>         if (request.getProperties() != null && request.getProperties().size() != 0) {
+>           updateRequestProperties.putAll(request.getProperties().iterator().next());
+>         }
+>         requests.add(getRequest(updateRequestProperties));
+649,650d667
+<       requests.add(getRequest(updateRequestProperties));
+< 
+664a682
+> 

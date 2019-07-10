@@ -1,0 +1,144 @@
+1a2,144
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> package org.apache.lucene.document;
+> 
+> import java.io.IOException;
+> import java.util.Objects;
+> 
+> import org.apache.lucene.index.DocValues;
+> import org.apache.lucene.index.IndexReader;
+> import org.apache.lucene.index.LeafReader;
+> import org.apache.lucene.index.LeafReaderContext;
+> import org.apache.lucene.index.NumericDocValues;
+> import org.apache.lucene.index.SortedNumericDocValues;
+> import org.apache.lucene.search.ConstantScoreScorer;
+> import org.apache.lucene.search.ConstantScoreWeight;
+> import org.apache.lucene.search.FieldValueQuery;
+> import org.apache.lucene.search.IndexSearcher;
+> import org.apache.lucene.search.Query;
+> import org.apache.lucene.search.Scorer;
+> import org.apache.lucene.search.TwoPhaseIterator;
+> import org.apache.lucene.search.Weight;
+> 
+> abstract class SortedNumericDocValuesRangeQuery extends Query {
+> 
+>   private final String field;
+>   private final long lowerValue;
+>   private final long upperValue;
+> 
+>   SortedNumericDocValuesRangeQuery(String field, long lowerValue, long upperValue) {
+>     this.field = Objects.requireNonNull(field);
+>     this.lowerValue = lowerValue;
+>     this.upperValue = upperValue;
+>   }
+> 
+>   @Override
+>   public boolean equals(Object obj) {
+>     if (sameClassAs(obj) == false) {
+>       return false;
+>     }
+>     SortedNumericDocValuesRangeQuery that = (SortedNumericDocValuesRangeQuery) obj;
+>     return Objects.equals(field, that.field)
+>         && lowerValue == that.lowerValue
+>         && upperValue == that.upperValue;
+>   }
+> 
+>   @Override
+>   public int hashCode() {
+>     int h = classHash();
+>     h = 31 * h + field.hashCode();
+>     h = 31 * h + Long.hashCode(lowerValue);
+>     h = 31 * h + Long.hashCode(upperValue);
+>     return h;
+>   }
+> 
+>   @Override
+>   public String toString(String field) {
+>     StringBuilder b = new StringBuilder();
+>     if (this.field.equals(field) == false) {
+>       b.append(this.field).append(":");
+>     }
+>     return b
+>         .append("[")
+>         .append(lowerValue)
+>         .append(" TO ")
+>         .append(upperValue)
+>         .append("]")
+>         .toString();
+>   }
+> 
+>   @Override
+>   public Query rewrite(IndexReader reader) throws IOException {
+>     if (lowerValue == Long.MIN_VALUE && upperValue == Long.MAX_VALUE) {
+>       return new FieldValueQuery(field);
+>     }
+>     return super.rewrite(reader);
+>   }
+> 
+>   abstract SortedNumericDocValues getValues(LeafReader reader, String field) throws IOException;
+> 
+>   @Override
+>   public Weight createWeight(IndexSearcher searcher, boolean needsScores, float boost) throws IOException {
+>     return new ConstantScoreWeight(this, boost) {
+>       @Override
+>       public Scorer scorer(LeafReaderContext context) throws IOException {
+>         SortedNumericDocValues values = getValues(context.reader(), field);
+>         if (values == null) {
+>           return null;
+>         }
+>         final NumericDocValues singleton = DocValues.unwrapSingleton(values);
+>         final TwoPhaseIterator iterator;
+>         if (singleton != null) {
+>           iterator = new TwoPhaseIterator(singleton) {
+>             @Override
+>             public boolean matches() throws IOException {
+>               final long value = singleton.longValue();
+>               return value >= lowerValue && value <= upperValue;
+>             }
+> 
+>             @Override
+>             public float matchCost() {
+>               return 2; 
+>             }
+>           };
+>         } else {
+>           iterator = new TwoPhaseIterator(values) {
+>             @Override
+>             public boolean matches() throws IOException {
+>               for (int i = 0, count = values.docValueCount(); i < count; ++i) {
+>                 final long value = values.nextValue();
+>                 if (value < lowerValue) {
+>                   continue;
+>                 }
+>                 
+>                 return value <= upperValue;
+>               }
+>               return false; 
+>             }
+> 
+>             @Override
+>             public float matchCost() {
+>               return 2; 
+>             }
+>           };
+>         }
+>         return new ConstantScoreScorer(this, score(), iterator);
+>       }
+>     };
+>   }
+> 
+> }

@@ -1,0 +1,29 @@
+56a57,84
+> 
+> 
+> 
+>   public static final int WINDOWS_MAX_SHELL_LENGHT = 8191;
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static void checkWindowsCommandLineLength(String...commands)
+>       throws IOException {
+>     int len = 0;
+>     for (String s: commands) {
+>       len += s.length();
+>     }
+>     if (len > WINDOWS_MAX_SHELL_LENGHT) {
+>       throw new IOException(String.format(
+>           "The command line has a length of %d exceeds maximum allowed length of %d. " +
+>           "Command starts with: %s",
+>           len, WINDOWS_MAX_SHELL_LENGHT,
+>           StringUtils.join("", commands).substring(0, 100)));
+>     }
+>   }
+> 
+>   

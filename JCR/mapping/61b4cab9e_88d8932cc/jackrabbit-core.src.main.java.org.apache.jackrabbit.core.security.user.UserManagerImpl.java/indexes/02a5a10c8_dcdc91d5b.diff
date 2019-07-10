@@ -1,0 +1,17 @@
+19d18
+< import org.apache.jackrabbit.api.JackrabbitRepository;
+1158,1171d1156
+<     public static boolean includesAdmin(NodeImpl node) throws RepositoryException {
+<         SessionImpl s = (SessionImpl) node.getSession();
+<         if (s.getRepository().getDescriptorValue(JackrabbitRepository.OPTION_USER_MANAGEMENT_SUPPORTED).getBoolean()) {
+<             UserManager uMgr = s.getUserManager();
+<             if (uMgr instanceof UserManagerImpl) {
+<                 UserManagerImpl uMgrImpl = (UserManagerImpl) uMgr;
+<                 AuthorizableImpl admin = (AuthorizableImpl) uMgrImpl.getAuthorizable(uMgrImpl.adminId);
+<                 return Text.isDescendantOrEqual(node.getPath(), admin.getNode().getPath());
+<             }
+<         }
+<         return false;
+<     }
+< 
+<     

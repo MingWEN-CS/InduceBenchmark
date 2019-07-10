@@ -1,0 +1,10 @@
+29a30
+> import org.apache.jackrabbit.core.cluster.ClusterException;
+570c571,575
+<             eventChannel.updateCreated(this);
+---
+>             try {
+>                 eventChannel.updateCreated(this);
+>             } catch (ClusterException e) {
+>                 throw new ItemStateException(e.getMessage(), e);
+>             }

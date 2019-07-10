@@ -1,0 +1,14 @@
+33d32
+< import org.springframework.security.authentication.DisabledException;
+89c88
+<         throw e;
+---
+>         throw new InvalidUsernamePasswordCombinationException(e);
+201c200
+<       throw new UsernameNotFoundException("Username " + userName + " not found");
+---
+>       throw new InvalidUsernamePasswordCombinationException();
+207c206
+<       throw new DisabledException("Username " + userName + " is disabled");
+---
+>       throw new InvalidUsernamePasswordCombinationException();

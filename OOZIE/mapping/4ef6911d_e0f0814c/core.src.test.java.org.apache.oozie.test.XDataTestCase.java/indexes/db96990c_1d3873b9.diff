@@ -1,0 +1,31 @@
+45a46,47
+> import org.apache.oozie.client.CoordinatorJob.Execution;
+> import org.apache.oozie.client.CoordinatorJob.Timeunit;
+51,52d52
+< import org.apache.oozie.client.CoordinatorJob.Execution;
+< import org.apache.oozie.client.CoordinatorJob.Timeunit;
+70a71
+> import org.apache.oozie.service.UUIDService.ApplicationType;
+73d73
+< import org.apache.oozie.service.UUIDService.ApplicationType;
+728a729
+>     @Deprecated
+741c742,744
+<     protected void addRecordToSLAEventTable(String slaId, String appName, SLAEvent.Status status, Date today) throws Exception {
+---
+>     @Deprecated
+>     protected void addRecordToSLAEventTable(String slaId, String appName, SLAEvent.Status status, Date today)
+>             throws Exception {
+776,777d778
+< 
+< 
+1465a1467,1475
+> 
+>     protected void modifyCoordForRunning(CoordinatorJobBean coord) throws Exception {
+>         String wfXml = IOUtils.getResourceAsString("wf-credentials.xml", -1);
+>         writeToFile(wfXml, getFsTestCaseDir(), "workflow.xml");
+>         String coordXml = coord.getJobXml();
+>         coord.setJobXml(coordXml.replace("hdfs:
+>         Services.get().get(JPAService.class).execute(new CoordJobUpdateJPAExecutor(coord));
+>     }
+> 

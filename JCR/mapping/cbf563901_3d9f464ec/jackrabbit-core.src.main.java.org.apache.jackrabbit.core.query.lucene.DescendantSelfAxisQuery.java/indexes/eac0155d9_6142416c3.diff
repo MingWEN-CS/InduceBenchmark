@@ -1,0 +1,130 @@
+27c27,28
+< import org.apache.lucene.search.MatchAllDocsQuery;
+---
+> import org.apache.lucene.search.Sort;
+> import org.apache.jackrabbit.core.SessionImpl;
+28a30,31
+> import javax.jcr.Node;
+> import javax.jcr.RepositoryException;
+31a35,37
+> import java.util.Map;
+> import java.util.TreeMap;
+> import java.util.Iterator;
+38c44
+< class DescendantSelfAxisQuery extends Query {
+---
+> class DescendantSelfAxisQuery extends Query implements JackrabbitQuery {
+139a146,156
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+196a214,314
+>     public QueryHits execute(final JackrabbitIndexSearcher searcher,
+>                              final SessionImpl session,
+>                              final Sort sort) throws IOException {
+>         if (sort.getSort().length == 0 && subQueryMatchesAll()) {
+>             
+>             Map startingPoints = new TreeMap();
+>             QueryHits result = searcher.execute(getContextQuery(), sort);
+>             try {
+>                 
+>                 
+>                 
+>                 for (int i = 2; i <= getMinLevels(); i++) {
+>                     result = new ChildNodesQueryHits(result, session);
+>                 }
+> 
+>                 ScoreNode sn;
+>                 try {
+>                     while ((sn = result.nextScoreNode()) != null) {
+>                         Node node = session.getNodeById(sn.getNodeId());
+>                         startingPoints.put(node.getPath(), sn);
+>                     }
+>                 } catch (RepositoryException e) {
+>                     IOException ex = new IOException(e.getMessage());
+>                     ex.initCause(e);
+>                     throw ex;
+>                 }
+>             } finally {
+>                 result.close();
+>             }
+> 
+>             
+>             String previousPath = null;
+>             for (Iterator it = startingPoints.keySet().iterator(); it.hasNext(); ) {
+>                 String path = (String) it.next();
+>                 
+>                 
+>                 if (previousPath != null && path.startsWith(previousPath)) {
+>                     it.remove();
+>                 } else {
+>                     previousPath = path;
+>                 }
+>             }
+> 
+>             final Iterator scoreNodes = startingPoints.values().iterator();
+>             return new AbstractQueryHits() {
+> 
+>                 private NodeTraversingQueryHits currentTraversal;
+> 
+>                 {
+>                     fetchNextTraversal();
+>                 }
+> 
+>                 public void close() throws IOException {
+>                     if (currentTraversal != null) {
+>                         currentTraversal.close();
+>                     }
+>                 }
+> 
+>                 public ScoreNode nextScoreNode() throws IOException {
+>                     while (currentTraversal != null) {
+>                         ScoreNode sn = currentTraversal.nextScoreNode();
+>                         if (sn != null) {
+>                             return sn;
+>                         } else {
+>                             fetchNextTraversal();
+>                         }
+>                     }
+>                     
+>                     return null;
+>                 }
+> 
+>                 private void fetchNextTraversal() throws IOException {
+>                     if (currentTraversal != null) {
+>                         currentTraversal.close();
+>                     }
+>                     if (scoreNodes.hasNext()) {
+>                         ScoreNode sn = (ScoreNode) scoreNodes.next();
+>                         try {
+>                             Node node = session.getNodeById(sn.getNodeId());
+>                             currentTraversal = new NodeTraversingQueryHits(node,
+>                                     getMinLevels() == 0);
+>                         } catch (RepositoryException e) {
+>                             IOException ex = new IOException(e.getMessage());
+>                             ex.initCause(e);
+>                             throw ex;
+>                         }
+>                     } else {
+>                         currentTraversal = null;
+>                     }
+>                 }
+>             };
+>         } else {
+>             return null;
+>         }
+>     }
+> 
+>     
+> 
+>     
+> 
+> 

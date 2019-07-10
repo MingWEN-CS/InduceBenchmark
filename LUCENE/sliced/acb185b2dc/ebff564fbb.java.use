@@ -1,0 +1,732 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+65	cmd	AddUpdateCommand	param	304	define	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+67	deletesAfter	List<UpdateLog.DBQ>	param	304	define	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+55	e	Exception	param	315	define	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+65	cmd	AddUpdateCommand	param	306	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+67	deletesAfter	List<UpdateLog.DBQ>	param	307	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+67	deletesAfter	List<UpdateLog.DBQ>	param	308	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+67	deletesAfter	List<UpdateLog.DBQ>	param	309	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+65	cmd	AddUpdateCommand	param	311	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+55	e	Exception	param	316	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+65	cmd	AddUpdateCommand	param	320	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+65	cmd	AddUpdateCommand	param	328	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+65	cmd	AddUpdateCommand	param	330	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+65	cmd	AddUpdateCommand	param	336	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+66	dbqList	List<Query>	variable	308	define	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+68	idTerm	Term	variable	320	define	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+69	iw	RefCounted<IndexWriter>	variable	322	define	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+70	writer	IndexWriter	variable	324	define	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+56	dbq	UpdateLog.DBQ	variable	309	define	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+60	tmpDel	DeleteUpdateCommand	variable	311	define	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+64	q	Query	variable	333	define	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+66	dbqList	List<Query>	variable	308	set	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+60	tmpDel	DeleteUpdateCommand	variable	311	set	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+60	tmpDel	DeleteUpdateCommand	variable	312	set	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+60	tmpDel	DeleteUpdateCommand	variable	313	set	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+68	idTerm	Term	variable	320	set	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+69	iw	RefCounted<IndexWriter>	variable	322	set	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+70	writer	IndexWriter	variable	324	set	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+306	DirectUpdateHandler2.log	Logger	variable	306	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+59	req		variable	311	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+58	query		variable	312	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+56	dbq	UpdateLog.DBQ	variable	312	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+57	q		variable	312	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+61	version		variable	313	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+56	dbq	UpdateLog.DBQ	variable	313	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+61	version		variable	313	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+66	dbqList	List<Query>	variable	314	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+60	tmpDel	DeleteUpdateCommand	variable	314	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+306	DirectUpdateHandler2.log	Logger	variable	316	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+56	dbq	UpdateLog.DBQ	variable	316	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	322	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+69	iw	RefCounted<IndexWriter>	variable	324	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	327	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+70	writer	IndexWriter	variable	328	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+68	idTerm	Term	variable	328	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+41	ulog		variable	330	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+41	ulog		variable	331	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+66	dbqList	List<Query>	variable	333	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+70	writer	IndexWriter	variable	334	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+64	q	Query	variable	334	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+41	ulog		variable	336	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+41	ulog		variable	336	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+69	iw	RefCounted<IndexWriter>	variable	339	use	org.apache.solr.update.DirectUpdateHandler2.addAndDelete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	304	339
+80	cmd	AddUpdateCommand	param	166	define	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+72	e	SolrException	param	169	define	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+78	iae	IllegalArgumentException	param	171	define	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+79	t	RuntimeException	param	178	define	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+80	cmd	AddUpdateCommand	param	168	use	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+72	e	SolrException	param	170	use	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+78	iae	IllegalArgumentException	param	174	use	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+78	iae	IllegalArgumentException	param	175	use	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+80	cmd	AddUpdateCommand	param	177	use	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+78	iae	IllegalArgumentException	param	177	use	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+80	cmd	AddUpdateCommand	param	181	use	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+79	t	RuntimeException	param	181	use	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+77	ROOT		variable	173	use	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+77	ROOT		variable	180	use	org.apache.solr.update.DirectUpdateHandler2.addDoc	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	166	183
+86	cmd	AddUpdateCommand	param	191	define	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+86	cmd	AddUpdateCommand	param	199	set	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+86	cmd	AddUpdateCommand	param	202	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+86	cmd	AddUpdateCommand	param	206	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+86	cmd	AddUpdateCommand	param	207	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+86	cmd	AddUpdateCommand	param	211	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+86	cmd	AddUpdateCommand	param	213	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+86	cmd	AddUpdateCommand	param	216	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+86	cmd	AddUpdateCommand	param	219	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+86	cmd	AddUpdateCommand	param	222	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+86	cmd	AddUpdateCommand	param	225	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+91	rc	int	variable	192	define	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+88	deletesAfter	List<UpdateLog.DBQ>	variable	205	define	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+91	rc	int	variable	192	set	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+88	deletesAfter	List<UpdateLog.DBQ>	variable	205	set	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+88	deletesAfter	List<UpdateLog.DBQ>	variable	207	set	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+91	rc	int	variable	229	set	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+294	DirectUpdateHandler2.addCommands	LongAdder	variable	194	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+295	DirectUpdateHandler2.addCommandsCumulative	LongAdder	variable	195	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+89	idField		variable	198	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+90	overwrite		variable	199	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+90	overwrite		variable	202	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+41	ulog		variable	206	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+61	version		variable	206	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+41	ulog		variable	207	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+61	version		variable	207	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+88	deletesAfter	List<UpdateLog.DBQ>	variable	210	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+88	deletesAfter	List<UpdateLog.DBQ>	variable	211	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+299	DirectUpdateHandler2.commitWithinSoftCommit	boolean	variable	220	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	221	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	222	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+87	commitWithin		variable	222	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	224	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	225	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+87	commitWithin		variable	225	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+91	rc	int	variable	231	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+309	DirectUpdateHandler2.numErrors	LongAdder	variable	232	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+310	DirectUpdateHandler2.numErrorsCumulative	LongAdder	variable	233	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+308	DirectUpdateHandler2.numDocsPending	LongAdder	variable	235	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+91	rc	int	variable	239	use	org.apache.solr.update.DirectUpdateHandler2.addDoc0	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	191	239
+97	cmd	AddUpdateCommand	param	242	define	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+97	cmd	AddUpdateCommand	param	247	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+97	cmd	AddUpdateCommand	param	248	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+97	cmd	AddUpdateCommand	param	250	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+97	cmd	AddUpdateCommand	param	252	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+98	iw	RefCounted<IndexWriter>	variable	243	define	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+99	writer	IndexWriter	variable	245	define	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+98	iw	RefCounted<IndexWriter>	variable	243	set	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+99	writer	IndexWriter	variable	245	set	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	243	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+98	iw	RefCounted<IndexWriter>	variable	245	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+99	writer	IndexWriter	variable	248	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+99	writer	IndexWriter	variable	250	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+41	ulog		variable	252	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+41	ulog		variable	252	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+98	iw	RefCounted<IndexWriter>	variable	255	use	org.apache.solr.update.DirectUpdateHandler2.allowDuplicateUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	242	255
+41	ulog		variable	391	use	org.apache.solr.update.DirectUpdateHandler2.clearIndex	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	389	394
+41	ulog		variable	392	use	org.apache.solr.update.DirectUpdateHandler2.clearIndex	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	389	394
+306	DirectUpdateHandler2.log	Logger	variable	739	use	org.apache.solr.update.DirectUpdateHandler2.close	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	738	744
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	741	use	org.apache.solr.update.DirectUpdateHandler2.close	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	738	744
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	742	use	org.apache.solr.update.DirectUpdateHandler2.close	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	738	744
+308	DirectUpdateHandler2.numDocsPending	LongAdder	variable	744	use	org.apache.solr.update.DirectUpdateHandler2.close	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	738	744
+132	writer	IndexWriter	param	752	define	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+123	th	Throwable	param	805	define	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+124	th	Throwable	param	816	define	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+132	writer	IndexWriter	param	768	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+132	writer	IndexWriter	param	769	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+132	writer	IndexWriter	param	780	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+132	writer	IndexWriter	param	798	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+132	writer	IndexWriter	param	799	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+123	th	Throwable	param	806	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+123	th	Throwable	param	807	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+123	th	Throwable	param	808	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+124	th	Throwable	param	817	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+124	th	Throwable	param	818	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+124	th	Throwable	param	819	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+132	writer	IndexWriter	param	823	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+132	writer	IndexWriter	param	824	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+125	clearRequestInfo	boolean	variable	756	define	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+127	req	SolrQueryRequest	variable	759	define	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+128	rsp	SolrQueryResponse	variable	760	define	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+130	tryToCommit	boolean	variable	780	define	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+126	cmd	CommitUpdateCommand	variable	785	define	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+125	clearRequestInfo	boolean	variable	756	set	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+127	req	SolrQueryRequest	variable	759	set	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+128	rsp	SolrQueryResponse	variable	760	set	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+125	clearRequestInfo	boolean	variable	762	set	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+130	tryToCommit	boolean	variable	780	set	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+126	cmd	CommitUpdateCommand	variable	785	set	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+126	cmd	CommitUpdateCommand	variable	786	set	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+126	cmd	CommitUpdateCommand	variable	787	set	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+126	cmd	CommitUpdateCommand	variable	788	set	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	757	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+127	req	SolrQueryRequest	variable	763	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+128	rsp	SolrQueryResponse	variable	763	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+297	DirectUpdateHandler2.commitOnClose	boolean	variable	767	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+41	ulog		variable	774	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+41	ulog		variable	774	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+41	ulog		variable	780	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+41	ulog		variable	780	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+41	ulog		variable	780	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+130	tryToCommit	boolean	variable	783	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+306	DirectUpdateHandler2.log	Logger	variable	784	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+127	req	SolrQueryRequest	variable	785	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+27	openSearcher		variable	786	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+131	waitSearcher		variable	787	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+129	softCommit		variable	788	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	793	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+41	ulog		variable	794	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+126	cmd	CommitUpdateCommand	variable	794	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	801	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+41	ulog		variable	802	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+126	cmd	CommitUpdateCommand	variable	802	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+306	DirectUpdateHandler2.log	Logger	variable	806	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+41	ulog		variable	815	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+41	ulog		variable	815	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+306	DirectUpdateHandler2.log	Logger	variable	817	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	828	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+125	clearRequestInfo	boolean	variable	829	use	org.apache.solr.update.DirectUpdateHandler2.closeWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	752	829
+149	cmd	CommitUpdateCommand	param	548	define	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+148	e	InterruptedException,ExecutionException	param	685	define	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	549	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	550	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	554	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	558	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	562	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	569	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	573	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	577	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	581	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	581	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	591	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	592	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	595	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	597	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	598	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	603	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	607	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	628	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	633	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	636	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	638	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	643	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	644	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	651	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	653	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	659	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+149	cmd	CommitUpdateCommand	param	670	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+148	e	InterruptedException,ExecutionException	param	686	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+157	waitSearcher	Future[]	variable	561	define	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+150	error	boolean	variable	566	define	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+152	iw	RefCounted<IndexWriter>	variable	588	define	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+158	writer	IndexWriter	variable	590	define	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+156	searchHolder	RefCounted<SolrIndexSearcher>	variable	648	define	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+157	waitSearcher	Future[]	variable	561	set	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+157	waitSearcher	Future[]	variable	563	set	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+150	error	boolean	variable	566	set	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+152	iw	RefCounted<IndexWriter>	variable	588	set	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+158	writer	IndexWriter	variable	590	set	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+156	searchHolder	RefCounted<SolrIndexSearcher>	variable	648	set	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+150	error	boolean	variable	667	set	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+155	prepareCommit		variable	549	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+154	optimize		variable	554	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+311	DirectUpdateHandler2.optimizeCommands	LongAdder	variable	555	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+296	DirectUpdateHandler2.commitCommands	LongAdder	variable	557	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+151	expungeDeletes		variable	558	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+304	DirectUpdateHandler2.expungeDeleteCommands	LongAdder	variable	558	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+131	waitSearcher		variable	562	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+129	softCommit		variable	569	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	570	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+306	DirectUpdateHandler2.log	Logger	variable	573	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+27	openSearcher		variable	577	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	579	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+129	softCommit		variable	581	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+27	openSearcher		variable	581	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	581	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	585	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	588	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+152	iw	RefCounted<IndexWriter>	variable	590	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+154	optimize		variable	591	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+153	maxOptimizeSegments		variable	592	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+306	DirectUpdateHandler2.log	Logger	variable	593	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+306	DirectUpdateHandler2.log	Logger	variable	595	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+153	maxOptimizeSegments		variable	595	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+158	writer	IndexWriter	variable	597	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+153	maxOptimizeSegments		variable	597	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+151	expungeDeletes		variable	598	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+306	DirectUpdateHandler2.log	Logger	variable	599	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+158	writer	IndexWriter	variable	600	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+129	softCommit		variable	603	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	604	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	607	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	607	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+158	writer	IndexWriter	variable	612	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+158	writer	IndexWriter	variable	613	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+158	writer	IndexWriter	variable	614	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+306	DirectUpdateHandler2.log	Logger	variable	616	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+308	DirectUpdateHandler2.numDocsPending	LongAdder	variable	620	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+152	iw	RefCounted<IndexWriter>	variable	624	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+154	optimize		variable	628	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+129	softCommit		variable	633	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	635	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	636	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	636	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+157	waitSearcher	Future[]	variable	637	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	638	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	638	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	642	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	643	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	643	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+27	openSearcher		variable	644	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+157	waitSearcher	Future[]	variable	645	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+156	searchHolder	RefCounted<SolrIndexSearcher>	variable	649	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	651	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	651	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	653	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+41	ulog		variable	653	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+129	softCommit		variable	659	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	660	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	662	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+306	DirectUpdateHandler2.log	Logger	variable	665	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+129	softCommit		variable	670	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	671	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+294	DirectUpdateHandler2.addCommands	LongAdder	variable	674	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+300	DirectUpdateHandler2.deleteByIdCommands	LongAdder	variable	675	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+302	DirectUpdateHandler2.deleteByQueryCommands	LongAdder	variable	676	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+150	error	boolean	variable	677	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+309	DirectUpdateHandler2.numErrors	LongAdder	variable	677	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+157	waitSearcher	Future[]	variable	682	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+157	waitSearcher	Future[]	variable	682	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+157	waitSearcher	Future[]	variable	684	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+306	DirectUpdateHandler2.log	Logger	variable	686	use	org.apache.solr.update.DirectUpdateHandler2.commit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	548	686
+163	cmd	DeleteUpdateCommand	param	369	define	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+163	cmd	DeleteUpdateCommand	param	373	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+163	cmd	DeleteUpdateCommand	param	383	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+163	cmd	DeleteUpdateCommand	param	385	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+164	deleteTerm	Term	variable	373	define	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+165	iw	RefCounted<IndexWriter>	variable	375	define	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+164	deleteTerm	Term	variable	373	set	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+165	iw	RefCounted<IndexWriter>	variable	375	set	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+300	DirectUpdateHandler2.deleteByIdCommands	LongAdder	variable	370	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+301	DirectUpdateHandler2.deleteByIdCommandsCumulative	LongAdder	variable	371	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	375	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+165	iw	RefCounted<IndexWriter>	variable	377	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+164	deleteTerm	Term	variable	377	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+165	iw	RefCounted<IndexWriter>	variable	379	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+41	ulog		variable	383	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+41	ulog		variable	383	use	org.apache.solr.update.DirectUpdateHandler2.delete	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	369	385
+168	iw	RefCounted<IndexWriter>	variable	151	define	org.apache.solr.update.DirectUpdateHandler2.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	149	157
+168	iw	RefCounted<IndexWriter>	variable	151	set	org.apache.solr.update.DirectUpdateHandler2.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	149	157
+306	DirectUpdateHandler2.log	Logger	variable	150	use	org.apache.solr.update.DirectUpdateHandler2.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	149	157
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	151	use	org.apache.solr.update.DirectUpdateHandler2.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	149	157
+168	iw	RefCounted<IndexWriter>	variable	153	use	org.apache.solr.update.DirectUpdateHandler2.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	149	157
+168	iw	RefCounted<IndexWriter>	variable	155	use	org.apache.solr.update.DirectUpdateHandler2.deleteAll	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	149	157
+174	cmd	DeleteUpdateCommand	param	427	define	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+174	cmd	DeleteUpdateCommand	param	432	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+174	cmd	DeleteUpdateCommand	param	437	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+174	cmd	DeleteUpdateCommand	param	471	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+174	cmd	DeleteUpdateCommand	param	476	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+177	madeIt	boolean	variable	430	define	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+178	q	Query	variable	432	define	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+175	delAll	boolean	variable	434	define	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+176	iw	RefCounted<IndexWriter>	variable	463	define	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+177	madeIt	boolean	variable	430	set	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+178	q	Query	variable	432	set	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+175	delAll	boolean	variable	434	set	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+176	iw	RefCounted<IndexWriter>	variable	463	set	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+177	madeIt	boolean	variable	474	set	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+302	DirectUpdateHandler2.deleteByQueryCommands	LongAdder	variable	428	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+303	DirectUpdateHandler2.deleteByQueryCommandsCumulative	LongAdder	variable	429	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+173	class		variable	434	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+178	q	Query	variable	434	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+175	delAll	boolean	variable	437	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	438	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	454	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+41	ulog		variable	458	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+41	ulog		variable	458	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+175	delAll	boolean	variable	460	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	463	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+176	iw	RefCounted<IndexWriter>	variable	465	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+178	q	Query	variable	465	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+176	iw	RefCounted<IndexWriter>	variable	467	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+41	ulog		variable	471	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+41	ulog		variable	471	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+177	madeIt	boolean	variable	479	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+309	DirectUpdateHandler2.numErrors	LongAdder	variable	480	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+310	DirectUpdateHandler2.numErrorsCumulative	LongAdder	variable	481	use	org.apache.solr.update.DirectUpdateHandler2.deleteByQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	427	481
+24	core	SolrCore	param	103	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+24	core	SolrCore	param	104	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+24	core	SolrCore	param	106	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+24	core	SolrCore	param	108	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+24	core	SolrCore	param	112	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+24	core	SolrCore	param	116	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+31	updateHandlerInfo	UpdateHandlerInfo	variable	108	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+25	docsUpperBound	int	variable	110	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+30	timeUpperBound	int	variable	111	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+28	softCommitDocsUpperBound	int	variable	114	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+29	softCommitTimeUpperBound	int	variable	115	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	106	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+31	updateHandlerInfo	UpdateHandlerInfo	variable	108	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+25	docsUpperBound	int	variable	110	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+30	timeUpperBound	int	variable	111	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	112	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+28	softCommitDocsUpperBound	int	variable	114	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+29	softCommitTimeUpperBound	int	variable	115	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	116	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+299	DirectUpdateHandler2.commitWithinSoftCommit	boolean	variable	118	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+305	DirectUpdateHandler2.indexWriterCloseWaitsForMerges	boolean	variable	119	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+31	updateHandlerInfo	UpdateHandlerInfo	variable	110	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+19	autoCommmitMaxDocs		variable	110	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+31	updateHandlerInfo	UpdateHandlerInfo	variable	111	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+20	autoCommmitMaxTime		variable	111	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+25	docsUpperBound	int	variable	112	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+30	timeUpperBound	int	variable	112	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+31	updateHandlerInfo	UpdateHandlerInfo	variable	112	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+27	openSearcher		variable	112	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+31	updateHandlerInfo	UpdateHandlerInfo	variable	114	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+21	autoSoftCommmitMaxDocs		variable	114	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+31	updateHandlerInfo	UpdateHandlerInfo	variable	115	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+22	autoSoftCommmitMaxTime		variable	115	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+28	softCommitDocsUpperBound	int	variable	116	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+29	softCommitTimeUpperBound	int	variable	116	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+31	updateHandlerInfo	UpdateHandlerInfo	variable	118	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+23	commitWithinSoftCommit		variable	118	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+31	updateHandlerInfo	UpdateHandlerInfo	variable	119	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+26	indexWriterCloseWaitsForMerges		variable	119	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	103	119
+35	core	SolrCore	param	124	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+42	updateHandler	UpdateHandler	param	124	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+35	core	SolrCore	param	125	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+42	updateHandler	UpdateHandler	param	125	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+35	core	SolrCore	param	126	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+35	core	SolrCore	param	128	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+35	core	SolrCore	param	132	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+35	core	SolrCore	param	136	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+42	updateHandler	UpdateHandler	param	141	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+35	core	SolrCore	param	145	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+43	updateHandlerInfo	UpdateHandlerInfo	variable	128	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+36	docsUpperBound	int	variable	130	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+40	timeUpperBound	int	variable	131	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+38	softCommitDocsUpperBound	int	variable	134	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+39	softCommitTimeUpperBound	int	variable	135	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+37	existingLog	UpdateLog	variable	141	define	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	126	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+43	updateHandlerInfo	UpdateHandlerInfo	variable	128	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+36	docsUpperBound	int	variable	130	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+40	timeUpperBound	int	variable	131	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	132	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+38	softCommitDocsUpperBound	int	variable	134	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+39	softCommitTimeUpperBound	int	variable	135	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	136	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+299	DirectUpdateHandler2.commitWithinSoftCommit	boolean	variable	138	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+305	DirectUpdateHandler2.indexWriterCloseWaitsForMerges	boolean	variable	139	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+37	existingLog	UpdateLog	variable	141	set	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+43	updateHandlerInfo	UpdateHandlerInfo	variable	130	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+19	autoCommmitMaxDocs		variable	130	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+43	updateHandlerInfo	UpdateHandlerInfo	variable	131	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+20	autoCommmitMaxTime		variable	131	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+36	docsUpperBound	int	variable	132	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+40	timeUpperBound	int	variable	132	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+43	updateHandlerInfo	UpdateHandlerInfo	variable	132	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+27	openSearcher		variable	132	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+43	updateHandlerInfo	UpdateHandlerInfo	variable	134	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+21	autoSoftCommmitMaxDocs		variable	134	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+43	updateHandlerInfo	UpdateHandlerInfo	variable	135	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+22	autoSoftCommmitMaxTime		variable	135	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+38	softCommitDocsUpperBound	int	variable	136	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+39	softCommitTimeUpperBound	int	variable	136	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+43	updateHandlerInfo	UpdateHandlerInfo	variable	136	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+27	openSearcher		variable	136	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+43	updateHandlerInfo	UpdateHandlerInfo	variable	138	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+23	commitWithinSoftCommit		variable	138	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+43	updateHandlerInfo	UpdateHandlerInfo	variable	139	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+26	indexWriterCloseWaitsForMerges		variable	139	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+41	ulog		variable	142	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+41	ulog		variable	142	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+37	existingLog	UpdateLog	variable	142	use	org.apache.solr.update.DirectUpdateHandler2.DirectUpdateHandler2	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	124	145
+184	cmd	AddUpdateCommand	param	260	define	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+184	cmd	AddUpdateCommand	param	262	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+184	cmd	AddUpdateCommand	param	264	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+184	cmd	AddUpdateCommand	param	269	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+184	cmd	AddUpdateCommand	param	276	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+184	cmd	AddUpdateCommand	param	294	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+188	updateTerm	Term	variable	261	define	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+186	idTerm	Term	variable	262	define	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+185	del	boolean	variable	263	define	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+187	iw	RefCounted<IndexWriter>	variable	272	define	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+190	writer	IndexWriter	variable	274	define	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+183	bq	BooleanQuery.Builder	variable	279	define	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+186	idTerm	Term	variable	262	set	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+185	del	boolean	variable	263	set	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+188	updateTerm	Term	variable	265	set	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+185	del	boolean	variable	268	set	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+188	updateTerm	Term	variable	269	set	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+187	iw	RefCounted<IndexWriter>	variable	272	set	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+190	writer	IndexWriter	variable	274	set	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+183	bq	BooleanQuery.Builder	variable	279	set	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+189	updateTerm		variable	264	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+186	idTerm	Term	variable	265	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+189	updateTerm		variable	269	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	272	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+187	iw	RefCounted<IndexWriter>	variable	274	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+190	writer	IndexWriter	variable	276	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+188	updateTerm	Term	variable	276	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+185	del	boolean	variable	278	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+183	bq	BooleanQuery.Builder	variable	280	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+188	updateTerm	Term	variable	280	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+182	MUST_NOT		variable	281	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+183	bq	BooleanQuery.Builder	variable	282	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+186	idTerm	Term	variable	282	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+181	MUST		variable	282	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+190	writer	IndexWriter	variable	283	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+183	bq	BooleanQuery.Builder	variable	283	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+41	ulog		variable	294	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+41	ulog		variable	294	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+187	iw	RefCounted<IndexWriter>	variable	297	use	org.apache.solr.update.DirectUpdateHandler2.doNormalUpdate	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	260	297
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	967	use	org.apache.solr.update.DirectUpdateHandler2.getCommitTracker	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	966	968
+195	cmd	AddUpdateCommand	param	344	define	org.apache.solr.update.DirectUpdateHandler2.getIdTerm	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	344	346
+195	cmd	AddUpdateCommand	param	345	use	org.apache.solr.update.DirectUpdateHandler2.getIdTerm	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	344	346
+195	cmd	AddUpdateCommand	param	345	use	org.apache.solr.update.DirectUpdateHandler2.getIdTerm	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	344	346
+210	cmd	DeleteUpdateCommand	param	397	define	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+208	e	SyntaxError	param	419	define	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+210	cmd	DeleteUpdateCommand	param	401	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+210	cmd	DeleteUpdateCommand	param	401	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+210	cmd	DeleteUpdateCommand	param	406	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+210	cmd	DeleteUpdateCommand	param	406	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+210	cmd	DeleteUpdateCommand	param	411	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+208	e	SyntaxError	param	420	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+213	q	Query	variable	398	define	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+212	parser	QParser	variable	401	define	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+209	bq	BooleanQuery.Builder	variable	407	define	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+215	sf	SchemaField	variable	409	define	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+216	vs	ValueSource	variable	410	define	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+211	filt	ValueSourceRangeFilter	variable	411	define	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+214	range	FunctionRangeQuery	variable	412	define	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+212	parser	QParser	variable	401	set	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+213	q	Query	variable	402	set	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+213	q	Query	variable	403	set	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+209	bq	BooleanQuery.Builder	variable	407	set	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+215	sf	SchemaField	variable	409	set	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+216	vs	ValueSource	variable	410	set	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+211	filt	ValueSourceRangeFilter	variable	411	set	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+214	range	FunctionRangeQuery	variable	412	set	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+213	q	Query	variable	414	set	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+59	req		variable	401	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+212	parser	QParser	variable	402	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+213	q	Query	variable	403	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+41	ulog		variable	406	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+209	bq	BooleanQuery.Builder	variable	408	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+213	q	Query	variable	408	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+181	MUST		variable	408	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+41	ulog		variable	409	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+215	sf	SchemaField	variable	410	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+215	sf	SchemaField	variable	410	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+216	vs	ValueSource	variable	411	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+211	filt	ValueSourceRangeFilter	variable	412	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+209	bq	BooleanQuery.Builder	variable	413	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+214	range	FunctionRangeQuery	variable	413	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+182	MUST_NOT		variable	413	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+209	bq	BooleanQuery.Builder	variable	414	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+213	q	Query	variable	417	use	org.apache.solr.update.DirectUpdateHandler2.getQuery	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	397	420
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	972	use	org.apache.solr.update.DirectUpdateHandler2.getSoftCommitTracker	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	971	973
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	962	use	org.apache.solr.update.DirectUpdateHandler2.getSolrCoreState	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	961	963
+227	lst	NamedList	variable	918	define	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	918	set	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	919	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+296	DirectUpdateHandler2.commitCommands	LongAdder	variable	919	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	920	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	921	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	921	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	923	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	924	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	924	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	926	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	926	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	927	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	928	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	928	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	930	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	931	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	931	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	933	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	933	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	934	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+311	DirectUpdateHandler2.optimizeCommands	LongAdder	variable	934	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	935	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+312	DirectUpdateHandler2.rollbackCommands	LongAdder	variable	935	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	936	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+304	DirectUpdateHandler2.expungeDeleteCommands	LongAdder	variable	936	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	937	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+308	DirectUpdateHandler2.numDocsPending	LongAdder	variable	937	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	940	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+294	DirectUpdateHandler2.addCommands	LongAdder	variable	940	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	941	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+300	DirectUpdateHandler2.deleteByIdCommands	LongAdder	variable	941	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	942	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+302	DirectUpdateHandler2.deleteByQueryCommands	LongAdder	variable	942	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	943	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+309	DirectUpdateHandler2.numErrors	LongAdder	variable	943	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	944	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+295	DirectUpdateHandler2.addCommandsCumulative	LongAdder	variable	944	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	945	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+301	DirectUpdateHandler2.deleteByIdCommandsCumulative	LongAdder	variable	945	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	946	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+303	DirectUpdateHandler2.deleteByQueryCommandsCumulative	LongAdder	variable	946	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	947	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+310	DirectUpdateHandler2.numErrorsCumulative	LongAdder	variable	947	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+41	ulog		variable	948	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	949	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+41	ulog		variable	949	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	950	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+41	ulog		variable	950	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+227	lst	NamedList	variable	952	use	org.apache.solr.update.DirectUpdateHandler2.getStatistics	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	917	952
+41	ulog		variable	734	use	org.apache.solr.update.DirectUpdateHandler2.getUpdateLog	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	733	735
+61	version		variable	898	use	org.apache.solr.update.DirectUpdateHandler2.getVersion	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	897	899
+241	cmd	MergeIndexesCommand	param	488	define	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+241	cmd	MergeIndexesCommand	param	492	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+241	cmd	MergeIndexesCommand	param	494	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+244	rc	int	variable	490	define	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+245	readers	List<DirectoryReader>	variable	494	define	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+243	mergeReaders	List<CodecReader>	variable	496	define	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+242	iw	RefCounted<IndexWriter>	variable	502	define	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+240	reader	DirectoryReader	variable	497	define	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+239	leaf	LeafReaderContext	variable	498	define	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+245	readers	List<DirectoryReader>	variable	494	set	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+243	mergeReaders	List<CodecReader>	variable	496	set	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+242	iw	RefCounted<IndexWriter>	variable	502	set	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+244	rc	int	variable	508	set	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+244	rc	int	variable	510	set	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+307	DirectUpdateHandler2.mergeIndexesCommands	LongAdder	variable	489	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+306	DirectUpdateHandler2.log	Logger	variable	492	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+246	readers		variable	494	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+245	readers	List<DirectoryReader>	variable	495	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+245	readers	List<DirectoryReader>	variable	495	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+245	readers	List<DirectoryReader>	variable	497	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+240	reader	DirectoryReader	variable	498	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+243	mergeReaders	List<CodecReader>	variable	499	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+239	leaf	LeafReaderContext	variable	499	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	502	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+242	iw	RefCounted<IndexWriter>	variable	504	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+243	mergeReaders	List<CodecReader>	variable	504	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+243	mergeReaders	List<CodecReader>	variable	504	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+242	iw	RefCounted<IndexWriter>	variable	506	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+306	DirectUpdateHandler2.log	Logger	variable	512	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+244	rc	int	variable	515	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	515	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	516	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	516	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+244	rc	int	variable	517	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	517	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	518	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	518	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+244	rc	int	variable	521	use	org.apache.solr.update.DirectUpdateHandler2.mergeIndexes	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	488	521
+249	rollback	boolean	param	692	define	org.apache.solr.update.DirectUpdateHandler2.newIndexWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	692	694
+249	rollback	boolean	param	693	use	org.apache.solr.update.DirectUpdateHandler2.newIndexWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	692	694
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	693	use	org.apache.solr.update.DirectUpdateHandler2.newIndexWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	692	694
+252	cmd	CommitUpdateCommand	param	524	define	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+252	cmd	CommitUpdateCommand	param	529	use	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+253	error	boolean	variable	526	define	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+254	iw	RefCounted<IndexWriter>	variable	530	define	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+253	error	boolean	variable	526	set	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+254	iw	RefCounted<IndexWriter>	variable	530	set	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+253	error	boolean	variable	540	set	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+306	DirectUpdateHandler2.log	Logger	variable	529	use	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	530	use	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+254	iw	RefCounted<IndexWriter>	variable	532	use	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+254	iw	RefCounted<IndexWriter>	variable	533	use	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+254	iw	RefCounted<IndexWriter>	variable	535	use	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+306	DirectUpdateHandler2.log	Logger	variable	538	use	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+253	error	boolean	variable	543	use	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+309	DirectUpdateHandler2.numErrors	LongAdder	variable	543	use	org.apache.solr.update.DirectUpdateHandler2.prepareCommit	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	524	543
+259	cmd	RollbackUpdateCommand	param	700	define	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+259	cmd	RollbackUpdateCommand	param	710	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+260	error	boolean	variable	707	define	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+260	error	boolean	variable	707	set	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+260	error	boolean	variable	722	set	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+312	DirectUpdateHandler2.rollbackCommands	LongAdder	variable	705	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+306	DirectUpdateHandler2.log	Logger	variable	710	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	717	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	718	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+306	DirectUpdateHandler2.log	Logger	variable	720	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+295	DirectUpdateHandler2.addCommandsCumulative	LongAdder	variable	725	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+294	DirectUpdateHandler2.addCommands	LongAdder	variable	725	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+301	DirectUpdateHandler2.deleteByIdCommandsCumulative	LongAdder	variable	726	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+300	DirectUpdateHandler2.deleteByIdCommands	LongAdder	variable	726	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+303	DirectUpdateHandler2.deleteByQueryCommandsCumulative	LongAdder	variable	727	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+302	DirectUpdateHandler2.deleteByQueryCommands	LongAdder	variable	727	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+260	error	boolean	variable	728	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+309	DirectUpdateHandler2.numErrors	LongAdder	variable	728	use	org.apache.solr.update.DirectUpdateHandler2.rollback	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	700	728
+308	DirectUpdateHandler2.numDocsPending	LongAdder	variable	160	use	org.apache.solr.update.DirectUpdateHandler2.rollbackWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	159	162
+314	DirectUpdateHandler2.solrCoreState	SolrCoreState	variable	161	use	org.apache.solr.update.DirectUpdateHandler2.rollbackWriter	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	159	162
+265	cmd	SplitIndexCommand	param	834	define	org.apache.solr.update.DirectUpdateHandler2.split	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	834	838
+265	cmd	SplitIndexCommand	param	835	use	org.apache.solr.update.DirectUpdateHandler2.split	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	834	838
+265	cmd	SplitIndexCommand	param	836	use	org.apache.solr.update.DirectUpdateHandler2.split	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	834	838
+266	splitter	SolrIndexSplitter	variable	836	define	org.apache.solr.update.DirectUpdateHandler2.split	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	834	838
+266	splitter	SolrIndexSplitter	variable	836	set	org.apache.solr.update.DirectUpdateHandler2.split	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	834	838
+59	req		variable	835	use	org.apache.solr.update.DirectUpdateHandler2.split	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	834	838
+266	splitter	SolrIndexSplitter	variable	837	use	org.apache.solr.update.DirectUpdateHandler2.split	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	834	838
+270	cmd	DeleteUpdateCommand	param	348	define	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+270	cmd	DeleteUpdateCommand	param	349	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+270	cmd	DeleteUpdateCommand	param	351	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+270	cmd	DeleteUpdateCommand	param	353	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+299	DirectUpdateHandler2.commitWithinSoftCommit	boolean	variable	350	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	351	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+87	commitWithin		variable	351	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	353	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+87	commitWithin		variable	353	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	356	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	357	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+298	DirectUpdateHandler2.commitTracker	CommitTracker	variable	357	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	360	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	361	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+313	DirectUpdateHandler2.softCommitTracker	CommitTracker	variable	361	use	org.apache.solr.update.DirectUpdateHandler2.updateDeleteTrackers	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	348	363
+279	cmd	AddUpdateCommand	param	853	define	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+286	writer	IndexWriter	param	853	define	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+285	updateTerm	Term	param	853	define	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+279	cmd	AddUpdateCommand	param	854	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+279	cmd	AddUpdateCommand	param	855	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+279	cmd	AddUpdateCommand	param	858	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+279	cmd	AddUpdateCommand	param	859	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+279	cmd	AddUpdateCommand	param	868	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+286	writer	IndexWriter	param	869	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+285	updateTerm	Term	param	869	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+279	cmd	AddUpdateCommand	param	871	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+286	writer	IndexWriter	param	871	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+285	updateTerm	Term	param	871	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+283	uniqueKeyField	SchemaField	variable	855	define	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+284	uniqueKeyFieldName	String	variable	856	define	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+281	luceneDocument	Document	variable	859	define	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+282	origDocFields	List<IndexableField>	variable	861	define	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+280	fieldsToUpdate	List<Field>	variable	862	define	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+278	field	IndexableField	variable	863	define	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+283	uniqueKeyField	SchemaField	variable	855	set	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+284	uniqueKeyFieldName	String	variable	856	set	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+281	luceneDocument	Document	variable	859	set	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+282	origDocFields	List<IndexableField>	variable	861	set	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+280	fieldsToUpdate	List<Field>	variable	862	set	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+283	uniqueKeyField	SchemaField	variable	856	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+283	uniqueKeyField	SchemaField	variable	856	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+281	luceneDocument	Document	variable	861	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+282	origDocFields	List<IndexableField>	variable	862	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+282	origDocFields	List<IndexableField>	variable	863	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+278	field	IndexableField	variable	864	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+284	uniqueKeyFieldName	String	variable	864	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+280	fieldsToUpdate	List<Field>	variable	865	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+278	field	IndexableField	variable	865	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+306	DirectUpdateHandler2.log	Logger	variable	868	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+280	fieldsToUpdate	List<Field>	variable	869	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+280	fieldsToUpdate	List<Field>	variable	869	use	org.apache.solr.update.DirectUpdateHandler2.updateDocOrDocValues	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	853	871
+290	cmd	AddUpdateCommand	param	875	define	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+293	writer	IndexWriter	param	875	define	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+292	updateTerm	Term	param	875	define	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+290	cmd	AddUpdateCommand	param	876	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+290	cmd	AddUpdateCommand	param	877	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+293	writer	IndexWriter	param	878	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+292	updateTerm	Term	param	878	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+290	cmd	AddUpdateCommand	param	878	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+290	cmd	AddUpdateCommand	param	880	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+290	cmd	AddUpdateCommand	param	881	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+293	writer	IndexWriter	param	882	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+292	updateTerm	Term	param	882	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+291	luceneDocument	Document	variable	880	define	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+291	luceneDocument	Document	variable	880	set	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+306	DirectUpdateHandler2.log	Logger	variable	877	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+306	DirectUpdateHandler2.log	Logger	variable	881	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884
+291	luceneDocument	Document	variable	882	use	org.apache.solr.update.DirectUpdateHandler2.updateDocument	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/acb185b2dc/ebff564fbb.java	875	884

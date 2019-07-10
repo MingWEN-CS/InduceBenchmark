@@ -1,0 +1,34 @@
+296,298c296,309
+<       lastUpdatedTime = System.nanoTime();
+<       zkClient.setData(ZkStateReader.CLUSTER_STATE, ZkStateReader.toJSON(clusterState), true);
+< 
+---
+>       TimerContext timerContext = stats.time("update_state");
+>       boolean success = false;
+>       try {
+>         zkClient.setData(ZkStateReader.CLUSTER_STATE, ZkStateReader.toJSON(clusterState), true);
+>         lastUpdatedTime = System.nanoTime();
+>         success = true;
+>       } finally {
+>         timerContext.stop();
+>         if (success)  {
+>           stats.success("update_state");
+>         } else  {
+>           stats.error("update_state");
+>         }
+>       }
+587a599,600
+>       TimerContext timerContext = stats.time("am_i_leader");
+>       boolean success = true;
+594a608
+>         success = false;
+603a618
+>         success = false;
+604a620,626
+>       } finally {
+>         timerContext.stop();
+>         if (success)  {
+>           stats.success("am_i_leader");
+>         } else  {
+>           stats.error("am_i_leader");
+>         }

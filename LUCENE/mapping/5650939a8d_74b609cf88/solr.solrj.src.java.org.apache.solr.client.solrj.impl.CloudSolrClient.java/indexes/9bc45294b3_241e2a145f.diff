@@ -1,0 +1,435 @@
+18a19
+> import java.io.Closeable;
+39a41
+> import java.util.concurrent.atomic.AtomicLong;
+59d60
+< import org.apache.solr.common.cloud.Aliases;
+71d71
+< import org.apache.solr.common.cloud.ZooKeeperException;
+82d81
+< import org.apache.zookeeper.KeeperException;
+104,107c103
+<   private volatile ZkStateReader zkStateReader;
+<   private String zkHost; 
+<   private int zkConnectTimeout = 10000;
+<   private int zkClientTimeout = 10000;
+---
+>   private final ClusterStateProvider stateProvider;
+124a121
+>   private long retryExpiryTime = TimeUnit.NANOSECONDS.convert(3, TimeUnit.SECONDS);
+142d138
+<   private volatile long timeToLive = 60* 1000L;
+146c142,144
+<   protected final Map<String, ExpiringCachedDocCollection> collectionStateCache = new ConcurrentHashMap<String, ExpiringCachedDocCollection>(){
+---
+>   static class StateCache extends ConcurrentHashMap<String, ExpiringCachedDocCollection> {
+>     final AtomicLong puts = new AtomicLong();
+>     final AtomicLong hits = new AtomicLong();
+147a146,147
+>     private volatile long timeToLive = 60 * 1000L;
+> 
+160a161
+>       hits.incrementAndGet();
+163a165,170
+>     @Override
+>     public ExpiringCachedDocCollection put(String key, ExpiringCachedDocCollection value) {
+>       puts.incrementAndGet();
+>       return super.put(key, value);
+>     }
+> 
+177c184,188
+<   };
+---
+>   }
+> 
+>   
+> 
+> 
+178a190,200
+> 
+> 
+>   public void setRetryExpiryTime(int secs) {
+>     this.retryExpiryTime = TimeUnit.NANOSECONDS.convert(secs, TimeUnit.SECONDS);
+>   }
+> 
+>   public void setSoTimeout(int timeout) {
+>     lbClient.setSoTimeout(timeout);
+>   }
+> 
+>   protected final StateCache collectionStateCache = new StateCache();
+181c203,207
+<     long cachedAt;
+---
+>     final long cachedAt;
+>     
+>     long retriedAt = -1;
+>     
+>     boolean maybeStale = false;
+191a218,232
+> 
+>     boolean shoulRetry() {
+>       if (maybeStale) {
+>         if ((retriedAt == -1 ||
+>             (System.nanoTime() - retriedAt) > retryExpiryTime)) {
+>           return true;
+>           
+>         }
+>       }
+>       return false;
+>     }
+> 
+>     void setRetriedAt() {
+>       retriedAt = System.nanoTime();
+>     }
+218c259
+<       this.zkHost = zkHost;
+---
+>     this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+258,259c299,300
+<   public CloudSolrClient(String zkHost, HttpClient httpClient)  {
+<     this.zkHost = zkHost;
+---
+>   public CloudSolrClient(String zkHost, HttpClient httpClient) {
+>     this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+317c358
+<     this.zkHost = buildZkHostString(zkHosts, chroot);
+---
+>     this.stateProvider = new ZkClientClusterStateProvider(zkHosts, chroot);
+353c394
+<     this(zkHosts, chroot, httpClient, lbSolrClient, null, updatesToLeaders, false);
+---
+>     this(zkHosts, chroot, httpClient, lbSolrClient, null, updatesToLeaders, false, null);
+388,389c429,437
+<                           boolean directUpdatesToLeadersOnly) {
+<     this.zkHost = buildZkHostString(zkHosts, chroot);
+---
+>                           boolean directUpdatesToLeadersOnly,
+>                           ClusterStateProvider stateProvider
+> 
+>   ) {
+>     if (stateProvider == null) {
+>       this.stateProvider = new ZkClientClusterStateProvider(zkHosts, chroot);
+>     } else {
+>       this.stateProvider = stateProvider;
+>     }
+427c475
+<     this.zkHost = zkHost;
+---
+>     this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+446c494
+<     timeToLive = seconds*1000L;
+---
+>     this.collectionStateCache.timeToLive = seconds * 1000L;
+474d521
+<     this.zkHost = zkHost;
+475a523
+>     this.stateProvider = new ZkClientClusterStateProvider(zkHost);
+511c559
+<     return zkHost;
+---
+>     return assertZKStateProvider().zkHost;
+515c563,567
+<     return zkStateReader;
+---
+>     if (stateProvider instanceof ZkClientClusterStateProvider) {
+>       ZkClientClusterStateProvider provider = (ZkClientClusterStateProvider) stateProvider;
+>       return provider.zkStateReader;
+>     }
+>     throw new IllegalStateException("This has no Zk stateReader");
+544c596
+<     this.zkConnectTimeout = zkConnectTimeout;
+---
+>     assertZKStateProvider().zkConnectTimeout = zkConnectTimeout;
+549c601
+<     this.zkClientTimeout = zkClientTimeout;
+---
+>     assertZKStateProvider().zkClientTimeout = zkClientTimeout;
+558,580c610
+<     if (zkStateReader == null) {
+<       synchronized (this) {
+<         if (zkStateReader == null) {
+<           ZkStateReader zk = null;
+<           try {
+<             zk = new ZkStateReader(zkHost, zkClientTimeout, zkConnectTimeout);
+<             zk.createClusterStateWatchersAndUpdate();
+<             zkStateReader = zk;
+<           } catch (InterruptedException e) {
+<             zk.close();
+<             Thread.currentThread().interrupt();
+<             throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR, "", e);
+<           } catch (KeeperException e) {
+<             zk.close();
+<             throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR, "", e);
+<           } catch (Exception e) {
+<             if (zk != null) zk.close();
+<             
+<             throw e;
+<           }
+<         }
+<       }
+<     }
+---
+>     stateProvider.connect();
+591c621
+<     log.info("Waiting for {} {} for cluster at {} to be ready", duration, timeUnit, zkHost);
+---
+>     log.info("Waiting for {} {} for cluster at {} to be ready", duration, timeUnit, stateProvider);
+596c626
+<         log.info("Cluster at {} ready", zkHost);
+---
+>         log.info("Cluster at {} ready", stateProvider);
+623,624c653,662
+<     connect();
+<     zkStateReader.getConfigManager().uploadConfigDir(configPath, configName);
+---
+>     stateProvider.connect();
+>     assertZKStateProvider().uploadConfig(configPath, configName);
+>   }
+> 
+>   private ZkClientClusterStateProvider assertZKStateProvider() {
+>     if (stateProvider instanceof ZkClientClusterStateProvider) {
+>       return (ZkClientClusterStateProvider) stateProvider;
+>     }
+>     throw new IllegalArgumentException("This client does not use ZK");
+> 
+634,635c672
+<     connect();
+<     zkStateReader.getConfigManager().downloadConfigDir(configName, downloadPath);
+---
+>     assertZKStateProvider().downloadConfig(configName, downloadPath);
+653,654c690,691
+<     connect();
+<     zkStateReader.waitForState(collection, wait, unit, predicate);
+---
+>     stateProvider.connect();
+>     assertZKStateProvider().zkStateReader.waitForState(collection, wait, unit, predicate);
+668,669c705,706
+<     connect();
+<     zkStateReader.registerCollectionStateWatcher(collection, watcher);
+---
+>     stateProvider.connect();
+>     assertZKStateProvider().zkStateReader.registerCollectionStateWatcher(collection, watcher);
+672c709
+<   private NamedList<Object> directUpdate(AbstractUpdateRequest request, String collection, ClusterState clusterState) throws SolrServerException {
+---
+>   private NamedList<Object> directUpdate(AbstractUpdateRequest request, String collection) throws SolrServerException {
+692,698c729
+<     Aliases aliases = zkStateReader.getAliases();
+<     if(aliases != null) {
+<       Map<String, String> collectionAliases = aliases.getCollectionAliasMap();
+<       if(collectionAliases != null && collectionAliases.containsKey(collection)) {
+<         collection = collectionAliases.get(collection);
+<       }
+<     }
+---
+>     collection = stateProvider.getCollectionName(collection);
+700c731
+<     DocCollection col = getDocCollection(clusterState, collection,null);
+---
+>     DocCollection col = getDocCollection(collection, null);
+1021c1052
+<       Set<String> requestedCollectionNames = getCollectionNames(getZkStateReader().getClusterState(), collection);
+---
+>       Set<String> requestedCollectionNames = getCollectionNames(collection);
+1026c1057
+<         DocCollection coll = getDocCollection(getZkStateReader().getClusterState(), requestedCollection,null);
+---
+>         DocCollection coll = getDocCollection(requestedCollection, null);
+1067c1098
+<           getDocCollection(getZkStateReader().getClusterState(),(String)e.getKey(), (Integer)e.getValue());
+---
+>           getDocCollection((String) e.getKey(), (Integer) e.getValue());
+1099a1131,1150
+>       if (wasCommError) {
+>         
+>         
+>         
+>         
+>         
+>         for (DocCollection ext : requestedCollections) {
+>           ExpiringCachedDocCollection cacheEntry = collectionStateCache.get(ext.getName());
+>           if (cacheEntry == null) continue;
+>           cacheEntry.maybeStale = true;
+>         }
+>         if (retryCount < MAX_STALE_RETRIES) {
+>           
+>           
+>           
+>           
+>           return requestWithRetryOnStaleState(request, retryCount + 1, collection);
+>         }
+>       }
+> 
+1124c1175
+<           DocCollection latestStateFromZk = getDocCollection(zkStateReader.getClusterState(), ext.getName(),null);
+---
+>           DocCollection latestStateFromZk = getDocCollection(ext.getName(), null);
+1161,1163c1212
+<     
+<     ClusterState clusterState = zkStateReader.getClusterState();
+<     
+---
+> 
+1169c1218
+<         NamedList<Object> response = directUpdate((AbstractUpdateRequest) request, collection, clusterState);
+---
+>         NamedList<Object> response = directUpdate((AbstractUpdateRequest) request, collection);
+1184c1233
+<       Set<String> liveNodes = clusterState.getLiveNodes();
+---
+>       Set<String> liveNodes = stateProvider.liveNodes();
+1186c1235,1236
+<         theUrlList.add(zkStateReader.getBaseUrlForNodeName(liveNode));
+---
+>         theUrlList.add(ZkStateReader.getBaseUrlForNodeName(liveNode,
+>             (String) stateProvider.getClusterProperties().getOrDefault(ZkStateReader.URL_SCHEME,"http")));
+1194,1195c1244,1245
+<       
+<       Set<String> collectionNames = getCollectionNames(clusterState, collection);
+---
+> 
+>       Set<String> collectionNames = getCollectionNames(collection);
+1212c1262
+<         DocCollection col = getDocCollection(clusterState, collectionName, null);
+---
+>         DocCollection col = getDocCollection(collectionName, null);
+1216c1266
+<       Set<String> liveNodes = clusterState.getLiveNodes();
+---
+>       Set<String> liveNodes = stateProvider.liveNodes();
+1292,1293c1342
+<   private Set<String> getCollectionNames(ClusterState clusterState,
+<                                          String collection) {
+---
+>   Set<String> getCollectionNames(String collection) {
+1299,1301c1348,1349
+<       if (!clusterState.hasCollection(collectionName)) {
+<         Aliases aliases = zkStateReader.getAliases();
+<         String alias = aliases.getCollectionAlias(collectionName);
+---
+>       if (stateProvider.getState(collectionName) == null) {
+>         String alias = stateProvider.getAlias(collection);
+1318,1324c1366
+<     if (zkStateReader != null) {
+<       synchronized(this) {
+<         if (zkStateReader!= null)
+<           zkStateReader.close();
+<         zkStateReader = null;
+<       }
+<     }
+---
+>     stateProvider.close();
+1370c1412,1413
+<   protected DocCollection getDocCollection(ClusterState clusterState, String collection, Integer expectedVersion) throws SolrException {
+---
+>   protected DocCollection getDocCollection(String collection, Integer expectedVersion) throws SolrException {
+>     if (expectedVersion == null) expectedVersion = -1;
+1372c1415,1416
+<     DocCollection col = getFromCache(collection);
+---
+>     ExpiringCachedDocCollection cacheEntry = collectionStateCache.get(collection);
+>     DocCollection col = cacheEntry == null ? null : cacheEntry.cached;
+1374,1375c1418,1419
+<       if (expectedVersion == null) return col;
+<       if (expectedVersion.intValue() == col.getZNodeVersion()) return col;
+---
+>       if (expectedVersion <= col.getZNodeVersion()
+>           && !cacheEntry.shoulRetry()) return col;
+1378c1422
+<     ClusterState.CollectionRef ref = clusterState.getCollectionRef(collection);
+---
+>     ClusterState.CollectionRef ref = getCollectionRef(collection);
+1388a1433
+>     DocCollection fetchedCol = null;
+1391c1436,1437
+<       col = getFromCache(collection);
+---
+>       cacheEntry = collectionStateCache.get(collection);
+>       col = cacheEntry == null ? null : cacheEntry.cached;
+1393,1398c1439,1440
+<         if (expectedVersion == null) return col;
+<         if (expectedVersion.intValue() == col.getZNodeVersion()) {
+<           return col;
+<         } else {
+<           collectionStateCache.remove(collection);
+<         }
+---
+>         if (expectedVersion <= col.getZNodeVersion()
+>             && !cacheEntry.shoulRetry()) return col;
+1400c1442,1453
+<       col = ref.get();
+---
+>       
+>       
+>       fetchedCol = ref.get();
+>       if (fetchedCol == null) return null;
+>       if (col != null && fetchedCol.getZNodeVersion() == col.getZNodeVersion()) {
+>         cacheEntry.setRetriedAt();
+>         cacheEntry.maybeStale = false;
+>       } else {
+>         if (fetchedCol.getStateFormat() > 1)
+>           collectionStateCache.put(collection, new ExpiringCachedDocCollection(fetchedCol));
+>       }
+>       return fetchedCol;
+1402,1404d1454
+<     if (col == null) return null;
+<     if (col.getStateFormat() > 1) collectionStateCache.put(collection, new ExpiringCachedDocCollection(col));
+<     return col;
+1407,1409c1457,1458
+<   private DocCollection getFromCache(String c){
+<     ExpiringCachedDocCollection cachedState = collectionStateCache.get(c);
+<     return cachedState != null ? cachedState.cached : null;
+---
+>   ClusterState.CollectionRef getCollectionRef(String collection) {
+>     return stateProvider.getState(collection);
+1412d1460
+< 
+1448c1496
+<       ClusterState clusterState = zkStateReader.getClusterState();     
+---
+>       DocCollection coll = getDocCollection(collection, null);
+1450c1498
+<       for (Slice slice : clusterState.getActiveSlices(collection)) {
+---
+>       for (Slice slice : coll.getActiveSlices()) {
+1487,1490d1534
+<   public void setSoTimeout(int timeout) {
+<     this.lbClient.setSoTimeout(timeout);
+<   }
+< 
+1567c1611,1613
+<     
+---
+>     private ClusterStateProvider stateProvider;
+> 
+> 
+1668a1715,1719
+>     public Builder withClusterStateProvider(ClusterStateProvider stateProvider) {
+>       this.stateProvider = stateProvider;
+>       return this;
+>     }
+> 
+1672a1724,1726
+>       if (stateProvider == null) {
+>         stateProvider = new ZkClientClusterStateProvider(zkHosts, zkChroot);
+>       }
+1674c1728
+<           shardLeadersOnly, directUpdatesToLeadersOnly);
+---
+>           shardLeadersOnly, directUpdatesToLeadersOnly, stateProvider);
+1676a1731,1745
+> 
+>   interface ClusterStateProvider extends Closeable {
+> 
+>     ClusterState.CollectionRef getState(String collection);
+> 
+>     Set<String> liveNodes();
+> 
+>     String getAlias(String collection);
+> 
+>     String getCollectionName(String name);
+> 
+>     Map<String, Object> getClusterProperties();
+> 
+>     void connect();
+>   }

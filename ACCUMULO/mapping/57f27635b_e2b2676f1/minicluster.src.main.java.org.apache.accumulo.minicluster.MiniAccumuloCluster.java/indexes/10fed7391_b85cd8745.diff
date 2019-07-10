@@ -1,0 +1,11 @@
+301,302d300
+< 
+<     this.executor = Executors.newSingleThreadExecutor();
+347a346,349
+> 
+>     if (null == executor) {
+>       executor = Executors.newSingleThreadExecutor();
+>     }
+422a425,426
+> 
+>       executor = null;

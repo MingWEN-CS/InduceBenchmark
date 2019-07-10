@@ -1,0 +1,18 @@
+21a22,25
+> import java.io.ObjectOutput;
+> import java.io.ObjectOutputStream;
+> import java.io.ByteArrayOutputStream;
+> 
+192a197,208
+> 
+>   public void testSerializable() throws IOException {
+>     Directory dir = new RAMDirectory();
+>     ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+>     assertEquals("initially empty", 0, bos.size());
+>     ObjectOutput out = new ObjectOutputStream(bos);
+>     int headerSize = bos.size();
+>     out.writeObject(dir);
+>     out.close();
+>     assertTrue("contains more then just header", headerSize < bos.size());
+>   } 
+> 

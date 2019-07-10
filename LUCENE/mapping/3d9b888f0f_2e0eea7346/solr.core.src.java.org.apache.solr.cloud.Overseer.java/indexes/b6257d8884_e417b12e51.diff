@@ -1,0 +1,4 @@
+1242c1242
+<             zkClient.delete("/collections/" + collection, -1, true);
+---
+>             zkClient.clean("/collections/" + collection);

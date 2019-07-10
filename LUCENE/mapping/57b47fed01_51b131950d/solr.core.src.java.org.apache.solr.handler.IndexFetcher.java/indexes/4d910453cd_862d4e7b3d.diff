@@ -1,0 +1,43 @@
+90a91
+> import org.apache.solr.update.VersionInfo;
+1052a1054,1062
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+1056,1060c1066,1089
+<     
+<     
+<     ((CdcrUpdateLog) ulog).reset();
+<     
+<     if (!copyTmpTlogFiles2Tlog(tmpTlogDir)) return false;
+---
+>     VersionInfo vinfo = ulog.getVersionInfo();
+>     vinfo.blockUpdates(); 
+>     try {
+>       
+>       CdcrUpdateLog.BufferedUpdates bufferedUpdates = ((CdcrUpdateLog) ulog).resetForRecovery();
+>       
+>       if (!copyTmpTlogFiles2Tlog(tmpTlogDir)) return false;
+>       
+>       if (bufferedUpdates.tlog != null) {
+>         
+>         File parentDir = FileSystems.getDefault().getPath(solrCore.getUpdateHandler().getUpdateLog().getLogDir()).getParent().toFile();
+>         File backupTlogDir = new File(parentDir, tmpTlogDir.getName());
+>         bufferedUpdates.tlog = new File(backupTlogDir, bufferedUpdates.tlog.getName());
+>       }
+>       
+>       ((CdcrUpdateLog) ulog).initForRecovery(bufferedUpdates.tlog, bufferedUpdates.offset);
+>     }
+>     catch (Exception e) {
+>       LOG.error("Unable to copy tlog files", e);
+>       return false;
+>     }
+>     finally {
+>       vinfo.unblockUpdates();
+>     }

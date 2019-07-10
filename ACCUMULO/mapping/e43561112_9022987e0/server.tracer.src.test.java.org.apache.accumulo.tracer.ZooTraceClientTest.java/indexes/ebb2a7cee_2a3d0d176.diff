@@ -1,0 +1,36 @@
+18a19,20
+> import java.util.concurrent.atomic.AtomicBoolean;
+> 
+23a26,41
+>   
+> 
+> 
+>   private static class UpdateHostsDelegate extends ZooTraceClient {
+>     private final AtomicBoolean done;
+> 
+>     private UpdateHostsDelegate(AtomicBoolean done) {
+>       this.done = done;
+>     }
+> 
+>     @Override
+>     public void updateHostsFromZooKeeper() {
+>       this.done.set(true);
+>     }
+>   }
+> 
+27a46
+>     AtomicBoolean done = new AtomicBoolean(false);
+32c51,52
+<     EasyMock.expectLastCall();
+---
+>     
+>     EasyMock.expectLastCall().andDelegateTo(new UpdateHostsDelegate(done));
+37c57,62
+<     
+---
+> 
+>     while (!done.get()) {
+>       
+>       Thread.sleep(200);
+>     }
+> 

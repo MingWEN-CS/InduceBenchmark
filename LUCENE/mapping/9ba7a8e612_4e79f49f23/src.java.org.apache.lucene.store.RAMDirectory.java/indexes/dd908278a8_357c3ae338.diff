@@ -1,0 +1,29 @@
+37c37
+< public final class RAMDirectory extends Directory implements Serializable {
+---
+> public class RAMDirectory extends Directory implements Serializable {
+41c41
+<   private HashMap fileMap = new HashMap();
+---
+>   HashMap fileMap = new HashMap();
+43c43
+<   private Collection files = fileMap.values();
+---
+>   Collection files = fileMap.values();
+181a182,183
+> 
+> 
+187,195d188
+<   public synchronized final long getRecomputedSizeInBytes() {
+<     long size = 0;
+<     Iterator it = files.iterator();
+<     while (it.hasNext())
+<       size += ((RAMFile) it.next()).getSizeInBytes();
+<     return size;
+<   }
+< 
+<   
+225c218
+<   public final IndexOutput createOutput(String name) {
+---
+>   public IndexOutput createOutput(String name) {

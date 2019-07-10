@@ -1,0 +1,85 @@
+62a63,64
+> import org.apache.tika.config.TikaConfig;
+> import org.apache.tika.parser.AutoDetectParser;
+76a79,80
+> import java.net.MalformedURLException;
+> import java.net.URL;
+212c216,222
+<     private final JackrabbitParser parser = new JackrabbitParser();
+---
+>     private String tikaConfigPath = null;
+> 
+>     
+> 
+> 
+> 
+>     private Parser parser = null;
+870a881,897
+>     public String getTikaConfigPath() {
+>         return tikaConfigPath;
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     public void setTikaConfigPath(String tikaConfigPath) {
+>         this.tikaConfigPath = tikaConfigPath;
+>     }
+> 
+>     
+872c899,936
+<     public Parser getParser() {
+---
+> 
+> 
+> 
+> 
+>     public synchronized Parser getParser() {
+>         if (parser == null) {
+>             URL url = null;
+>             if (tikaConfigPath != null) {
+>                 File file = new File(tikaConfigPath);
+>                 if (file.exists()) {
+>                     try {
+>                         url = file.toURI().toURL();
+>                     } catch (MalformedURLException e) {
+>                         log.warn("Invalid Tika configuration path: " + file, e);
+>                     }
+>                 } else {
+>                     ClassLoader loader = SearchIndex.class.getClassLoader();
+>                     url = loader.getResource(tikaConfigPath);
+>                 }
+>             }
+>             if (url == null) {
+>                 url = SearchIndex.class.getResource("tika-config.xml");
+>             }
+> 
+>             TikaConfig config = null;
+>             if (url != null) {
+>                 try {
+>                     config = new TikaConfig(url);
+>                 } catch (Exception e) {
+>                     log.warn("Tika configuration not available: " + url, e);
+>                 }
+>             }
+>             if (config == null) {
+>                 config = TikaConfig.getDefaultConfig();
+>             }
+> 
+>             parser = new AutoDetectParser(config);
+>         }
+1081c1145
+<                 getContext().getExecutor(), parser);
+---
+>                 getContext().getExecutor(), getParser());
+1909c1973,1975
+<         parser.setTextFilterClasses(filterClasses);
+---
+>         log.warn("The textFilterClasses configuration parameter has"
+>                 + " been deprecated, and the configured value will"
+>                 + " be ignored: {}", filterClasses);

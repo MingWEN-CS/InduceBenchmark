@@ -1,0 +1,10 @@
+50a51,52
+>     private static final Set<String> EMPTY_REFERER = new HashSet<String>() {{ add(null); }};
+> 
+113a116,121
+>     public void testNoContentType() throws Exception {
+>         CSRFUtil util = new CSRFUtil("");
+>         testValid(util, validURLs, POST, EMPTY_REFERER);
+>         testInvalid(util, invalidURLs, POST, EMPTY_REFERER);
+>     }
+> 

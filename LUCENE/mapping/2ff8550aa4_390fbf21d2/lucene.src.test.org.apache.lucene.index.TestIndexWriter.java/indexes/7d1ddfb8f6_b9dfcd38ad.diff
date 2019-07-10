@@ -1,0 +1,64 @@
+45d44
+< import org.apache.lucene.analysis.standard.StandardAnalyzer;
+541,601d539
+<     
+< 
+< 
+<     public void testWickedLongTerm() throws IOException {
+<       RAMDirectory dir = new RAMDirectory();
+<       IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT)));
+< 
+<       char[] chars = new char[DocumentsWriter.MAX_TERM_LENGTH_UTF8];
+<       Arrays.fill(chars, 'x');
+<       Document doc = new Document();
+<       final String bigTerm = new String(chars);
+< 
+<       
+<       String contents = "abc xyz x" + bigTerm + " another term";
+<       doc.add(new Field("content", contents, Field.Store.NO, Field.Index.ANALYZED));
+<       writer.addDocument(doc);
+< 
+<       
+<       doc = new Document();
+<       doc.add(new Field("content", "abc bbb ccc", Field.Store.NO, Field.Index.ANALYZED));
+<       writer.addDocument(doc);
+<       writer.close();
+< 
+<       IndexReader reader = IndexReader.open(dir, true);
+< 
+<       
+<       assertEquals(2, reader.docFreq(new Term("content", "abc")));
+<       assertEquals(1, reader.docFreq(new Term("content", "bbb")));
+<       assertEquals(1, reader.docFreq(new Term("content", "term")));
+<       assertEquals(1, reader.docFreq(new Term("content", "another")));
+< 
+<       
+<       
+<       TermPositions tps = reader.termPositions(new Term("content", "another"));
+<       assertTrue(tps.next());
+<       assertEquals(1, tps.freq());
+<       assertEquals(3, tps.nextPosition());
+< 
+<       
+<       
+<       assertEquals("document with wicked long term should is not in the index!", 2, reader.numDocs());
+< 
+<       reader.close();
+< 
+<       
+<       
+<       doc = new Document();
+<       doc.add(new Field("content", bigTerm, Field.Store.NO, Field.Index.ANALYZED));
+<       StandardAnalyzer sa = new StandardAnalyzer(TEST_VERSION_CURRENT);
+<       sa.setMaxTokenLength(100000);
+<       writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, sa));
+<       writer.addDocument(doc);
+<       writer.close();
+<       reader = IndexReader.open(dir, true);
+<       assertEquals(1, reader.docFreq(new Term("content", bigTerm)));
+<       reader.close();
+< 
+<       dir.close();
+<     }
+< 

@@ -1,0 +1,6 @@
+264,265c264,265
+<       if (matchedTokens.contains(docTerm) || docTerm.startsWith(prefixToken)) {
+< 
+---
+>       if (matchedTokens.contains(docTerm) || (prefixToken != null && docTerm.startsWith(prefixToken))) {
+>  

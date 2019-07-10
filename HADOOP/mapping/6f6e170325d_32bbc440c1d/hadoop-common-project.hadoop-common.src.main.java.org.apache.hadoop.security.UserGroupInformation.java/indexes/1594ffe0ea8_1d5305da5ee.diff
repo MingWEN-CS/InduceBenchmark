@@ -1,0 +1,9 @@
+1255a1256,1263
+>   public String getPrimaryGroupName() throws IOException {
+>     String[] groups = getGroupNames();
+>     if (groups.length == 0) {
+>       throw new IOException("There is no primary group for UGI " + this);
+>     }
+>     return groups[0];
+>   }
+> 

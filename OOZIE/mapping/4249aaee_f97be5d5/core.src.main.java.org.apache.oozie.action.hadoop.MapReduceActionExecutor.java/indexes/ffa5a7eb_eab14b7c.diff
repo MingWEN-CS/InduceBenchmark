@@ -1,0 +1,41 @@
+47d46
+<     public static final String OOZIE_MAPREDUCE_UBER_JAR = "oozie.mapreduce.uber.jar";
+66,68c65
+<             
+<             
+<             log.error("Streaming class not found " +e);
+---
+>             throw new RuntimeException("Class not found", e);
+141c138
+<             String uberJar = actionConf.get(OOZIE_MAPREDUCE_UBER_JAR);
+---
+>             String uberJar = actionConf.get(MapReduceMain.OOZIE_MAPREDUCE_UBER_JAR);
+145,146c142,143
+<                             "{0} property is not allowed.  Set {1} to true in oozie-site to enable.", OOZIE_MAPREDUCE_UBER_JAR,
+<                             OOZIE_MAPREDUCE_UBER_JAR_ENABLE);
+---
+>                             "{0} property is not allowed.  Set {1} to true in oozie-site to enable.",
+>                             MapReduceMain.OOZIE_MAPREDUCE_UBER_JAR, OOZIE_MAPREDUCE_UBER_JAR_ENABLE);
+156c153,154
+<                             actionConf.set(OOZIE_MAPREDUCE_UBER_JAR, new Path(nameNodeSchemeAuthority + uberJarPath).toString());
+---
+>                             actionConf.set(MapReduceMain.OOZIE_MAPREDUCE_UBER_JAR,
+>                                     new Path(nameNodeSchemeAuthority + uberJarPath).toString());
+159c157
+<                             actionConf.set(OOZIE_MAPREDUCE_UBER_JAR, new Path(appPath, uberJarPath).toString());
+---
+>                             actionConf.set(MapReduceMain.OOZIE_MAPREDUCE_UBER_JAR, new Path(appPath, uberJarPath).toString());
+166,169c164,167
+<             if (actionConf.get(OOZIE_MAPREDUCE_UBER_JAR) != null) {
+<                 log.warn("The " + OOZIE_MAPREDUCE_UBER_JAR + " property is only applicable for MapReduce (not streaming nor pipes)"
+<                         + " workflows, ignoring");
+<                 actionConf.set(OOZIE_MAPREDUCE_UBER_JAR, "");
+---
+>             if (actionConf.get(MapReduceMain.OOZIE_MAPREDUCE_UBER_JAR) != null) {
+>                 log.warn("The " + MapReduceMain.OOZIE_MAPREDUCE_UBER_JAR + " property is only applicable for MapReduce (not"
+>                         + "streaming nor pipes) workflows, ignoring");
+>                 actionConf.set(MapReduceMain.OOZIE_MAPREDUCE_UBER_JAR, "");
+297c295
+<             String uberJar = actionConf.get(MapReduceActionExecutor.OOZIE_MAPREDUCE_UBER_JAR);
+---
+>             String uberJar = actionConf.get(MapReduceMain.OOZIE_MAPREDUCE_UBER_JAR);

@@ -1,0 +1,378 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.security;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Map;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.sasl.RealmCallback;
+import javax.security.sasl.RealmChoiceCallback;
+import javax.security.sasl.Sasl;
+import javax.security.sasl.SaslException;
+import javax.security.sasl.SaslClient;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+import org.apache.hadoop.ipc.ProtobufRpcEngine.RpcRequestMessageWrapper;
+import org.apache.hadoop.ipc.ProtobufRpcEngine.RpcResponseMessageWrapper;
+import org.apache.hadoop.ipc.RPC.RpcKind;
+import org.apache.hadoop.ipc.RemoteException;
+import org.apache.hadoop.ipc.Server.AuthProtocol;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcRequestHeaderProto;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcRequestHeaderProto.OperationProto;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcResponseHeaderProto;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcSaslProto;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcSaslProto.SaslAuth;
+import org.apache.hadoop.ipc.protobuf.RpcHeaderProtos.RpcSaslProto.SaslState;
+import org.apache.hadoop.security.SaslRpcServer.AuthMethod;
+import org.apache.hadoop.security.authentication.util.KerberosName;
+import org.apache.hadoop.security.token.Token;
+import org.apache.hadoop.security.token.TokenIdentifier;
+import org.apache.hadoop.util.ProtoUtil;
+
+import com.google.protobuf.ByteString;
+
+
+
+@InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
+@InterfaceStability.Evolving
+public class SaslRpcClient {
+  public static final Log LOG = LogFactory.getLog(SaslRpcClient.class);
+
+  private final AuthMethod authMethod;
+  private final SaslClient saslClient;
+  private final boolean fallbackAllowed;
+  private static final RpcRequestHeaderProto saslHeader =
+      ProtoUtil.makeRpcRequestHeader(RpcKind.RPC_PROTOCOL_BUFFER,
+          OperationProto.RPC_FINAL_PACKET, AuthProtocol.SASL.callId);
+  private static final RpcSaslProto negotiateRequest =
+      RpcSaslProto.newBuilder().setState(SaslState.NEGOTIATE).build();
+  
+  
+
+
+
+
+
+
+
+  public SaslRpcClient(AuthMethod method,
+      Token<? extends TokenIdentifier> token, String serverPrincipal,
+      boolean fallbackAllowed)
+      throws IOException {
+    this.authMethod = method;
+    this.fallbackAllowed = fallbackAllowed;
+    String saslUser = null;
+    String saslProtocol = null;
+    String saslServerName = null;
+    Map<String, String> saslProperties = SaslRpcServer.SASL_PROPS;
+    CallbackHandler saslCallback = null;
+    
+    switch (method) {
+      case TOKEN: {
+        saslProtocol = "";
+        saslServerName = SaslRpcServer.SASL_DEFAULT_REALM;
+        saslCallback = new SaslClientCallbackHandler(token);
+        break;
+      }
+      case KERBEROS: {
+        if (serverPrincipal == null || serverPrincipal.isEmpty()) {
+          throw new IOException(
+              "Failed to specify server's Kerberos principal name");
+        }
+        KerberosName name = new KerberosName(serverPrincipal);
+        saslProtocol = name.getServiceName();
+        saslServerName = name.getHostName();
+        if (saslServerName == null) {
+          throw new IOException(
+              "Kerberos principal name does NOT have the expected hostname part: "
+                  + serverPrincipal);
+        }
+        break;
+      }
+      default:
+        throw new IOException("Unknown authentication method " + method);
+    }
+    
+    String mechanism = method.getMechanismName();
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Creating SASL " + mechanism + "(" + authMethod + ") "
+          + " client to authenticate to service at " + saslServerName);
+    }
+    saslClient = Sasl.createSaslClient(
+        new String[] { mechanism }, saslUser, saslProtocol, saslServerName,
+        saslProperties, saslCallback);
+    if (saslClient == null) {
+      throw new IOException("Unable to find SASL client implementation");
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  public boolean saslConnect(InputStream inS, OutputStream outS)
+      throws IOException {
+    DataInputStream inStream = new DataInputStream(new BufferedInputStream(inS));
+    DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(
+        outS));
+    
+    
+    boolean inSasl = false;
+    sendSaslMessage(outStream, negotiateRequest);
+    
+    
+    boolean done = false;
+    do {
+      int totalLen = inStream.readInt();
+      RpcResponseMessageWrapper responseWrapper =
+          new RpcResponseMessageWrapper();
+      responseWrapper.readFields(inStream);
+      RpcResponseHeaderProto header = responseWrapper.getMessageHeader();
+      switch (header.getStatus()) {
+        case ERROR: 
+        case FATAL:
+          throw new RemoteException(header.getExceptionClassName(),
+                                    header.getErrorMsg());
+        default: break;
+      }
+      if (totalLen != responseWrapper.getLength()) {
+        throw new SaslException("Received malformed response length");
+      }
+      
+      if (header.getCallId() != AuthProtocol.SASL.callId) {
+        throw new SaslException("Non-SASL response during negotiation");
+      }
+      RpcSaslProto saslMessage =
+          RpcSaslProto.parseFrom(responseWrapper.getMessageBytes());
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Received SASL message "+saslMessage);
+      }
+      
+      RpcSaslProto.Builder response = null;
+      switch (saslMessage.getState()) {
+        case NEGOTIATE: {
+          inSasl = true;
+          
+          
+          String clientAuthMethod = authMethod.toString();
+          SaslAuth saslAuthType = null;
+          for (SaslAuth authType : saslMessage.getAuthsList()) {
+            if (clientAuthMethod.equals(authType.getMethod())) {
+              saslAuthType = authType;
+              break;
+            }
+          }
+          if (saslAuthType == null) {
+            saslAuthType = SaslAuth.newBuilder()
+                .setMethod(clientAuthMethod)
+                .setMechanism(saslClient.getMechanismName())
+                .build();
+          }
+          
+          byte[] challengeToken = null;
+          if (saslAuthType != null && saslAuthType.hasChallenge()) {
+            
+            challengeToken = saslAuthType.getChallenge().toByteArray();
+            saslAuthType =
+              SaslAuth.newBuilder(saslAuthType).clearChallenge().build();
+          } else if (saslClient.hasInitialResponse()) {
+            challengeToken = new byte[0];
+          }
+          byte[] responseToken = (challengeToken != null)
+              ? saslClient.evaluateChallenge(challengeToken)
+              : new byte[0];
+          
+          response = createSaslReply(SaslState.INITIATE, responseToken);
+          response.addAuths(saslAuthType);
+          break;
+        }
+        case CHALLENGE: {
+          inSasl = true;
+          byte[] responseToken = saslEvaluateToken(saslMessage, false);
+          response = createSaslReply(SaslState.RESPONSE, responseToken);
+          break;
+        }
+        case SUCCESS: {
+          if (inSasl && saslEvaluateToken(saslMessage, true) != null) {
+            throw new SaslException("SASL client generated spurious token");
+          }
+          done = true;
+          break;
+        }
+        default: {
+          throw new SaslException(
+              "RPC client doesn't support SASL " + saslMessage.getState());
+        }
+      }
+      if (response != null) {
+        sendSaslMessage(outStream, response.build());
+      }
+    } while (!done);
+    if (!inSasl && !fallbackAllowed) {
+      throw new IOException("Server asks us to fall back to SIMPLE " +
+          "auth, but this client is configured to only allow secure " +
+          "connections.");
+    }
+    return inSasl;
+  }
+  
+  private void sendSaslMessage(DataOutputStream out, RpcSaslProto message)
+      throws IOException {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Sending sasl message "+message);
+    }
+    RpcRequestMessageWrapper request =
+        new RpcRequestMessageWrapper(saslHeader, message);
+    out.writeInt(request.getLength());
+    request.write(out);
+    out.flush();    
+  }
+  
+  private byte[] saslEvaluateToken(RpcSaslProto saslResponse,
+      boolean done) throws SaslException {
+    byte[] saslToken = null;
+    if (saslResponse.hasToken()) {
+      saslToken = saslResponse.getToken().toByteArray();
+      saslToken = saslClient.evaluateChallenge(saslToken);
+    } else if (!done) {
+      throw new SaslException("Challenge contains no token");
+    }
+    if (done && !saslClient.isComplete()) {
+      throw new SaslException("Client is out of sync with server");
+    }
+    return saslToken;
+  }
+  
+  private RpcSaslProto.Builder createSaslReply(SaslState state,
+                                               byte[] responseToken) {
+    RpcSaslProto.Builder response = RpcSaslProto.newBuilder();
+    response.setState(state);
+    if (responseToken != null) {
+      response.setToken(ByteString.copyFrom(responseToken));
+    }
+    return response;
+  }
+
+  
+
+
+
+
+
+
+
+
+  public InputStream getInputStream(InputStream in) throws IOException {
+    if (!saslClient.isComplete()) {
+      throw new IOException("Sasl authentication exchange hasn't completed yet");
+    }
+    return new SaslInputStream(in, saslClient);
+  }
+
+  
+
+
+
+
+
+
+
+
+  public OutputStream getOutputStream(OutputStream out) throws IOException {
+    if (!saslClient.isComplete()) {
+      throw new IOException("Sasl authentication exchange hasn't completed yet");
+    }
+    return new SaslOutputStream(out, saslClient);
+  }
+
+  
+  public void dispose() throws SaslException {
+    saslClient.dispose();
+  }
+
+  private static class SaslClientCallbackHandler implements CallbackHandler {
+    private final String userName;
+    private final char[] userPassword;
+
+    public SaslClientCallbackHandler(Token<? extends TokenIdentifier> token) {
+      this.userName = SaslRpcServer.encodeIdentifier(token.getIdentifier());
+      this.userPassword = SaslRpcServer.encodePassword(token.getPassword());
+    }
+
+    @Override
+    public void handle(Callback[] callbacks)
+        throws UnsupportedCallbackException {
+      NameCallback nc = null;
+      PasswordCallback pc = null;
+      RealmCallback rc = null;
+      for (Callback callback : callbacks) {
+        if (callback instanceof RealmChoiceCallback) {
+          continue;
+        } else if (callback instanceof NameCallback) {
+          nc = (NameCallback) callback;
+        } else if (callback instanceof PasswordCallback) {
+          pc = (PasswordCallback) callback;
+        } else if (callback instanceof RealmCallback) {
+          rc = (RealmCallback) callback;
+        } else {
+          throw new UnsupportedCallbackException(callback,
+              "Unrecognized SASL client callback");
+        }
+      }
+      if (nc != null) {
+        if (LOG.isDebugEnabled())
+          LOG.debug("SASL client callback: setting username: " + userName);
+        nc.setName(userName);
+      }
+      if (pc != null) {
+        if (LOG.isDebugEnabled())
+          LOG.debug("SASL client callback: setting userPassword");
+        pc.setPassword(userPassword);
+      }
+      if (rc != null) {
+        if (LOG.isDebugEnabled())
+          LOG.debug("SASL client callback: setting realm: "
+              + rc.getDefaultText());
+        rc.setText(rc.getDefaultText());
+      }
+    }
+  }
+}

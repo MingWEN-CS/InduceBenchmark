@@ -1,0 +1,12 @@
+62c62
+<     base.setWritable(true);
+---
+>     FileUtil.setWritable(base, true);
+301c301
+<     assertTrue(dir2.exists() && dir2.canWrite());
+---
+>     assertTrue(dir2.exists() && FileUtil.canWrite(dir2));
+324c324
+<     base.setWritable(false);
+---
+>     FileUtil.setWritable(base, false);

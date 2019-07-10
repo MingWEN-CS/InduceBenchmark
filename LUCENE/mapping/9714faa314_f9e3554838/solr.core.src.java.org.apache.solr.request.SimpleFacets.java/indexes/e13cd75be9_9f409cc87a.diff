@@ -1,0 +1,79 @@
+71a72
+> import org.apache.solr.search.facet.FacetProcessor;
+79a81
+> import java.util.HashMap;
+363c365
+<     ENUM, FC, FCS;
+---
+>     ENUM, FC, FCS, UIF;
+424a427,428
+>     } else if(FacetParams.FACET_METHOD_uif.equals(methodStr)) {
+>       method = FacetMethod.UIF;
+487a492,558
+>         case UIF:
+> 
+>             
+>             Map<String, Object> jsonFacet = new HashMap<>(13);
+>             jsonFacet.put("type", "terms");
+>             jsonFacet.put("field", field);
+>             jsonFacet.put("offset", offset);
+>             jsonFacet.put("limit", limit);
+>             jsonFacet.put("mincount", mincount);
+>             jsonFacet.put("missing", missing);
+>             
+>             if (prefix!=null) {
+>               
+>               throw new SolrException (
+>                   SolrException.ErrorCode.BAD_REQUEST,
+>                   FacetParams.FACET_PREFIX+"="+prefix+
+>                   " are not supported by "+FacetParams.FACET_METHOD+"="+FacetParams.FACET_METHOD_uif+
+>                   " for field:"+ field
+>                   
+>               );
+>             }
+>             jsonFacet.put("numBuckets", params.getFieldBool(field, "numBuckets", false));
+>             jsonFacet.put("allBuckets", params.getFieldBool(field, "allBuckets", false));
+>             jsonFacet.put("method", "uif");
+>             jsonFacet.put("cacheDf", 0);
+>             jsonFacet.put("perSeg", false);
+>             
+>             final String sortVal;
+>             switch(sort){
+>               case FacetParams.FACET_SORT_COUNT_LEGACY:
+>                 sortVal = FacetParams.FACET_SORT_COUNT;
+>               break;
+>               case FacetParams.FACET_SORT_INDEX_LEGACY:
+>                 sortVal = FacetParams.FACET_SORT_INDEX;
+>               break;
+>               default:
+>                 sortVal = sort;
+>             }
+>             jsonFacet.put("sort", sortVal );
+> 
+>             Map<String, Object> topLevel = new HashMap<>();
+>             topLevel.put(field, jsonFacet);
+>               
+>             topLevel.put("processEmpty", true);
+> 
+>             FacetProcessor fproc = FacetProcessor.createProcessor(rb.req, topLevel, 
+>                                                                     docs );
+>             
+>             fproc.process();
+> 
+>             
+>             Object res = fproc.getResponse();
+>             counts = new NamedList<Integer>();
+>             if(res != null) {
+>               SimpleOrderedMap<Object> som = (SimpleOrderedMap<Object>)res;
+>               SimpleOrderedMap<Object> asdf = (SimpleOrderedMap<Object>) som.get(field);
+> 
+>               List<SimpleOrderedMap<Object>> buckets = (List<SimpleOrderedMap<Object>>)asdf.get("buckets");
+>               for(SimpleOrderedMap<Object> b : buckets) {
+>                 counts.add(b.get("val").toString(), (Integer)b.get("count"));
+>               }
+>               if(missing) {
+>                 SimpleOrderedMap<Object> missingCounts = (SimpleOrderedMap<Object>) asdf.get("missing");
+>                 counts.add(null, (Integer)missingCounts.get("count"));
+>               }
+>             }
+>           break;

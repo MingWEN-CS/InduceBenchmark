@@ -1,0 +1,22 @@
+19d18
+< import java.io.PrintStream;
+42d40
+< import org.apache.jackrabbit.core.util.Dumpable;
+113c111
+<         implements ItemStateManager, ItemStateListener, Dumpable {
+---
+>         implements ItemStateManager, ItemStateListener {
+438a437
+> 
+442,448c441,443
+<     public void dump(PrintStream ps) {
+<         ps.println("SharedItemStateManager (" + this + ")");
+<         if (cache instanceof Dumpable) {
+<             ps.println();
+<             ps.print("[referenceCache] ");
+<             ((Dumpable) cache).dump(ps);
+<         }
+---
+>     public String toString() {
+>         return "SharedItemStateManager (" + this + ")\n"
+>             + "[referenceCache]\n" + cache;

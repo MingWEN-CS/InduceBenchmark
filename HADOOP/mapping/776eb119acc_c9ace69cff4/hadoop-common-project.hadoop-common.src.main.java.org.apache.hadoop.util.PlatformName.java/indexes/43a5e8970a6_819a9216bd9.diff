@@ -1,0 +1,21 @@
+35c35
+<   private static final String platformName =
+---
+>   public static final String PLATFORM_NAME =
+42a43
+>   public static final String JAVA_VENDOR_NAME = System.getProperty("java.vendor");
+44,46c45,49
+<   public static String getPlatformName() {
+<     return platformName;
+<   }
+---
+>   
+> 
+> 
+> 
+>   public static final boolean IBM_JAVA = JAVA_VENDOR_NAME.contains("IBM");
+49c52,53
+<     System.out.println(platformName);
+---
+>     System.out.println("platform name: " + PLATFORM_NAME);
+>     System.out.println("java vendor name: " + JAVA_VENDOR_NAME);

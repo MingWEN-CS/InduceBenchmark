@@ -1,0 +1,43 @@
+23a24,26
+> import javax.persistence.EntityManager;
+> import javax.persistence.Query;
+> 
+25a29
+> import org.apache.ambari.server.orm.entities.ClusterConfigEntity;
+46a51,52
+>   public static final String SERVICE_DELETED_COLUMN = "service_deleted";
+>   public static final String UNMAPPED_COLUMN = "unmapped";
+151a158,188
+>     renameServiceDeletedColumn();
+>   }
+> 
+>   private void renameServiceDeletedColumn() throws AmbariException, SQLException {
+>     if (dbAccessor.tableHasColumn(CLUSTER_CONFIG_TABLE, SERVICE_DELETED_COLUMN)) {
+>       dbAccessor.renameColumn(CLUSTER_CONFIG_TABLE, SERVICE_DELETED_COLUMN, new DBAccessor.DBColumnInfo(UNMAPPED_COLUMN, Short.class, null, 0, false));
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   private void setUnmappedForOrphanedConfigs() {
+>     executeInTransaction(new Runnable() {
+>       @Override
+>       public void run() {
+>         EntityManager entityManager = getEntityManagerProvider().get();
+>         Query query = entityManager.createNamedQuery("ClusterConfigEntity.findNotMappedClusterConfigsToService",ClusterConfigEntity.class);
+> 
+>         List<ClusterConfigEntity> notMappedConfigs =  (List<ClusterConfigEntity>) query.getResultList();
+>         if (notMappedConfigs != null) {
+>           for (ClusterConfigEntity clusterConfigEntity : notMappedConfigs) {
+>             clusterConfigEntity.setUnmapped(true);
+>             entityManager.merge(clusterConfigEntity);
+>           }
+>         }
+>       }
+>     });
+331a369
+>     setUnmappedForOrphanedConfigs();

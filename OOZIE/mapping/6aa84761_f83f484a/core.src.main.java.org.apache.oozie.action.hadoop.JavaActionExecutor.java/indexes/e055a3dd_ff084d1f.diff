@@ -1,0 +1,44 @@
+237c237
+<     private void injectLauncherProperties(Configuration srcConf, Configuration launcherConf) {
+---
+>     private static void injectLauncherProperties(Configuration srcConf, Configuration launcherConf) {
+261,265c261,266
+<             Element e = actionXml.getChild("configuration", ns);
+<             if (e != null) {
+<                 String strConf = XmlUtils.prettyPrint(e).toString();
+<                 XConfiguration inlineConf = new XConfiguration(new StringReader(strConf));
+<                 injectLauncherProperties(inlineConf, launcherConf);
+---
+>             try {
+>                 parseJobXmlAndConfiguration(context, actionXml, appPath, conf, true);
+>             } catch (HadoopAccessorException ex) {
+>                 throw convertException(ex);
+>             } catch (URISyntaxException ex) {
+>                 throw convertException(ex);
+271c272,273
+<             e = actionXml.getChild("config-class", actionXml.getNamespace());
+---
+>             
+>             Element e = actionXml.getChild("config-class", ns);
+458a461,465
+>         parseJobXmlAndConfiguration(context, element, appPath, conf, false);
+>     }
+> 
+>     public static void parseJobXmlAndConfiguration(Context context, Element element, Path appPath, Configuration conf,
+>             boolean isLauncher) throws IOException, ActionExecutorException, HadoopAccessorException, URISyntaxException {
+497c504,508
+<             XConfiguration.copy(jobXmlConf, conf);
+---
+>             if (isLauncher) {
+>                 injectLauncherProperties(jobXmlConf, conf);
+>             } else {
+>                 XConfiguration.copy(jobXmlConf, conf);
+>             }
+504c515,519
+<             XConfiguration.copy(inlineConf, conf);
+---
+>             if (isLauncher) {
+>                 injectLauncherProperties(inlineConf, conf);
+>             } else {
+>                 XConfiguration.copy(inlineConf, conf);
+>             }

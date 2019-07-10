@@ -1,0 +1,1205 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.actionmanager;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.ambari.server.AmbariException;
+import org.apache.ambari.server.ClusterNotFoundException;
+import org.apache.ambari.server.Role;
+import org.apache.ambari.server.RoleCommand;
+import org.apache.ambari.server.ServiceComponentHostNotFoundException;
+import org.apache.ambari.server.ServiceComponentNotFoundException;
+import org.apache.ambari.server.agent.ActionQueue;
+import org.apache.ambari.server.agent.AgentCommand.AgentCommandType;
+import org.apache.ambari.server.agent.CancelCommand;
+import org.apache.ambari.server.agent.CommandReport;
+import org.apache.ambari.server.agent.ExecutionCommand;
+import org.apache.ambari.server.configuration.Configuration;
+import org.apache.ambari.server.controller.HostsMap;
+import org.apache.ambari.server.events.ActionFinalReportReceivedEvent;
+import org.apache.ambari.server.events.publishers.AmbariEventPublisher;
+import org.apache.ambari.server.orm.entities.RequestEntity;
+import org.apache.ambari.server.serveraction.ServerActionExecutor;
+import org.apache.ambari.server.state.Cluster;
+import org.apache.ambari.server.state.Clusters;
+import org.apache.ambari.server.state.Host;
+import org.apache.ambari.server.state.HostState;
+import org.apache.ambari.server.state.Service;
+import org.apache.ambari.server.state.ServiceComponent;
+import org.apache.ambari.server.state.ServiceComponentHost;
+import org.apache.ambari.server.state.ServiceComponentHostEvent;
+import org.apache.ambari.server.state.fsm.InvalidStateTransitionException;
+import org.apache.ambari.server.state.svccomphost.ServiceComponentHostOpFailedEvent;
+import org.apache.ambari.server.utils.StageUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.persist.UnitOfWork;
+
+
+
+
+
+
+
+class ActionScheduler implements Runnable {
+
+  private static Logger LOG = LoggerFactory.getLogger(ActionScheduler.class);
+
+  public static final String FAILED_TASK_ABORT_REASONING =
+          "Server considered task failed and automatically aborted it";
+
+  private final long actionTimeout;
+  private final long sleepTime;
+  private final UnitOfWork unitOfWork;
+  private volatile boolean shouldRun = true;
+  private Thread schedulerThread = null;
+  private final ActionDBAccessor db;
+  private final short maxAttempts;
+  private final ActionQueue actionQueue;
+  private final Clusters clusters;
+  private final AmbariEventPublisher ambariEventPublisher;
+  private boolean taskTimeoutAdjustment = true;
+  private final HostsMap hostsMap;
+  private final Object wakeupSyncObject = new Object();
+  private final ServerActionExecutor serverActionExecutor;
+  private final Configuration configuration;
+
+  private final Set<Long> requestsInProgress = new HashSet<Long>();
+
+  
+
+
+
+  private final Set<Long> requestsToBeCancelled =
+          Collections.newSetFromMap(new ConcurrentHashMap<Long, Boolean>());
+
+  
+
+
+
+
+  private final Map<Long, String> requestCancelReasons =
+          new HashMap<Long, String>();
+
+  
+
+
+
+
+  private boolean activeAwakeRequest = false;
+  
+  private Cache<String, Map<String, Set<String>>> clusterHostInfoCache;
+  private Cache<String, Map<String, String>> commandParamsStageCache;
+  private Cache<String, Map<String, String>> hostParamsStageCache;
+
+  public ActionScheduler(long sleepTimeMilliSec, long actionTimeoutMilliSec,
+                         ActionDBAccessor db, ActionQueue actionQueue, Clusters fsmObject,
+                         int maxAttempts, HostsMap hostsMap,
+                         UnitOfWork unitOfWork, AmbariEventPublisher ambariEventPublisher,
+                         Configuration configuration) {
+    sleepTime = sleepTimeMilliSec;
+    this.hostsMap = hostsMap;
+    actionTimeout = actionTimeoutMilliSec;
+    this.db = db;
+    this.actionQueue = actionQueue;
+    clusters = fsmObject;
+    this.ambariEventPublisher = ambariEventPublisher;
+    this.maxAttempts = (short) maxAttempts;
+    serverActionExecutor = new ServerActionExecutor(db, sleepTimeMilliSec);
+    this.unitOfWork = unitOfWork;
+    clusterHostInfoCache = CacheBuilder.newBuilder().
+        expireAfterAccess(5, TimeUnit.MINUTES).
+        build();
+    commandParamsStageCache = CacheBuilder.newBuilder().
+      expireAfterAccess(5, TimeUnit.MINUTES).
+      build();
+    hostParamsStageCache = CacheBuilder.newBuilder().
+      expireAfterAccess(5, TimeUnit.MINUTES).
+      build();
+    this.configuration = configuration;
+  }
+
+  public void start() {
+    schedulerThread = new Thread(this, "ambari-action-scheduler");
+    schedulerThread.start();
+
+    
+    
+    serverActionExecutor.start();
+  }
+
+  public void stop() {
+    shouldRun = false;
+    schedulerThread.interrupt();
+
+    
+    
+    serverActionExecutor.stop();
+  }
+
+  
+
+
+
+
+  public void awake() {
+    synchronized (wakeupSyncObject) {
+      activeAwakeRequest = true;
+      wakeupSyncObject.notify();
+    }
+  }
+
+  @Override
+  public void run() {
+    while (shouldRun) {
+      try {
+        synchronized (wakeupSyncObject) {
+          if (!activeAwakeRequest) {
+              wakeupSyncObject.wait(sleepTime);
+          }
+          activeAwakeRequest = false;
+        }
+        doWork();
+      } catch (InterruptedException ex) {
+        LOG.warn("Scheduler thread is interrupted going to stop", ex);
+        shouldRun = false;
+      } catch (Exception ex) {
+        LOG.warn("Exception received", ex);
+        requestsInProgress.clear();
+      } catch (Throwable t) {
+        LOG.warn("ERROR", t);
+        requestsInProgress.clear();
+      }
+    }
+  }
+
+  public void doWork() throws AmbariException {
+    try {
+      unitOfWork.begin();
+
+      
+      processCancelledRequestsList();
+
+      
+      
+      
+      if (db.getCommandsInProgressCount() == 0) {
+        
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("There are no stages currently in progress.");
+        }
+
+        actionQueue.updateListOfHostsWithPendingTask(null);
+        return;
+      }
+
+      Set<Long> runningRequestIds = new HashSet<Long>();
+      List<Stage> stages = db.getStagesInProgress();
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Scheduler wakes up");
+        LOG.debug("Processing {} in progress stages ", stages.size());
+      }
+
+      if (stages.isEmpty()) {
+        
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("There are no stages currently in progress.");
+        }
+
+        actionQueue.updateListOfHostsWithPendingTask(null);
+        return;
+      }
+
+      int i_stage = 0;
+
+      HashSet<String> hostsWithTasks = getListOfHostsWithPendingTask(stages);
+      actionQueue.updateListOfHostsWithPendingTask(hostsWithTasks);
+
+      stages = filterParallelPerHostStages(stages);
+      
+
+      boolean exclusiveRequestIsGoing = false;
+      
+      
+      for (Stage stage : stages) {
+        
+        i_stage ++;
+        long requestId = stage.getRequestId();
+        LOG.debug("==> STAGE_i = " + i_stage + "(requestId=" + requestId + ",StageId=" + stage.getStageId() + ")");
+
+        RequestEntity request = db.getRequestEntity(requestId);
+
+        if (request.isExclusive()) {
+          if (runningRequestIds.size() > 0 ) {
+            
+            LOG.debug("Stage requires exclusive execution, but other requests are already executing. Stopping for now");
+            break;
+          }
+          exclusiveRequestIsGoing = true;
+        }
+
+        if (runningRequestIds.contains(requestId)) {
+          
+          LOG.debug("==> We don't want to process different stages from the same request in parallel");
+          continue;
+        } else {
+          runningRequestIds.add(requestId);
+          if (!requestsInProgress.contains(requestId)) {
+            requestsInProgress.add(requestId);
+            db.startRequest(requestId);
+          }
+        }
+
+        
+        List<ExecutionCommand> commandsToSchedule = new ArrayList<ExecutionCommand>();
+        Map<String, RoleStats> roleStats = processInProgressStage(stage, commandsToSchedule);
+
+        
+        boolean failed = false;
+        for (Map.Entry<String, RoleStats> entry : roleStats.entrySet()) {
+
+          String role = entry.getKey();
+          RoleStats stats = entry.getValue();
+
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Stats for role: {}, stats={}", role, stats);
+          }
+
+          
+          
+          if (stats.isRoleFailed() && !stage.isSkippable()) {
+            LOG.warn("{} failed, request {} will be aborted", role, request.getRequestId());
+
+            failed = true;
+            break;
+          }
+        }
+
+        if (!failed) {
+          
+          failed = hasPreviousStageFailed(stage);
+        }
+
+        if (failed) {
+          LOG.error("Operation completely failed, aborting request id: {}", stage.getRequestId());
+          cancelHostRoleCommands(stage.getOrderedHostRoleCommands(), FAILED_TASK_ABORT_REASONING);
+          abortOperationsForStage(stage);
+          return;
+        }
+
+        List<ExecutionCommand> commandsToStart = new ArrayList<ExecutionCommand>();
+        List<ExecutionCommand> commandsToUpdate = new ArrayList<ExecutionCommand>();
+
+        
+
+        for (ExecutionCommand cmd : commandsToSchedule) {
+
+          
+          if ((cmd.getRole().equals(Role.HIVE_CLIENT.toString()) ||
+                  cmd.getRole().equals(Role.WEBHCAT_SERVER.toString()) ||
+                  cmd.getRole().equals(Role.HCAT.toString())) &&
+                  cmd.getConfigurations().containsKey(Configuration.HIVE_CONFIG_TAG)) {
+            cmd.getConfigurations().get(Configuration.HIVE_CONFIG_TAG).remove(Configuration.HIVE_METASTORE_PASSWORD_PROPERTY);
+          }
+          processHostRole(stage, cmd, commandsToStart, commandsToUpdate);
+        }
+
+        LOG.debug("==> Commands to start: {}", commandsToStart.size());
+        LOG.debug("==> Commands to update: {}", commandsToUpdate.size());
+
+        
+        ListMultimap<String, ServiceComponentHostEvent> eventMap = formEventMap(stage, commandsToStart);
+        Map<ExecutionCommand, String> commandsToAbort = new HashMap<ExecutionCommand, String>();
+        if (!eventMap.isEmpty()) {
+          LOG.debug("==> processing {} serviceComponentHostEvents...", eventMap.size());
+          Cluster cluster = clusters.getCluster(stage.getClusterName());
+          if (cluster != null) {
+            Map<ServiceComponentHostEvent, String> failedEvents = cluster.processServiceComponentHostEvents(eventMap);
+
+            if (failedEvents.size() > 0) {
+              LOG.error("==> {} events failed.", failedEvents.size());
+            }
+
+            for (Iterator<ExecutionCommand> iterator = commandsToUpdate.iterator(); iterator.hasNext(); ) {
+              ExecutionCommand cmd = iterator.next();
+              for (ServiceComponentHostEvent event : failedEvents.keySet()) {
+                if (StringUtils.equals(event.getHostName(), cmd.getHostname()) &&
+                  StringUtils.equals(event.getServiceComponentName(), cmd.getRole())) {
+                  iterator.remove();
+                  commandsToAbort.put(cmd, failedEvents.get(event));
+                  break;
+                }
+              }
+            }
+          } else {
+            LOG.warn("There was events to process but cluster {} not found", stage.getClusterName());
+          }
+        }
+
+        LOG.debug("==> Scheduling {} tasks...", commandsToUpdate.size());
+        db.bulkHostRoleScheduled(stage, commandsToUpdate);
+
+        if (commandsToAbort.size() > 0) { 
+          LOG.debug("==> Aborting {} tasks...", commandsToAbort.size());
+          
+          List<Long> taskIds = new ArrayList<Long>();
+          for (ExecutionCommand command : commandsToAbort.keySet()) {
+            taskIds.add(command.getTaskId());
+          }
+          Collection<HostRoleCommand> hostRoleCommands = db.getTasks(taskIds);
+
+          cancelHostRoleCommands(hostRoleCommands, FAILED_TASK_ABORT_REASONING);
+          db.bulkAbortHostRole(stage, commandsToAbort);
+        }
+
+        LOG.debug("==> Adding {} tasks to queue...", commandsToUpdate.size());
+        for (ExecutionCommand cmd : commandsToUpdate) {
+          
+          if (Role.AMBARI_SERVER_ACTION.name().equals(cmd.getRole())) {
+            serverActionExecutor.awake();
+          } else {
+            actionQueue.enqueue(cmd.getHostname(), cmd);
+          }
+        }
+        LOG.debug("==> Finished.");
+
+        if (! configuration.getParallelStageExecution()) { 
+          return;
+        }
+
+        if (exclusiveRequestIsGoing) {
+          
+          LOG.debug("Stage requires exclusive execution, skipping all executing any further stages");
+          break;
+        }
+      }
+
+      requestsInProgress.retainAll(runningRequestIds);
+
+    } finally {
+      LOG.debug("Scheduler finished work.");
+      unitOfWork.end();
+    }
+  }
+
+  
+
+
+
+
+
+
+  private HashSet<String> getListOfHostsWithPendingTask(List<Stage> stages) {
+    HashSet<String> hostsWithTasks = new HashSet<String>();
+    for (Stage s : stages) {
+      hostsWithTasks.addAll(s.getHosts());
+    }
+    return hostsWithTasks;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  private List<Stage> filterParallelPerHostStages(List<Stage> stages) {
+    List<Stage> retVal = new ArrayList<Stage>();
+    Set<String> affectedHosts = new HashSet<String>();
+    Set<Long> affectedRequests = new HashSet<Long>();
+
+    for (Stage s : stages) {
+      long requestId = s.getRequestId();
+
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("==> Processing stage: {}/{} ({}) for {}", requestId, s.getStageId(), s.getRequestContext());
+      }
+
+      boolean addStage = true;
+
+      
+      
+      
+      for (String host : s.getHosts()) {
+        LOG.trace("===> Processing Host {}", host);
+
+        if (affectedHosts.contains(host)) {
+          if (LOG.isTraceEnabled()) {
+            LOG.trace("===>  Skipping stage since it utilizes at least one host that a previous stage requires: {}/{} ({})", s.getRequestId(), s.getStageId(), s.getRequestContext());
+          }
+
+          addStage &= false;
+        } else {
+          if (!Stage.INTERNAL_HOSTNAME.equalsIgnoreCase(host) && !isStageHasBackgroundCommandsOnly(s, host)) {
+            LOG.trace("====>  Adding host to affected hosts: {}", host);
+            affectedHosts.add(host);
+          }
+
+          addStage &= true;
+        }
+      }
+
+      
+      
+      
+      
+      if (affectedRequests.contains(requestId)) {
+        if (LOG.isTraceEnabled()) {
+          LOG.trace("===>  Skipping stage since the request it is in has been processed already: {}/{} ({})", s.getRequestId(), s.getStageId(), s.getRequestContext());
+        }
+
+        addStage = false;
+      } else {
+        if (LOG.isTraceEnabled()) {
+          LOG.trace("====>  Adding request to affected requests: {}", requestId);
+        }
+
+        affectedRequests.add(requestId);
+        addStage &= true;
+      }
+
+      
+      
+      
+      if (addStage) {
+        if (LOG.isTraceEnabled()) {
+          LOG.trace("===>  Adding stage to return value: {}/{} ({})", s.getRequestId(), s.getStageId(), s.getRequestContext());
+        }
+
+        retVal.add(s);
+      }
+    }
+
+    return retVal;
+  }
+
+  private boolean isStageHasBackgroundCommandsOnly(Stage s, String host) {
+    for (ExecutionCommandWrapper c : s.getExecutionCommands(host)) {
+      if(c.getExecutionCommand().getCommandType() != AgentCommandType.BACKGROUND_EXECUTION_COMMAND)
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private boolean hasPreviousStageFailed(Stage stage) {
+    boolean failed = false;
+
+    long prevStageId = stage.getStageId() - 1;
+
+    if (prevStageId >= 0) {
+      
+      String actionId = StageUtils.getActionId(stage.getRequestId(), prevStageId);
+      Stage prevStage = db.getStage(actionId);
+
+      
+      if (prevStage == null || prevStage.isSkippable()) {
+        return false;
+      }
+
+      Map<Role, Integer> hostCountsForRoles       = new HashMap<Role, Integer>();
+      Map<Role, Integer> failedHostCountsForRoles = new HashMap<Role, Integer>();
+
+      for (String host : prevStage.getHostRoleCommands().keySet()) {
+        Map<String, HostRoleCommand> roleCommandMap = prevStage.getHostRoleCommands().get(host);
+        for (String role : roleCommandMap.keySet()) {
+          HostRoleCommand c = roleCommandMap.get(role);
+          if (hostCountsForRoles.get(c.getRole()) == null) {
+            hostCountsForRoles.put(c.getRole(), 0);
+            failedHostCountsForRoles.put(c.getRole(), 0);
+          }
+          int hostCount = hostCountsForRoles.get(c.getRole());
+          hostCountsForRoles.put(c.getRole(), hostCount + 1);
+          if (c.getStatus().isFailedAndNotSkippableState()) {
+            int failedHostCount = failedHostCountsForRoles.get(c.getRole());
+            failedHostCountsForRoles.put(c.getRole(), failedHostCount + 1);
+          }
+        }
+      }
+
+      for (Role role : hostCountsForRoles.keySet()) {
+        float failedHosts = failedHostCountsForRoles.get(role);
+        float totalHosts = hostCountsForRoles.get(role);
+        if (((totalHosts - failedHosts) / totalHosts) < prevStage.getSuccessFactor(role)) {
+          failed = true;
+        }
+      }
+    }
+    return failed;
+  }
+
+  
+
+
+
+
+
+
+  protected Map<String, RoleStats> processInProgressStage(Stage s,
+      List<ExecutionCommand> commandsToSchedule) throws AmbariException {
+    LOG.debug("==> Collecting commands to schedule...");
+    
+    Map<String, RoleStats> roleStats = initRoleStats(s);
+    long now = System.currentTimeMillis();
+
+    Cluster cluster = null;
+    if (null != s.getClusterName()) {
+      cluster = clusters.getCluster(s.getClusterName());
+    }
+
+    for (String host : s.getHosts()) {
+
+      List<ExecutionCommandWrapper> commandWrappers = s.getExecutionCommands(host);
+      Host hostObj = null;
+      try {
+        hostObj = clusters.getHost(host);
+      } catch (AmbariException e) {
+        LOG.debug("Host {} not found, stage is likely a server side action", host);
+      }
+
+      int i_my = 0;
+      LOG.trace("===>host=" + host);
+
+      for(ExecutionCommandWrapper wrapper : commandWrappers) {
+        ExecutionCommand c = wrapper.getExecutionCommand();
+        String roleStr = c.getRole();
+        HostRoleStatus status = s.getHostRoleStatus(host, roleStr);
+        i_my ++;
+        if (LOG.isTraceEnabled()) {
+          LOG.trace("Host task " + i_my + ") id = " + c.getTaskId() + " status = " + status.toString() +
+            " (role=" + roleStr + "), roleCommand = "+ c.getRoleCommand());
+        }
+        boolean hostDeleted = false;
+        if (null != cluster) {
+          Service svc = null;
+          if (c.getServiceName() != null && !c.getServiceName().isEmpty()) {
+            svc = cluster.getService(c.getServiceName());
+          }
+
+          ServiceComponent svcComp = null;
+          Map<String, ServiceComponentHost> scHosts = null;
+          try {
+            if (svc != null) {
+              svcComp = svc.getServiceComponent(roleStr);
+              scHosts = svcComp.getServiceComponentHosts();
+            }
+          } catch (ServiceComponentNotFoundException scnex) {
+            String msg = String.format(
+                    "%s is not not a service component, assuming its an action",
+                    roleStr);
+            LOG.debug(msg);
+          }
+
+          hostDeleted = (scHosts != null && !scHosts.containsKey(host));
+          if (hostDeleted) {
+            String message = String.format(
+              "Host component information has not been found.  Details:" +
+              "cluster=%s; host=%s; service=%s; component=%s; ",
+              c.getClusterName(), host,
+              svcComp == null ? "null" : svcComp.getServiceName(),
+              svcComp == null ? "null" : svcComp.getName());
+            LOG.warn(message);
+          }
+        }
+
+        
+        long commandTimeout = actionTimeout;
+        if (taskTimeoutAdjustment) {
+          Map<String, String> commandParams = c.getCommandParams();
+          String timeoutKey = ExecutionCommand.KeyNames.COMMAND_TIMEOUT;
+          if (commandParams != null && commandParams.containsKey(timeoutKey)) {
+            String timeoutStr = commandParams.get(timeoutKey);
+            commandTimeout += Long.parseLong(timeoutStr) * 1000; 
+          } else {
+            LOG.error("Execution command has no timeout parameter" +
+                    c.toString());
+          }
+        }
+
+        
+        if (hostDeleted) {
+
+          String message = String.format(
+            "Host not found when trying to schedule an execution command. " +
+            "The most probable reason for that is that host or host component " +
+            "has been deleted recently. The command has been aborted and dequeued." +
+            "Execution command details: " +
+            "cmdId: %s; taskId: %s; roleCommand: %s",
+            c.getCommandId(), c.getTaskId(), c.getRoleCommand());
+          LOG.warn("Host {} has been detected as non-available. {}", host, message);
+          
+          
+          db.abortHostRole(host, s.getRequestId(), s.getStageId(), c.getRole(), message);
+          if (c.getRoleCommand().equals(RoleCommand.ACTIONEXECUTE)) {
+            processActionDeath(cluster.getClusterName(), c.getHostname(), roleStr);
+          }
+          status = HostRoleStatus.ABORTED;
+        } else if (timeOutActionNeeded(status, s, hostObj, roleStr, now, commandTimeout)) {
+          
+          if (s.getAttemptCount(host, roleStr) >= maxAttempts) {
+            LOG.warn("Host: {}, role: {}, actionId: {} expired and will be failed", host, roleStr,
+                s.getActionId());
+
+            
+            boolean isSkipSupported = s.isAutoSkipOnFailureSupported();
+            HostRoleCommand hostRoleCommand = s.getHostRoleCommand(c.getTaskId());
+            if (isSkipSupported && null != hostRoleCommand) {
+              isSkipSupported = hostRoleCommand.isFailureAutoSkipped();
+            }
+
+            db.timeoutHostRole(host, s.getRequestId(), s.getStageId(), c.getRole(), isSkipSupported);
+            
+            status = s.getHostRoleStatus(host, roleStr);
+
+            if (null != cluster) {
+              if (!RoleCommand.CUSTOM_COMMAND.equals(c.getRoleCommand())
+                && !RoleCommand.SERVICE_CHECK.equals(c.getRoleCommand())
+                && !RoleCommand.ACTIONEXECUTE.equals(c.getRoleCommand())) {
+                
+                transitionToFailedState(cluster.getClusterName(), c.getServiceName(), roleStr, host, now, false);
+              }
+              if (c.getRoleCommand().equals(RoleCommand.ACTIONEXECUTE)) {
+                processActionDeath(cluster.getClusterName(), c.getHostname(), roleStr);
+              }
+            }
+
+            
+            LOG.info("Removing command from queue, host={}, commandId={} ", host, c.getCommandId());
+            actionQueue.dequeue(host, c.getCommandId());
+          } else {
+            LOG.info("Host: {}, role: {}, actionId: {} timed out and will be rescheduled", host,
+                roleStr, s.getActionId());
+
+            
+            commandsToSchedule.add(c);
+            LOG.trace("===> commandsToSchedule(reschedule)=" + commandsToSchedule.size());
+          }
+        } else if (status.equals(HostRoleStatus.PENDING)) {
+          
+          commandsToSchedule.add(c);
+          LOG.trace("===>commandsToSchedule(first_time)=" + commandsToSchedule.size());
+        }
+
+        updateRoleStats(status, roleStats.get(roleStr));
+      }
+    }
+    LOG.debug("Collected {} commands to schedule in this wakeup.", commandsToSchedule.size());
+    return roleStats;
+  }
+
+  
+
+
+
+  private void abortOperationsForStage(Stage stage) {
+    long now = System.currentTimeMillis();
+
+    for (String hostName : stage.getHosts()) {
+      List<ExecutionCommandWrapper> commandWrappers =
+        stage.getExecutionCommands(hostName);
+
+      for(ExecutionCommandWrapper wrapper : commandWrappers) {
+        ExecutionCommand c = wrapper.getExecutionCommand();
+        transitionToFailedState(stage.getClusterName(), c.getServiceName(),
+                c.getRole(), hostName, now, true);
+        if (c.getRoleCommand().equals(RoleCommand.ACTIONEXECUTE)) {
+          String clusterName = c.getClusterName();
+          processActionDeath(clusterName,
+                  c.getHostname(),
+                  c.getRole());
+        }
+      }
+    }
+    db.abortOperation(stage.getRequestId());
+  }
+
+  
+
+
+
+
+
+
+
+  private void transitionToFailedState(String clusterName, String serviceName,
+                                       String componentName, String hostname,
+                                       long timestamp,
+                                       boolean ignoreTransitionException) {
+
+    try {
+      Cluster cluster = clusters.getCluster(clusterName);
+
+      ServiceComponentHostOpFailedEvent failedEvent =
+        new ServiceComponentHostOpFailedEvent(componentName,
+          hostname, timestamp);
+
+      if (serviceName != null && ! serviceName.isEmpty() &&
+              componentName != null && ! componentName.isEmpty()) {
+        Service svc = cluster.getService(serviceName);
+        ServiceComponent svcComp = svc.getServiceComponent(componentName);
+        ServiceComponentHost svcCompHost =
+                svcComp.getServiceComponentHost(hostname);
+        svcCompHost.handleEvent(failedEvent);
+      } else {
+        LOG.info("Service name is " + serviceName + ", component name is " + componentName +
+                "skipping sending ServiceComponentHostOpFailedEvent for " + componentName);
+      }
+
+    } catch (ServiceComponentNotFoundException scnex) {
+      LOG.debug(componentName + " associated with service " + serviceName +
+        " is not a service component, assuming it's an action.");
+    } catch (ServiceComponentHostNotFoundException e) {
+      String msg = String.format("Service component host %s not found, " +
+              "unable to transition to failed state.", componentName);
+      LOG.warn(msg, e);
+    } catch (InvalidStateTransitionException e) {
+      if (ignoreTransitionException) {
+        LOG.debug("Unable to transition to failed state.", e);
+      } else {
+        LOG.warn("Unable to transition to failed state.", e);
+      }
+    } catch (AmbariException e) {
+      LOG.warn("Unable to transition to failed state.", e);
+    }
+  }
+
+
+  
+
+
+  private Map<String, RoleStats> initRoleStats(Stage s) {
+    
+    Map<Role, Integer> hostCountsForRoles = new HashMap<Role, Integer>();
+    
+    Map<String, RoleStats> roleStats = new TreeMap<String, RoleStats>();
+
+    for (String host : s.getHostRoleCommands().keySet()) {
+      Map<String, HostRoleCommand> roleCommandMap = s.getHostRoleCommands().get(host);
+      for (String role : roleCommandMap.keySet()) {
+        HostRoleCommand c = roleCommandMap.get(role);
+        if (hostCountsForRoles.get(c.getRole()) == null) {
+          hostCountsForRoles.put(c.getRole(), 0);
+        }
+        int val = hostCountsForRoles.get(c.getRole());
+        hostCountsForRoles.put(c.getRole(), val + 1);
+      }
+    }
+
+    for (Role r : hostCountsForRoles.keySet()) {
+      RoleStats stats = new RoleStats(hostCountsForRoles.get(r),
+          s.getSuccessFactor(r));
+      roleStats.put(r.name(), stats);
+    }
+    return roleStats;
+  }
+
+  
+
+
+
+
+
+
+  protected boolean wasAgentRestartedDuringOperation(Host host, Stage stage, String role) {
+    String hostName = host.getHostName();
+    long taskStartTime = stage.getHostRoleCommand(hostName, role).getStartTime();
+    return taskStartTime > 0 && taskStartTime <= host.getLastRegistrationTime();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  protected boolean timeOutActionNeeded(HostRoleStatus status, Stage stage,
+      Host host, String role, long currentTime, long taskTimeout) throws
+    AmbariException {
+    if (( !status.equals(HostRoleStatus.QUEUED) ) &&
+        ( ! status.equals(HostRoleStatus.IN_PROGRESS) )) {
+      return false;
+    }
+
+    
+    if (null != host &&
+      (host.getState().equals(HostState.HEARTBEAT_LOST) || wasAgentRestartedDuringOperation(host, stage, role))) {
+      LOG.debug("Timing out action since agent is not heartbeating or agent was restarted.");
+      return true;
+    }
+
+    
+    
+    String hostName = (null == host) ? null : host.getHostName();
+
+    
+    if (hasCommandInProgress(stage, hostName)
+            && !status.equals(HostRoleStatus.IN_PROGRESS)) {
+      return false;
+    }
+    if (currentTime >= stage.getLastAttemptTime(hostName, role)
+        + taskTimeout) {
+      return true;
+    }
+    return false;
+  }
+
+  private boolean hasCommandInProgress(Stage stage, String host) {
+    List<ExecutionCommandWrapper> commandWrappers = stage.getExecutionCommands(host);
+    for (ExecutionCommandWrapper wrapper : commandWrappers) {
+      ExecutionCommand c = wrapper.getExecutionCommand();
+      String roleStr = c.getRole();
+      HostRoleStatus status = stage.getHostRoleStatus(host, roleStr);
+      if (status == HostRoleStatus.IN_PROGRESS) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private ListMultimap<String, ServiceComponentHostEvent> formEventMap(Stage s, List<ExecutionCommand> commands) {
+    ListMultimap<String, ServiceComponentHostEvent> serviceEventMap = ArrayListMultimap.create();
+    for (ExecutionCommand cmd : commands) {
+      String hostname = cmd.getHostname();
+      String roleStr = cmd.getRole();
+      if (RoleCommand.ACTIONEXECUTE != cmd.getRoleCommand()) {
+          serviceEventMap.put(cmd.getServiceName(), s.getFsmEvent(hostname, roleStr).getEvent());
+      }
+    }
+    return serviceEventMap;
+  }
+
+  private void processHostRole(Stage s, ExecutionCommand cmd, List<ExecutionCommand> commandsToStart,
+                               List<ExecutionCommand> commandsToUpdate)
+    throws AmbariException {
+    long now = System.currentTimeMillis();
+    String roleStr = cmd.getRole();
+    String hostname = cmd.getHostname();
+
+    
+    if (s.getStartTime(hostname, roleStr) < 0) {
+
+      commandsToStart.add(cmd);
+      s.setStartTime(hostname,roleStr, now);
+      s.setHostRoleStatus(hostname, roleStr, HostRoleStatus.QUEUED);
+    }
+    s.setLastAttemptTime(hostname, roleStr, now);
+    s.incrementAttemptCount(hostname, roleStr);
+    
+    cmd.setHostname(hostsMap.getHostMap(hostname));
+
+
+    
+    String stagePk = s.getStageId() + "-" + s.getRequestId();
+    Map<String, Set<String>> clusterHostInfo = clusterHostInfoCache.getIfPresent(stagePk);
+
+    if (clusterHostInfo == null) {
+      Type type = new TypeToken<Map<String, Set<String>>>() {}.getType();
+      clusterHostInfo = StageUtils.getGson().fromJson(s.getClusterHostInfo(), type);
+      clusterHostInfoCache.put(stagePk, clusterHostInfo);
+    }
+
+    cmd.setClusterHostInfo(clusterHostInfo);
+
+    
+    Map<String, String> commandParams = commandParamsStageCache.getIfPresent(stagePk);
+
+    if (commandParams == null){
+      Type type = new TypeToken<Map<String, String>>() {}.getType();
+      commandParams = StageUtils.getGson().fromJson(s.getCommandParamsStage(), type);
+      commandParamsStageCache.put(stagePk, commandParams);
+    }
+    Map<String, String> commandParamsCmd = cmd.getCommandParams();
+    commandParamsCmd.putAll(commandParams);
+    cmd.setCommandParams(commandParamsCmd);
+
+    try {
+      Cluster cluster = clusters.getCluster(s.getClusterName());
+      if (null != cluster) {
+        
+        for (ServiceComponentHost sch : cluster.getServiceComponentHosts(hostname)) {
+          cmd.getLocalComponents().add(sch.getServiceComponentName());
+        }
+      }
+    } catch (ClusterNotFoundException cnfe) {
+      
+    }
+
+    
+    Map<String, String> hostParams = hostParamsStageCache.getIfPresent(stagePk);
+    if (hostParams == null) {
+      Type type = new TypeToken<Map<String, String>>() {}.getType();
+      hostParams = StageUtils.getGson().fromJson(s.getHostParamsStage(), type);
+      hostParamsStageCache.put(stagePk, hostParams);
+    }
+    Map<String, String> hostParamsCmd = cmd.getHostLevelParams();
+    hostParamsCmd.putAll(hostParams);
+    cmd.setHostLevelParams(hostParamsCmd);
+
+
+    commandsToUpdate.add(cmd);
+  }
+
+  
+
+
+
+
+  public void scheduleCancellingRequest(long requestId, String reason) {
+    synchronized (requestsToBeCancelled) {
+      requestsToBeCancelled.add(requestId);
+      requestCancelReasons.put(requestId, reason);
+    }
+  }
+
+
+  
+
+
+  private void processCancelledRequestsList() {
+    synchronized (requestsToBeCancelled) {
+      
+      for (Long requestId : requestsToBeCancelled) {
+        List<HostRoleCommand> tasksToDequeue = db.getRequestTasks(requestId);
+        String reason = requestCancelReasons.get(requestId);
+        cancelHostRoleCommands(tasksToDequeue, reason);
+        List<Stage> stages = db.getAllStages(requestId);
+        for (Stage stage : stages) {
+          abortOperationsForStage(stage);
+        }
+      }
+      requestsToBeCancelled.clear();
+      requestCancelReasons.clear();
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+  void cancelHostRoleCommands(Collection<HostRoleCommand> hostRoleCommands, String reason) {
+    for (HostRoleCommand hostRoleCommand : hostRoleCommands) {
+      if (hostRoleCommand.getStatus() == HostRoleStatus.QUEUED) {
+        
+        actionQueue.dequeue(hostRoleCommand.getHostName(),
+                hostRoleCommand.getExecutionCommandWrapper().
+                        getExecutionCommand().getCommandId());
+      }
+      if (hostRoleCommand.getStatus() == HostRoleStatus.QUEUED ||
+            hostRoleCommand.getStatus() == HostRoleStatus.IN_PROGRESS) {
+        CancelCommand cancelCommand = new CancelCommand();
+        cancelCommand.setTargetTaskId(hostRoleCommand.getTaskId());
+        cancelCommand.setReason(reason);
+        actionQueue.enqueue(hostRoleCommand.getHostName(), cancelCommand);
+      }
+
+      if (hostRoleCommand.getStatus().isHoldingState()) {
+        db.abortHostRole(hostRoleCommand.getHostName(),
+            hostRoleCommand.getRequestId(),
+            hostRoleCommand.getStageId(), hostRoleCommand.getRole().name());
+      }
+
+      
+      if (hostRoleCommand.getRoleCommand().equals(RoleCommand.ACTIONEXECUTE)) {
+        String clusterName = hostRoleCommand.getExecutionCommandWrapper().getExecutionCommand().getClusterName();
+        processActionDeath(clusterName,
+                hostRoleCommand.getHostName(),
+                hostRoleCommand.getRole().name());
+      }
+    }
+  }
+
+
+  
+
+
+
+  private void processActionDeath(String clusterName,
+                                  String hostname,
+                                  String role) {
+    try {
+      
+      
+      
+      Long clusterId = clusterName != null ?
+              clusters.getCluster(clusterName).getClusterId() : null;
+      CommandReport report = new CommandReport();
+      report.setRole(role);
+      report.setStdOut("Action is dead");
+      report.setStdErr("Action is dead");
+      report.setStructuredOut("{}");
+      report.setExitCode(1);
+      report.setStatus(HostRoleStatus.ABORTED.toString());
+      ActionFinalReportReceivedEvent event = new ActionFinalReportReceivedEvent(
+              clusterId, hostname, report, true);
+      ambariEventPublisher.publish(event);
+    } catch (AmbariException e) {
+      LOG.error(String.format("Can not get cluster %s", clusterName), e);
+    }
+  }
+
+  private void updateRoleStats(HostRoleStatus status, RoleStats rs) {
+    switch (status) {
+      case COMPLETED:
+        rs.numSucceeded++;
+        break;
+      case FAILED:
+        rs.numFailed++;
+        break;
+      case QUEUED:
+        rs.numQueued++;
+        break;
+      case PENDING:
+        rs.numPending++;
+        break;
+      case TIMEDOUT:
+        rs.numTimedOut++;
+        break;
+      case ABORTED:
+        rs.numAborted++;
+        break;
+      case IN_PROGRESS:
+        rs.numInProgress++;
+        break;
+      case HOLDING:
+      case HOLDING_FAILED:
+      case HOLDING_TIMEDOUT:
+        rs.numHolding++;
+        break;
+      case SKIPPED_FAILED:
+        rs.numSkipped++;
+        break;
+      default:
+        LOG.error("Unknown status " + status.name());
+    }
+  }
+
+
+  public void setTaskTimeoutAdjustment(boolean val) {
+    taskTimeoutAdjustment = val;
+  }
+
+  ServerActionExecutor getServerActionExecutor() {
+    return serverActionExecutor;
+  }
+
+  static class RoleStats {
+    int numInProgress;
+    int numQueued = 0;
+    int numSucceeded = 0;
+    int numFailed = 0;
+    int numTimedOut = 0;
+    int numPending = 0;
+    int numAborted = 0;
+    int numHolding = 0;
+    int numSkipped = 0;
+
+    final int totalHosts;
+    final float successFactor;
+
+    RoleStats(int total, float successFactor) {
+      totalHosts = total;
+      this.successFactor = successFactor;
+    }
+
+    
+
+
+    boolean isSuccessFactorMet() {
+      int minSuccessNeeded = (int) Math.ceil(successFactor * totalHosts);
+      return minSuccessNeeded <= numSucceeded;
+    }
+
+    private boolean isRoleInProgress() {
+      return numPending + numQueued + numInProgress + numHolding > 0;
+    }
+
+    
+
+
+
+    boolean isRoleFailed() {
+      return !(isRoleInProgress() || isSuccessFactorMet());
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder builder = new StringBuilder();
+      builder.append("numQueued=").append(numQueued);
+      builder.append(", numInProgress=").append(numInProgress);
+      builder.append(", numSucceeded=").append(numSucceeded);
+      builder.append(", numFailed=").append(numFailed);
+      builder.append(", numTimedOut=").append(numTimedOut);
+      builder.append(", numPending=").append(numPending);
+      builder.append(", numAborted=").append(numAborted);
+      builder.append(", numSkipped=").append(numSkipped);
+      builder.append(", totalHosts=").append(totalHosts);
+      builder.append(", successFactor=").append(successFactor);
+      return builder.toString();
+    }
+  }
+}

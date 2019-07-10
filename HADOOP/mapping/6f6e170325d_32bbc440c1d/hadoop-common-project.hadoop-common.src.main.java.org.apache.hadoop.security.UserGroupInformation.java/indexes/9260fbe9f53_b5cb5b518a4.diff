@@ -1,0 +1,20 @@
+83a84
+>   static final String HADOOP_PROXY_USER = "HADOOP_PROXY_USER";
+644,647c645,656
+<         loginUser = new UserGroupInformation(subject);
+<         loginUser.setLogin(login);
+<         loginUser.setAuthenticationMethod(authenticationMethod);
+<         loginUser = new UserGroupInformation(login.getSubject());
+---
+>         UserGroupInformation realUser = new UserGroupInformation(subject);
+>         realUser.setLogin(login);
+>         realUser.setAuthenticationMethod(authenticationMethod);
+>         realUser = new UserGroupInformation(login.getSubject());
+>         
+>         
+>         String proxyUser = System.getenv(HADOOP_PROXY_USER);
+>         if (proxyUser == null) {
+>           proxyUser = System.getProperty(HADOOP_PROXY_USER);
+>         }
+>         loginUser = proxyUser == null ? realUser : createProxyUser(proxyUser, realUser);
+> 

@@ -1,0 +1,55 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.notifications;
+
+
+
+
+
+
+
+
+
+
+public interface NotificationDispatcher {
+
+  
+
+
+
+
+
+  public String getType();
+
+  
+
+
+
+
+
+  public void dispatch(Notification notification);
+
+  
+
+
+
+
+
+
+  public boolean isDigestSupported();
+}

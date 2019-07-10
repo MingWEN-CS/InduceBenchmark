@@ -1,0 +1,502 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.api.services.stackadvisor.commands;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.ambari.server.api.resources.ResourceInstance;
+import org.apache.ambari.server.api.services.AmbariMetaInfo;
+import org.apache.ambari.server.api.services.BaseService;
+import org.apache.ambari.server.api.services.LocalUriInfo;
+import org.apache.ambari.server.api.services.Request;
+import org.apache.ambari.server.api.services.stackadvisor.StackAdvisorException;
+import org.apache.ambari.server.api.services.stackadvisor.StackAdvisorRequest;
+import org.apache.ambari.server.api.services.stackadvisor.StackAdvisorResponse;
+import org.apache.ambari.server.api.services.stackadvisor.StackAdvisorRunner;
+import org.apache.ambari.server.controller.spi.Resource;
+import org.apache.ambari.server.state.ServiceInfo;
+import org.apache.ambari.server.utils.DateUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
+import org.codehaus.jackson.node.TextNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+
+
+public abstract class StackAdvisorCommand<T extends StackAdvisorResponse> extends BaseService {
+
+  
+
+
+
+  private Class<T> type;
+
+  private static final Logger LOG = LoggerFactory.getLogger(StackAdvisorCommand.class);
+
+  private static final String GET_HOSTS_INFO_URI = "/api/v1/hosts"
+      + "?fields=Hosts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static class StackAdvisorData {
+    protected String hostsJSON;
+    protected String servicesJSON;
+
+    public StackAdvisorData(String hostsJSON, String servicesJSON) {
+      this.hostsJSON = hostsJSON;
+      this.servicesJSON = servicesJSON;
+    }
+  }
+
+  
+
+
+
+
+
+  protected abstract String getResultFileName();
+
+  protected abstract void validate(StackAdvisorRequest request) throws StackAdvisorException;
+
+  protected StackAdvisorData adjust(StackAdvisorData data, StackAdvisorRequest request) {
+    try {
+      ObjectNode root = (ObjectNode) this.mapper.readTree(data.servicesJSON);
+
+      populateStackHierarchy(root);
+      populateComponentHostsMap(root, request.getComponentHostsMap());
+      populateServiceAdvisors(root);
+      populateConfigurations(root, request);
+      populateConfigGroups(root, request);
+      populateAmbariServerInfo(root);
+      populateLdapConfiguration(root);
+      data.servicesJSON = mapper.writeValueAsString(root);
+    } catch (Exception e) {
+      
+      String message = "Error parsing services.json file content: " + e.getMessage();
+      LOG.warn(message, e);
+      throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(message).build());
+    }
+
+    return data;
+  }
+
+  
+
+
+
+
+
+  protected void populateLdapConfiguration(ObjectNode root) throws StackAdvisorException, IOException {
+    Response response = handleRequest(null, null, new LocalUriInfo(GET_LDAP_CONFIG_URI), Request.Type.GET,
+        createConfigResource());
+
+    if (response.getStatus() != Status.OK.getStatusCode()) {
+      String message = String.format(
+          "Error occured during retrieving ldap configuration, status=%s, response=%s",
+          response.getStatus(), (String) response.getEntity());
+      LOG.warn(message);
+      throw new StackAdvisorException(message);
+    }
+
+    String ldapConfigJSON = (String) response.getEntity();
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("LDAP configuration: {}", ldapConfigJSON);
+    }
+
+    JsonNode ldapConfigRoot = mapper.readTree(ldapConfigJSON);
+    ArrayNode ldapConfigs = ((ArrayNode)ldapConfigRoot.get("items"));
+    int numConfigs = ldapConfigs.size();
+    
+    switch (numConfigs) {
+      case 0:
+        LOG.debug("No LDAP config is stored in the DB");
+        break;
+      case 1:
+        ArrayNode ldapConfigData = (ArrayNode)ldapConfigs.get(0).get("AmbariConfiguration").get("data");
+        if (ldapConfigData.size() == 0) {
+          throw new StackAdvisorException("No configuration data for LDAP configuration.");
+        }
+        if (ldapConfigData.size() > 1) {
+          throw new StackAdvisorException("Ambigous configuration data for LDAP configuration.");
+        }
+        root.put(LDAP_CONFIGURATION_PROPERTY, ldapConfigData.get(0));
+        break;
+      default:
+        throw new StackAdvisorException(String.format("Multiple (%s) LDAP configs are found in the DB.", numConfigs));
+    }
+  }
+
+  protected void populateAmbariServerInfo(ObjectNode root) throws StackAdvisorException {
+    Map<String, String> serverProperties = metaInfo.getAmbariServerProperties();
+
+    if (serverProperties != null && !serverProperties.isEmpty()) {
+      JsonNode serverPropertiesNode = mapper.convertValue(serverProperties, JsonNode.class);
+      root.put(AMBARI_SERVER_CONFIGURATIONS_PROPERTY, serverPropertiesNode);
+    }
+  }
+
+  private void populateConfigurations(ObjectNode root,
+                                      StackAdvisorRequest request) {
+    Map<String, Map<String, Map<String, String>>> configurations =
+      request.getConfigurations();
+    ObjectNode configurationsNode = root.putObject(CONFIGURATIONS_PROPERTY);
+    for (String siteName : configurations.keySet()) {
+      ObjectNode siteNode = configurationsNode.putObject(siteName);
+
+      Map<String, Map<String, String>> siteMap = configurations.get(siteName);
+      for (String properties : siteMap.keySet()) {
+        ObjectNode propertiesNode = siteNode.putObject(properties);
+
+        Map<String, String> propertiesMap = siteMap.get(properties);
+        for (String propertyName : propertiesMap.keySet()) {
+          String propertyValue = propertiesMap.get(propertyName);
+          propertiesNode.put(propertyName, propertyValue);
+        }
+      }
+    }
+
+    JsonNode changedConfigs = mapper.valueToTree(request.getChangedConfigurations());
+    root.put(CHANGED_CONFIGURATIONS_PROPERTY, changedConfigs);
+
+    JsonNode userContext = mapper.valueToTree(request.getUserContext());
+    root.put(USER_CONTEXT_PROPERTY, userContext);
+  }
+
+  private void populateConfigGroups(ObjectNode root,
+                                    StackAdvisorRequest request) {
+    if (request.getConfigGroups() != null &&
+      !request.getConfigGroups().isEmpty()) {
+      JsonNode configGroups = mapper.valueToTree(request.getConfigGroups());
+      root.put(CONFIG_GROUPS_PROPERTY, configGroups);
+    }
+  }
+
+  protected void populateStackHierarchy(ObjectNode root) {
+    ObjectNode version = (ObjectNode) root.get("Versions");
+    TextNode stackName = (TextNode) version.get("stack_name");
+    TextNode stackVersion = (TextNode) version.get("stack_version");
+    ObjectNode stackHierarchy = version.putObject("stack_hierarchy");
+    stackHierarchy.put("stack_name", stackName);
+    ArrayNode parents = stackHierarchy.putArray("stack_versions");
+    for (String parentVersion : metaInfo.getStackParentVersions(stackName.asText(), stackVersion.asText())) {
+      parents.add(parentVersion);
+    }
+  }
+
+  private void populateComponentHostsMap(ObjectNode root, Map<String, Set<String>> componentHostsMap) {
+    ArrayNode services = (ArrayNode) root.get(SERVICES_PROPERTY);
+    Iterator<JsonNode> servicesIter = services.getElements();
+
+    while (servicesIter.hasNext()) {
+      JsonNode service = servicesIter.next();
+      ArrayNode components = (ArrayNode) service.get(SERVICES_COMPONENTS_PROPERTY);
+      Iterator<JsonNode> componentsIter = components.getElements();
+
+      while (componentsIter.hasNext()) {
+        JsonNode component = componentsIter.next();
+        ObjectNode componentInfo = (ObjectNode) component.get(COMPONENT_INFO_PROPERTY);
+        String componentName = componentInfo.get(COMPONENT_NAME_PROPERTY).getTextValue();
+
+        Set<String> componentHosts = componentHostsMap.get(componentName);
+        ArrayNode hostnames = componentInfo.putArray(COMPONENT_HOSTNAMES_PROPERTY);
+        if (null != componentHosts) {
+          for (String hostName : componentHosts) {
+            hostnames.add(hostName);
+          }
+        }
+      }
+    }
+  }
+
+  private void populateServiceAdvisors(ObjectNode root) {
+    ArrayNode services = (ArrayNode) root.get(SERVICES_PROPERTY);
+    Iterator<JsonNode> servicesIter = services.getElements();
+
+    ObjectNode version = (ObjectNode) root.get("Versions");
+    String stackName = version.get("stack_name").asText();
+    String stackVersion = version.get("stack_version").asText();
+
+    while (servicesIter.hasNext()) {
+      JsonNode service = servicesIter.next();
+      ObjectNode serviceVersion = (ObjectNode) service.get(STACK_SERVICES_PROPERTY);
+      String serviceName = serviceVersion.get("service_name").getTextValue();
+      try {
+        ServiceInfo serviceInfo = metaInfo.getService(stackName, stackVersion, serviceName);
+        if (serviceInfo.getAdvisorFile() != null) {
+          serviceVersion.put("advisor_name", serviceInfo.getAdvisorName());
+          serviceVersion.put("advisor_path", serviceInfo.getAdvisorFile().getAbsolutePath());
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Error adding service advisor information to services.json", e);
+      }
+    }
+  }
+
+  public synchronized T invoke(StackAdvisorRequest request, ServiceInfo.ServiceAdvisorType serviceAdvisorType) throws StackAdvisorException {
+    validate(request);
+    String hostsJSON = getHostsInformation(request);
+    String servicesJSON = getServicesInformation(request);
+
+    StackAdvisorData adjusted = adjust(new StackAdvisorData(hostsJSON, servicesJSON), request);
+
+    try {
+      createRequestDirectory();
+
+      FileUtils.writeStringToFile(new File(requestDirectory, "hosts.json"), adjusted.hostsJSON);
+      FileUtils.writeStringToFile(new File(requestDirectory, "services.json"), adjusted.servicesJSON);
+
+      saRunner.runScript(serviceAdvisorType, getCommandType(), requestDirectory);
+      String result = FileUtils.readFileToString(new File(requestDirectory, getResultFileName()));
+
+      T response = this.mapper.readValue(result, this.type);
+      return updateResponse(request, setRequestId(response));
+    } catch (StackAdvisorException ex) {
+      throw ex;
+    } catch (Exception e) {
+      String message = "Error occured during stack advisor command invocation: ";
+      LOG.warn(message, e);
+      throw new StackAdvisorException(message + e.getMessage());
+    }
+  }
+
+  protected abstract T updateResponse(StackAdvisorRequest request, T response);
+
+  private T setRequestId(T response) {
+    response.setId(requestId);
+    return response;
+  }
+
+  
+
+
+  private void createRequestDirectory() throws IOException {
+    if (!recommendationsDir.exists()) {
+      if (!recommendationsDir.mkdirs()) {
+        throw new IOException("Cannot create " + recommendationsDir);
+      }
+    }
+
+    cleanupRequestDirectory();
+
+    requestDirectory = new File(recommendationsDir, Integer.toString(requestId));
+
+    if (requestDirectory.exists()) {
+      FileUtils.deleteDirectory(requestDirectory);
+    }
+    if (!requestDirectory.mkdirs()) {
+      throw new IOException("Cannot create " + requestDirectory);
+    }
+  }
+
+  
+
+
+  private void cleanupRequestDirectory() throws IOException {
+    final Date cutoffDate = DateUtils.getDateSpecifiedTimeAgo(recommendationsArtifactsLifetime); 
+
+    String[] oldDirectories = recommendationsDir.list(new FilenameFilter() {
+      @Override
+      public boolean accept(File current, String name) {
+        File file = new File(current, name);
+        return file.isDirectory() && !FileUtils.isFileNewer(file, cutoffDate);
+      }
+    });
+
+    if(oldDirectories.length > 0) {
+      LOG.info(String.format("Deleting old directories %s from %s", StringUtils.join(oldDirectories, ", "), recommendationsDir));
+    }
+
+    for(String oldDirectory:oldDirectories) {
+      FileUtils.deleteQuietly(new File(recommendationsDir, oldDirectory));
+    }
+  }
+
+  String getHostsInformation(StackAdvisorRequest request) throws StackAdvisorException {
+    String hostsURI = String.format(GET_HOSTS_INFO_URI, request.getHostsCommaSeparated());
+
+    Response response = handleRequest(null, null, new LocalUriInfo(hostsURI), Request.Type.GET,
+        createHostResource());
+
+    if (response.getStatus() != Status.OK.getStatusCode()) {
+      String message = String.format(
+          "Error occured during hosts information retrieving, status=%s, response=%s",
+          response.getStatus(), (String) response.getEntity());
+      LOG.warn(message);
+      throw new StackAdvisorException(message);
+    }
+
+    String hostsJSON = (String) response.getEntity();
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Hosts information: {}", hostsJSON);
+    }
+
+    Collection<String> unregistered = getUnregisteredHosts(hostsJSON, request.getHosts());
+    if (unregistered.size() > 0) {
+      String message = String.format("There are unregistered hosts in the request, %s",
+          Arrays.toString(unregistered.toArray()));
+      LOG.warn(message);
+      throw new StackAdvisorException(message);
+    }
+
+    return hostsJSON;
+  }
+
+  @SuppressWarnings("unchecked")
+  private Collection<String> getUnregisteredHosts(String hostsJSON, List<String> hosts)
+      throws StackAdvisorException {
+    ObjectMapper mapper = new ObjectMapper();
+    List<String> registeredHosts = new ArrayList<>();
+
+    try {
+      JsonNode root = mapper.readTree(hostsJSON);
+      Iterator<JsonNode> iterator = root.get("items").getElements();
+      while (iterator.hasNext()) {
+        JsonNode next = iterator.next();
+        String hostName = next.get("Hosts").get("host_name").getTextValue();
+        registeredHosts.add(hostName);
+      }
+
+      return CollectionUtils.subtract(hosts, registeredHosts);
+    } catch (Exception e) {
+      throw new StackAdvisorException("Error occured during calculating unregistered hosts", e);
+    }
+  }
+
+  String getServicesInformation(StackAdvisorRequest request) throws StackAdvisorException {
+    String stackName = request.getStackName();
+    String stackVersion = request.getStackVersion();
+    String servicesURI = String.format(GET_SERVICES_INFO_URI, stackName, stackVersion,
+        request.getServicesCommaSeparated());
+
+    Response response = handleRequest(null, null, new LocalUriInfo(servicesURI),
+        Request.Type.GET, createStackVersionResource(stackName, stackVersion));
+
+    if (response.getStatus() != Status.OK.getStatusCode()) {
+      String message = String.format(
+          "Error occured during services information retrieving, status=%s, response=%s",
+          response.getStatus(), (String) response.getEntity());
+      LOG.warn(message);
+      throw new StackAdvisorException(message);
+    }
+
+    String servicesJSON = (String) response.getEntity();
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Services information: {}", servicesJSON);
+    }
+    return servicesJSON;
+  }
+
+  private ResourceInstance createHostResource() {
+    Map<Resource.Type, String> mapIds = new HashMap<>();
+    return createResource(Resource.Type.Host, mapIds);
+  }
+
+  protected ResourceInstance createConfigResource() {
+    return createResource(Resource.Type.AmbariConfiguration, new HashMap<>());
+  }
+
+
+  private ResourceInstance createStackVersionResource(String stackName, String stackVersion) {
+    Map<Resource.Type, String> mapIds = new HashMap<>();
+    mapIds.put(Resource.Type.Stack, stackName);
+    mapIds.put(Resource.Type.StackVersion, stackVersion);
+
+    return createResource(Resource.Type.StackVersion, mapIds);
+  }
+
+}

@@ -1,0 +1,9 @@
+30d29
+< import org.apache.solr.schema.IndexSchema;
+48d46
+<   protected final IndexSchema schema;
+128,129c126
+<     schema = core.getSchema();
+<     idField = schema.getUniqueKeyField();
+---
+>     idField = core.getLatestSchema().getUniqueKeyField();

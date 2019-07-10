@@ -1,0 +1,349 @@
+package org.apache.solr.cloud;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.embedded.JettySolrRunner;
+import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrException;
+import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.cloud.CompositeIdRouter;
+import org.apache.solr.common.cloud.ZkNodeProps;
+import org.apache.solr.common.cloud.ZkStateReader;
+import org.apache.solr.common.params.CommonParams;
+import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.ShardParams;
+import org.apache.solr.common.util.StrUtils;
+import org.apache.solr.servlet.SolrDispatchFilter;
+import org.apache.solr.update.DirectUpdateHandler2;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+
+public class ShardRoutingTest extends AbstractFullDistribZkTestBase {
+
+  String bucket1 = "shard1";      
+  String bucket2 = "shard2";      
+  String bucket3 = "shard3";      
+  String bucket4 = "shard4";      
+
+
+  @BeforeClass
+  public static void beforeShardHashingTest() throws Exception {
+    
+    
+    
+    
+    
+    useFactory(null);
+  }
+
+  public ShardRoutingTest() {
+    schemaString = "schema15.xml";      
+    super.sliceCount = 4;
+    super.shardCount = 8;
+    super.fixShardCount = true;  
+
+    
+    
+    
+    
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+  @Override
+  public void doTest() throws Exception {
+    boolean testFinished = false;
+    try {
+      handle.clear();
+      handle.put("QTime", SKIPVAL);
+      handle.put("timestamp", SKIPVAL);
+
+      
+      waitForRecoveriesToFinish(false);
+
+      doHashingTest();
+      doTestNumRequests();
+      doAtomicUpdate();
+
+      testFinished = true;
+    } finally {
+      if (!testFinished) {
+        printLayoutOnTearDown = true;
+      }
+    }
+  }
+
+
+
+
+  private void doHashingTest() throws Exception {
+    log.info("### STARTING doHashingTest");
+    assertEquals(4, cloudClient.getZkStateReader().getClusterState().getCollection(DEFAULT_COLLECTION).getSlices().size());
+    String shardKeys = ShardParams.SHARD_KEYS;
+    
+    
+
+
+    doAddDoc("b!doc1");
+    doAddDoc("c!doc2");
+    doAddDoc("d!doc3");
+    doAddDoc("e!doc4");
+    doAddDoc("f1!f2!doc5");
+
+    doRTG("b!doc1");
+    doRTG("c!doc2");
+    doRTG("d!doc3");
+    doRTG("e!doc4");
+    doRTG("f1!f2!doc5");
+    doRTG("b!doc1,c!doc2");
+    doRTG("d!doc3,e!doc4");
+
+    commit();
+
+    doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*");
+    doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*", "shards","shard1,shard2,shard3,shard4");
+    doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*", shardKeys,"b!,c!,d!,e!,f1!f2!");
+    doQuery("b!doc1", "q","*:*", shardKeys,"b!");
+    doQuery("c!doc2", "q","*:*", shardKeys,"c!");
+    doQuery("d!doc3,f1!f2!doc5", "q","*:*", shardKeys,"d!");
+    doQuery("e!doc4", "q","*:*", shardKeys,"e!");
+    doQuery("f1!f2!doc5,d!doc3", "q","*:*", shardKeys,"f1/8!");
+
+    
+    doQuery("b!doc1", "q","*:*", "shards",bucket1);
+    doQuery("c!doc2", "q","*:*", "shards",bucket2);
+    doQuery("d!doc3,f1!f2!doc5", "q","*:*", "shards",bucket3);
+    doQuery("e!doc4", "q","*:*", "shards",bucket4);
+
+
+    doQuery("b!doc1,c!doc2", "q","*:*", shardKeys,"b!,c!");
+    doQuery("b!doc1,e!doc4", "q","*:*", shardKeys,"b!,e!");
+
+    doQuery("b!doc1,c!doc2", "q","*:*", shardKeys,"b,c");     
+
+    doQuery("b!doc1,c!doc2", "q","*:*", shardKeys,"b/1!");   
+    doQuery("d!doc3,e!doc4,f1!f2!doc5", "q","*:*", shardKeys,"d/1!");   
+
+    doQuery("b!doc1,c!doc2", "q","*:*", shardKeys,"b!,c!");
+
+    doQuery("b!doc1,f1!f2!doc5,c!doc2,d!doc3,e!doc4", "q","*:*", shardKeys,"foo/0!");
+
+    
+    doDBQ("*:*", shardKeys,"b!");
+    commit();
+    doQuery("c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*");
+    doAddDoc("b!doc1");
+
+    doDBQ("*:*", shardKeys,"f1!");
+    commit();
+    doQuery("b!doc1,c!doc2,e!doc4", "q","*:*");
+    doAddDoc("f1!f2!doc5");
+    doAddDoc("d!doc3");
+
+    doDBQ("*:*", shardKeys,"c!");
+    commit();
+    doQuery("b!doc1,f1!f2!doc5,d!doc3,e!doc4", "q","*:*");
+    doAddDoc("c!doc2");
+
+    doDBQ("*:*", shardKeys,"d!,e!");
+    commit();
+    doQuery("b!doc1,c!doc2", "q","*:*");
+    doAddDoc("d!doc3");
+    doAddDoc("e!doc4");
+    doAddDoc("f1!f2!doc5");
+
+    commit();
+  }
+
+
+  public void doTestNumRequests() throws Exception {
+    log.info("### STARTING doTestNumRequests");
+
+    List<CloudJettyRunner> runners = shardToJetty.get(bucket1);
+    CloudJettyRunner leader = shardToLeaderJetty.get(bucket1);
+    CloudJettyRunner replica =  null;
+    for (CloudJettyRunner r : runners) {
+      if (r != leader) replica = r;
+    }
+
+    long nStart = getNumRequests();
+    leader.client.solrClient.add( sdoc("id","b!doc1") );
+    long nEnd = getNumRequests();
+    assertEquals(2, nEnd - nStart);   
+
+
+    nStart = getNumRequests();
+    replica.client.solrClient.add( sdoc("id","b!doc1") );
+    nEnd = getNumRequests();
+    assertEquals(3, nEnd - nStart);   
+
+    nStart = getNumRequests();
+    replica.client.solrClient.add( sdoc("id","b!doc1") );
+    nEnd = getNumRequests();
+    assertEquals(3, nEnd - nStart);   
+
+    CloudJettyRunner leader2 = shardToLeaderJetty.get(bucket2);
+
+
+    nStart = getNumRequests();
+    replica.client.solrClient.query( params("q","*:*", "shards",bucket1) );
+    nEnd = getNumRequests();
+    assertEquals(1, nEnd - nStart);   
+
+    nStart = getNumRequests();
+    replica.client.solrClient.query( params("q","*:*", "shard.keys","b!") );
+    nEnd = getNumRequests();
+    assertEquals(1, nEnd - nStart);   
+
+    nStart = getNumRequests();
+    leader2.client.solrClient.query( params("q","*:*", "shard.keys","b!") );
+    nEnd = getNumRequests();
+    assertEquals(3, nEnd - nStart);   
+
+    nStart = getNumRequests();
+    leader2.client.solrClient.query( params("q","*:*") );
+    nEnd = getNumRequests();
+    assertEquals(9, nEnd - nStart);   
+
+    nStart = getNumRequests();
+    leader2.client.solrClient.query( params("q","*:*", "shard.keys","b!,d!") );
+    nEnd = getNumRequests();
+    assertEquals(5, nEnd - nStart);   
+
+    nStart = getNumRequests();
+    leader2.client.solrClient.query( params("q","*:*", "shard.keys","b!,f1!f2!") );
+    nEnd = getNumRequests();
+    assertEquals(5, nEnd - nStart);
+  }
+
+  public void doAtomicUpdate() throws Exception {
+    log.info("### STARTING doAtomicUpdate");
+    int nClients = clients.size();
+    assertEquals(8, nClients);
+
+    int expectedVal = 0;
+    for (SolrServer client : clients) {
+      client.add(sdoc("id", "b!doc", "foo_i", map("inc",1)));
+      expectedVal++;
+
+      QueryResponse rsp = client.query(params("qt","/get", "id","b!doc"));
+      Object val = ((Map)rsp.getResponse().get("doc")).get("foo_i");
+      assertEquals((Integer)expectedVal, val);
+    }
+
+  }
+
+  long getNumRequests() {
+    long n = controlJetty.getDebugFilter().getTotalRequests();
+    for (JettySolrRunner jetty : jettys) {
+      n += jetty.getDebugFilter().getTotalRequests();
+    }
+    return n;
+  }
+
+
+  void doAddDoc(String id) throws Exception {
+    index("id",id);
+    
+  }
+
+  
+  void doQuery(String expectedDocs, String... queryParams) throws Exception {
+    Set<String> expectedIds = new HashSet<String>( StrUtils.splitSmart(expectedDocs, ",", true) );
+
+    QueryResponse rsp = cloudClient.query(params(queryParams));
+    Set<String> obtainedIds = new HashSet<String>();
+    for (SolrDocument doc : rsp.getResults()) {
+      obtainedIds.add((String) doc.get("id"));
+    }
+
+    assertEquals(expectedIds, obtainedIds);
+  }
+
+  void doRTG(String ids) throws Exception {
+    cloudClient.query(params("qt","/get", "ids",ids));
+
+    Set<String> expectedIds = new HashSet<String>( StrUtils.splitSmart(ids, ",", true) );
+
+    QueryResponse rsp = cloudClient.query(params("qt","/get", "ids",ids));
+    Set<String> obtainedIds = new HashSet<String>();
+    for (SolrDocument doc : rsp.getResults()) {
+      obtainedIds.add((String) doc.get("id"));
+    }
+
+    assertEquals(expectedIds, obtainedIds);
+  }
+
+  
+  void doDBQ(String q, String... reqParams) throws Exception {
+    UpdateRequest req = new UpdateRequest();
+    req.deleteByQuery(q);
+    req.setParams(params(reqParams));
+    req.process(cloudClient);
+  }
+
+  @Override
+  public void tearDown() throws Exception {
+    super.tearDown();
+  }
+
+}

@@ -1,0 +1,20 @@
+25a26
+> import java.util.Arrays;
+86c87,91
+< import static org.apache.solr.common.params.CommonParams.ADMIN_PATHS;
+---
+> import static org.apache.solr.common.params.CommonParams.AUTHC_PATH;
+> import static org.apache.solr.common.params.CommonParams.AUTHZ_PATH;
+> import static org.apache.solr.common.params.CommonParams.COLLECTIONS_HANDLER_PATH;
+> import static org.apache.solr.common.params.CommonParams.CONFIGSETS_HANDLER_PATH;
+> import static org.apache.solr.common.params.CommonParams.CORES_HANDLER_PATH;
+1038a1044,1052
+>   private static final Set<String> ADMIN_PATHS = new HashSet<>(Arrays.asList(
+>       CORES_HANDLER_PATH,
+>       COLLECTIONS_HANDLER_PATH,
+>       CONFIGSETS_HANDLER_PATH,
+>       AUTHC_PATH,
+>       AUTHZ_PATH,
+>       "/v2/cluster/security/authentication",
+>       "/v2/cluster/security/authorization"
+>       ));

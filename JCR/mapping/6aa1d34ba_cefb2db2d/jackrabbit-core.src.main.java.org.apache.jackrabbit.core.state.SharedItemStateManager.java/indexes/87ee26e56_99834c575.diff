@@ -1,0 +1,78 @@
+21d20
+< import java.util.Iterator;
+599,600c598
+<                 for (Iterator<ItemState> iter = local.modifiedStates(); iter.hasNext();) {
+<                     ItemState state = iter.next();
+---
+>                 for (ItemState state : local.modifiedStates()) {
+656,657c654
+<                 for (Iterator<ItemState> iter = local.deletedStates(); iter.hasNext();) {
+<                     ItemState state = iter.next();
+---
+>                 for (ItemState state : local.deletedStates()) {
+666,667c663
+<                 for (Iterator<ItemState> iter = local.addedStates(); iter.hasNext();) {
+<                     ItemState state = iter.next();
+---
+>                 for (ItemState state : local.addedStates()) {
+674,675c670
+<                 for (Iterator<NodeReferences> iter = local.modifiedRefs(); iter.hasNext();) {
+<                     NodeReferences refs = iter.next();
+---
+>                 for (NodeReferences refs : local.modifiedRefs()) {
+795,796c790
+<                 for (Iterator<ItemState> iter = shared.modifiedStates(); iter.hasNext();) {
+<                     ItemState state = iter.next();
+---
+>                 for (ItemState state : shared.modifiedStates()) {
+803,804c797
+<                 for (Iterator<ItemState> iter = shared.deletedStates(); iter.hasNext();) {
+<                     ItemState state = iter.next();
+---
+>                 for (ItemState state : shared.deletedStates()) {
+811,812c804
+<                 for (Iterator<ItemState> iter = shared.addedStates(); iter.hasNext();) {
+<                     ItemState state = iter.next();
+---
+>                 for (ItemState state : shared.addedStates()) {
+881,882c873
+<             for (Iterator<ItemState> i = local.addedStates(); i.hasNext();) {
+<                 ItemState state = i.next();
+---
+>             for (ItemState state : local.addedStates()) {
+894,895c885
+<             for (Iterator<ItemState> i = local.modifiedStates(); i.hasNext();) {
+<                 ItemState state = i.next();
+---
+>             for (ItemState state : local.modifiedStates()) {
+905,906c895,896
+<             for (Iterator<ItemState> i = local.deletedStates(); i.hasNext();) {
+<                 removeReferences(i.next());
+---
+>             for (ItemState state : local.deletedStates()) {
+>                 removeReferences(state);
+992,993c982
+<             for (Iterator<ItemState> iter = local.deletedStates(); iter.hasNext();) {
+<                 ItemState state = iter.next();
+---
+>             for (ItemState state : local.deletedStates()) {
+1021,1023c1010
+<             for (Iterator<NodeReferences> iter = local.modifiedRefs(); iter.hasNext();) {
+<                 NodeReferences refs = iter.next();
+<                 NodeId id = refs.getTargetId();
+---
+>             for (NodeReferences refs : local.modifiedRefs()) {
+1027a1015
+>                     NodeId id = refs.getTargetId();
+1180,1182c1168
+<         Iterator<ItemState> modifiedStates = external.modifiedStates();
+<         while (modifiedStates.hasNext()) {
+<             ItemState state = modifiedStates.next();
+---
+>         for (ItemState state : external.modifiedStates()) {
+1202,1204c1188
+<         Iterator<ItemState> deletedStates = external.deletedStates();
+<         while (deletedStates.hasNext()) {
+<             ItemState state = deletedStates.next();
+---
+>         for (ItemState state : external.deletedStates()) {

@@ -1,0 +1,114 @@
+21,24d20
+< import java.io.DataInput;
+< import java.io.DataOutput;
+< import java.io.IOException;
+< import java.util.ArrayList;
+36a33
+> import org.apache.accumulo.core.client.admin.CompactionStrategyConfig;
+57a55
+> import org.apache.accumulo.server.master.tableOps.UserCompactionConfig;
+61d58
+< import org.apache.hadoop.io.Writable;
+210c207
+<   private byte[] iterators;
+---
+>   private byte[] config;
+212,277d208
+<   public static class CompactionIterators implements Writable {
+<     byte[] startRow;
+<     byte[] endRow;
+<     List<IteratorSetting> iterators;
+< 
+<     public CompactionIterators(byte[] startRow, byte[] endRow, List<IteratorSetting> iterators) {
+<       this.startRow = startRow;
+<       this.endRow = endRow;
+<       this.iterators = iterators;
+<     }
+< 
+<     public CompactionIterators() {
+<       startRow = null;
+<       endRow = null;
+<       iterators = Collections.emptyList();
+<     }
+< 
+<     @Override
+<     public void write(DataOutput out) throws IOException {
+<       out.writeBoolean(startRow != null);
+<       if (startRow != null) {
+<         out.writeInt(startRow.length);
+<         out.write(startRow);
+<       }
+< 
+<       out.writeBoolean(endRow != null);
+<       if (endRow != null) {
+<         out.writeInt(endRow.length);
+<         out.write(endRow);
+<       }
+< 
+<       out.writeInt(iterators.size());
+<       for (IteratorSetting is : iterators) {
+<         is.write(out);
+<       }
+<     }
+< 
+<     @Override
+<     public void readFields(DataInput in) throws IOException {
+<       if (in.readBoolean()) {
+<         startRow = new byte[in.readInt()];
+<         in.readFully(startRow);
+<       } else {
+<         startRow = null;
+<       }
+< 
+<       if (in.readBoolean()) {
+<         endRow = new byte[in.readInt()];
+<         in.readFully(endRow);
+<       } else {
+<         endRow = null;
+<       }
+< 
+<       int num = in.readInt();
+<       iterators = new ArrayList<IteratorSetting>(num);
+< 
+<       for (int i = 0; i < num; i++) {
+<         iterators.add(new IteratorSetting(in));
+<       }
+<     }
+< 
+<     public Text getEndRow() {
+<       if (endRow == null)
+<         return null;
+<       return new Text(endRow);
+<     }
+279,290c210,211
+<     public Text getStartRow() {
+<       if (startRow == null)
+<         return null;
+<       return new Text(startRow);
+<     }
+< 
+<     public List<IteratorSetting> getIterators() {
+<       return iterators;
+<     }
+<   }
+< 
+<   public CompactRange(String tableId, byte[] startRow, byte[] endRow, List<IteratorSetting> iterators) throws ThriftTableOperationException {
+---
+>   public CompactRange(String tableId, byte[] startRow, byte[] endRow, List<IteratorSetting> iterators, CompactionStrategyConfig compactionStrategy)
+>       throws ThriftTableOperationException {
+295,298c216,217
+<     if (iterators.size() > 0) {
+<       this.iterators = WritableUtils.toByteArray(new CompactionIterators(this.startRow, this.endRow, iterators));
+<     } else {
+<       iterators = null;
+---
+>     if (iterators.size() > 0 || compactionStrategy != null) {
+>       this.config = WritableUtils.toByteArray(new UserCompactionConfig(this.startRow, this.endRow, iterators, compactionStrategy));
+340c259
+<           if (iterators != null) {
+---
+>           if (config != null) {
+345c264
+<             encodedIterators.append(new String(hex.encode(iterators), UTF_8));
+---
+>             encodedIterators.append(new String(hex.encode(config), UTF_8));

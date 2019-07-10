@@ -1,0 +1,84 @@
+34d33
+< import org.apache.jackrabbit.core.id.NodeReferencesId;
+317c316
+<     public NodeReferences getNodeReferences(NodeReferencesId id)
+---
+>     public NodeReferences getNodeReferences(NodeId id)
+319c318
+<         ISMLocking.ReadLock readLock = acquireReadLock(id.getTargetId());
+---
+>         ISMLocking.ReadLock readLock = acquireReadLock(id);
+323c322
+<                 return persistMgr.load(id);
+---
+>                 return persistMgr.loadReferencesTo(id);
+347c346
+<     public boolean hasNodeReferences(NodeReferencesId id) {
+---
+>     public boolean hasNodeReferences(NodeId id) {
+350c349
+<             readLock = acquireReadLock(id.getTargetId());
+---
+>             readLock = acquireReadLock(id);
+357c356
+<                 if (persistMgr.exists(id)) {
+---
+>                 if (persistMgr.existsReferencesTo(id)) {
+672c671
+<                     NodeId id = refs.getId().getTargetId();
+---
+>                     NodeId id = refs.getTargetId();
+912d910
+<             NodeReferencesId refsId = new NodeReferencesId(target);
+914c912
+<                     || !virtualProvider.hasNodeReferences(refsId)) {
+---
+>                     || !virtualProvider.hasNodeReferences(target)) {
+916c914
+<                 NodeReferences refs = local.get(refsId);
+---
+>                 NodeReferences refs = local.getReferencesTo(target);
+918,919c916,917
+<                     if (hasNodeReferences(refsId)) {
+<                         refs = getNodeReferences(refsId);
+---
+>                     if (hasNodeReferences(target)) {
+>                         refs = getNodeReferences(target);
+921c919
+<                         refs = new NodeReferences(refsId);
+---
+>                         refs = new NodeReferences(target);
+947d944
+<             NodeReferencesId refsId = new NodeReferencesId(target);
+949c946
+<                     || !virtualProvider.hasNodeReferences(refsId)) {
+---
+>                     || !virtualProvider.hasNodeReferences(target)) {
+952,954c949,951
+<                 NodeReferences refs = local.get(refsId);
+<                 if (refs == null && hasNodeReferences(refsId)) {
+<                     refs = getNodeReferences(refsId);
+---
+>                 NodeReferences refs = local.getReferencesTo(target);
+>                 if (refs == null && hasNodeReferences(target)) {
+>                     refs = getNodeReferences(target);
+986c983
+<                         NodeReferencesId refsId = new NodeReferencesId(node.getNodeId());
+---
+>                         NodeId targetId = node.getNodeId();
+989c986
+<                         NodeReferences refs = local.get(refsId);
+---
+>                         NodeReferences refs = local.getReferencesTo(targetId);
+991c988
+<                             if (!hasNodeReferences(refsId)) {
+---
+>                             if (!hasNodeReferences(targetId)) {
+994c991
+<                             refs = getNodeReferences(refsId);
+---
+>                             refs = getNodeReferences(targetId);
+999c996
+<                         if (refs.hasReferences() && !local.has(node.getNodeId())) {
+---
+>                         if (refs.hasReferences() && !local.has(targetId)) {

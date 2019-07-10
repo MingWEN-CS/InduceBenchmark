@@ -1,0 +1,97 @@
+34a35
+> import java.util.concurrent.atomic.AtomicReference;
+489a491,494
+>         if (this.legacyClusterStateVersion >= stat.getVersion()) {
+>           
+>           return;
+>         }
+512a518,520
+>   private final Object refreshCollectionListLock = new Object();
+> 
+>   
+525,535c533,544
+<     List<String> children = null;
+<     try {
+<       children = zkClient.getChildren(COLLECTIONS_ZKNODE, watcher, true);
+<     } catch (KeeperException.NoNodeException e) {
+<       LOG.warn("Error fetching collection names: [{}]", e.getMessage());
+<       
+<     }
+<     if (children == null || children.isEmpty()) {
+<       lazyCollectionStates.clear();
+<       return;
+<     }
+---
+>     synchronized (refreshCollectionListLock) {
+>       List<String> children = null;
+>       try {
+>         children = zkClient.getChildren(COLLECTIONS_ZKNODE, watcher, true);
+>       } catch (KeeperException.NoNodeException e) {
+>         LOG.warn("Error fetching collection names: [{}]", e.getMessage());
+>         
+>       }
+>       if (children == null || children.isEmpty()) {
+>         lazyCollectionStates.clear();
+>         return;
+>       }
+537c546,547
+<     
+---
+>       
+>       
+539,541d548
+<     
+<     this.lazyCollectionStates.keySet().retainAll(children);
+<     for (String coll : children) {
+543c550,551
+<       if (!interestingCollections.contains(coll)) {
+---
+>       this.lazyCollectionStates.keySet().retainAll(children);
+>       for (String coll : children) {
+545,547c553,558
+<         LazyCollectionRef existing = lazyCollectionStates.get(coll);
+<         if (existing == null) {
+<           lazyCollectionStates.putIfAbsent(coll, new LazyCollectionRef(coll));
+---
+>         if (!interestingCollections.contains(coll)) {
+>           
+>           LazyCollectionRef existing = lazyCollectionStates.get(coll);
+>           if (existing == null) {
+>             lazyCollectionStates.putIfAbsent(coll, new LazyCollectionRef(coll));
+>           }
+579a591,595
+>   private final Object refreshLiveNodesLock = new Object();
+>   
+>   private final AtomicReference<Set<String>> lastFetchedLiveNodes = new AtomicReference<>();
+> 
+>   
+583,588c599,607
+<     Set<String> newLiveNodes;
+<     try {
+<       List<String> nodeList = zkClient.getChildren(LIVE_NODES_ZKNODE, watcher, true);
+<       newLiveNodes = new HashSet<>(nodeList);
+<     } catch (KeeperException.NoNodeException e) {
+<       newLiveNodes = emptySet();
+---
+>     synchronized (refreshLiveNodesLock) {
+>       Set<String> newLiveNodes;
+>       try {
+>         List<String> nodeList = zkClient.getChildren(LIVE_NODES_ZKNODE, watcher, true);
+>         newLiveNodes = new HashSet<>(nodeList);
+>       } catch (KeeperException.NoNodeException e) {
+>         newLiveNodes = emptySet();
+>       }
+>       lastFetchedLiveNodes.set(newLiveNodes);
+590c609,611
+<     Set<String> oldLiveNodes;
+---
+> 
+>     
+>     Set<String> oldLiveNodes, newLiveNodes;
+591a613,618
+>       newLiveNodes = lastFetchedLiveNodes.getAndSet(null);
+>       if (newLiveNodes == null) {
+>         
+>         return;
+>       }
+> 

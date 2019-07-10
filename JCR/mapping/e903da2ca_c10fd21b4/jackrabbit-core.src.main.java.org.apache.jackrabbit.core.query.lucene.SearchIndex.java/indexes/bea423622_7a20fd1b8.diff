@@ -1,0 +1,20 @@
+1014c1014
+<                             new LengthSortComparator(),
+---
+>                             new LengthSortComparator(nsMappings),
+1020c1020
+<                     SortField sf = (SortField) super.visit(node, data);
+---
+>                     SortField sf = (SortField) ((DynamicOperandImpl) node.getOperand()).accept(this, data);
+1023c1023
+<                             sf.getReverse());
+---
+>                             !ordering.isAscending());
+1028c1028
+<                     SortField sf = (SortField) super.visit(node, data);
+---
+>                     SortField sf = (SortField) ((DynamicOperandImpl) node.getOperand()).accept(this, data);
+1031c1031
+<                             sf.getReverse());
+---
+>                             !ordering.isAscending());

@@ -1,0 +1,11 @@
+48a49
+> import org.apache.hadoop.ipc.RpcConstants;
+74,76c75,78
+<   private static final RpcRequestHeaderProto saslHeader =
+<       ProtoUtil.makeRpcRequestHeader(RpcKind.RPC_PROTOCOL_BUFFER,
+<           OperationProto.RPC_FINAL_PACKET, AuthProtocol.SASL.callId);
+---
+>   private static final RpcRequestHeaderProto saslHeader = ProtoUtil
+>       .makeRpcRequestHeader(RpcKind.RPC_PROTOCOL_BUFFER,
+>           OperationProto.RPC_FINAL_PACKET, AuthProtocol.SASL.callId,
+>           RpcConstants.DUMMY_CLIENT_ID);

@@ -1,0 +1,13 @@
+142,143c142,143
+<         statusMessages.put("Aborted", DataImporter.DATE_TIME_FORMAT
+<                 .format(new Date()));
+---
+>         statusMessages.put("Aborted", DataImporter.DATE_TIME_FORMAT.format(new Date()));
+>         rollback();
+172a173,178
+>   void rollback() {
+>     writer.rollback();
+>     statusMessages.put("", "Indexing failed. Rolled back all changes.");
+>     addStatusMessage("Rolledback");
+>   }
+> 

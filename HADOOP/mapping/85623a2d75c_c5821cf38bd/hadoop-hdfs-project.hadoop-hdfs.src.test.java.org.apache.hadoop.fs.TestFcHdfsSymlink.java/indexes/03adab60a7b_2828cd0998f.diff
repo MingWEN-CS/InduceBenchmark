@@ -1,0 +1,16 @@
+20d19
+< import static org.apache.hadoop.fs.FileContextTestHelper.getAbsoluteTestRootDir;
+53a53
+>   private static FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+57d56
+< 
+89d87
+<     FileContextTestHelper.TEST_ROOT_DIR = "/tmp/TestFcHdfsSymlink";
+106a105
+>     FileContext localFc = FileContext.getLocalFSFileContext();
+110d108
+<     FileContext localFc = FileContext.getLocalFSFileContext();
+123a122
+>     FileContext localFc = FileContext.getLocalFSFileContext();
+129d127
+<     FileContext localFc = FileContext.getLocalFSFileContext();

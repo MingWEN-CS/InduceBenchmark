@@ -1,0 +1,34 @@
+50a51
+>   private final String segmentSuffix;
+59a61,65
+>   public CompressingStoredFieldsFormat(String formatName, CompressionMode compressionMode, int chunkSize) {
+>     this(formatName, "", compressionMode, chunkSize);
+>   }
+>   
+>   
+84c90,99
+<   public CompressingStoredFieldsFormat(String formatName, CompressionMode compressionMode, int chunkSize) {
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public CompressingStoredFieldsFormat(String formatName, String segmentSuffix, 
+>                                        CompressionMode compressionMode, int chunkSize) {
+85a101
+>     this.segmentSuffix = segmentSuffix;
+90a107
+>     
+96c113,114
+<     return new CompressingStoredFieldsReader(directory, si, "", fn, context, formatName, compressionMode);
+---
+>     return new CompressingStoredFieldsReader(directory, si, segmentSuffix, fn, 
+>         context, formatName, compressionMode);
+102c120
+<     return new CompressingStoredFieldsWriter(directory, si, "", context,
+---
+>     return new CompressingStoredFieldsWriter(directory, si, segmentSuffix, context,

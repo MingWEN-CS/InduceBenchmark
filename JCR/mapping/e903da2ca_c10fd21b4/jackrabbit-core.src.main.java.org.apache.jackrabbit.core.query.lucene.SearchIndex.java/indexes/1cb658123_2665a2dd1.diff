@@ -1,0 +1,67 @@
+76d75
+< import java.util.Iterator;
+347c346
+<     private Class excerptProviderClass = DefaultHTMLExcerpt.class;
+---
+>     private Class<?> excerptProviderClass = DefaultHTMLExcerpt.class;
+369c368
+<     private Class indexingConfigurationClass = IndexingConfigurationImpl.class;
+---
+>     private Class<?> indexingConfigurationClass = IndexingConfigurationImpl.class;
+374c373
+<     private Class synonymProviderClass;
+---
+>     private Class<?> synonymProviderClass;
+405c404
+<     private Class spellCheckerClass;
+---
+>     private Class<?> spellCheckerClass;
+470c469
+<         Set excludedIDs = new HashSet();
+---
+>         Set<NodeId> excludedIDs = new HashSet<NodeId>();
+525c524
+<                     List errors = check.getErrors();
+---
+>                     List<ConsistencyCheckError> errors = check.getErrors();
+529,530c528
+<                     for (Iterator it = errors.iterator(); it.hasNext();) {
+<                         ConsistencyCheckError err = (ConsistencyCheckError) it.next();
+---
+>                     for (ConsistencyCheckError err : errors) {
+979c977
+<         List sortFields = new ArrayList();
+---
+>         List<SortField> sortFields = new ArrayList<SortField>();
+992c990
+<         return (SortField[]) sortFields.toArray(new SortField[sortFields.size()]);
+---
+>         return sortFields.toArray(new SortField[sortFields.size()]);
+1103c1101
+<             Class clazz = Class.forName(directoryManagerClass);
+---
+>             Class<?> clazz = Class.forName(directoryManagerClass);
+1585c1583
+<             Class analyzerClass = Class.forName(analyzerClassName);
+---
+>             Class<?> analyzerClass = Class.forName(analyzerClassName);
+1880c1878
+<             Class clazz = Class.forName(className);
+---
+>             Class<?> clazz = Class.forName(className);
+1925c1923
+<             Class clazz = Class.forName(className);
+---
+>             Class<?> clazz = Class.forName(className);
+1955c1953
+<             Class clazz = Class.forName(className);
+---
+>             Class<?> clazz = Class.forName(className);
+1989c1987
+<             Class clazz = Class.forName(className);
+---
+>             Class<?> clazz = Class.forName(className);
+2058c2056
+<             Class similarityClass = Class.forName(className);
+---
+>             Class<?> similarityClass = Class.forName(className);

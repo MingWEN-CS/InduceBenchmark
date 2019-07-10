@@ -1,0 +1,24 @@
+46c46,47
+< import org.apache.log4j.Logger;
+---
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+52c53
+<   private static final Logger LOG = Logger.getLogger(LoggingSearchPropertyProvider.class);
+---
+>   private static final Logger LOG = LoggerFactory.getLogger(LoggingSearchPropertyProvider.class);
+70a72
+>   @Inject
+73,76d74
+<   public LoggingSearchPropertyProvider() {
+<     loggingRequestHelperFactory = new LoggingRequestHelperFactoryImpl();
+<   }
+< 
+226c224
+<   protected void setLogSearchDataRetrievalService(LogSearchDataRetrievalService logSearchDataRetrievalService) {
+---
+>   void setLogSearchDataRetrievalService(LogSearchDataRetrievalService logSearchDataRetrievalService) {
+230c228
+<   protected void setLoggingRequestHelperFactory(LoggingRequestHelperFactory loggingRequestHelperFactory) {
+---
+>   void setLoggingRequestHelperFactory(LoggingRequestHelperFactory loggingRequestHelperFactory) {

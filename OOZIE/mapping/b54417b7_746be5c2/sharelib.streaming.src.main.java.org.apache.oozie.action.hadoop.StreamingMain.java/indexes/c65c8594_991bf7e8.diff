@@ -1,0 +1,35 @@
+31a32
+> 
+33c34
+<     protected RunningJob submitJob(JobConf jobConf) throws Exception {
+---
+>     protected void addActionConf(JobConf jobConf, Configuration actionConf) {
+46,48c47
+<         jobConf.set("stream.addenvironment", "");
+< 
+<         String value = jobConf.get("oozie.streaming.mapper");
+---
+>         String value = actionConf.get("oozie.streaming.mapper");
+52c51
+<         value = jobConf.get("oozie.streaming.reducer");
+---
+>         value = actionConf.get("oozie.streaming.reducer");
+56c55
+<         value = jobConf.get("oozie.streaming.record-reader");
+---
+>         value = actionConf.get("oozie.streaming.record-reader");
+60c59
+<         String[] values = getStrings(jobConf, "oozie.streaming.record-reader-mapping");
+---
+>         String[] values = getStrings(actionConf, "oozie.streaming.record-reader-mapping");
+65c64
+<         values = getStrings(jobConf, "oozie.streaming.env");
+---
+>         values = getStrings(actionConf, "oozie.streaming.env");
+74a74,79
+>         super.addActionConf(jobConf, actionConf);
+>     }
+> 
+>     @Override
+>     protected RunningJob submitJob(JobConf jobConf) throws Exception {
+> 

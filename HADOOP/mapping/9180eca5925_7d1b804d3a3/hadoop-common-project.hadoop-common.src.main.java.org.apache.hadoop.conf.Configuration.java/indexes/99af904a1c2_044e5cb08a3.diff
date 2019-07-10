@@ -1,0 +1,172 @@
+35a36
+> import java.util.Arrays;
+275a277,284
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   @Deprecated
+290a300,315
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public synchronized static void addDeprecation(String key, String newKey,
+> 	      String customMessage) {
+> 	  addDeprecation(key, new String[] {newKey}, customMessage);
+>   }
+302a328,333
+> 
+> 
+> 
+> 
+> 
+>   @Deprecated
+313a345,359
+> 
+> 
+> 
+> 
+>   public synchronized static void addDeprecation(String key, String newKey) {
+> 	addDeprecation(key, new String[] {newKey}, null);
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+325,326c371,372
+<   private String getAlternateName(String name) {
+<     String altName;
+---
+>   private String[] getAlternateNames(String name) {
+>     String oldName, altNames[] = null;
+328,332c374,388
+<     if (keyInfo != null) {
+<       altName = (keyInfo.newKeys.length > 0) ? keyInfo.newKeys[0] : null;
+<     }
+<     else {
+<       altName = reverseDeprecatedKeyMap.get(name);
+---
+>     if (keyInfo == null) {
+>       altNames = (reverseDeprecatedKeyMap.get(name) != null ) ? 
+>         new String [] {reverseDeprecatedKeyMap.get(name)} : null;
+>       if(altNames != null && altNames.length > 0) {
+>     	
+>     	keyInfo = deprecatedKeyMap.get(altNames[0]);
+>       }      
+>     } 
+>     if(keyInfo != null && keyInfo.newKeys.length > 0) {
+>       List<String> list = new ArrayList<String>(); 
+>       if(altNames != null) {
+>     	  list.addAll(Arrays.asList(altNames));
+>       }
+>       list.addAll(Arrays.asList(keyInfo.newKeys));
+>       altNames = list.toArray(new String[list.size()]);
+334c390
+<     return altName;
+---
+>     return altNames;
+349,350c405,407
+<   private String handleDeprecation(String name) {
+<     if (isDeprecated(name)) {
+---
+>   private String[] handleDeprecation(String name) {
+>     ArrayList<String > names = new ArrayList<String>();
+> 	if (isDeprecated(name)) {
+355,356c412
+<           name = newKey;
+<           break;
+---
+>           names.add(newKey);
+360,364c416,417
+<     String deprecatedKey = reverseDeprecatedKeyMap.get(name);
+<     if (deprecatedKey != null && !getOverlay().containsKey(name) &&
+<         getOverlay().containsKey(deprecatedKey)) {
+<       getProps().setProperty(name, getOverlay().getProperty(deprecatedKey));
+<       getOverlay().setProperty(name, getOverlay().getProperty(deprecatedKey));
+---
+>     if(names.size() == 0) {
+>     	names.add(name);
+366c419,427
+<     return name;
+---
+>     for(String n : names) {
+> 	  String deprecatedKey = reverseDeprecatedKeyMap.get(n);
+> 	  if (deprecatedKey != null && !getOverlay().containsKey(n) &&
+> 	      getOverlay().containsKey(deprecatedKey)) {
+> 	    getProps().setProperty(n, getOverlay().getProperty(deprecatedKey));
+> 	    getOverlay().setProperty(n, getOverlay().getProperty(deprecatedKey));
+> 	  }
+>     }
+>     return names.toArray(new String[names.size()]);
+598,599c659,664
+<     name = handleDeprecation(name);
+<     return substituteVars(getProps().getProperty(name));
+---
+>     String[] names = handleDeprecation(name);
+>     String result = null;
+>     for(String n : names) {
+>       result = substituteVars(getProps().getProperty(n));
+>     }
+>     return result;
+636,637c701,706
+<     name = handleDeprecation(name);
+<     return getProps().getProperty(name);
+---
+>     String[] names = handleDeprecation(name);
+>     String result = null;
+>     for(String n : names) {
+>       result = getProps().getProperty(n);
+>     }
+>     return result;
+655,658c724,729
+<     String altName = getAlternateName(name);
+<     if (altName != null) {
+<       getOverlay().setProperty(altName, value);
+<       getProps().setProperty(altName, value);
+---
+>     String[] altNames = getAlternateNames(name);
+>     if (altNames != null && altNames.length > 0) {
+>       for(String altName : altNames) {
+>     	getOverlay().setProperty(altName, value);
+>         getProps().setProperty(altName, value);
+>       }
+674c745
+<     String altName = getAlternateName(name);
+---
+>     String[] altNames = getAlternateNames(name);
+677,679c748,752
+<     if (altName !=null) {
+<       getOverlay().remove(altName);
+<        getProps().remove(altName);
+---
+>     if (altNames !=null && altNames.length > 0) {
+>       for(String altName : altNames) {
+>     	getOverlay().remove(altName);
+>     	getProps().remove(altName);
+>       }
+714,715c787,792
+<     name = handleDeprecation(name);
+<     return substituteVars(getProps().getProperty(name, defaultValue));
+---
+>     String[] names = handleDeprecation(name);
+>     String result = null;
+>     for(String n : names) {
+>       result = substituteVars(getProps().getProperty(n, defaultValue));
+>     }
+>     return result;

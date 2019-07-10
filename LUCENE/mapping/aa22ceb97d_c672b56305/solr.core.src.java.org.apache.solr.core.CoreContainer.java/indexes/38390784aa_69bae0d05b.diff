@@ -1,0 +1,10 @@
+847c847
+<       SolrCore core = solrCores.getCoreFromAnyList(name);
+---
+>       SolrCore core = solrCores.getCoreFromAnyList(name, false);
+955c955
+<     SolrCore core = solrCores.getCoreFromAnyList(name);
+---
+>     SolrCore core = solrCores.getCoreFromAnyList(name, true);
+958d957
+<       core.open();

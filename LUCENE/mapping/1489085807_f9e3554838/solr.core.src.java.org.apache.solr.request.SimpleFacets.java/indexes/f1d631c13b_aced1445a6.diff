@@ -1,0 +1,216 @@
+20a21
+> import org.apache.log4j.Logger;
+48a50
+> import org.apache.solr.common.params.FacetParams.FacetRangeMethod;
+108a111,112
+>   
+>   private final static Logger log = Logger.getLogger(SimpleFacets.class);
+1085a1090,1098
+>     String methodStr = params.get(FacetParams.FACET_RANGE_METHOD);
+>     FacetRangeMethod method = (methodStr==null?FacetRangeMethod.getDefault():FacetRangeMethod.get(methodStr));
+>     boolean groupFacet = params.getBool(GroupParams.GROUP_FACET, false);
+>     if (groupFacet && method.equals(FacetRangeMethod.DV)) {
+>       
+>       log.warn("Range facet method '" + FacetRangeMethod.DV + "' is not supported together with '" + 
+>               GroupParams.GROUP_FACET + "'. Will use method '" + FacetRangeMethod.FILTER + "' instead");
+>       method = FacetRangeMethod.FILTER;
+>     }
+1117a1131,1136
+>       if (method.equals(FacetRangeMethod.DV)) {
+>         
+>         log.warn("Range facet method '" + FacetRangeMethod.DV + "' is not supported together with field type '" + 
+>             DateRangeField.class + "'. Will use method '" + FacetRangeMethod.FILTER + "' instead");
+>         method = FacetRangeMethod.FILTER;
+>       }
+1123,1124c1142,1147
+< 
+<     resOuter.add(key, getFacetRangeCounts(sf, calc));
+---
+>     if (method.equals(FacetRangeMethod.DV)) {
+>       assert ft instanceof TrieField;
+>       resOuter.add(key, getFacetRangeCountsDocValues(sf, calc));
+>     } else {
+>       resOuter.add(key, getFacetRangeCounts(sf, calc));
+>     }
+1127c1150
+<   private <T extends Comparable<T>> NamedList getFacetRangeCounts
+---
+>   private <T extends Comparable<T>> NamedList<Object> getFacetRangeCounts
+1253a1277,1453
+>   private <T extends Comparable<T>> NamedList<Object> getFacetRangeCountsDocValues(final SchemaField sf,
+>    final RangeEndpointCalculator<T> calc) throws IOException {
+>   
+>   final String f = sf.getName();
+>   final NamedList<Object> res = new SimpleOrderedMap<>();
+>   final NamedList<Integer> counts = new NamedList<>();
+>   res.add("counts", counts);
+>   
+>   String globalStartS = required.getFieldParam(f,FacetParams.FACET_RANGE_START);
+>   String globalEndS = required.getFieldParam(f,FacetParams.FACET_RANGE_END);
+> 
+>   final T start = calc.getValue(globalStartS);
+>   
+>   T end = calc.getValue(globalEndS);
+>   if (end.compareTo(start) < 0) {
+>     throw new SolrException
+>       (SolrException.ErrorCode.BAD_REQUEST,
+>        "range facet 'end' comes before 'start': "+end+" < "+start);
+>   }
+>   
+>   final String gap = required.getFieldParam(f, FacetParams.FACET_RANGE_GAP);
+>   
+>   
+>   res.add("gap", calc.getGap(gap));
+>   
+>   final int minCount = params.getFieldInt(f,FacetParams.FACET_MINCOUNT, 0);
+>   
+>   final EnumSet<FacetRangeInclude> include = FacetRangeInclude.parseParam
+>     (params.getFieldParams(f,FacetParams.FACET_RANGE_INCLUDE));
+>   ArrayList<IntervalFacets.FacetInterval> intervals = new ArrayList<>();
+>   
+>   final String[] othersP =
+>       params.getFieldParams(f,FacetParams.FACET_RANGE_OTHER);
+>   
+>   boolean includeBefore = false;
+>   boolean includeBetween = false;
+>   boolean includeAfter = false;
+>   
+>   if (othersP != null && othersP.length > 0) {
+>     Set<FacetRangeOther> others = EnumSet.noneOf(FacetRangeOther.class);
+>     
+>     
+>     for (final String o : othersP) {
+>       others.add(FacetRangeOther.get(o));
+>     }
+>     
+>     
+>     if (!others.contains(FacetRangeOther.NONE)) {
+>       
+>       if (others.contains(FacetRangeOther.ALL) || others.contains(FacetRangeOther.BEFORE)) {
+>         
+>         intervals.add(null);
+>         includeBefore = true;
+>       }
+>       
+>       if (others.contains(FacetRangeOther.ALL) || others.contains(FacetRangeOther.BETWEEN)) {
+>         
+>         intervals.add(null);
+>         includeBetween = true;
+>       }
+>       
+>       if (others.contains(FacetRangeOther.ALL) || others.contains(FacetRangeOther.AFTER)) {
+>         includeAfter = true;
+>       }
+>     }
+>     
+>   }
+>   
+>   
+>   T low = start;
+>   
+>   while (low.compareTo(end) < 0) {
+>     T high = calc.addGap(low, gap);
+>     if (end.compareTo(high) < 0) {
+>       if (params.getFieldBool(f,FacetParams.FACET_RANGE_HARD_END,false)) {
+>         high = end;
+>       } else {
+>         end = high;
+>       }
+>     }
+>     if (high.compareTo(low) < 0) {
+>       throw new SolrException
+>         (SolrException.ErrorCode.BAD_REQUEST,
+>          "range facet infinite loop (is gap negative? did the math overflow?)");
+>     }
+>     if (high.compareTo(low) == 0) {
+>       throw new SolrException
+>         (SolrException.ErrorCode.BAD_REQUEST,
+>          "range facet infinite loop: gap is either zero, or too small relative start/end and caused underflow: " + low + " + " + gap + " = " + high );
+>     }
+>     
+>     final boolean includeLower = 
+>       (include.contains(FacetRangeInclude.LOWER) ||
+>        (include.contains(FacetRangeInclude.EDGE) && 
+>         0 == low.compareTo(start)));
+>     final boolean includeUpper = 
+>       (include.contains(FacetRangeInclude.UPPER) ||
+>        (include.contains(FacetRangeInclude.EDGE) && 
+>         0 == high.compareTo(end)));
+>     
+>     final String lowS = calc.formatValue(low);
+>     final String highS = calc.formatValue(high);
+>     
+>     intervals.add(new IntervalFacets.FacetInterval(sf, lowS, highS, includeLower, includeUpper, lowS));
+>     
+>     low = high;
+>   }
+>   
+>   if (includeBefore) {
+>     
+>     intervals.set(0, new IntervalFacets.FacetInterval(sf, "*", globalStartS, true, 
+>         include.contains(FacetRangeInclude.OUTER) ||
+>           (! (include.contains(FacetRangeInclude.LOWER) ||
+>             include.contains(FacetRangeInclude.EDGE))), FacetRangeOther.BEFORE.toString()));
+>   }
+>   
+>   if (includeBetween) {
+>     int intervalIndex = (includeBefore?1:0);
+>     intervals.set(intervalIndex, new IntervalFacets.FacetInterval(sf, globalStartS, calc.formatValue(end), 
+>         include.contains(FacetRangeInclude.LOWER) ||
+>         include.contains(FacetRangeInclude.EDGE), 
+>         include.contains(FacetRangeInclude.UPPER) ||
+>         include.contains(FacetRangeInclude.EDGE), 
+>         FacetRangeOther.BETWEEN.toString()));
+>    }
+>   
+>   if (includeAfter) {
+>     
+>     intervals.add(new IntervalFacets.FacetInterval(sf, calc.formatValue(end), "*", 
+>         (include.contains(FacetRangeInclude.OUTER) ||
+>         (! (include.contains(FacetRangeInclude.UPPER) ||
+>             include.contains(FacetRangeInclude.EDGE)))),  
+>        false, FacetRangeOther.AFTER.toString()));
+>   }
+>   
+>   IntervalFacets.FacetInterval[] intervalsArray = intervals.toArray(new IntervalFacets.FacetInterval[intervals.size()]);
+>   
+>   intervals = null;
+>   
+>   new IntervalFacets(sf, searcher, docs, intervalsArray);
+>   
+>   int intervalIndex = 0;
+>   int lastIntervalIndex = intervalsArray.length - 1;
+>   
+>   
+>   if (includeBefore) {
+>     res.add(intervalsArray[intervalIndex].getKey(), intervalsArray[intervalIndex].getCount());
+>     intervalIndex++;
+>   }
+>   
+>   
+>   
+>   if (includeBetween) {
+>     res.add(intervalsArray[intervalIndex].getKey(), intervalsArray[intervalIndex].getCount());
+>     intervalIndex++;
+>   }
+>   
+>   
+>   
+>   if (includeAfter) {
+>     res.add(intervalsArray[lastIntervalIndex].getKey(), intervalsArray[lastIntervalIndex].getCount());
+>     lastIntervalIndex--;
+>   }
+>   
+>   while (intervalIndex <= lastIntervalIndex) {
+>     FacetInterval interval = intervalsArray[intervalIndex];
+>     if (interval.getCount() >= minCount) {
+>       counts.add(interval.getKey(), interval.getCount());
+>     }
+>     intervalIndex++;
+>   }
+>   
+>   res.add("start", start);
+>   res.add("end", end);
+>   return res;
+> }  
+>   

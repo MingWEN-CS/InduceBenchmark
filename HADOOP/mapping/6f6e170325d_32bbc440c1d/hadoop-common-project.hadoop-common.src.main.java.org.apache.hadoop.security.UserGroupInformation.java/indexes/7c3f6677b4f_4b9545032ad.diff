@@ -1,0 +1,14 @@
+239,240c239,240
+<     String value = conf.get(HADOOP_SECURITY_AUTHENTICATION);
+<     if (value == null || "simple".equals(value)) {
+---
+>     AuthenticationMethod auth = SecurityUtil.getAuthenticationMethod(conf);
+>     if (auth == AuthenticationMethod.SIMPLE) {
+242c242
+<     } else if ("kerberos".equals(value)) {
+---
+>     } else if (auth == AuthenticationMethod.KERBEROS) {
+247c247
+<                                          " of " + value);
+---
+>                                          " of " + auth);

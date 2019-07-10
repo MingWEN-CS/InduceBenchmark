@@ -1,0 +1,105 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.oozie.service;
+
+import org.apache.oozie.util.Instrumentable;
+import org.apache.oozie.util.Instrumentation;
+import org.apache.oozie.lock.LockToken;
+import org.apache.oozie.lock.MemoryLocks;
+
+import com.google.common.annotations.VisibleForTesting;
+
+
+
+
+public class MemoryLocksService implements Service, Instrumentable {
+    protected static final String INSTRUMENTATION_GROUP = "locks";
+    private MemoryLocks locks;
+
+    
+
+
+
+
+    @Override
+    public void init(Services services) throws ServiceException {
+        locks = new MemoryLocks();
+    }
+
+    
+
+
+    @Override
+    public void destroy() {
+        locks = null;
+    }
+
+    
+
+
+
+
+    @Override
+    public Class<? extends Service> getInterface() {
+        return MemoryLocksService.class;
+    }
+
+    
+
+
+
+
+    public void instrument(Instrumentation instr) {
+        final MemoryLocks finalLocks = this.locks;
+        instr.addVariable(INSTRUMENTATION_GROUP, "locks", new Instrumentation.Variable<Long>() {
+            public Long getValue() {
+                return (long) finalLocks.size();
+            }
+        });
+    }
+
+    
+
+
+
+
+
+
+
+    public LockToken getReadLock(String resource, long wait) throws InterruptedException {
+        return locks.getReadLock(resource, wait);
+    }
+
+    
+
+
+
+
+
+
+
+    public LockToken getWriteLock(String resource, long wait) throws InterruptedException {
+        return locks.getWriteLock(resource, wait);
+    }
+
+    @VisibleForTesting
+    public MemoryLocks getMemoryLocks() {
+        return locks;
+    }
+}

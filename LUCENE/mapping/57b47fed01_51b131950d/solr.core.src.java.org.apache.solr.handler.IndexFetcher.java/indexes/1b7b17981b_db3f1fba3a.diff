@@ -1,0 +1,6 @@
+73a74
+> import org.apache.solr.common.util.ExecutorUtil;
+349c350
+<       fsyncService = Executors.newSingleThreadExecutor(new DefaultSolrThreadFactory("fsyncService"));
+---
+>       fsyncService = ExecutorUtil.newMDCAwareSingleThreadExecutor(new DefaultSolrThreadFactory("fsyncService"));

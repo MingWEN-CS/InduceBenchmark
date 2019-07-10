@@ -1,0 +1,210 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.query.lucene;
+
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.index.FilterIndexReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.TermPositions;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.FieldSelector;
+import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.document.Field;
+import org.apache.jackrabbit.core.query.lucene.directory.DirectoryManager;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
+import java.io.IOException;
+
+
+
+
+
+
+
+
+
+
+public class IndexMigration {
+
+    
+
+
+    private static final Logger log = LoggerFactory.getLogger(IndexMigration.class);
+
+    
+
+
+
+
+
+
+    public static void migrate(PersistentIndex index,
+                               DirectoryManager directoryManager)
+            throws IOException {
+        Directory indexDir = index.getDirectory();
+        log.debug("Checking {} ...", indexDir);
+        ReadOnlyIndexReader reader = index.getReadOnlyIndexReader();
+        try {
+            if (IndexFormatVersion.getVersion(reader).getVersion() >=
+                    IndexFormatVersion.V3.getVersion()) {
+                
+                
+                log.debug("IndexFormatVersion >= V3, no migration needed");
+                return;
+            }
+            
+            
+            TermEnum terms = reader.terms(new Term(FieldNames.PROPERTIES, ""));
+            try {
+                Term t = terms.term();
+                if (t.text().indexOf('\uFFFF') == -1) {
+                    log.debug("Index already migrated");
+                    return;
+                }
+            } finally {
+                terms.close();
+            }
+        } finally {
+            reader.release();
+            index.releaseWriterAndReaders();
+        }
+
+        
+        log.debug("Index requires migration {}", indexDir);
+
+        String migrationName = index.getName() + "_v2.3";
+        if (directoryManager.hasDirectory(migrationName)) {
+            directoryManager.delete(migrationName);
+        }
+
+        Directory migrationDir = directoryManager.getDirectory(migrationName);
+        try {
+            IndexWriter writer = new IndexWriter(migrationDir, new JackrabbitAnalyzer(),
+                    IndexWriter.MaxFieldLength.UNLIMITED);
+            try {
+                IndexReader r = new MigrationIndexReader(
+                        IndexReader.open(index.getDirectory()));
+                try {
+                    writer.addIndexes(new IndexReader[]{r});
+                    writer.close();
+                } finally {
+                    r.close();
+                }
+            } finally {
+                writer.close();
+            }
+        } finally {
+            migrationDir.close();
+        }
+        directoryManager.delete(index.getName());
+        if (!directoryManager.rename(migrationName, index.getName())) {
+            throw new IOException("failed to move migrated directory " +
+                    migrationDir);
+        }
+        log.info("Migrated " + index.getName());
+    }
+
+    
+
+    
+
+
+
+    private static class MigrationIndexReader extends FilterIndexReader {
+
+        public MigrationIndexReader(IndexReader in) {
+            super(in);
+        }
+
+        public Document document(int n, FieldSelector fieldSelector)
+                throws CorruptIndexException, IOException {
+            Document doc = super.document(n, fieldSelector);
+            Fieldable[] fields = doc.getFieldables(FieldNames.PROPERTIES);
+            if (fields != null) {
+                doc.removeFields(FieldNames.PROPERTIES);
+                for (Fieldable field : fields) {
+                    String value = field.stringValue();
+                    value = value.replace('\uFFFF', '[');
+                    doc.add(new Field(FieldNames.PROPERTIES, value, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+                }
+            }
+            return doc;
+        }
+
+        public TermEnum terms() throws IOException {
+            return new MigrationTermEnum(in.terms());
+        }
+
+        public TermPositions termPositions() throws IOException {
+            return new MigrationTermPositions(in.termPositions());
+        }
+
+        private static class MigrationTermEnum extends FilterTermEnum {
+
+            public MigrationTermEnum(TermEnum in) {
+                super(in);
+            }
+
+            public Term term() {
+                Term t = super.term();
+                if (t == null) {
+                    return t;
+                }
+                if (t.field().equals(FieldNames.PROPERTIES)) {
+                    String text = t.text();
+                    return t.createTerm(text.replace('\uFFFF', '['));
+                } else {
+                    return t;
+                }
+            }
+
+            TermEnum unwrap() {
+                return in;
+            }
+        }
+
+        private static class MigrationTermPositions extends FilterTermPositions {
+
+            public MigrationTermPositions(TermPositions in) {
+                super(in);
+            }
+
+            public void seek(Term term) throws IOException {
+                if (term.field().equals(FieldNames.PROPERTIES)) {
+                    char[] text = term.text().toCharArray();
+                    text[term.text().indexOf('[')] = '\uFFFF';
+                    super.seek(term.createTerm(new String(text)));
+                } else {
+                    super.seek(term);
+                }
+            }
+
+            public void seek(TermEnum termEnum) throws IOException {
+                if (termEnum instanceof MigrationTermEnum) {
+                    super.seek(((MigrationTermEnum) termEnum).unwrap());
+                } else {
+                    super.seek(termEnum);
+                }
+            }
+        }
+    }
+}

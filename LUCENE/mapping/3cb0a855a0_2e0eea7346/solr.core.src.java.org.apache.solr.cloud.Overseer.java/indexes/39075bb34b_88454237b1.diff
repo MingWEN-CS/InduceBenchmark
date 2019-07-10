@@ -1,0 +1,14 @@
+133c133,135
+<   public static final Set<String> sliceUniqueBooleanProperties = ImmutableSet.of("property.preferredleader");
+---
+>   public static final String preferredLeaderProp = COLL_PROP_PREFIX + "preferredleader";
+> 
+>   public static final Set<String> sliceUniqueBooleanProperties = ImmutableSet.of(preferredLeaderProp);
+1172c1174
+<     ClusterState updateSlice(ClusterState state, String collectionName, Slice slice) {
+---
+>     private ClusterState updateSlice(ClusterState state, String collectionName, Slice slice) {
+1399d1400
+< 
+1700a1702
+> 

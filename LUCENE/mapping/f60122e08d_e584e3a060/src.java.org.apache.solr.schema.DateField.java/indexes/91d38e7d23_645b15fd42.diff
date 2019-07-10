@@ -1,0 +1,148 @@
+35a36,38
+> import java.text.NumberFormat;
+> import java.text.DecimalFormat;
+> import java.text.ParsePosition;
+36a40,56
+> import java.text.FieldPosition;
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+99,104d118
+<     final int len=val.length();
+<     if (val.charAt(len-1) == Z) {
+<       
+<       
+<       return val.substring(0,len-1);
+<     }
+153c167
+<     return getThreadLocalDateFormat().format(val);
+---
+>     return formatDate(val);
+164c178
+<     return getThreadLocalDateFormat().parse(indexedToReadable(indexedForm));
+---
+>     return parseDate(indexedToReadable(indexedForm));
+170c184
+<       return getThreadLocalDateFormat().parse( toExternal(f) );
+---
+>       return parseDate( toExternal(f) );
+196a211,214
+> 
+> 
+> 
+> 
+198d215
+<   
+202,203c219,301
+<   private static ThreadLocalDateFormat fmtThreadLocal
+<     = new ThreadLocalDateFormat();
+---
+>   
+> 
+> 
+> 
+>   protected String formatDate(Date d) {
+>     return fmtThreadLocal.get().format(d);
+>   }
+> 
+>   
+> 
+> 
+> 
+>    protected Date parseDate(String s) throws ParseException {
+>      return fmtThreadLocal.get().parse(s);
+>    }
+>   
+>   
+> 
+> 
+> 
+> 
+>   private final static ThreadLocalDateFormat fmtThreadLocal
+>     = new ThreadLocalDateFormat(new ISO8601CanonicalDateFormat());
+>   
+>   private static class ISO8601CanonicalDateFormat extends SimpleDateFormat {
+>     
+>     protected NumberFormat millisParser
+>       = NumberFormat.getIntegerInstance(Locale.US);
+> 
+>     protected NumberFormat millisFormat = new DecimalFormat(".###");
+> 
+>     public ISO8601CanonicalDateFormat() {
+>       super("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+>       this.setTimeZone(UTC);
+>     }
+> 
+>     public Date parse(String i, ParsePosition p) {
+>       
+>       Date d = super.parse(i, p);
+>       int milliIndex = p.getIndex();
+>       
+>       if (null != d &&
+>           -1 == p.getErrorIndex() &&
+>           milliIndex + 1 < i.length() &&
+>           '.' == i.charAt(milliIndex)) {
+>         p.setIndex( ++milliIndex ); 
+>         Number millis = millisParser.parse(i, p);
+>         if (-1 == p.getErrorIndex()) {
+>           int endIndex = p.getIndex();
+>             d = new Date(d.getTime()
+>                          + (long)(millis.doubleValue() *
+>                                   Math.pow(10, (3-endIndex+milliIndex))));
+>         }
+>       }
+>       return d;
+>     }
+> 
+>     public StringBuffer format(Date d, StringBuffer toAppendTo,
+>                                FieldPosition pos) {
+>       
+>       super.format(d, toAppendTo, pos);
+>       
+>       long millis = d.getTime() % 1000l;
+>       if (0l == millis) {
+>         return toAppendTo;
+>       }
+>       int posBegin = toAppendTo.length();
+>       toAppendTo.append(millisFormat.format(millis / 1000d));
+>       if (DateFormat.MILLISECOND_FIELD == pos.getField()) {
+>         pos.setBeginIndex(posBegin);
+>         pos.setEndIndex(toAppendTo.length());
+>       }
+>       return toAppendTo;
+>     }
+> 
+>     public Object clone() {
+>       ISO8601CanonicalDateFormat c
+>         = (ISO8601CanonicalDateFormat) super.clone();
+>       c.millisParser = NumberFormat.getIntegerInstance(Locale.US);
+>       c.millisFormat = new DecimalFormat(".###");
+>       return c;
+>     }
+>   }
+207c305
+<     public ThreadLocalDateFormat() {
+---
+>     public ThreadLocalDateFormat(DateFormat d) {
+209,212c307
+<       SimpleDateFormat tmp =
+<         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
+<       tmp.setTimeZone(UTC);
+<       proto = tmp;
+---
+>       proto = d;
+214d308
+<     

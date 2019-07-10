@@ -1,0 +1,24 @@
+20,21c20,22
+< import java.util.SortedSet;
+< import java.util.TreeSet;
+---
+> import java.util.ArrayList;
+> import java.util.Collections;
+> import java.util.List;
+41,44c42
+<     SortedSet<String> set = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+<     for (byte[] auth : auths) {
+<       set.add(new String(auth));
+<     }
+---
+>     List<String> set = sortAuthorizations(auths);
+48a47,55
+>   protected List<String> sortAuthorizations(Authorizations auths) {
+>     List<String> list = new ArrayList<String>();
+>     for (byte[] auth : auths) {
+>       list.add(new String(auth));
+>     }
+>     Collections.sort(list, String.CASE_INSENSITIVE_ORDER);
+>     return list;
+>   }
+> 

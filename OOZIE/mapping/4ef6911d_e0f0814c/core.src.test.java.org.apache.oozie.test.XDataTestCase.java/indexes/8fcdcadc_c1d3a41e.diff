@@ -1,0 +1,39 @@
+90a91
+> @SuppressWarnings("deprecation")
+720c721
+<         return addRecordToWfActionTable(wfId, actionName, status, "");
+---
+>         return addRecordToWfActionTable(wfId, actionName, status, "", false);
+724,725c725,731
+<             String execPath) throws Exception {
+<         WorkflowActionBean action = createWorkflowAction(wfId, actionName, status);
+---
+>             boolean pending) throws Exception {
+>         return addRecordToWfActionTable(wfId, actionName, status, "", pending);
+>     }
+> 
+>     protected WorkflowActionBean addRecordToWfActionTable(String wfId, String actionName, WorkflowAction.Status status,
+>             String execPath, boolean pending) throws Exception {
+>         WorkflowActionBean action = createWorkflowAction(wfId, actionName, status, pending);
+1130,1131c1136,1137
+<     protected WorkflowActionBean createWorkflowAction(String wfId, String actionName, WorkflowAction.Status status)
+<             throws Exception {
+---
+>     protected WorkflowActionBean createWorkflowAction(String wfId, String actionName, WorkflowAction.Status status,
+>             boolean pending) throws Exception {
+1142c1148,1154
+<         action.resetPendingOnly();
+---
+>         action.setCred("null");
+>         if (pending) {
+>             action.setPendingOnly();
+>         }
+>         else {
+>             action.resetPendingOnly();
+>         }
+1165a1178,1182
+>     protected WorkflowActionBean createWorkflowAction(String wfId, String actionName, WorkflowAction.Status status)
+>             throws Exception {
+>         return createWorkflowAction(wfId, actionName, status, false);
+>     }
+> 

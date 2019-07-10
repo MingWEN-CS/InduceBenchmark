@@ -1,0 +1,30 @@
+92a93
+>   
+93a95
+>   
+189a192,206
+>     if (null == hostPort) {
+>       
+>       
+>       log.warn("Solr 'hostPort' has not be explicitly configured, using hardcoded default of " + DEFAULT_HOST_PORT + ".  This default has been deprecated and will be removed in future versions of Solr, please configure this value explicitly");
+>       hostPort = DEFAULT_HOST_PORT;
+>     }
+>     if (null == hostContext) {
+>       
+>       
+>       log.warn("Solr 'hostContext' has not be explicitly configured, using hardcoded default of " + DEFAULT_HOST_CONTEXT + ".  This default has been deprecated and will be removed in future versions of Solr, please configure this value explicitly");
+>       hostContext = DEFAULT_HOST_CONTEXT;
+>     }
+>     
+> 
+>     
+455a473,475
+> 
+>     
+>     hostPort = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "hostPort", null);
+457c477
+<     hostPort = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "hostPort", DEFAULT_HOST_PORT);
+---
+>     hostContext = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "hostContext", null);
+459d478
+<     hostContext = cfg.get(ConfigSolr.ConfLevel.SOLR_CORES, "hostContext", DEFAULT_HOST_CONTEXT);

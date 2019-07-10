@@ -1,0 +1,267 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.security.authentication.client;
+
+import com.sun.security.auth.module.Krb5LoginModule;
+import org.apache.commons.codec.binary.Base64;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSManager;
+import org.ietf.jgss.GSSName;
+import sun.security.jgss.GSSUtil;
+
+import javax.security.auth.Subject;
+import javax.security.auth.login.AppConfigurationEntry;
+import javax.security.auth.login.Configuration;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.HashMap;
+import java.util.Map;
+
+
+
+
+
+
+
+
+
+public class KerberosAuthenticator implements Authenticator {
+
+  
+
+
+  public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
+
+  
+
+
+  public static final String AUTHORIZATION = "Authorization";
+
+  
+
+
+  public static final String NEGOTIATE = "Negotiate";
+
+  private static final String AUTH_HTTP_METHOD = "OPTIONS";
+
+  
+
+
+
+  private static class KerberosConfiguration extends Configuration {
+
+    private static final String OS_LOGIN_MODULE_NAME;
+    private static final boolean windows = System.getProperty("os.name").startsWith("Windows");
+
+    static {
+      if (windows) {
+        OS_LOGIN_MODULE_NAME = "com.sun.security.auth.module.NTLoginModule";
+      } else {
+        OS_LOGIN_MODULE_NAME = "com.sun.security.auth.module.UnixLoginModule";
+      }
+    }
+
+    private static final AppConfigurationEntry OS_SPECIFIC_LOGIN =
+      new AppConfigurationEntry(OS_LOGIN_MODULE_NAME,
+                                AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
+                                new HashMap<String, String>());
+
+    private static final Map<String, String> USER_KERBEROS_OPTIONS = new HashMap<String, String>();
+
+    static {
+      USER_KERBEROS_OPTIONS.put("doNotPrompt", "true");
+      USER_KERBEROS_OPTIONS.put("useTicketCache", "true");
+      USER_KERBEROS_OPTIONS.put("renewTGT", "true");
+      String ticketCache = System.getenv("KRB5CCNAME");
+      if (ticketCache != null) {
+        USER_KERBEROS_OPTIONS.put("ticketCache", ticketCache);
+      }
+    }
+
+    private static final AppConfigurationEntry USER_KERBEROS_LOGIN =
+      new AppConfigurationEntry(Krb5LoginModule.class.getName(),
+                                AppConfigurationEntry.LoginModuleControlFlag.OPTIONAL,
+                                USER_KERBEROS_OPTIONS);
+
+    private static final AppConfigurationEntry[] USER_KERBEROS_CONF =
+      new AppConfigurationEntry[]{OS_SPECIFIC_LOGIN, USER_KERBEROS_LOGIN};
+
+    @Override
+    public AppConfigurationEntry[] getAppConfigurationEntry(String appName) {
+      return USER_KERBEROS_CONF;
+    }
+  }
+
+  private URL url;
+  private HttpURLConnection conn;
+  private Base64 base64;
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Override
+  public void authenticate(URL url, AuthenticatedURL.Token token)
+    throws IOException, AuthenticationException {
+    if (!token.isSet()) {
+      this.url = url;
+      base64 = new Base64(0);
+      conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod(AUTH_HTTP_METHOD);
+      conn.connect();
+      if (isNegotiate()) {
+        doSpnegoSequence(token);
+      } else {
+        getFallBackAuthenticator().authenticate(url, token);
+      }
+    }
+  }
+
+  
+
+
+
+
+
+
+  protected Authenticator getFallBackAuthenticator() {
+    return new PseudoAuthenticator();
+  }
+
+  
+
+
+  private boolean isNegotiate() throws IOException {
+    boolean negotiate = false;
+    if (conn.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+      String authHeader = conn.getHeaderField(WWW_AUTHENTICATE);
+      negotiate = authHeader != null && authHeader.trim().startsWith(NEGOTIATE);
+    }
+    return negotiate;
+  }
+
+  
+
+
+
+
+
+
+
+
+  private void doSpnegoSequence(AuthenticatedURL.Token token) throws IOException, AuthenticationException {
+    try {
+      AccessControlContext context = AccessController.getContext();
+      Subject subject = Subject.getSubject(context);
+      if (subject == null) {
+        subject = new Subject();
+        LoginContext login = new LoginContext("", subject,
+            null, new KerberosConfiguration());
+        login.login();
+      }
+      Subject.doAs(subject, new PrivilegedExceptionAction<Void>() {
+
+        @Override
+        public Void run() throws Exception {
+          GSSContext gssContext = null;
+          try {
+            GSSManager gssManager = GSSManager.getInstance();
+            String servicePrincipal = "HTTP/" + KerberosAuthenticator.this.url.getHost();
+            GSSName serviceName = gssManager.createName(servicePrincipal,
+                                                        GSSUtil.NT_GSS_KRB5_PRINCIPAL);
+            gssContext = gssManager.createContext(serviceName, GSSUtil.GSS_KRB5_MECH_OID, null,
+                                                  GSSContext.DEFAULT_LIFETIME);
+            gssContext.requestCredDeleg(true);
+            gssContext.requestMutualAuth(true);
+
+            byte[] inToken = new byte[0];
+            byte[] outToken;
+            boolean established = false;
+
+            
+            while (!established) {
+              outToken = gssContext.initSecContext(inToken, 0, inToken.length);
+              if (outToken != null) {
+                sendToken(outToken);
+              }
+
+              if (!gssContext.isEstablished()) {
+                inToken = readToken();
+              } else {
+                established = true;
+              }
+            }
+          } finally {
+            if (gssContext != null) {
+              gssContext.dispose();
+              gssContext = null;
+            }
+          }
+          return null;
+        }
+      });
+    } catch (PrivilegedActionException ex) {
+      throw new AuthenticationException(ex.getException());
+    } catch (LoginException ex) {
+      throw new AuthenticationException(ex);
+    }
+    AuthenticatedURL.extractToken(conn, token);
+  }
+
+  
+
+
+  private void sendToken(byte[] outToken) throws IOException, AuthenticationException {
+    String token = base64.encodeToString(outToken);
+    conn = (HttpURLConnection) url.openConnection();
+    conn.setRequestMethod(AUTH_HTTP_METHOD);
+    conn.setRequestProperty(AUTHORIZATION, NEGOTIATE + " " + token);
+    conn.connect();
+  }
+
+  
+
+
+  private byte[] readToken() throws IOException, AuthenticationException {
+    int status = conn.getResponseCode();
+    if (status == HttpURLConnection.HTTP_OK || status == HttpURLConnection.HTTP_UNAUTHORIZED) {
+      String authHeader = conn.getHeaderField(WWW_AUTHENTICATE);
+      if (authHeader == null || !authHeader.trim().startsWith(NEGOTIATE)) {
+        throw new AuthenticationException("Invalid SPNEGO sequence, '" + WWW_AUTHENTICATE +
+                                          "' header incorrect: " + authHeader);
+      }
+      String negotiation = authHeader.trim().substring((NEGOTIATE + " ").length()).trim();
+      return base64.decode(negotiation);
+    }
+    throw new AuthenticationException("Invalid SPNEGO sequence, status code: " + status);
+  }
+
+}

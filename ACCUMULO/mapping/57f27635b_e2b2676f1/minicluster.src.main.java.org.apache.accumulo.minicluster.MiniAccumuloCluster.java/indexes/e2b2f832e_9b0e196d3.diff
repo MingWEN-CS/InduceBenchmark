@@ -1,0 +1,73 @@
+34a35,41
+> import java.util.concurrent.Callable;
+> import java.util.concurrent.ExecutionException;
+> import java.util.concurrent.ExecutorService;
+> import java.util.concurrent.Executors;
+> import java.util.concurrent.FutureTask;
+> import java.util.concurrent.TimeUnit;
+> import java.util.concurrent.TimeoutException;
+45a53
+> import org.apache.log4j.Logger;
+54a63
+>   private static final Logger log = Logger.getLogger(MiniAccumuloCluster.class);
+360,361c369,375
+<       zooKeeperProcess.destroy();
+<       zooKeeperProcess.waitFor();
+---
+>       try {
+>         stopProcessWithTimeout(zooKeeperProcess, 30, TimeUnit.SECONDS);
+>       } catch (ExecutionException e) {
+>         log.warn("ZooKeeper did not fully stop after 30 seconds", e);
+>       } catch (TimeoutException e) {
+>         log.warn("ZooKeeper did not fully stop after 30 seconds", e);
+>       }
+364,365c378,384
+<       masterProcess.destroy();
+<       masterProcess.waitFor();
+---
+>       try {
+>         stopProcessWithTimeout(masterProcess, 30, TimeUnit.SECONDS);
+>       } catch (ExecutionException e) {
+>         log.warn("Master did not fully stop after 30 seconds", e);
+>       } catch (TimeoutException e) {
+>         log.warn("Master did not fully stop after 30 seconds", e);
+>       }
+369,370c388,394
+<         tserver.destroy();
+<         tserver.waitFor();
+---
+>         try {
+>           stopProcessWithTimeout(tserver, 30, TimeUnit.SECONDS);
+>         } catch (ExecutionException e) {
+>           log.warn("TabletServer did not fully stop after 30 seconds", e);
+>         } catch (TimeoutException e) {
+>           log.warn("TabletServer did not fully stop after 30 seconds", e);
+>         }
+378,379c402,408
+<       gcProcess.destroy();
+<       gcProcess.waitFor();
+---
+>       try {
+>         stopProcessWithTimeout(gcProcess, 30, TimeUnit.SECONDS);
+>       } catch (ExecutionException e) {
+>         log.warn("GarbageCollector did not fully stop after 30 seconds", e);
+>       } catch (TimeoutException e) {
+>         log.warn("GarbageCollector did not fully stop after 30 seconds", e);
+>       }
+381a411,426
+> 
+>   private final ExecutorService executor = Executors.newSingleThreadExecutor();
+> 
+>   private int stopProcessWithTimeout(final Process proc, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+>     FutureTask<Integer> future = new FutureTask<Integer>(new Callable<Integer>() {
+>         @Override
+>         public Integer call() throws InterruptedException {
+>           proc.destroy();
+>           return proc.waitFor();
+>         }
+>     });
+> 
+>     executor.execute(future);
+> 
+>     return future.get(timeout, unit);
+>   }

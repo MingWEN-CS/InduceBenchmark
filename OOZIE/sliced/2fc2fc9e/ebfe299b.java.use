@@ -1,0 +1,56 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+40	ActionService.executors	Map<String,Class>	variable	79	set	org.apache.oozie.service.ActionService.destroy	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	75	80
+40	ActionService.executors	Map<String,Class>	variable	106	use	org.apache.oozie.service.ActionService.getActionTypes	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	105	107
+14	actionType	String	param	99	define	org.apache.oozie.service.ActionService.getExecutor	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	99	103
+14	actionType	String	param	100	use	org.apache.oozie.service.ActionService.getExecutor	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	99	103
+14	actionType	String	param	101	use	org.apache.oozie.service.ActionService.getExecutor	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	99	103
+15	executorClass	Class<? extends ActionExecutor>	variable	101	define	org.apache.oozie.service.ActionService.getExecutor	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	99	103
+15	executorClass	Class<? extends ActionExecutor>	variable	101	set	org.apache.oozie.service.ActionService.getExecutor	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	99	103
+40	ActionService.executors	Map<String,Class>	variable	101	use	org.apache.oozie.service.ActionService.getExecutor	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	99	103
+15	executorClass	Class<? extends ActionExecutor>	variable	102	use	org.apache.oozie.service.ActionService.getExecutor	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	99	103
+15	executorClass	Class<? extends ActionExecutor>	variable	102	use	org.apache.oozie.service.ActionService.getExecutor	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	99	103
+21	class		variable	83	use	org.apache.oozie.service.ActionService.getInterface	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	82	84
+23	services	Services	param	49	define	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+23	services	Services	param	50	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+23	services	Services	param	60	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+23	services	Services	param	63	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+22	classes	Class<? extends ActionExecutor>[]	variable	56	define	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+41	ActionService.services	Services	variable	50	set	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+40	ActionService.executors	Map<String,Class>	variable	54	set	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+22	classes	Class<? extends ActionExecutor>[]	variable	56	set	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+22	classes	Class<? extends ActionExecutor>[]	variable	60	set	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+22	classes	Class<? extends ActionExecutor>[]	variable	63	set	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+21	class		variable	56	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+21	class		variable	57	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+21	class		variable	57	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+21	class		variable	57	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+21	class		variable	57	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+22	classes	Class<? extends ActionExecutor>[]	variable	58	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+36	ActionService.CONF_ACTION_EXECUTOR_CLASSES	String	variable	60	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+22	classes	Class<? extends ActionExecutor>[]	variable	61	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+37	ActionService.CONF_ACTION_EXECUTOR_EXT_CLASSES	String	variable	63	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+22	classes	Class<? extends ActionExecutor>[]	variable	64	use	org.apache.oozie.service.ActionService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	49	64
+32	klass	Class<? extends ActionExecutor>	param	86	define	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+32	klass	Class<? extends ActionExecutor>	param	87	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+32	klass	Class<? extends ActionExecutor>	param	88	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+32	klass	Class<? extends ActionExecutor>	param	95	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+32	klass	Class<? extends ActionExecutor>	param	96	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+31	executor	ActionExecutor	variable	87	define	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+31	executor	ActionExecutor	variable	87	set	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+41	ActionService.services	Services	variable	87	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+39	ActionService.LOG	XLog	variable	88	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+31	executor	ActionExecutor	variable	88	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+40	ActionService.executors	Map<String,Class>	variable	89	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+31	executor	ActionExecutor	variable	89	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+30	E0150		variable	90	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+31	executor	ActionExecutor	variable	90	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+31	executor	ActionExecutor	variable	93	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+40	ActionService.executors	Map<String,Class>	variable	95	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+31	executor	ActionExecutor	variable	95	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+39	ActionService.LOG	XLog	variable	96	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+31	executor	ActionExecutor	variable	96	use	org.apache.oozie.service.ActionService.register	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	86	97
+35	classes	Class<? extends ActionExecutor>[]	param	67	define	org.apache.oozie.service.ActionService.registerExecutors	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	67	73
+35	classes	Class<? extends ActionExecutor>[]	param	68	use	org.apache.oozie.service.ActionService.registerExecutors	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	67	73
+35	classes	Class<? extends ActionExecutor>[]	param	69	use	org.apache.oozie.service.ActionService.registerExecutors	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	67	73
+34	executorClass	Class<? extends ActionExecutor>	variable	69	define	org.apache.oozie.service.ActionService.registerExecutors	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	67	73
+34	executorClass	Class<? extends ActionExecutor>	variable	70	use	org.apache.oozie.service.ActionService.registerExecutors	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/2fc2fc9e/ebfe299b.java	67	73

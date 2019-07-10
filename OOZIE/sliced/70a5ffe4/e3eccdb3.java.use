@@ -1,0 +1,22 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+28	finalLocks	MemoryLocks	variable	70	use	org.apache.oozie.service.MemoryLocksService.instrument.(Anon_1).getValue	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	69	71
+31	MemoryLocksService.locks	MemoryLocks	variable	48	set	org.apache.oozie.service.MemoryLocksService.destroy	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	47	49
+12	class		variable	58	use	org.apache.oozie.service.MemoryLocksService.getInterface	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	57	59
+15	resource	String	param	83	define	org.apache.oozie.service.MemoryLocksService.getReadLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	83	85
+16	wait	long	param	83	define	org.apache.oozie.service.MemoryLocksService.getReadLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	83	85
+15	resource	String	param	84	use	org.apache.oozie.service.MemoryLocksService.getReadLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	83	85
+16	wait	long	param	84	use	org.apache.oozie.service.MemoryLocksService.getReadLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	83	85
+31	MemoryLocksService.locks	MemoryLocks	variable	84	use	org.apache.oozie.service.MemoryLocksService.getReadLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	83	85
+19	resource	String	param	95	define	org.apache.oozie.service.MemoryLocksService.getWriteLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	95	97
+20	wait	long	param	95	define	org.apache.oozie.service.MemoryLocksService.getWriteLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	95	97
+19	resource	String	param	96	use	org.apache.oozie.service.MemoryLocksService.getWriteLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	95	97
+20	wait	long	param	96	use	org.apache.oozie.service.MemoryLocksService.getWriteLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	95	97
+31	MemoryLocksService.locks	MemoryLocks	variable	96	use	org.apache.oozie.service.MemoryLocksService.getWriteLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	95	97
+22	services	Services	param	39	define	org.apache.oozie.service.MemoryLocksService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	39	41
+31	MemoryLocksService.locks	MemoryLocks	variable	40	set	org.apache.oozie.service.MemoryLocksService.init	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	39	41
+29	instr	Instrumentation	param	66	define	org.apache.oozie.service.MemoryLocksService.instrument	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	66	73
+29	instr	Instrumentation	param	68	use	org.apache.oozie.service.MemoryLocksService.instrument	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	66	73
+28	finalLocks	MemoryLocks	variable	67	define	org.apache.oozie.service.MemoryLocksService.instrument	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	66	73
+28	finalLocks	MemoryLocks	variable	67	set	org.apache.oozie.service.MemoryLocksService.instrument	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	66	73
+31	MemoryLocksService.locks	MemoryLocks	variable	67	use	org.apache.oozie.service.MemoryLocksService.instrument	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	66	73
+30	MemoryLocksService.INSTRUMENTATION_GROUP	String	variable	68	use	org.apache.oozie.service.MemoryLocksService.instrument	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/70a5ffe4/e3eccdb3.java	66	73

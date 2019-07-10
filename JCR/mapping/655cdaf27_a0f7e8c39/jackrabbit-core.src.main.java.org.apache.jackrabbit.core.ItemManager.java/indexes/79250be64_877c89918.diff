@@ -1,0 +1,17 @@
+184,185c184,188
+<             NodeImpl parent = (NodeImpl) getItem(parentId);
+<             parentState = parent.getNodeState();
+---
+>             
+>             
+>             
+>             ItemData parentData = getItemData(parentId, null, false);
+>             parentState = (NodeState) parentData.getState();
+240c243,247
+<             NodeImpl parent = (NodeImpl) getItem(state.getParentId());
+---
+>             
+>             
+>             
+>             ItemData parentData = getItemData(state.getParentId(), null, false);
+>             NodeImpl parent = (NodeImpl) createItemInstance(parentData);

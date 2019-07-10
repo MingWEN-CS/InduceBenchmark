@@ -1,0 +1,28 @@
+47c47
+<     @NamedQuery(name = "UPDATE_WORKFLOW", query = "update WorkflowJobBean w set w.appName = :appName, w.appPath = :appPath, w.conf = :conf, w.group = :groupName, w.run = :run, w.user = :user, w.authToken = :authToken, w.createdTimestamp = :createdTime, w.endTimestamp = :endTime, w.externalId = :externalId, w.lastModifiedTimestamp = :lastModTime, w.logToken = :logToken, w.protoActionConf = :protoActionConf, w.slaXml =:slaXml, w.startTimestamp = :startTime, w.status = :status, w.wfInstance = :wfInstance where w.id = :id"),
+---
+>     @NamedQuery(name = "UPDATE_WORKFLOW", query = "update WorkflowJobBean w set w.appName = :appName, w.appPath = :appPath, w.conf = :conf, w.group = :groupName, w.run = :run, w.user = :user, w.createdTimestamp = :createdTime, w.endTimestamp = :endTime, w.externalId = :externalId, w.lastModifiedTimestamp = :lastModTime,w.logToken = :logToken, w.protoActionConf = :protoActionConf, w.slaXml =:slaXml, w.startTimestamp = :startTime, w.status = :status, w.wfInstance = :wfInstance where w.id = :id"),
+111,114d110
+<     @Column(name = "auth_token")
+<     @Lob
+<     private String authToken = null;
+< 
+126,127c122,123
+<     @Column(name = "sla_xml")
+<     @Lob
+---
+>     @Basic
+>     @Column(name = "sla_xml", length = 4000)
+156d151
+<         WritableUtils.writeStr(dataOutput, authToken);
+194d188
+<         authToken = WritableUtils.readStr(dataInput);
+201,208d194
+<     public String getAuthToken() {
+<         return authToken;
+<     }
+< 
+<     public void setAuthToken(String authToken) {
+<         this.authToken = authToken;
+<     }
+< 

@@ -1,0 +1,25 @@
+58a59,67
+>     Map<String, String> filterConfig = getFilterConfigMap(conf, PREFIX);
+> 
+>     container.addFilter("authentication",
+>                         AuthenticationFilter.class.getName(),
+>                         filterConfig);
+>   }
+> 
+>   public static Map<String, String> getFilterConfigMap(Configuration conf,
+>       String prefix) {
+66c75
+<       if (name.startsWith(PREFIX)) {
+---
+>       if (name.startsWith(prefix)) {
+68c77
+<         name = name.substring(PREFIX.length());
+---
+>         name = name.substring(prefix.length());
+85,88c94
+< 
+<     container.addFilter("authentication",
+<                         AuthenticationFilter.class.getName(),
+<                         filterConfig);
+---
+>     return filterConfig;

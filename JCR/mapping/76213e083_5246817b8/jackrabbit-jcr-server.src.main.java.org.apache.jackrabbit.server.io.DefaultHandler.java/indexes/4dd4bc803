@@ -1,0 +1,793 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.server.io;
+
+import org.apache.jackrabbit.JcrConstants;
+import org.apache.jackrabbit.commons.NamespaceHelper;
+import org.apache.jackrabbit.util.ISO9075;
+import org.apache.jackrabbit.util.Text;
+import org.apache.jackrabbit.webdav.DavResource;
+import org.apache.jackrabbit.webdav.xml.Namespace;
+import org.apache.jackrabbit.webdav.property.DavPropertyName;
+import org.apache.jackrabbit.webdav.property.DavProperty;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.detect.Detector;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.Item;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.PropertyIterator;
+import javax.jcr.Session;
+import javax.jcr.nodetype.PropertyDefinition;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class DefaultHandler implements IOHandler, PropertyHandler {
+
+    private static Logger log = LoggerFactory.getLogger(DefaultHandler.class);
+
+    private String collectionNodetype;
+
+    private String defaultNodetype;
+
+    private String contentNodetype;
+
+    private IOManager ioManager;
+
+    
+
+
+
+
+
+
+
+
+
+    public DefaultHandler() {
+        this(null);
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    public DefaultHandler(IOManager ioManager) {
+        this(ioManager,
+                JcrConstants.NT_FOLDER,
+                JcrConstants.NT_FILE,
+                
+                
+                
+                JcrConstants.NT_UNSTRUCTURED);
+    }
+
+    
+
+
+
+
+
+
+
+
+    public DefaultHandler(IOManager ioManager, String collectionNodetype, String defaultNodetype, String contentNodetype) {
+        this.ioManager = ioManager;
+
+        this.collectionNodetype = collectionNodetype;
+        this.defaultNodetype = defaultNodetype;
+        this.contentNodetype = contentNodetype;
+    }
+
+    
+
+
+    public IOManager getIOManager() {
+        return ioManager;
+    }
+
+    
+
+
+    public void setIOManager(IOManager ioManager) {
+        this.ioManager = ioManager;
+    }
+
+    
+
+
+    public String getName() {
+        return getClass().getName();
+    }
+
+    
+
+
+    public boolean canImport(ImportContext context, boolean isCollection) {
+        if (context == null || context.isCompleted()) {
+            return false;
+        }
+        Item contextItem = context.getImportRoot();
+        return contextItem != null && contextItem.isNode() && context.getSystemId() != null;
+    }
+
+    
+
+
+    public boolean canImport(ImportContext context, DavResource resource) {
+        if (resource == null) {
+            return false;
+        }
+        return canImport(context, resource.isCollection());
+    }
+
+    
+
+
+    public boolean importContent(ImportContext context, boolean isCollection) throws IOException {
+        if (!canImport(context, isCollection)) {
+            throw new IOException(getName() + ": Cannot import " + context.getSystemId());
+        }
+
+        boolean success = false;
+        try {
+            Node contentNode = getContentNode(context, isCollection);
+            success = importData(context, isCollection, contentNode);
+            if (success) {
+                success = importProperties(context, isCollection, contentNode);
+            }
+        } catch (RepositoryException e) {
+            success = false;
+            throw new IOException(e.getMessage());
+        } finally {
+            
+            if (!success) {
+                try {
+                    context.getImportRoot().refresh(false);
+                } catch (RepositoryException e) {
+                    throw new IOException(e.getMessage());
+                }
+            }
+        }
+        return success;
+    }
+
+    
+
+
+    public boolean importContent(ImportContext context, DavResource resource) throws IOException {
+        if (!canImport(context, resource)) {
+            throw new IOException(getName() + ": Cannot import " + context.getSystemId());
+        }
+        return importContent(context, resource.isCollection());
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    protected boolean importData(ImportContext context, boolean isCollection, Node contentNode) throws IOException, RepositoryException {
+        InputStream in = context.getInputStream();
+        if (in != null) {
+            
+            
+            if (isCollection) {
+                return false;
+            }
+            try {
+                contentNode.setProperty(JcrConstants.JCR_DATA, in);
+            } finally {
+                in.close();
+            }
+        }
+        
+        return true;
+    }
+
+    
+
+
+
+
+
+
+
+
+    protected boolean importProperties(ImportContext context, boolean isCollection, Node contentNode) {
+        try {
+            
+            
+            
+            if (!contentNode.hasProperty(JcrConstants.JCR_MIMETYPE)) {
+                contentNode.setProperty(JcrConstants.JCR_MIMETYPE, context.getMimeType());
+            }
+        } catch (RepositoryException e) {
+            
+        }
+        try {
+            
+            
+            
+            if (!contentNode.hasProperty(JcrConstants.JCR_ENCODING)) {
+                contentNode.setProperty(JcrConstants.JCR_ENCODING, context.getEncoding());
+            }
+        } catch (RepositoryException e) {
+            
+        }
+        setLastModified(contentNode, context.getModificationTime());
+        return true;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    protected Node getContentNode(ImportContext context, boolean isCollection) throws RepositoryException {
+        Node parentNode = (Node)context.getImportRoot();
+        String name = context.getSystemId();
+        if (parentNode.hasNode(name)) {
+            parentNode = parentNode.getNode(name);
+        } else {
+            String ntName = (isCollection) ? getCollectionNodeType() : getNodeType();
+            parentNode = parentNode.addNode(name, ntName);
+        }
+        Node contentNode = null;
+        if (isCollection) {
+            contentNode = parentNode;
+        } else {
+            if (parentNode.hasNode(JcrConstants.JCR_CONTENT)) {
+                contentNode = parentNode.getNode(JcrConstants.JCR_CONTENT);
+                
+                if (contentNode.isNodeType(getContentNodeType()) ||
+                        !forceCompatibleContentNodes()) {
+                    
+                    
+                    if (contentNode.hasNodes()) {
+                        NodeIterator it = contentNode.getNodes();
+                        while (it.hasNext()) {
+                            it.nextNode().remove();
+                        }
+                    }
+                } else {
+                    contentNode.remove();
+                    contentNode = null;
+                }
+            }
+            if (contentNode == null) {
+                
+                
+                if (parentNode.getPrimaryNodeType().canAddChildNode(
+                        JcrConstants.JCR_CONTENT, getContentNodeType())) {
+                    contentNode = parentNode.addNode(
+                            JcrConstants.JCR_CONTENT, getContentNodeType());
+                } else {
+                    contentNode = parentNode.addNode(JcrConstants.JCR_CONTENT);
+                }
+            }
+        }
+        return contentNode;
+    }
+
+    
+
+
+
+
+
+    protected boolean forceCompatibleContentNodes() {
+        return false;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    public boolean canExport(ExportContext context, boolean isCollection) {
+        if (context == null || context.isCompleted()) {
+            return false;
+        }
+        Item exportRoot = context.getExportRoot();
+        boolean success = exportRoot != null && exportRoot.isNode();
+        if (success && !isCollection) {
+            try {
+                Node n = ((Node)exportRoot);
+                success = n.hasNode(JcrConstants.JCR_CONTENT);
+            } catch (RepositoryException e) {
+                
+                success = false;
+            }
+        }
+        return success;
+    }
+
+    
+
+
+    public boolean canExport(ExportContext context, DavResource resource) {
+        if (resource == null) {
+            return false;
+        }
+        return canExport(context, resource.isCollection());
+    }
+
+    
+
+
+
+
+
+
+
+
+    public boolean exportContent(ExportContext context, boolean isCollection) throws IOException {
+        if (!canExport(context, isCollection)) {
+            throw new IOException(getName() + ": Cannot export " + context.getExportRoot());
+        }
+        try {
+            Node contentNode = getContentNode(context, isCollection);
+            exportProperties(context, isCollection, contentNode);
+            if (context.hasStream()) {
+                exportData(context, isCollection, contentNode);
+            } 
+            return true;
+        } catch (RepositoryException e) {
+            
+            
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    
+
+
+
+
+
+    public boolean exportContent(ExportContext context, DavResource resource) throws IOException {
+        if (!canExport(context, resource)) {
+            throw new IOException(getName() + ": Cannot export " + context.getExportRoot());
+        }
+        return exportContent(context, resource.isCollection());
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    protected void exportData(ExportContext context, boolean isCollection, Node contentNode) throws IOException, RepositoryException {
+        if (contentNode.hasProperty(JcrConstants.JCR_DATA)) {
+            Property p = contentNode.getProperty(JcrConstants.JCR_DATA);
+            IOUtil.spool(p.getStream(), context.getOutputStream());
+        } 
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    protected void exportProperties(ExportContext context, boolean isCollection, Node contentNode) throws IOException {
+        try {
+            
+            if (!isCollection && contentNode.getDepth() > 0 && contentNode.getParent().hasProperty(JcrConstants.JCR_CREATED)) {
+                long cTime = contentNode.getParent().getProperty(JcrConstants.JCR_CREATED).getValue().getLong();
+                context.setCreationTime(cTime);
+            }
+
+            long length = IOUtil.UNDEFINED_LENGTH;
+            if (contentNode.hasProperty(JcrConstants.JCR_DATA)) {
+                Property p = contentNode.getProperty(JcrConstants.JCR_DATA);
+                length = p.getLength();
+                context.setContentLength(length);
+            }
+
+            String mimeType = null;
+            String encoding = null;
+            if (contentNode.hasProperty(JcrConstants.JCR_MIMETYPE)) {
+                mimeType = contentNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
+            }
+            if (contentNode.hasProperty(JcrConstants.JCR_ENCODING)) {
+                encoding = contentNode.getProperty(JcrConstants.JCR_ENCODING).getString();
+                
+                if ("".equals(encoding)) {
+                    encoding = null;
+                }
+            }
+            context.setContentType(mimeType, encoding);
+
+            long modTime = IOUtil.UNDEFINED_TIME;
+            if (contentNode.hasProperty(JcrConstants.JCR_LASTMODIFIED)) {
+                modTime = contentNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getLong();
+                context.setModificationTime(modTime);
+            } else {
+                context.setModificationTime(System.currentTimeMillis());
+            }
+
+            if (length > IOUtil.UNDEFINED_LENGTH && modTime > IOUtil.UNDEFINED_TIME) {
+                String etag = "\"" + length + "-" + modTime + "\"";
+                context.setETag(etag);
+            }
+        } catch (RepositoryException e) {
+            
+            log.error("Unexpected error {0} while exporting properties: {1}", e.getClass().getName(), e.getMessage());
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    protected Node getContentNode(ExportContext context, boolean isCollection) throws RepositoryException {
+        Node contentNode = (Node)context.getExportRoot();
+        
+        if (!isCollection) {
+            contentNode = contentNode.getNode(JcrConstants.JCR_CONTENT);
+        }
+        return contentNode;
+    }
+
+    
+
+
+
+
+    protected String getCollectionNodeType() {
+        return collectionNodetype;
+    }
+
+    
+
+
+
+
+    protected String getNodeType() {
+        return defaultNodetype;
+    }
+
+    
+
+
+
+
+
+
+    protected String getContentNodeType() {
+        return contentNodetype;
+    }
+
+    
+
+    public boolean canExport(PropertyExportContext context, boolean isCollection) {
+        return canExport((ExportContext) context, isCollection);
+    }
+
+    public boolean exportProperties(PropertyExportContext exportContext, boolean isCollection) throws RepositoryException {
+        if (!canExport(exportContext, isCollection)) {
+            throw new RepositoryException("PropertyHandler " + getName() + " failed to export properties.");
+        }
+
+        Node cn = getContentNode(exportContext, isCollection);
+        try {
+            
+            exportProperties(exportContext, isCollection, cn);
+
+            
+            PropertyIterator it = cn.getProperties();
+            while (it.hasNext()) {
+                Property p = it.nextProperty();
+                String name = p.getName();
+                PropertyDefinition def = p.getDefinition();
+                if (def.isMultiple() || isDefinedByFilteredNodeType(def)) {
+                    log.debug("Skip property '" + name + "': not added to webdav property set.");
+                    continue;
+                }
+                if (JcrConstants.JCR_DATA.equals(name)
+                    || JcrConstants.JCR_MIMETYPE.equals(name)
+                    || JcrConstants.JCR_ENCODING.equals(name)
+                    || JcrConstants.JCR_LASTMODIFIED.equals(name)) {
+                    continue;
+                }
+
+                DavPropertyName davName = getDavName(name, p.getSession());
+                exportContext.setProperty(davName, p.getValue().getString());
+            }
+            return true;
+        } catch (IOException e) {
+            
+            return false;
+        }
+    }
+
+    public boolean canImport(PropertyImportContext context, boolean isCollection) {
+        if (context == null || context.isCompleted()) {
+            return false;
+        }
+        Item contextItem = context.getImportRoot();
+        try {
+            return contextItem != null && contextItem.isNode() && (isCollection || ((Node)contextItem).hasNode(JcrConstants.JCR_CONTENT));
+        } catch (RepositoryException e) {
+            log.error("Unexpected error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public Map importProperties(PropertyImportContext importContext, boolean isCollection) throws RepositoryException {
+        if (!canImport(importContext, isCollection)) {
+            throw new RepositoryException("PropertyHandler " + getName() + " failed import properties");
+        }
+
+        
+        
+        Map failures = new HashMap();
+        List changeList = importContext.getChangeList();
+
+        
+        
+        
+        
+        
+        Node cn = (Node) importContext.getImportRoot();
+        if (!isCollection && cn.hasNode(JcrConstants.JCR_CONTENT)) {
+            cn = cn.getNode(JcrConstants.JCR_CONTENT);
+        }
+
+        if (changeList != null) {
+            Iterator it = changeList.iterator();
+            while (it.hasNext()) {
+                Object propEntry = it.next();
+                try {
+                    if (propEntry instanceof DavPropertyName) {
+                        
+                        DavPropertyName propName = (DavPropertyName) propEntry;
+                        removeJcrProperty(propName, cn);
+                    } else if (propEntry instanceof DavProperty) {
+                        
+                        DavProperty prop = (DavProperty)propEntry;
+                        setJcrProperty(prop, cn);
+                    } else {
+                        
+                        log.error("unknown object in change list: " + propEntry.getClass().getName());
+                    }
+                } catch (RepositoryException e) {
+                    failures.put(propEntry, e);
+                }
+            }
+        }
+        if (failures.isEmpty()) {
+            setLastModified(cn, IOUtil.UNDEFINED_LENGTH);
+        }
+        return failures;
+    }
+
+    
+
+
+
+
+
+    protected String detect(String name) {
+        try {
+            Metadata metadata = new Metadata();
+            metadata.set(Metadata.RESOURCE_NAME_KEY, name);
+            return ioManager.getDetector().detect(null, metadata).toString();
+        } catch (IOException e) {
+            
+            throw new IllegalStateException(
+                    "Unexpected IOException", e);
+        }
+    }
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+    private DavPropertyName getDavName(String jcrName, Session session) throws RepositoryException {
+        
+        String localName = ISO9075.encode(Text.getLocalName(jcrName));
+        String prefix = Text.getNamespacePrefix(jcrName);
+        String uri = session.getNamespaceURI(prefix);
+        Namespace namespace = Namespace.getNamespace(prefix, uri);
+        DavPropertyName name = DavPropertyName.create(localName, namespace);
+        return name;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    private String getJcrName(DavPropertyName propName, Session session) throws RepositoryException {
+        
+        String pName = ISO9075.decode(propName.getName());
+        Namespace propNamespace = propName.getNamespace();
+        if (!Namespace.EMPTY_NAMESPACE.equals(propNamespace)) {
+            NamespaceHelper helper = new NamespaceHelper(session);
+            String prefix = helper.registerNamespace(
+                    propNamespace.getPrefix(), propNamespace.getURI());
+            pName = prefix + ":" + pName;
+        }
+        return pName;
+    }
+
+
+    
+
+
+
+
+    private void setJcrProperty(DavProperty property, Node contentNode) throws RepositoryException {
+        
+        
+        
+        String value = "";
+        if (property.getValue() != null) {
+            value = property.getValue().toString();
+        }
+
+        DavPropertyName davName = property.getName();
+        if (DavPropertyName.GETCONTENTTYPE.equals(davName)) {
+            String mimeType = IOUtil.getMimeType(value);
+            String encoding = IOUtil.getEncoding(value);
+            contentNode.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
+            contentNode.setProperty(JcrConstants.JCR_ENCODING, encoding);
+        } else {
+            contentNode.setProperty(getJcrName(davName, contentNode.getSession()), value);
+        }
+    }
+
+    
+
+
+
+
+    private void removeJcrProperty(DavPropertyName propertyName, Node contentNode)
+            throws RepositoryException {
+        if (DavPropertyName.GETCONTENTTYPE.equals(propertyName)) {
+            if (contentNode.hasProperty(JcrConstants.JCR_MIMETYPE)) {
+                contentNode.getProperty(JcrConstants.JCR_MIMETYPE).remove();
+            }
+            if (contentNode.hasProperty(JcrConstants.JCR_ENCODING)) {
+                contentNode.getProperty(JcrConstants.JCR_ENCODING).remove();
+            }
+        } else {
+            String jcrName = getJcrName(propertyName, contentNode.getSession());
+            if (contentNode.hasProperty(jcrName)) {
+                contentNode.getProperty(jcrName).remove();
+            }
+            
+        }
+    }
+
+    private void setLastModified(Node contentNode, long hint) {
+        try {
+            Calendar lastMod = Calendar.getInstance();
+            if (hint > IOUtil.UNDEFINED_TIME) {
+                lastMod.setTimeInMillis(hint);
+            } else {
+                lastMod.setTime(new Date());
+            }
+            contentNode.setProperty(JcrConstants.JCR_LASTMODIFIED, lastMod);
+        } catch (RepositoryException e) {
+            
+            
+        }
+    }
+
+    private static boolean isDefinedByFilteredNodeType(PropertyDefinition def) {
+        String ntName = def.getDeclaringNodeType().getName();
+        return ntName.equals(JcrConstants.NT_BASE)
+               || ntName.equals(JcrConstants.MIX_REFERENCEABLE)
+               || ntName.equals(JcrConstants.MIX_VERSIONABLE)
+               || ntName.equals(JcrConstants.MIX_LOCKABLE);
+    }
+}

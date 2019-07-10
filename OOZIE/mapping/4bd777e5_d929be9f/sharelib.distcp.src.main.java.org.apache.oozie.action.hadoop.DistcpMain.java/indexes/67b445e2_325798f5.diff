@@ -1,0 +1,6 @@
+25a26
+> import org.apache.hadoop.util.ToolRunner;
+63c64
+<             int i = distcp.run(args);
+---
+>             int i = ToolRunner.run(distcp, args);

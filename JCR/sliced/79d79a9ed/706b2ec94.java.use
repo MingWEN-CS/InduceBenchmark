@@ -1,0 +1,508 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+136	bin	Binary	variable	484	use	org.apache.jackrabbit.core.PropertyImpl.getStream.(Anon_1).close	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	482	485
+41	visitor	ItemVisitor	param	815	define	org.apache.jackrabbit.core.PropertyImpl.accept	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	815	819
+41	visitor	ItemVisitor	param	819	use	org.apache.jackrabbit.core.PropertyImpl.accept	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	815	819
+50	multipleValues	boolean	param	226	define	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+50	multipleValues	boolean	param	233	use	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+50	multipleValues	boolean	param	234	use	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+52	parent	NodeImpl	variable	230	define	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+48	definition	PropertyDefinition	variable	231	define	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+49	msg	String	variable	234	define	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+51	options	int	variable	241	define	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+52	parent	NodeImpl	variable	230	set	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+48	definition	PropertyDefinition	variable	231	set	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+49	msg	String	variable	234	set	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+51	options	int	variable	241	set	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+51	options	int	variable	245	set	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+270	PropertyImpl.data	PropertyData	variable	231	use	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+48	definition	PropertyDefinition	variable	233	use	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+49	msg	String	variable	237	use	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+51	options	int	variable	242	use	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+47	NONE		variable	242	use	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+52	parent	NodeImpl	variable	247	use	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+51	options	int	variable	247	use	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+47	NONE		variable	247	use	org.apache.jackrabbit.core.PropertyImpl.checkSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	226	247
+270	PropertyImpl.data	PropertyData	variable	775	use	org.apache.jackrabbit.core.PropertyImpl.getDefinition	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	771	775
+74	value	InternalValue	param	190	define	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+74	value	InternalValue	param	192	use	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+74	value	InternalValue	param	195	use	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+74	value	InternalValue	param	199	use	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+71	length	long	variable	191	define	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+73	str	String	variable	195	define	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+73	str	String	variable	195	set	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+71	length	long	variable	196	set	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+71	length	long	variable	199	set	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+69	NAME		variable	193	use	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+70	PATH		variable	194	use	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+72	session		variable	195	use	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+73	str	String	variable	196	use	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+71	length	long	variable	202	use	org.apache.jackrabbit.core.PropertyImpl.getLength	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	190	203
+79	values	InternalValue[]	variable	760	define	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+78	lengths	long[]	variable	761	define	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+77	i	int	variable	762	define	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+79	values	InternalValue[]	variable	760	set	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+78	lengths	long[]	variable	761	set	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+77	i	int	variable	762	set	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+78	lengths	long[]	variable	763	set	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+79	values	InternalValue[]	variable	761	use	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+307	length		variable	761	use	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+77	i	int	variable	762	use	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+79	values	InternalValue[]	variable	762	use	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+307	length		variable	762	use	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+77	i	int	variable	763	use	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+77	i	int	variable	763	use	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+79	values	InternalValue[]	variable	763	use	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+78	lengths	long[]	variable	765	use	org.apache.jackrabbit.core.PropertyImpl.getLengths	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	759	766
+94	e	RepositoryException	param	524	define	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+104	value	Value	variable	506	define	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+103	type	int	variable	507	define	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+101	path	String	variable	515	define	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+100	p	Path	variable	516	define	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+99	absolute	boolean	variable	517	define	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+102	refValue	Value	variable	522	define	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+95	pathValue	Value	variable	526	define	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+104	value	Value	variable	506	set	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+103	type	int	variable	507	set	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+101	path	String	variable	515	set	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+100	p	Path	variable	516	set	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+99	absolute	boolean	variable	517	set	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+102	refValue	Value	variable	522	set	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+95	pathValue	Value	variable	526	set	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+100	p	Path	variable	527	set	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+99	absolute	boolean	variable	528	set	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+104	value	Value	variable	507	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+103	type	int	variable	508	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+96	REFERENCE		variable	509	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+98	WEAKREFERENCE		variable	510	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+104	value	Value	variable	511	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+70	PATH		variable	513	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+69	NAME		variable	514	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+104	value	Value	variable	515	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+101	path	String	variable	516	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+100	p	Path	variable	517	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+99	absolute	boolean	variable	518	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+101	path	String	variable	518	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+101	path	String	variable	518	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+97	STRING		variable	520	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+104	value	Value	variable	522	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+96	REFERENCE		variable	522	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+102	refValue	Value	variable	523	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+104	value	Value	variable	526	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+70	PATH		variable	526	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+95	pathValue	Value	variable	527	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+100	p	Path	variable	528	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+99	absolute	boolean	variable	529	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+95	pathValue	Value	variable	529	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+95	pathValue	Value	variable	529	use	org.apache.jackrabbit.core.PropertyImpl.getNode	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	505	533
+112	ise	ItemStateException	param	107	define	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+112	ise	ItemStateException	param	110	use	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+115	transientState	PropertyState	variable	102	define	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+113	msg	String	variable	108	define	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+115	transientState	PropertyState	variable	102	set	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+113	msg	String	variable	108	set	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+270	PropertyImpl.data	PropertyData	variable	98	use	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+270	PropertyImpl.data	PropertyData	variable	104	use	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+114	STATUS_EXISTING_MODIFIED		variable	104	use	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+270	PropertyImpl.data	PropertyData	variable	106	use	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+115	transientState	PropertyState	variable	106	use	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+271	PropertyImpl.log	Logger	variable	109	use	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+113	msg	String	variable	109	use	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+113	msg	String	variable	110	use	org.apache.jackrabbit.core.PropertyImpl.getOrCreateTransientItemState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	95	113
+121	e	RepositoryException	param	545	define	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+126	value	Value	variable	538	define	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+125	pathValue	Value	variable	539	define	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+124	path	String	variable	540	define	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+122	absolute	boolean	variable	541	define	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+123	p	Path	variable	543	define	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+126	value	Value	variable	538	set	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+125	pathValue	Value	variable	539	set	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+124	path	String	variable	540	set	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+123	p	Path	variable	543	set	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+122	absolute	boolean	variable	544	set	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+126	value	Value	variable	539	use	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+70	PATH		variable	539	use	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+125	pathValue	Value	variable	540	use	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+124	path	String	variable	543	use	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+123	p	Path	variable	544	use	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+122	absolute	boolean	variable	548	use	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+124	path	String	variable	548	use	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+124	path	String	variable	548	use	org.apache.jackrabbit.core.PropertyImpl.getProperty	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	537	549
+128	state	ItemState	variable	90	define	org.apache.jackrabbit.core.PropertyImpl.getPropertyState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	87	92
+128	state	ItemState	variable	90	set	org.apache.jackrabbit.core.PropertyImpl.getPropertyState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	87	92
+128	state	ItemState	variable	92	use	org.apache.jackrabbit.core.PropertyImpl.getPropertyState	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	87	92
+136	bin	Binary	variable	479	define	org.apache.jackrabbit.core.PropertyImpl.getStream	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	478	486
+136	bin	Binary	variable	479	set	org.apache.jackrabbit.core.PropertyImpl.getStream	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	478	486
+136	bin	Binary	variable	481	use	org.apache.jackrabbit.core.PropertyImpl.getStream	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	478	486
+142	e	RuntimeException	param	467	define	org.apache.jackrabbit.core.PropertyImpl.getValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	464	472
+142	e	RuntimeException	param	469	use	org.apache.jackrabbit.core.PropertyImpl.getValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	464	472
+142	e	RuntimeException	param	470	use	org.apache.jackrabbit.core.PropertyImpl.getValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	464	472
+143	msg	String	variable	468	define	org.apache.jackrabbit.core.PropertyImpl.getValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	464	472
+143	msg	String	variable	468	set	org.apache.jackrabbit.core.PropertyImpl.getValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	464	472
+72	session		variable	466	use	org.apache.jackrabbit.core.PropertyImpl.getValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	464	472
+72	session		variable	466	use	org.apache.jackrabbit.core.PropertyImpl.getValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	464	472
+271	PropertyImpl.log	Logger	variable	469	use	org.apache.jackrabbit.core.PropertyImpl.getValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	464	472
+143	msg	String	variable	469	use	org.apache.jackrabbit.core.PropertyImpl.getValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	464	472
+143	msg	String	variable	470	use	org.apache.jackrabbit.core.PropertyImpl.getValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	464	472
+146	internals	InternalValue[]	variable	456	define	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+147	values	Value[]	variable	457	define	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+145	i	int	variable	458	define	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+146	internals	InternalValue[]	variable	456	set	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+147	values	Value[]	variable	457	set	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+145	i	int	variable	458	set	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+147	values	Value[]	variable	459	set	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+146	internals	InternalValue[]	variable	457	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+307	length		variable	457	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+145	i	int	variable	458	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+146	internals	InternalValue[]	variable	458	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+307	length		variable	458	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+145	i	int	variable	459	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+145	i	int	variable	459	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+146	internals	InternalValue[]	variable	459	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+72	session		variable	459	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+72	session		variable	459	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+147	values	Value[]	variable	461	use	org.apache.jackrabbit.core.PropertyImpl.getValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	455	462
+150	definition	PropertyDefinition	variable	437	define	org.apache.jackrabbit.core.PropertyImpl.internalGetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	436	450
+151	values	InternalValue[]	variable	443	define	org.apache.jackrabbit.core.PropertyImpl.internalGetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	436	450
+150	definition	PropertyDefinition	variable	437	set	org.apache.jackrabbit.core.PropertyImpl.internalGetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	436	450
+151	values	InternalValue[]	variable	443	set	org.apache.jackrabbit.core.PropertyImpl.internalGetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	436	450
+270	PropertyImpl.data	PropertyData	variable	437	use	org.apache.jackrabbit.core.PropertyImpl.internalGetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	436	450
+150	definition	PropertyDefinition	variable	438	use	org.apache.jackrabbit.core.PropertyImpl.internalGetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	436	450
+151	values	InternalValue[]	variable	444	use	org.apache.jackrabbit.core.PropertyImpl.internalGetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	436	450
+307	length		variable	444	use	org.apache.jackrabbit.core.PropertyImpl.internalGetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	436	450
+151	values	InternalValue[]	variable	445	use	org.apache.jackrabbit.core.PropertyImpl.internalGetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	436	450
+153	definition	PropertyDefinition	variable	418	define	org.apache.jackrabbit.core.PropertyImpl.internalGetValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	417	426
+153	definition	PropertyDefinition	variable	418	set	org.apache.jackrabbit.core.PropertyImpl.internalGetValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	417	426
+270	PropertyImpl.data	PropertyData	variable	418	use	org.apache.jackrabbit.core.PropertyImpl.internalGetValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	417	426
+153	definition	PropertyDefinition	variable	419	use	org.apache.jackrabbit.core.PropertyImpl.internalGetValues	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	417	426
+171	values	InternalValue[]	param	256	define	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+170	type	int	param	256	define	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+171	values	InternalValue[]	param	271	set	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+170	type	int	param	294	set	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+171	values	InternalValue[]	param	259	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+171	values	InternalValue[]	param	266	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+171	values	InternalValue[]	param	290	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+170	type	int	param	292	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+170	type	int	param	296	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+167	list	ArrayList<InternalValue>	variable	264	define	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+169	thisState	PropertyState	variable	274	define	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+168	oldValues	InternalValue[]	variable	277	define	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+161	v	InternalValue	variable	266	define	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+164	i	int	variable	279	define	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+165	old	InternalValue	variable	280	define	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+167	list	ArrayList<InternalValue>	variable	264	set	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+169	thisState	PropertyState	variable	274	set	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+168	oldValues	InternalValue[]	variable	277	set	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+164	i	int	variable	279	set	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+165	old	InternalValue	variable	280	set	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+161	v	InternalValue	variable	267	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+167	list	ArrayList<InternalValue>	variable	268	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+161	v	InternalValue	variable	268	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+167	list	ArrayList<InternalValue>	variable	271	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+167	list	ArrayList<InternalValue>	variable	271	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+169	thisState	PropertyState	variable	277	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+168	oldValues	InternalValue[]	variable	278	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+164	i	int	variable	279	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+168	oldValues	InternalValue[]	variable	279	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+307	length		variable	279	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+164	i	int	variable	280	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+168	oldValues	InternalValue[]	variable	280	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+165	old	InternalValue	variable	281	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+165	old	InternalValue	variable	281	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+163	BINARY		variable	281	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+165	old	InternalValue	variable	284	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+169	thisState	PropertyState	variable	290	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+166	UNDEFINED		variable	292	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+97	STRING		variable	294	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+169	thisState	PropertyState	variable	296	use	org.apache.jackrabbit.core.PropertyImpl.internalSetValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	256	296
+270	PropertyImpl.data	PropertyData	variable	792	use	org.apache.jackrabbit.core.PropertyImpl.isMultiple	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	788	792
+188	transientState	PropertyState	variable	123	define	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	124	define	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+186	msg	String	variable	133	define	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+188	transientState	PropertyState	variable	123	set	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	124	set	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	127	set	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+186	msg	String	variable	133	set	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+271	PropertyImpl.log	Logger	variable	119	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+270	PropertyImpl.data	PropertyData	variable	123	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+188	transientState	PropertyState	variable	124	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	125	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+188	transientState	PropertyState	variable	127	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	130	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+188	transientState	PropertyState	variable	132	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+271	PropertyImpl.log	Logger	variable	136	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+186	msg	String	variable	136	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+186	msg	String	variable	137	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	140	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+188	transientState	PropertyState	variable	140	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	141	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+188	transientState	PropertyState	variable	141	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	142	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+188	transientState	PropertyState	variable	142	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	143	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+188	transientState	PropertyState	variable	143	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	145	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+188	transientState	PropertyState	variable	149	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+270	PropertyImpl.data	PropertyData	variable	151	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+187	persistentState	PropertyState	variable	151	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+270	PropertyImpl.data	PropertyData	variable	153	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+185	STATUS_NORMAL		variable	153	use	org.apache.jackrabbit.core.PropertyImpl.makePersistent	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	117	153
+192	defId	PropDefId	param	171	define	org.apache.jackrabbit.core.PropertyImpl.onRedefine	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	171	178
+192	defId	PropDefId	param	173	use	org.apache.jackrabbit.core.PropertyImpl.onRedefine	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	171	178
+192	defId	PropDefId	param	177	use	org.apache.jackrabbit.core.PropertyImpl.onRedefine	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	171	178
+193	newDef	PropertyDefinitionImpl	variable	172	define	org.apache.jackrabbit.core.PropertyImpl.onRedefine	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	171	178
+194	thisState	PropertyState	variable	175	define	org.apache.jackrabbit.core.PropertyImpl.onRedefine	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	171	178
+193	newDef	PropertyDefinitionImpl	variable	172	set	org.apache.jackrabbit.core.PropertyImpl.onRedefine	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	171	178
+194	thisState	PropertyState	variable	175	set	org.apache.jackrabbit.core.PropertyImpl.onRedefine	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	171	178
+194	thisState	PropertyState	variable	177	use	org.apache.jackrabbit.core.PropertyImpl.onRedefine	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	171	178
+270	PropertyImpl.data	PropertyData	variable	178	use	org.apache.jackrabbit.core.PropertyImpl.onRedefine	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	171	178
+193	newDef	PropertyDefinitionImpl	variable	178	use	org.apache.jackrabbit.core.PropertyImpl.onRedefine	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	171	178
+36	itemMgr	ItemManager	param	74	define	org.apache.jackrabbit.core.PropertyImpl.PropertyImpl	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	74	77
+37	session	SessionImpl	param	74	define	org.apache.jackrabbit.core.PropertyImpl.PropertyImpl	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	74	77
+35	data	PropertyData	param	74	define	org.apache.jackrabbit.core.PropertyImpl.PropertyImpl	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	74	77
+36	itemMgr	ItemManager	param	75	use	org.apache.jackrabbit.core.PropertyImpl.PropertyImpl	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	74	77
+37	session	SessionImpl	param	75	use	org.apache.jackrabbit.core.PropertyImpl.PropertyImpl	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	74	77
+35	data	PropertyData	param	75	use	org.apache.jackrabbit.core.PropertyImpl.PropertyImpl	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	74	77
+35	data	PropertyData	param	76	use	org.apache.jackrabbit.core.PropertyImpl.PropertyImpl	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	74	77
+270	PropertyImpl.data	PropertyData	variable	76	set	org.apache.jackrabbit.core.PropertyImpl.PropertyImpl	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	74	77
+199	transientState	PropertyState	param	156	define	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+199	transientState	PropertyState	param	159	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+199	transientState	PropertyState	param	165	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+199	transientState	PropertyState	param	166	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+199	transientState	PropertyState	param	167	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+199	transientState	PropertyState	param	168	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+198	thisState	PropertyState	variable	158	define	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+198	thisState	PropertyState	variable	158	set	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+197	STATUS_NEW		variable	159	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+198	thisState	PropertyState	variable	160	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+197	STATUS_NEW		variable	160	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+198	thisState	PropertyState	variable	161	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+197	STATUS_NEW		variable	161	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+198	thisState	PropertyState	variable	162	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+198	thisState	PropertyState	variable	165	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+198	thisState	PropertyState	variable	166	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+198	thisState	PropertyState	variable	167	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+198	thisState	PropertyState	variable	168	use	org.apache.jackrabbit.core.PropertyImpl.restoreTransient	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	156	168
+234	value	String	param	591	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	591	597
+234	value	String	param	592	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	591	597
+234	value	String	param	593	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	591	597
+221	value	BigDecimal	param	555	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	555	557
+221	value	BigDecimal	param	556	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	555	557
+246	target	Node	param	618	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	618	629
+246	target	Node	param	620	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	618	629
+246	target	Node	param	622	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	618	629
+246	target	Node	param	624	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	618	629
+245	MIX_REFERENCEABLE		variable	622	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	618	629
+96	REFERENCE		variable	624	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	618	629
+223	value	Binary	param	563	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	563	565
+223	value	Binary	param	564	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	563	565
+241	value	boolean	param	614	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	614	616
+241	value	boolean	param	615	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	614	616
+232	value	InputStream	param	583	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	583	589
+232	value	InputStream	param	584	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	583	589
+232	value	InputStream	param	585	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	583	589
+238	strings	String[]	param	599	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+238	strings	String[]	param	600	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+238	strings	String[]	param	602	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+238	strings	String[]	param	603	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+238	strings	String[]	param	604	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+238	strings	String[]	param	605	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+237	factory	ValueFactory	variable	601	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+239	values	Value[]	variable	602	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+236	i	int	variable	603	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+237	factory	ValueFactory	variable	601	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+239	values	Value[]	variable	602	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+236	i	int	variable	603	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+239	values	Value[]	variable	605	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+307	length		variable	602	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+236	i	int	variable	603	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+307	length		variable	603	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+236	i	int	variable	604	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+236	i	int	variable	605	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+237	factory	ValueFactory	variable	605	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+236	i	int	variable	605	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+239	values	Value[]	variable	608	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	599	612
+230	value	double	param	579	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	579	581
+230	value	double	param	580	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	579	581
+216	names	Name[]	param	360	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+216	names	Name[]	param	379	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+216	names	Name[]	param	380	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+216	names	Name[]	param	381	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+216	names	Name[]	param	382	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+214	definition	PropertyDefinition	variable	371	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+217	reqType	int	variable	372	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+215	internalValues	InternalValue[]	variable	377	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+210	i	int	variable	381	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+212	name	Name	variable	382	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+211	internalValue	InternalValue	variable	383	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+213	targetValue	Value	variable	387	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+214	definition	PropertyDefinition	variable	371	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+217	reqType	int	variable	372	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+217	reqType	int	variable	374	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+215	internalValues	InternalValue[]	variable	377	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+215	internalValues	InternalValue[]	variable	380	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+210	i	int	variable	381	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+212	name	Name	variable	382	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+211	internalValue	InternalValue	variable	383	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+213	targetValue	Value	variable	387	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+211	internalValue	InternalValue	variable	390	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+211	internalValue	InternalValue	variable	393	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+215	internalValues	InternalValue[]	variable	396	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+270	PropertyImpl.data	PropertyData	variable	371	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+214	definition	PropertyDefinition	variable	372	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+217	reqType	int	variable	373	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+166	UNDEFINED		variable	373	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+69	NAME		variable	374	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+307	length		variable	380	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+210	i	int	variable	381	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+307	length		variable	381	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+210	i	int	variable	382	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+212	name	Name	variable	384	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+217	reqType	int	variable	385	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+69	NAME		variable	385	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+212	name	Name	variable	388	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+72	session		variable	388	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+72	session		variable	388	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+217	reqType	int	variable	389	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+72	session		variable	389	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+213	targetValue	Value	variable	390	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+72	session		variable	390	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+212	name	Name	variable	393	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+210	i	int	variable	396	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+211	internalValue	InternalValue	variable	396	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+215	internalValues	InternalValue[]	variable	400	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+217	reqType	int	variable	400	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	360	400
+228	value	Calendar	param	567	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	567	577
+227	e	IllegalArgumentException	param	571	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	567	577
+228	value	Calendar	param	568	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	567	577
+228	value	Calendar	param	570	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	567	577
+227	e	IllegalArgumentException	param	572	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	567	577
+256	values	Value[]	param	677	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	677	682
+256	values	Value[]	param	681	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	677	682
+166	UNDEFINED		variable	681	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	677	682
+266	values	Value[]	param	692	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+265	valueType	int	param	692	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+266	values	Value[]	param	700	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+266	values	Value[]	param	703	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+266	values	Value[]	param	704	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+266	values	Value[]	param	706	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+266	values	Value[]	param	707	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+265	valueType	int	param	718	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+266	values	Value[]	param	723	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+266	values	Value[]	param	724	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+266	values	Value[]	param	727	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+266	values	Value[]	param	728	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+262	firstValueType	int	variable	702	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+261	definition	PropertyDefinition	variable	715	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+264	reqType	int	variable	716	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+263	internalValues	InternalValue[]	variable	721	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+258	i	int	variable	703	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+259	i	int	variable	727	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+260	value	Value	variable	728	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+262	firstValueType	int	variable	702	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+258	i	int	variable	703	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+262	firstValueType	int	variable	706	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+261	definition	PropertyDefinition	variable	715	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+264	reqType	int	variable	716	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+264	reqType	int	variable	718	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+263	internalValues	InternalValue[]	variable	721	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+263	internalValues	InternalValue[]	variable	724	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+259	i	int	variable	727	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+260	value	Value	variable	728	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+264	reqType	int	variable	732	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+260	value	Value	variable	735	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+263	internalValues	InternalValue[]	variable	738	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+263	internalValues	InternalValue[]	variable	741	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+166	UNDEFINED		variable	702	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+258	i	int	variable	703	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+307	length		variable	703	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+258	i	int	variable	704	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+262	firstValueType	int	variable	705	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+166	UNDEFINED		variable	705	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+258	i	int	variable	706	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+262	firstValueType	int	variable	707	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+258	i	int	variable	707	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+270	PropertyImpl.data	PropertyData	variable	715	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+261	definition	PropertyDefinition	variable	716	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+264	reqType	int	variable	717	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+166	UNDEFINED		variable	717	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+307	length		variable	724	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+259	i	int	variable	727	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+307	length		variable	727	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+259	i	int	variable	728	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+260	value	Value	variable	729	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+264	reqType	int	variable	730	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+166	UNDEFINED		variable	730	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+260	value	Value	variable	732	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+264	reqType	int	variable	734	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+260	value	Value	variable	734	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+260	value	Value	variable	736	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+264	reqType	int	variable	736	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+259	i	int	variable	738	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+260	value	Value	variable	739	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+72	session		variable	739	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+259	i	int	variable	741	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+263	internalValues	InternalValue[]	variable	746	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+264	reqType	int	variable	746	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	692	746
+254	value	Value	param	635	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+254	value	Value	param	649	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+254	value	Value	param	650	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+254	value	Value	param	656	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+254	value	Value	param	662	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+254	value	Value	param	665	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+254	value	Value	param	669	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+250	definition	PropertyDefinition	variable	646	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+252	reqType	int	variable	647	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+251	internalValue	InternalValue	variable	661	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+253	targetVal	Value	variable	664	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+250	definition	PropertyDefinition	variable	646	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+252	reqType	int	variable	647	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+252	reqType	int	variable	650	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+252	reqType	int	variable	652	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+253	targetVal	Value	variable	664	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+251	internalValue	InternalValue	variable	666	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+251	internalValue	InternalValue	variable	669	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+270	PropertyImpl.data	PropertyData	variable	646	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+250	definition	PropertyDefinition	variable	647	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+252	reqType	int	variable	648	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+166	UNDEFINED		variable	648	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+97	STRING		variable	652	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+252	reqType	int	variable	657	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+252	reqType	int	variable	662	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+252	reqType	int	variable	665	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+253	targetVal	Value	variable	666	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+72	session		variable	666	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+72	session		variable	669	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+251	internalValue	InternalValue	variable	671	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+252	reqType	int	variable	671	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	635	671
+248	value	long	param	631	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	631	633
+248	value	long	param	632	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	631	633
+206	name	Name	param	311	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+206	name	Name	param	328	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+206	name	Name	param	337	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+206	name	Name	param	342	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+204	definition	PropertyDefinition	variable	322	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+207	reqType	int	variable	323	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+205	internalValue	InternalValue	variable	333	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+208	targetValue	Value	variable	336	define	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+204	definition	PropertyDefinition	variable	322	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+207	reqType	int	variable	323	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+207	reqType	int	variable	325	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+208	targetValue	Value	variable	336	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+205	internalValue	InternalValue	variable	339	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+205	internalValue	InternalValue	variable	342	set	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+270	PropertyImpl.data	PropertyData	variable	322	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+204	definition	PropertyDefinition	variable	323	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+207	reqType	int	variable	324	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+166	UNDEFINED		variable	324	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+69	NAME		variable	325	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+207	reqType	int	variable	329	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+207	reqType	int	variable	334	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+69	NAME		variable	334	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+72	session		variable	337	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+72	session		variable	337	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+207	reqType	int	variable	338	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+72	session		variable	338	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+208	targetValue	Value	variable	339	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+72	session		variable	339	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+205	internalValue	InternalValue	variable	345	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345
+207	reqType	int	variable	345	use	org.apache.jackrabbit.core.PropertyImpl.setValue	/Users/justin/Java/Dataset_InducingBenchmark/JCR/sliced/79d79a9ed/706b2ec94.java	311	345

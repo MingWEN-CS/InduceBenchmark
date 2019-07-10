@@ -1,0 +1,18 @@
+55,56c55,56
+<             int val = rwLock.getQueueLength();
+<             if (val == 0) {
+---
+>             lock.unlock();
+>             if (!isLockHeld()) {
+58c58,60
+<                     locks.remove(resource);
+---
+>                     if (!isLockHeld()) {
+>                         locks.remove(resource);
+>                     }
+61c63,65
+<             lock.unlock();
+---
+>         }
+>         private boolean isLockHeld(){
+>             return rwLock.hasQueuedThreads() || rwLock.isWriteLocked() || rwLock.getReadLockCount() > 0;

@@ -1,0 +1,13 @@
+60a61,62
+>     public XLog LOG = XLog.getLog(getClass());
+> 
+223,227c225
+<                 
+<                 if(context.getVar(ActionStartXCommand.OOZIE_ACTION_YARN_TAG) != null) {
+<                     subWorkflowConf.set(ActionStartXCommand.OOZIE_ACTION_YARN_TAG,
+<                             context.getVar(ActionStartXCommand.OOZIE_ACTION_YARN_TAG));
+<                 }
+---
+>                 subWorkflowConf.set(OOZIE_ACTION_YARN_TAG, getActionYarnTag(parentConf, context.getWorkflow(), action));
+249a248
+>             LOG.error(ex);

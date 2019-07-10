@@ -1,0 +1,16 @@
+70a71
+>     assert doc != NO_MORE_DOCS;
+94,97c95,102
+<     score = sub.score();
+<     nrMatchers = 1;
+<     countMatches(1);
+<     countMatches(2);
+---
+>     if (doc == NO_MORE_DOCS) {
+>       nrMatchers = Integer.MAX_VALUE; 
+>     } else {
+>       score = sub.score();
+>       nrMatchers = 1;
+>       countMatches(1);
+>       countMatches(2);
+>     }

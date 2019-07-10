@@ -1,0 +1,18 @@
+169c169
+<   public ConfigValidationResult validateTargetConfig(Map<String, String> properties) {
+---
+>   public ConfigValidationResult validateTargetConfig(Map<String, Object> properties) {
+184c184
+<   protected Transport getMailTransport(Map<String, String> properties) throws NoSuchProviderException {
+---
+>   protected Transport getMailTransport(Map<String, Object> properties) throws NoSuchProviderException {
+188,189c188,189
+<       credentials.UserName = properties.get(AlertNoticeDispatchService.AMBARI_DISPATCH_CREDENTIAL_USERNAME);
+<       credentials.Password = properties.get(AlertNoticeDispatchService.AMBARI_DISPATCH_CREDENTIAL_PASSWORD);
+---
+>       credentials.UserName = (String) properties.get(AlertNoticeDispatchService.AMBARI_DISPATCH_CREDENTIAL_USERNAME);
+>       credentials.Password = (String) properties.get(AlertNoticeDispatchService.AMBARI_DISPATCH_CREDENTIAL_PASSWORD);
+192c192
+<     for (Entry<String, String> entry : properties.entrySet()) {
+---
+>     for (Entry<String, Object> entry : properties.entrySet()) {

@@ -1,0 +1,132 @@
+21d20
+< import java.net.URL;
+51,52d49
+< import org.apache.solr.common.util.NamedList;
+< import org.apache.solr.common.util.SimpleOrderedMap;
+127c124
+<     ZkController zkController = core.getCoreDescriptor().getCoreContainer().getZkController();
+---
+>     ZkController zkController = core.getCoreContainer().getZkController();
+165,182c162,195
+<     commitCommands = manager.meter(registry, "commits", getCategory().toString(), scope);
+<     manager.registerGauge(registry, () -> commitTracker.getCommitCount(), true, "autoCommits", getCategory().toString(), scope);
+<     manager.registerGauge(registry, () -> softCommitTracker.getCommitCount(), true, "softAutoCommits", getCategory().toString(), scope);
+<     optimizeCommands = manager.meter(registry, "optimizes", getCategory().toString(), scope);
+<     rollbackCommands = manager.meter(registry, "rollbacks", getCategory().toString(), scope);
+<     splitCommands = manager.meter(registry, "splits", getCategory().toString(), scope);
+<     mergeIndexesCommands = manager.meter(registry, "merges", getCategory().toString(), scope);
+<     expungeDeleteCommands = manager.meter(registry, "expungeDeletes", getCategory().toString(), scope);
+<     manager.registerGauge(registry, () -> numDocsPending.longValue(), true, "docsPending", getCategory().toString(), scope);
+<     manager.registerGauge(registry, () -> addCommands.longValue(), true, "adds", getCategory().toString(), scope);
+<     manager.registerGauge(registry, () -> deleteByIdCommands.longValue(), true, "deletesById", getCategory().toString(), scope);
+<     manager.registerGauge(registry, () -> deleteByQueryCommands.longValue(), true, "deletesByQuery", getCategory().toString(), scope);
+<     manager.registerGauge(registry, () -> numErrors.longValue(), true, "errors", getCategory().toString(), scope);
+< 
+<     addCommandsCumulative = manager.meter(registry, "cumulativeAdds", getCategory().toString(), scope);
+<     deleteByIdCommandsCumulative = manager.meter(registry, "cumulativeDeletesById", getCategory().toString(), scope);
+<     deleteByQueryCommandsCumulative = manager.meter(registry, "cumulativeDeletesByQuery", getCategory().toString(), scope);
+<     numErrorsCumulative = manager.meter(registry, "cumulativeErrors", getCategory().toString(), scope);
+---
+>     commitCommands = manager.meter(this, registry, "commits", getCategory().toString(), scope);
+>     manager.registerGauge(this, registry, () -> commitTracker.getCommitCount(), true, "autoCommits", getCategory().toString(), scope);
+>     manager.registerGauge(this, registry, () -> softCommitTracker.getCommitCount(), true, "softAutoCommits", getCategory().toString(), scope);
+>     if (commitTracker.getDocsUpperBound() > 0) {
+>       manager.registerGauge(this, registry, () -> commitTracker.getDocsUpperBound(), true, "autoCommitMaxDocs",
+>           getCategory().toString(), scope);
+>     }
+>     if (commitTracker.getTimeUpperBound() > 0) {
+>       manager.registerGauge(this, registry, () -> "" + commitTracker.getTimeUpperBound() + "ms", true, "autoCommitMaxTime",
+>           getCategory().toString(), scope);
+>     }
+>     if (softCommitTracker.getDocsUpperBound() > 0) {
+>       manager.registerGauge(this, registry, () -> softCommitTracker.getDocsUpperBound(), true, "softAutoCommitMaxDocs",
+>           getCategory().toString(), scope);
+>     }
+>     if (softCommitTracker.getTimeUpperBound() > 0) {
+>       manager.registerGauge(this, registry, () -> "" + softCommitTracker.getTimeUpperBound() + "ms", true, "softAutoCommitMaxTime",
+>           getCategory().toString(), scope);
+>     }
+>     optimizeCommands = manager.meter(this, registry, "optimizes", getCategory().toString(), scope);
+>     rollbackCommands = manager.meter(this, registry, "rollbacks", getCategory().toString(), scope);
+>     splitCommands = manager.meter(this, registry, "splits", getCategory().toString(), scope);
+>     mergeIndexesCommands = manager.meter(this, registry, "merges", getCategory().toString(), scope);
+>     expungeDeleteCommands = manager.meter(this, registry, "expungeDeletes", getCategory().toString(), scope);
+>     manager.registerGauge(this, registry, () -> numDocsPending.longValue(), true, "docsPending", getCategory().toString(), scope);
+>     manager.registerGauge(this, registry, () -> addCommands.longValue(), true, "adds", getCategory().toString(), scope);
+>     manager.registerGauge(this, registry, () -> deleteByIdCommands.longValue(), true, "deletesById", getCategory().toString(), scope);
+>     manager.registerGauge(this, registry, () -> deleteByQueryCommands.longValue(), true, "deletesByQuery", getCategory().toString(), scope);
+>     manager.registerGauge(this, registry, () -> numErrors.longValue(), true, "errors", getCategory().toString(), scope);
+> 
+>     addCommandsCumulative = manager.meter(this, registry, "cumulativeAdds", getCategory().toString(), scope);
+>     deleteByIdCommandsCumulative = manager.meter(this, registry, "cumulativeDeletesById", getCategory().toString(), scope);
+>     deleteByQueryCommandsCumulative = manager.meter(this, registry, "cumulativeDeletesByQuery", getCategory().toString(), scope);
+>     numErrorsCumulative = manager.meter(this, registry, "cumulativeErrors", getCategory().toString(), scope);
+758c771
+<     if (core.getCoreDescriptor().getCoreContainer().isZooKeeperAware()) {
+---
+>     if (core.getCoreContainer().isZooKeeperAware()) {
+814c827
+<     assert TestInjection.injectNonGracefullClose(core.getCoreDescriptor().getCoreContainer());
+---
+>     assert TestInjection.injectNonGracefullClose(core.getCoreContainer());
+963,967d975
+<   public String getVersion() {
+<     return SolrCore.version;
+<   }
+< 
+<   @Override
+973,1026d980
+<   public String getSource() {
+<     return null;
+<   }
+< 
+<   @Override
+<   public URL[] getDocs() {
+<     return null;
+<   }
+< 
+<   @Override
+<   public NamedList getStatistics() {
+<     NamedList lst = new SimpleOrderedMap();
+<     lst.add("commits", commitCommands.getCount());
+<     if (commitTracker.getDocsUpperBound() > 0) {
+<       lst.add("autocommit maxDocs", commitTracker.getDocsUpperBound());
+<     }
+<     if (commitTracker.getTimeUpperBound() > 0) {
+<       lst.add("autocommit maxTime", "" + commitTracker.getTimeUpperBound() + "ms");
+<     }
+<     lst.add("autocommits", commitTracker.getCommitCount());
+<     if (softCommitTracker.getDocsUpperBound() > 0) {
+<       lst.add("soft autocommit maxDocs", softCommitTracker.getDocsUpperBound());
+<     }
+<     if (softCommitTracker.getTimeUpperBound() > 0) {
+<       lst.add("soft autocommit maxTime", "" + softCommitTracker.getTimeUpperBound() + "ms");
+<     }
+<     lst.add("soft autocommits", softCommitTracker.getCommitCount());
+<     lst.add("optimizes", optimizeCommands.getCount());
+<     lst.add("rollbacks", rollbackCommands.getCount());
+<     lst.add("expungeDeletes", expungeDeleteCommands.getCount());
+<     lst.add("docsPending", numDocsPending.longValue());
+<     
+<     
+<     lst.add("adds", addCommands.longValue());
+<     lst.add("deletesById", deleteByIdCommands.longValue());
+<     lst.add("deletesByQuery", deleteByQueryCommands.longValue());
+<     lst.add("errors", numErrors.longValue());
+<     lst.add("cumulative_adds", addCommandsCumulative.getCount());
+<     lst.add("cumulative_deletesById", deleteByIdCommandsCumulative.getCount());
+<     lst.add("cumulative_deletesByQuery", deleteByQueryCommandsCumulative.getCount());
+<     lst.add("cumulative_errors", numErrorsCumulative.getCount());
+<     if (this.ulog != null) {
+<       lst.add("transaction_logs_total_size", ulog.getTotalLogsSize());
+<       lst.add("transaction_logs_total_number", ulog.getTotalLogsNumber());
+<     }
+<     return lst;
+<   }
+< 
+<   @Override
+<   public String toString() {
+<     return "DirectUpdateHandler2" + getStatistics();
+<   }
+<   
+<   @Override

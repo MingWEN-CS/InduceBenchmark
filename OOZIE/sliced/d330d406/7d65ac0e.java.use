@@ -1,0 +1,65 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+40	resource	String	param	102	define	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+41	type	Type	param	102	define	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+42	wait	long	param	102	define	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+40	resource	String	param	105	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+40	resource	String	param	106	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+40	resource	String	param	110	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+41	type	Type	param	114	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+42	wait	long	param	116	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+42	wait	long	param	120	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+42	wait	long	param	121	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+40	resource	String	param	132	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+40	resource	String	param	133	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+40	resource	String	param	136	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+39	lockEntry	ReentrantReadWriteLock	variable	103	define	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+38	lock	Lock	variable	114	define	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+39	lockEntry	ReentrantReadWriteLock	variable	106	set	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+39	lockEntry	ReentrantReadWriteLock	variable	109	set	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+38	lock	Lock	variable	114	set	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+51	MemoryLocks.locks	HashMap<String,ReentrantReadWriteLock>	variable	104	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+51	MemoryLocks.locks	HashMap<String,ReentrantReadWriteLock>	variable	105	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+51	MemoryLocks.locks	HashMap<String,ReentrantReadWriteLock>	variable	106	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+51	MemoryLocks.locks	HashMap<String,ReentrantReadWriteLock>	variable	110	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+39	lockEntry	ReentrantReadWriteLock	variable	110	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+26	Type.READ		variable	114	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+39	lockEntry	ReentrantReadWriteLock	variable	114	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+39	lockEntry	ReentrantReadWriteLock	variable	114	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+38	lock	Lock	variable	117	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+38	lock	Lock	variable	121	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+37	MILLISECONDS		variable	121	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+38	lock	Lock	variable	126	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+51	MemoryLocks.locks	HashMap<String,ReentrantReadWriteLock>	variable	131	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+51	MemoryLocks.locks	HashMap<String,ReentrantReadWriteLock>	variable	132	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+51	MemoryLocks.locks	HashMap<String,ReentrantReadWriteLock>	variable	133	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+39	lockEntry	ReentrantReadWriteLock	variable	133	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+39	lockEntry	ReentrantReadWriteLock	variable	136	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+38	lock	Lock	variable	136	use	org.apache.oozie.lock.MemoryLocks.getLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	102	136
+44	resource	String	param	86	define	org.apache.oozie.lock.MemoryLocks.getReadLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	86	88
+45	wait	long	param	86	define	org.apache.oozie.lock.MemoryLocks.getReadLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	86	88
+44	resource	String	param	87	use	org.apache.oozie.lock.MemoryLocks.getReadLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	86	88
+45	wait	long	param	87	use	org.apache.oozie.lock.MemoryLocks.getReadLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	86	88
+26	Type.READ		variable	87	use	org.apache.oozie.lock.MemoryLocks.getReadLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	86	88
+47	resource	String	param	98	define	org.apache.oozie.lock.MemoryLocks.getWriteLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	98	100
+48	wait	long	param	98	define	org.apache.oozie.lock.MemoryLocks.getWriteLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	98	100
+47	resource	String	param	99	use	org.apache.oozie.lock.MemoryLocks.getWriteLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	98	100
+48	wait	long	param	99	use	org.apache.oozie.lock.MemoryLocks.getWriteLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	98	100
+27	Type.WRITE		variable	99	use	org.apache.oozie.lock.MemoryLocks.getWriteLock	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	98	100
+51	MemoryLocks.locks	HashMap<String,ReentrantReadWriteLock>	variable	75	use	org.apache.oozie.lock.MemoryLocks.size	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	74	76
+21	MemoryLockToken.rwLock	ReentrantReadWriteLock	variable	65	use	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.isLockHeld	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	64	66
+21	MemoryLockToken.rwLock	ReentrantReadWriteLock	variable	65	use	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.isLockHeld	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	64	66
+21	MemoryLockToken.rwLock	ReentrantReadWriteLock	variable	65	use	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.isLockHeld	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	64	66
+11	rwLock	ReentrantReadWriteLock	param	44	define	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.MemoryLockToken	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	44	48
+9	lock	java.util.concurrent.locks.Lock	param	44	define	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.MemoryLockToken	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	44	48
+10	resource	String	param	44	define	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.MemoryLockToken	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	44	48
+11	rwLock	ReentrantReadWriteLock	param	45	use	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.MemoryLockToken	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	44	48
+9	lock	java.util.concurrent.locks.Lock	param	46	use	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.MemoryLockToken	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	44	48
+10	resource	String	param	47	use	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.MemoryLockToken	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	44	48
+21	MemoryLockToken.rwLock	ReentrantReadWriteLock	variable	45	set	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.MemoryLockToken	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	44	48
+19	MemoryLockToken.lock	java.util.concurrent.locks.Lock	variable	46	set	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.MemoryLockToken	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	44	48
+20	MemoryLockToken.resource	String	variable	47	set	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.MemoryLockToken	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	44	48
+19	MemoryLockToken.lock	java.util.concurrent.locks.Lock	variable	55	use	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.release	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	54	63
+51	MemoryLocks.locks	HashMap<String,ReentrantReadWriteLock>	variable	57	use	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.release	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	54	63
+51	MemoryLocks.locks	HashMap<String,ReentrantReadWriteLock>	variable	59	use	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.release	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	54	63
+20	MemoryLockToken.resource	String	variable	59	use	org.apache.oozie.lock.MemoryLocks.MemoryLockToken.release	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	54	63
+24	s		param	32	define	org.apache.oozie.lock.MemoryLocks.Type.valueOf	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/d330d406/7d65ac0e.java	32	32

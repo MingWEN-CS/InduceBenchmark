@@ -1,0 +1,26 @@
+164c164
+<   private boolean useInternal = false;
+---
+>   private boolean useInternalCompression = false;
+166c166
+<   private boolean useExternal = false;
+---
+>   private boolean useExternalCompression = false;
+195,196c195,196
+<     useInternal = INTERNAL.equals(compress);
+<     useExternal = EXTERNAL.equals(compress);
+---
+>     useInternalCompression = INTERNAL.equals(compress);
+>     useExternalCompression = EXTERNAL.equals(compress);
+201c201
+<     myHttpClient = createHttpClient(solrCore, connTimeout, readTimeout, httpBasicAuthUser, httpBasicAuthPassword, useExternal);
+---
+>     myHttpClient = createHttpClient(solrCore, connTimeout, readTimeout, httpBasicAuthUser, httpBasicAuthPassword, useExternalCompression);
+1506c1506
+<       if (useInternal) {
+---
+>       if (useInternalCompression) {
+1532c1532
+<         if(useInternal) {
+---
+>         if(useInternalCompression) {

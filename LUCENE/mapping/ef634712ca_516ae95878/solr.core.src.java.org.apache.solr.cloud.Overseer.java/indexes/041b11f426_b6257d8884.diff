@@ -1,0 +1,217 @@
+22,23d21
+< import static org.apache.solr.common.params.CollectionParams.CollectionAction.ADDREPLICA;
+< import static org.apache.solr.common.params.CollectionParams.CollectionAction.CLUSTERPROP;
+53a52
+> import org.apache.solr.common.params.CollectionParams;
+71c70,74
+<   public static final String DELETECORE = "deletecore";
+---
+> 
+>   
+> 
+> 
+>   @Deprecated
+72a76,80
+> 
+>   
+> 
+> 
+>   @Deprecated
+74,77c82,116
+<   public static final String ADD_ROUTING_RULE = "addroutingrule";
+<   public static final String REMOVE_ROUTING_RULE = "removeroutingrule";
+<   public static final String STATE = "state";
+<   public static final String QUIT = "quit";
+---
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+>   public static enum OverseerAction {
+>     LEADER,
+>     DELETECORE,
+>     ADDROUTINGRULE,
+>     REMOVEROUTINGRULE,
+>     UPDATESHARDSTATE,
+>     STATE,
+>     QUIT;
+> 
+>     public static OverseerAction get(String p) {
+>       if (p != null) {
+>         try {
+>           return OverseerAction.valueOf(p.toUpperCase(Locale.ROOT));
+>         } catch (Exception ex) {
+>         }
+>       }
+>       return null;
+>     }
+> 
+>     public boolean isEqual(String s) {
+>       return s != null && toString().equals(s.toUpperCase(Locale.ROOT));
+>     }
+> 
+>     public String toLower() {
+>       return toString().toLowerCase(Locale.ROOT);
+>     }
+>   }
+> 
+80,81d118
+<   public static final String CREATESHARD = "createshard";
+<   public static final String UPDATESHARDSTATE = "updateshardstate";
+381,385c418,442
+<       if (STATE.equals(operation)) {
+<         if( isLegacy( clusterProps )) {
+<           clusterState = updateState(clusterState, message);
+<         } else {
+<           clusterState = updateStateNew(clusterState, message);
+---
+> 
+>       CollectionParams.CollectionAction collectionAction = CollectionParams.CollectionAction.get(operation);
+>       if (collectionAction != null) {
+>         switch (collectionAction) {
+>           case CREATE:
+>             clusterState = buildCollection(clusterState, message);
+>             break;
+>           case DELETE:
+>             clusterState = removeCollection(clusterState, message);
+>             break;
+>           case CREATESHARD:
+>             clusterState = createShard(clusterState, message);
+>             break;
+>           case DELETESHARD:
+>             clusterState = removeShard(clusterState, message);
+>             break;
+>           case ADDREPLICA:
+>             clusterState = createReplica(clusterState, message);
+>             break;
+>           case CLUSTERPROP:
+>             handleProp(message);
+>             break;
+>           default:
+>             throw new RuntimeException("unknown operation:" + operation
+>                 + " contents:" + message.getProperties());
+387,427c444,499
+<       } else if (DELETECORE.equals(operation)) {
+<         clusterState = removeCore(clusterState, message);
+<       } else if (REMOVECOLLECTION.equals(operation)) {
+<         clusterState = removeCollection(clusterState, message);
+<       } else if (REMOVESHARD.equals(operation)) {
+<         clusterState = removeShard(clusterState, message);
+<       } else if (ZkStateReader.LEADER_PROP.equals(operation)) {
+< 
+<         StringBuilder sb = new StringBuilder();
+<         String baseUrl = message.getStr(ZkStateReader.BASE_URL_PROP);
+<         String coreName = message.getStr(ZkStateReader.CORE_NAME_PROP);
+<         sb.append(baseUrl);
+<         if (baseUrl != null && !baseUrl.endsWith("/")) sb.append("/");
+<         sb.append(coreName == null ? "" : coreName);
+<         if (!(sb.substring(sb.length() - 1).equals("/"))) sb.append("/");
+<         clusterState = setShardLeader(clusterState,
+<             message.getStr(ZkStateReader.COLLECTION_PROP),
+<             message.getStr(ZkStateReader.SHARD_ID_PROP),
+<             sb.length() > 0 ? sb.toString() : null);
+< 
+<       } else if (CREATESHARD.equals(operation)) {
+<         clusterState = createShard(clusterState, message);
+<       } else if (UPDATESHARDSTATE.equals(operation))  {
+<         clusterState = updateShardState(clusterState, message);
+<       } else if (OverseerCollectionProcessor.CREATECOLLECTION.equals(operation)) {
+<          clusterState = buildCollection(clusterState, message);
+<       } else if(ADDREPLICA.isEqual(operation)){
+<         clusterState = createReplica(clusterState, message);
+<       } else if (Overseer.ADD_ROUTING_RULE.equals(operation)) {
+<         clusterState = addRoutingRule(clusterState, message);
+<       } else if (Overseer.REMOVE_ROUTING_RULE.equals(operation))  {
+<         clusterState = removeRoutingRule(clusterState, message);
+<       } else if(CLUSTERPROP.isEqual(operation)){
+<            handleProp(message);
+<       } else if( QUIT.equals(operation)){
+<         if(myId.equals( message.get("id"))){
+<           log.info("Quit command received {}", LeaderElector.getNodeName(myId));
+<           overseerCollectionProcessor.close();
+<           close();
+<         } else {
+<           log.warn("Overseer received wrong QUIT message {}", message);
+---
+>       } else {
+>         OverseerAction overseerAction = OverseerAction.get(operation);
+>         if (overseerAction != null) {
+>           switch (overseerAction) {
+>             case STATE:
+>               if (isLegacy(clusterProps)) {
+>                 clusterState = updateState(clusterState, message);
+>               } else {
+>                 clusterState = updateStateNew(clusterState, message);
+>               }
+>               break;
+>             case LEADER:
+>               clusterState = setShardLeader(clusterState, message);
+>               break;
+>             case DELETECORE:
+>               clusterState = removeCore(clusterState, message);
+>               break;
+>             case ADDROUTINGRULE:
+>               clusterState = addRoutingRule(clusterState, message);
+>               break;
+>             case REMOVEROUTINGRULE:
+>               clusterState = removeRoutingRule(clusterState, message);
+>               break;
+>             case UPDATESHARDSTATE:
+>               clusterState = updateShardState(clusterState, message);
+>               break;
+>             case QUIT:
+>               if (myId.equals(message.get("id"))) {
+>                 log.info("Quit command received {}", LeaderElector.getNodeName(myId));
+>                 overseerCollectionProcessor.close();
+>                 close();
+>               } else {
+>                 log.warn("Overseer received wrong QUIT message {}", message);
+>               }
+>               break;
+>             default:
+>               throw new RuntimeException("unknown operation:" + operation
+>                   + " contents:" + message.getProperties());
+>           }
+>         } else  {
+>           
+>           
+>           switch (operation) {
+>             case OverseerCollectionProcessor.CREATECOLLECTION:
+>               clusterState = buildCollection(clusterState, message);
+>               break;
+>             case REMOVECOLLECTION:
+>               clusterState = removeCollection(clusterState, message);
+>               break;
+>             case REMOVESHARD:
+>               clusterState = removeShard(clusterState, message);
+>               break;
+>             default:
+>               throw new RuntimeException("unknown operation:" + operation
+>                   + " contents:" + message.getProperties());
+>           }
+429,431d500
+<       } else{
+<         throw new RuntimeException("unknown operation:" + operation
+<             + " contents:" + message.getProperties());
+432a502
+> 
+434a505,520
+> 
+>     private ClusterState setShardLeader(ClusterState clusterState, ZkNodeProps message) {
+>       StringBuilder sb = new StringBuilder();
+>       String baseUrl = message.getStr(ZkStateReader.BASE_URL_PROP);
+>       String coreName = message.getStr(ZkStateReader.CORE_NAME_PROP);
+>       sb.append(baseUrl);
+>       if (baseUrl != null && !baseUrl.endsWith("/")) sb.append("/");
+>       sb.append(coreName == null ? "" : coreName);
+>       if (!(sb.substring(sb.length() - 1).equals("/"))) sb.append("/");
+>       clusterState = setShardLeader(clusterState,
+>           message.getStr(ZkStateReader.COLLECTION_PROP),
+>           message.getStr(ZkStateReader.SHARD_ID_PROP),
+>           sb.length() > 0 ? sb.toString() : null);
+>       return clusterState;
+>     }
+> 

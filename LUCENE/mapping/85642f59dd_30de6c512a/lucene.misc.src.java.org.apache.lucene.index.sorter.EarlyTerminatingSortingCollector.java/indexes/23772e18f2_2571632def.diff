@@ -1,0 +1,73 @@
+23a24
+> import org.apache.lucene.search.LeafCollector;
+26c27,28
+< import org.apache.lucene.search.Scorer;
+---
+> import org.apache.lucene.search.FilterLeafCollector;
+> import org.apache.lucene.search.FilterCollector;
+64,66c66,67
+< public class EarlyTerminatingSortingCollector extends Collector {
+<   
+<   protected final Collector in;
+---
+> public class EarlyTerminatingSortingCollector extends FilterCollector {
+> 
+71,74d71
+<   
+<   protected int segmentTotalCollect;
+<   
+<   protected boolean segmentSorted;
+90a88
+>     super(in);
+92c90
+<       throw new IllegalStateException("numDocsToCollect must always be > 0, got " + segmentTotalCollect);
+---
+>       throw new IllegalStateException("numDocsToCollect must always be > 0, got " + numDocsToCollect);
+94d91
+<     this.in = in;
+100,108c97,117
+<   public void setScorer(Scorer scorer) throws IOException {
+<     in.setScorer(scorer);
+<   }
+< 
+<   @Override
+<   public void collect(int doc) throws IOException {
+<     in.collect(doc);
+<     if (++numCollected >= segmentTotalCollect) {
+<       throw new CollectionTerminatedException();
+---
+>   public LeafCollector getLeafCollector(AtomicReaderContext context) throws IOException {
+>     if (SortingMergePolicy.isSorted(context.reader(), sort)) {
+>       
+>       return new FilterLeafCollector(super.getLeafCollector(context)) {
+> 
+>         @Override
+>         public void collect(int doc) throws IOException {
+>           super.collect(doc);
+>           if (++numCollected >= numDocsToCollect) {
+>             throw new CollectionTerminatedException();
+>           }
+>         }
+> 
+>         @Override
+>         public boolean acceptsDocsOutOfOrder() {
+>           return false;
+>         }
+> 
+>       };
+>     } else {
+>       return super.getLeafCollector(context);
+112,124d120
+<   @Override
+<   public void setNextReader(AtomicReaderContext context) throws IOException {
+<     in.setNextReader(context);
+<     segmentSorted = SortingMergePolicy.isSorted(context.reader(), sort);
+<     segmentTotalCollect = segmentSorted ? numDocsToCollect : Integer.MAX_VALUE;
+<     numCollected = 0;
+<   }
+< 
+<   @Override
+<   public boolean acceptsDocsOutOfOrder() {
+<     return !segmentSorted && in.acceptsDocsOutOfOrder();
+<   }
+< 

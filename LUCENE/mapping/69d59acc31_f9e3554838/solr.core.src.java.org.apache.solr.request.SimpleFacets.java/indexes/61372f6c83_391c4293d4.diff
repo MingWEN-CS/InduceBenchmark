@@ -1,0 +1,4 @@
+824c824
+<               postingsEnum = termsEnum.postings(null, postingsEnum, PostingsEnum.NONE);
+---
+>               postingsEnum = termsEnum.postings(postingsEnum, PostingsEnum.NONE);

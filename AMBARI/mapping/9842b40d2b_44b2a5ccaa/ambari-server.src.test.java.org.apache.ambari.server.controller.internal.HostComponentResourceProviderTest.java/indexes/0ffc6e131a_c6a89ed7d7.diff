@@ -1,0 +1,8 @@
+271c271
+<         "Cluster102", "Service100", "Component100", "Host100", "STARTED", "", "", "", null));
+---
+>         "Cluster102", "Service100", "Component100", "Host100", "INSTALLED", "", "", "", null));
+326c326
+<         property(HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID).equals("Host100").and().
+---
+>         property(HostComponentResourceProvider.HOST_COMPONENT_STATE_PROPERTY_ID).equals("INSTALLED").and().

@@ -1,0 +1,28 @@
+16d15
+< import com.sun.security.auth.module.Krb5LoginModule;
+17a17
+> import org.apache.hadoop.security.authentication.util.KerberosUtil;
+21c21
+< import sun.security.jgss.GSSUtil;
+---
+> import org.ietf.jgss.Oid;
+28a29
+> import java.lang.reflect.Field;
+100c101
+<       new AppConfigurationEntry(Krb5LoginModule.class.getName(),
+---
+>       new AppConfigurationEntry(KerberosUtil.getKrb5LoginModuleName(),
+112c113
+< 
+---
+>   
+197a199
+>             
+199,200c201,204
+<                                                         GSSUtil.NT_GSS_KRB5_PRINCIPAL);
+<             gssContext = gssManager.createContext(serviceName, GSSUtil.GSS_KRB5_MECH_OID, null,
+---
+>                                                         GSSName.NT_HOSTBASED_SERVICE);
+>             Oid oid = KerberosUtil.getOidClassInstance(servicePrincipal, 
+>                 gssManager);
+>             gssContext = gssManager.createContext(serviceName, oid, null,

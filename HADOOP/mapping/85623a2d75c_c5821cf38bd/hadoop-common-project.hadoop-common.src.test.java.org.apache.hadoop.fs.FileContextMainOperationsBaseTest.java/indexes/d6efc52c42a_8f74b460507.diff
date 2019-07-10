@@ -1,0 +1,53 @@
+25a26
+> import org.apache.commons.lang.RandomStringUtils;
+64,74c65,68
+<   
+<   public static final Path LOCAL_FS_ROOT_PATH;
+<       
+<   static {
+<     File testBuildData = new File(System.getProperty("test.build.data",
+<                                     "build/test/data"));
+<     Path localFsRootPath = new Path(testBuildData.getAbsolutePath(), 
+<                                     "root-uri");
+<     LOCAL_FS_ROOT_PATH = localFsRootPath.makeQualified(LocalFileSystem.NAME, null);
+<   }
+<   
+---
+> 
+>   public Path localFsRootPath;
+> 
+>   protected final FileContextTestHelper fileContextTestHelper = new FileContextTestHelper();
+99a94,98
+>     File testBuildData = new File(System.getProperty("test.build.data",
+>             "build/test/data"), RandomStringUtils.randomAlphanumeric(10));
+>     Path rootPath = new Path(testBuildData.getAbsolutePath(), 
+>             "root-uri");
+>     localFsRootPath = rootPath.makeQualified(LocalFileSystem.NAME, null);
+105,106c104,105
+<     fc.delete(new Path(getAbsoluteTestRootPath(fc), new Path("test")), true);
+<     fc.delete(LOCAL_FS_ROOT_PATH, true);
+---
+>     fc.delete(new Path(fileContextTestHelper.getAbsoluteTestRootPath(fc), new Path("test")), true);
+>     fc.delete(localFsRootPath, true);
+139c138
+<     Path workDir = new Path(getAbsoluteTestRootPath(fc), new Path("test"));
+---
+>     Path workDir = new Path(fileContextTestHelper.getAbsoluteTestRootPath(fc), new Path("test"));
+152c151
+<     workDir = new Path(getAbsoluteTestRootPath(fc), new Path("test"));
+---
+>     workDir = new Path(fileContextTestHelper.getAbsoluteTestRootPath(fc), new Path("test"));
+187c186
+<     absoluteDir = new Path(LOCAL_FS_ROOT_PATH, "existingDir");
+---
+>     absoluteDir = new Path(localFsRootPath, "existingDir");
+1183a1183
+>   
+1192c1192,1196
+<  }
+---
+>   }
+>   
+>   private Path getTestRootPath(FileContext fc, String pathString) {
+>     return fileContextTestHelper.getTestRootPath(fc, pathString);
+>   }

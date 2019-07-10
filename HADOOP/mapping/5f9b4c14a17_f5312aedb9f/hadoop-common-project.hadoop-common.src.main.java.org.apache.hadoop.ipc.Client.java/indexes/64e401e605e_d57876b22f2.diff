@@ -1,0 +1,60 @@
+459c459
+<             + protocol.getSimpleName());
+---
+>             + (protocol == null? null: protocol.getSimpleName()));
+710c710
+<     private synchronized void setupIOstreams() throws InterruptedException {
+---
+>     private synchronized void setupIOstreams() {
+1265c1265
+<   throws InterruptedException, IOException {
+---
+>       throws IOException {
+1277c1277
+<   throws InterruptedException, IOException {
+---
+>   throws IOException {
+1291,1292c1291
+<       UserGroupInformation ticket)  
+<       throws InterruptedException, IOException {
+---
+>       UserGroupInformation ticket) throws IOException {
+1310,1311c1309
+<                        int rpcTimeout)  
+<                        throws InterruptedException, IOException {
+---
+>                        int rpcTimeout) throws IOException {
+1325,1326c1323
+<       int rpcTimeout, Configuration conf)
+<       throws InterruptedException, IOException {
+---
+>       int rpcTimeout, Configuration conf) throws IOException {
+1340c1337
+<       throws InterruptedException, IOException {
+---
+>       throws IOException {
+1356,1357c1353
+<                        int rpcTimeout, Configuration conf)  
+<                        throws InterruptedException, IOException {
+---
+>                        int rpcTimeout, Configuration conf) throws IOException {
+1367,1368c1363,1364
+<   public Writable call(Writable param, ConnectionId remoteId)  
+<       throws InterruptedException, IOException {
+---
+>   public Writable call(Writable param, ConnectionId remoteId)
+>       throws IOException {
+1384c1380
+<       ConnectionId remoteId) throws InterruptedException, IOException {
+---
+>       ConnectionId remoteId) throws IOException {
+1401,1402c1397
+<       ConnectionId remoteId, int serviceClass)
+<       throws InterruptedException, IOException {
+---
+>       ConnectionId remoteId, int serviceClass) throws IOException {
+1461,1462c1456
+<                                    Call call, int serviceClass)
+<                                    throws IOException, InterruptedException {
+---
+>       Call call, int serviceClass) throws IOException {

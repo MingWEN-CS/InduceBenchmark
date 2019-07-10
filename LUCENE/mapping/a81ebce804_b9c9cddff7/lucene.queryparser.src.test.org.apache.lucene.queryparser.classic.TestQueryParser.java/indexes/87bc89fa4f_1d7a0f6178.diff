@@ -1,0 +1,66 @@
+512,513c512,513
+<     synonym.add(guinea, BooleanClause.Occur.SHOULD);
+<     synonym.add(pig, BooleanClause.Occur.SHOULD);
+---
+>     synonym.add(guinea, BooleanClause.Occur.MUST);
+>     synonym.add(pig, BooleanClause.Occur.MUST);
+586,609c586,609
+<     assertQueryEquals("(guinea pig)", a, "Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("+(guinea pig)", a, "+Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("-(guinea pig)", a, "-Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("!(guinea pig)", a, "-Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("NOT (guinea pig)", a, "-Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("(guinea pig)^2", a, "(Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false))^2.0");
+< 
+<     assertQueryEquals("field:(guinea pig)", a, "Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+< 
+<     assertQueryEquals("+small guinea pig", a, "+small Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("-small guinea pig", a, "-small Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("!small guinea pig", a, "-small Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("NOT small guinea pig", a, "-small Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("small* guinea pig", a, "small* Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("small? guinea pig", a, "small? Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+<     assertQueryEquals("\"small\" guinea pig", a, "small Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+< 
+<     assertQueryEquals("guinea pig +running", a, "Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false) +running");
+<     assertQueryEquals("guinea pig -running", a, "Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false) -running");
+<     assertQueryEquals("guinea pig !running", a, "Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false) -running");
+<     assertQueryEquals("guinea pig NOT running", a, "Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false) -running");
+<     assertQueryEquals("guinea pig running*", a, "Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false) running*");
+<     assertQueryEquals("guinea pig running?", a, "Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false) running?");
+<     assertQueryEquals("guinea pig \"running\"", a, "Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false) running");
+---
+>     assertQueryEquals("(guinea pig)", a, "Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("+(guinea pig)", a, "+Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("-(guinea pig)", a, "-Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("!(guinea pig)", a, "-Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("NOT (guinea pig)", a, "-Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("(guinea pig)^2", a, "(Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false))^2.0");
+> 
+>     assertQueryEquals("field:(guinea pig)", a, "Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+> 
+>     assertQueryEquals("+small guinea pig", a, "+small Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("-small guinea pig", a, "-small Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("!small guinea pig", a, "-small Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("NOT small guinea pig", a, "-small Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("small* guinea pig", a, "small* Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("small? guinea pig", a, "small? Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+>     assertQueryEquals("\"small\" guinea pig", a, "small Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+> 
+>     assertQueryEquals("guinea pig +running", a, "Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false) +running");
+>     assertQueryEquals("guinea pig -running", a, "Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false) -running");
+>     assertQueryEquals("guinea pig !running", a, "Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false) -running");
+>     assertQueryEquals("guinea pig NOT running", a, "Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false) -running");
+>     assertQueryEquals("guinea pig running*", a, "Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false) running*");
+>     assertQueryEquals("guinea pig running?", a, "Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false) running?");
+>     assertQueryEquals("guinea pig \"running\"", a, "Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false) running");
+709,710c709,710
+<     synonym.add(guinea, BooleanClause.Occur.SHOULD);
+<     synonym.add(pig, BooleanClause.Occur.SHOULD);
+---
+>     synonym.add(guinea, BooleanClause.Occur.MUST);
+>     synonym.add(pig, BooleanClause.Occur.MUST);
+718c718
+<     assertQueryEquals("guinea pig", new MockSynonymAnalyzer(), "Graph(field:guinea field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");
+---
+>     assertQueryEquals("guinea pig", new MockSynonymAnalyzer(), "Graph(+field:guinea +field:pig, field:cavy, hasBoolean=true, hasPhrase=false)");

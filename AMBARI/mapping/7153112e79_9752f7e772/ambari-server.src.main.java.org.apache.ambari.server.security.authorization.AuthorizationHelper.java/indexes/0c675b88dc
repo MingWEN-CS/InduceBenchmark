@@ -1,0 +1,250 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.security.authorization;
+
+import com.google.inject.Singleton;
+import org.apache.ambari.server.orm.entities.PermissionEntity;
+import org.apache.ambari.server.orm.entities.PrivilegeEntity;
+import org.apache.ambari.server.orm.entities.ResourceEntity;
+import org.apache.ambari.server.orm.entities.RoleAuthorizationEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.*;
+
+@Singleton
+
+
+
+public class AuthorizationHelper {
+  private final static Logger LOG = LoggerFactory.getLogger(AuthorizationHelper.class);
+
+  
+
+
+  public Collection<GrantedAuthority> convertPrivilegesToAuthorities(Collection<PrivilegeEntity> privilegeEntities) {
+    Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>(privilegeEntities.size());
+
+    for (PrivilegeEntity privilegeEntity : privilegeEntities) {
+      authorities.add(new AmbariGrantedAuthority(privilegeEntity));
+    }
+
+    return authorities;
+  }
+
+  
+
+
+
+
+  public static String getAuthenticatedName() {
+    return getAuthenticatedName(null);
+  }
+
+  
+
+
+
+
+
+
+  public static String getAuthenticatedName(String defaultUsername) {
+    SecurityContext securityContext = SecurityContextHolder.getContext();
+
+    Authentication auth = securityContext.getAuthentication();
+
+    return (null == auth) ? defaultUsername : auth.getName();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public static boolean isAuthorized(ResourceType resourceType, Long resourceId, 
+                                     RoleAuthorization requiredAuthorization) {
+    return isAuthorized(getAuthentication(), resourceType, resourceId, EnumSet.of(requiredAuthorization));
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public static boolean isAuthorized(ResourceType resourceType, Long resourceId, 
+                                     Set<RoleAuthorization> requiredAuthorizations) {
+    return isAuthorized(getAuthentication(), resourceType, resourceId, requiredAuthorizations);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public static boolean isAuthorized(Authentication authentication, ResourceType resourceType,
+                                     Long resourceId, RoleAuthorization requiredAuthorization) {
+    return isAuthorized(authentication, resourceType, resourceId, EnumSet.of(requiredAuthorization));
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static boolean isAuthorized(Authentication authentication, ResourceType resourceType,
+                                     Long resourceId, Set<RoleAuthorization> requiredAuthorizations) {
+    if ((requiredAuthorizations == null) || requiredAuthorizations.isEmpty()) {
+      return true;
+    } else if (authentication == null) {
+      return false;
+    } else {
+      
+      
+      
+      for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+        AmbariGrantedAuthority ambariGrantedAuthority = (AmbariGrantedAuthority) grantedAuthority;
+        PrivilegeEntity privilegeEntity = ambariGrantedAuthority.getPrivilegeEntity();
+        ResourceEntity privilegeResource = privilegeEntity.getResource();
+        ResourceType privilegeResourceType = ResourceType.translate(privilegeResource.getResourceType().getName());
+        boolean resourceOK;
+
+        if (ResourceType.AMBARI == privilegeResourceType) {
+          
+          resourceOK = true;
+        } else if ((resourceType == null) || (resourceType == privilegeResourceType)) {
+          resourceOK = (resourceId == null) || resourceId.equals(privilegeResource.getId());
+        } else {
+          resourceOK = false;
+        }
+
+        
+        
+        if (resourceOK) {
+          PermissionEntity permission = privilegeEntity.getPermission();
+          Collection<RoleAuthorizationEntity> userAuthorizations = (permission == null)
+              ? null
+              : permission.getAuthorizations();
+
+          if (userAuthorizations != null) {
+            for (RoleAuthorizationEntity userAuthorization : userAuthorizations) {
+              try {
+                if (requiredAuthorizations.contains(RoleAuthorization.translate(userAuthorization.getAuthorizationId()))) {
+                  return true;
+                }
+              } catch (IllegalArgumentException e) {
+                LOG.warn("Invalid authorization name, '{}'... ignoring.", userAuthorization.getAuthorizationId());
+              }
+            }
+          }
+        }
+      }
+
+      return false;
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  public static void verifyAuthorization(ResourceType resourceType,
+                                         Long resourceId,
+                                         Set<RoleAuthorization> requiredAuthorizations)
+      throws AuthorizationException {
+    if (!isAuthorized(resourceType, resourceId, requiredAuthorizations)) {
+      throw new AuthorizationException();
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public static void verifyAuthorization(Authentication authentication,
+                                         ResourceType resourceType,
+                                         Long resourceId,
+                                         Set<RoleAuthorization> requiredAuthorizations)
+      throws AuthorizationException {
+    if (!isAuthorized(authentication, resourceType, resourceId, requiredAuthorizations)) {
+      throw new AuthorizationException();
+    }
+  }
+
+  
+
+
+
+
+  public static Authentication getAuthentication() {
+    SecurityContext context = SecurityContextHolder.getContext();
+    return (context == null) ? null : context.getAuthentication();
+  }
+}

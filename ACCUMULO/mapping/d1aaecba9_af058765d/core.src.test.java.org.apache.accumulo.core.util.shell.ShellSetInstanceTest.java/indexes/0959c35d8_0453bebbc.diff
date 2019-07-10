@@ -1,0 +1,24 @@
+32a33
+> import java.util.Arrays;
+170,173d170
+<     if (!onlyHosts) {
+<       expect(clientConf.get(ClientProperty.INSTANCE_ZK_HOST)).andReturn(null);
+<     }
+< 
+180,181c177,178
+<       expect(clientConf.containsKey(Property.INSTANCE_ZK_HOST.getKey())).andReturn(true).atLeastOnce();
+<       expect(clientConf.getString(Property.INSTANCE_ZK_HOST.getKey())).andReturn("host1,host2").atLeastOnce();
+---
+>       expect(clientConf.containsKey(ClientProperty.INSTANCE_ZK_HOST.getKey())).andReturn(true).atLeastOnce();
+>       expect(clientConf.get(ClientProperty.INSTANCE_ZK_HOST)).andReturn("host1,host2").atLeastOnce();
+226a224,225
+>     expect(clientConf.getKeys()).andReturn(Arrays.asList(ClientProperty.INSTANCE_NAME.getKey(), ClientProperty.INSTANCE_ZK_HOST.getKey()).iterator());
+>     expect(clientConf.getString(Property.GENERAL_SECURITY_CREDENTIAL_PROVIDER_PATHS.getKey())).andReturn(null);
+228a228
+>       expect(clientConf.getString(ClientProperty.INSTANCE_NAME.getKey())).andReturn("foo");
+229a230
+>       expect(clientConf.getString(ClientProperty.INSTANCE_ZK_HOST.getKey())).andReturn("host1,host2");
+236a238
+>       expect(clientConf.getString(ClientProperty.INSTANCE_NAME.getKey())).andReturn("bar");
+237a240
+>       expect(clientConf.getString(ClientProperty.INSTANCE_ZK_HOST.getKey())).andReturn("host3,host4");

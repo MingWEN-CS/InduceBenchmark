@@ -1,0 +1,23 @@
+98c98
+<     protected SessionItemStateManager(NodeId rootNodeId,
+---
+>     public SessionItemStateManager(NodeId rootNodeId,
+118,135d117
+< 
+< 
+< 
+<     public static SessionItemStateManager createInstance(
+<             NodeId rootNodeId,
+<             LocalItemStateManager stateMgr,
+<             NodeTypeRegistry ntReg) {
+<         SessionItemStateManager mgr = new SessionItemStateManager(
+<                 rootNodeId, stateMgr, ntReg);
+<         stateMgr.addListener(mgr);
+<         return mgr;
+<     }
+< 
+<     
+< 
+< 
+< 
+< 

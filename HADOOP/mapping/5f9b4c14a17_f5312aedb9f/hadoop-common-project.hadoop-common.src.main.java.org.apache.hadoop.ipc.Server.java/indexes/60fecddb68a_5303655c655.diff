@@ -1,0 +1,29 @@
+1279,1280c1279,1280
+<     private RpcSaslProto saslReadAndProcess(DataInputStream dis) throws
+<         WrappedRpcServerException, InterruptedException {
+---
+>     private void saslReadAndProcess(DataInputStream dis) throws
+>         WrappedRpcServerException, IOException, InterruptedException {
+1313,1314d1312
+<           String qop = (String) saslServer.getNegotiatedProperty(Sasl.QOP);
+<           useWrap = qop != null && !"auth".equalsIgnoreCase(qop);
+1329c1327,1335
+<       return saslResponse; 
+---
+>       
+>       if (saslResponse != null) {
+>         doSaslReply(saslResponse);
+>       }
+>       
+>       if (saslContextEstablished) {
+>         String qop = (String) saslServer.getNegotiatedProperty(Sasl.QOP);
+>         useWrap = (qop != null && !"auth".equalsIgnoreCase(qop));        
+>       }
+1909,1913c1915
+<         RpcSaslProto response = saslReadAndProcess(dis);
+<         
+<         if (response != null) {
+<           doSaslReply(response);
+<         }
+---
+>         saslReadAndProcess(dis);

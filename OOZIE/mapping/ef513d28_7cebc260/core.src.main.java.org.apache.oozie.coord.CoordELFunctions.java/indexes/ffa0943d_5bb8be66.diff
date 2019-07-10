@@ -1,0 +1,5 @@
+506c506,507
+<                 && !StringUtils.isEmpty(eval.getVariable(".actionInputLogic").toString())) {
+---
+>                 && (eval.getVariable(".actionInputLogic") != null && !StringUtils.isEmpty(eval.getVariable(
+>                         ".actionInputLogic").toString()))) {

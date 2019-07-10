@@ -1,0 +1,6 @@
+52a53
+> import org.apache.solr.common.util.ExecutorUtil;
+570c571
+<   static final Executor facetExecutor = new ThreadPoolExecutor(
+---
+>   static final Executor facetExecutor = new ExecutorUtil.MDCAwareThreadPoolExecutor(

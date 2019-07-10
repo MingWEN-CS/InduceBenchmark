@@ -1,0 +1,31 @@
+141c141
+<     List<Integer> current = new ArrayList<Integer>();
+---
+>     List<Integer> current = new ArrayList<>();
+181a182,184
+>     Capture<DBColumnInfo> repoVersionHiddenColumnCapture = newCapture();
+>     expectUpdateRepositoryVersionTableTable(repoVersionHiddenColumnCapture);
+> 
+206c209
+< 
+---
+>     verifyUpdateRepositoryVersionTableTable(repoVersionHiddenColumnCapture);
+509a513,516
+>   
+> 
+> 
+> 
+510a518,530
+> 
+> 
+>   public void expectUpdateRepositoryVersionTableTable(Capture<DBColumnInfo> hiddenColumnCapture) throws SQLException {
+>     dbAccessor.addColumn(eq(UpgradeCatalog260.REPO_VERSION_TABLE), capture(hiddenColumnCapture));
+>     expectLastCall().once();
+>   }
+> 
+>   public void verifyUpdateRepositoryVersionTableTable(Capture<DBColumnInfo> hiddenColumnCapture) {
+>     DBColumnInfo hiddenColumn = hiddenColumnCapture.getValue();
+>     Assert.assertEquals(0, hiddenColumn.getDefaultValue());
+>     Assert.assertEquals(UpgradeCatalog260.REPO_VERSION_HIDDEN_COLUMN, hiddenColumn.getName());
+>     Assert.assertEquals(false, hiddenColumn.isNullable());
+>   }

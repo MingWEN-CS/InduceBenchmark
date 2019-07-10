@@ -1,0 +1,36 @@
+529,534c529,530
+<       try {
+<         
+<         errThread.join();
+<       } catch (InterruptedException ie) {
+<         LOG.warn("Interrupted while reading the error stream", ie);
+<       }
+---
+>       
+>       joinThread(errThread);
+563,569c559,561
+<       try {
+<         if (!completed.get()) {
+<           errThread.interrupt();
+<           errThread.join();
+<         }
+<       } catch (InterruptedException ie) {
+<         LOG.warn("Interrupted while joining errThread");
+---
+>       if (!completed.get()) {
+>         errThread.interrupt();
+>         joinThread(errThread);
+583a576,588
+>   private static void joinThread(Thread t) {
+>     while (t.isAlive()) {
+>       try {
+>         t.join();
+>       } catch (InterruptedException ie) {
+>         if (LOG.isWarnEnabled()) {
+>           LOG.warn("Interrupted while joining on: " + t, ie);
+>         }
+>         t.interrupt(); 
+>       }
+>     }
+>   }
+> 

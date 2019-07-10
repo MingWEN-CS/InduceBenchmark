@@ -1,0 +1,62 @@
+43a44
+> import org.apache.ambari.server.orm.dao.ResourceTypeDAO;
+50a52,53
+> import org.apache.ambari.server.orm.entities.ResourceEntity;
+> import org.apache.ambari.server.orm.entities.ResourceTypeEntity;
+51a55
+> import org.apache.ambari.server.security.ClientSecurityType;
+90a95,96
+>   protected ResourceTypeDAO resourceTypeDAO;
+>   @Inject
+129a136,140
+> 
+>     if (userEntity == null) {
+>         userEntity = userDAO.findUserByNameAndType(userName, UserType.PAM);
+>     }
+> 
+376a388,399
+> 
+>   public Group getGroupByNameAndType(String groupName, GroupType groupType) {
+>     final GroupEntity groupEntity = groupDAO.findGroupByNameAndType(groupName, groupType);
+>     return (null == groupEntity) ? null : new Group(groupEntity);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+399c422
+<   public synchronized void createGroup(String groupName) {
+---
+>   public synchronized void createGroup(String groupName, GroupType groupType) {
+414a438
+>     groupEntity.setgroupType(groupType);
+486a511,536
+> 
+> 
+> 
+>   public synchronized void grantPrivilegeToGroup(Integer groupId, Long resourceId, ResourceType resourceType, String permissionName) {
+>     final GroupEntity group = groupDAO.findByPK(groupId);
+>     final PrivilegeEntity privilege = new PrivilegeEntity();
+>     ResourceTypeEntity resourceTypeEntity = new ResourceTypeEntity();
+>     resourceTypeEntity.setId(resourceType.getId());
+>     resourceTypeEntity.setName(resourceType.name());
+>     privilege.setPermission(permissionDAO.findPermissionByNameAndType(permissionName,resourceTypeEntity));
+>     privilege.setPrincipal(group.getPrincipal());
+>     privilege.setResource(resourceDAO.findById(resourceId));
+>     if (!group.getPrincipal().getPrivileges().contains(privilege)) {
+>       privilegeDAO.create(privilege);
+>       group.getPrincipal().getPrivileges().add(privilege);
+>       principalDAO.merge(group.getPrincipal()); 
+>       groupDAO.merge(group);
+>       privilegeDAO.merge(privilege);
+>     }
+>   }
+> 
+>   
+> 
+> 
+> 
+> 

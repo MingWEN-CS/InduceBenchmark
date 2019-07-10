@@ -1,0 +1,49 @@
+61a62
+> import org.apache.hadoop.security.SaslRpcServer.AuthMethod;
+1022,1028c1023,1050
+<     SIMPLE,
+<     KERBEROS,
+<     TOKEN,
+<     CERTIFICATE,
+<     KERBEROS_SSL,
+<     PROXY;
+<   }
+---
+>     
+>     
+>     SIMPLE(AuthMethod.SIMPLE),
+>     KERBEROS(AuthMethod.KERBEROS),
+>     TOKEN(AuthMethod.DIGEST),
+>     CERTIFICATE(null),
+>     KERBEROS_SSL(null),
+>     PROXY(null);
+>     
+>     private final AuthMethod authMethod;
+>     private AuthenticationMethod(AuthMethod authMethod) {
+>       this.authMethod = authMethod;
+>     }
+>     
+>     public AuthMethod getAuthMethod() {
+>       return authMethod;
+>     }
+>     
+>     public static AuthenticationMethod valueOf(AuthMethod authMethod) {
+>       for (AuthenticationMethod value : values()) {
+>         if (value.getAuthMethod() == authMethod) {
+>           return value;
+>         }
+>       }
+>       throw new IllegalArgumentException(
+>           "no authentication method for " + authMethod);
+>     }
+>   };
+1297a1320,1328
+>   public void setAuthenticationMethod(AuthMethod authMethod) {
+>     user.setAuthenticationMethod(AuthenticationMethod.valueOf(authMethod));
+>   }
+> 
+>   
+> 
+> 
+> 
+> 

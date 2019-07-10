@@ -1,0 +1,8 @@
+97c97
+<         ldapConfigurationRequest.getAmbariConfiguration().getData().iterator().next());
+---
+>         ldapConfigurationRequest.getAmbariConfiguration().getProperties());
+157c157
+<       || ldapConfigurationRequest.getAmbariConfiguration().getData().size() != 1) {
+---
+>       || ldapConfigurationRequest.getAmbariConfiguration().getProperties() != null) {

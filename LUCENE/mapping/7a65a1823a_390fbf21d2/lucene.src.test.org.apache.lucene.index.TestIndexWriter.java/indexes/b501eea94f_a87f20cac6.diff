@@ -1,0 +1,501 @@
+40c40
+< import org.apache.lucene.analysis.SimpleAnalyzer;
+---
+> import org.apache.lucene.analysis.MockAnalyzer;
+44c44
+< import org.apache.lucene.analysis.WhitespaceAnalyzer;
+---
+> import org.apache.lucene.analysis.MockAnalyzer;
+96c96
+<           writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>           writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+116c116
+<         writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+126c126
+<         writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+142c142
+<         writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setOpenMode(OpenMode.CREATE));
+---
+>         writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setOpenMode(OpenMode.CREATE));
+183c183
+<         IndexWriter writer  = new IndexWriter(dirs[i], new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         IndexWriter writer  = new IndexWriter(dirs[i], new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+197c197
+<       IndexWriter writer = new IndexWriter(startDir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>       IndexWriter writer = new IndexWriter(startDir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+260c260
+<           writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setOpenMode(OpenMode.APPEND));
+---
+>           writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setOpenMode(OpenMode.APPEND));
+470c470
+<           IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>           IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+616c616
+<           TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>           TEST_VERSION_CURRENT, new MockAnalyzer())
+630c630
+<           new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMergePolicy(ldmp));
+---
+>           new MockAnalyzer()).setMergePolicy(ldmp));
+655c655
+<         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer())
+693c693
+<       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+706c706
+<       writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setOpenMode(OpenMode.APPEND));
+---
+>       writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setOpenMode(OpenMode.APPEND));
+737c737
+<           IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>           IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+746c746
+<           writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setOpenMode(OpenMode.CREATE));
+---
+>           writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setOpenMode(OpenMode.CREATE));
+770c770
+<         writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+808c808
+<           writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setOpenMode(OpenMode.CREATE));
+---
+>           writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setOpenMode(OpenMode.CREATE));
+830c830
+<         writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+873c873
+<         writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+895c895
+<         writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+934c934
+<         IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+948c948
+<         writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+980c980
+<       IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(10));
+---
+>       IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(10));
+992c992
+<       writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>       writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer())
+1017c1017
+<       writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>       writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer())
+1052c1052
+<       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+1060c1060
+<       writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>       writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer())
+1095c1095
+<       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(10));
+---
+>       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(10));
+1101c1101
+<       writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setOpenMode(OpenMode.APPEND));
+---
+>       writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setOpenMode(OpenMode.APPEND));
+1123c1123
+<       writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setOpenMode(OpenMode.APPEND));
+---
+>       writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setOpenMode(OpenMode.APPEND));
+1138c1138
+<       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+1147c1147
+<       writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setOpenMode(OpenMode.APPEND));
+---
+>       writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setOpenMode(OpenMode.APPEND));
+1159c1159
+<       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(10));
+---
+>       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(10));
+1189c1189
+<       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setRAMBufferSizeMB(0.000001));
+---
+>       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setRAMBufferSizeMB(0.000001));
+1216c1216
+<         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(10).setRAMBufferSizeMB(
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(10).setRAMBufferSizeMB(
+1274c1274
+<         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(10).setMaxBufferedDeleteTerms(
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(10).setMaxBufferedDeleteTerms(
+1332c1332
+<       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setRAMBufferSizeMB(0.5));
+---
+>       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setRAMBufferSizeMB(0.5));
+1380c1380
+<       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(10));
+---
+>       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(10));
+1400c1400
+<       writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>       writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer())
+1427c1427
+<           TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxFieldLength(100000000).setRAMBufferSizeMB(0.01));
+---
+>           TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxFieldLength(100000000).setRAMBufferSizeMB(0.01));
+1474c1474
+<         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()));
+1485c1485
+<       writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>       writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer())
+1495c1495
+<         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+1513c1513
+<       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>       IndexWriter writer  = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+1533c1533
+<           TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>           TEST_VERSION_CURRENT, new MockAnalyzer())
+1587c1587
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()));
+1600c1600
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()));
+1627c1627
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()));
+1660c1660
+<           TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT))
+---
+>           TEST_VERSION_CURRENT, new MockAnalyzer())
+1702c1702
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT))
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer())
+1822c1822
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+2068c2068
+<       IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>       IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+2105c2105
+<         writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+2125c2125
+<           TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setOpenMode(OpenMode.CREATE)
+---
+>           TEST_VERSION_CURRENT, new MockAnalyzer()).setOpenMode(OpenMode.CREATE)
+2193c2193
+<         writer = new IndexWriter(directory, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setOpenMode(OpenMode.APPEND));
+---
+>         writer = new IndexWriter(directory, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setOpenMode(OpenMode.APPEND));
+2273c2273
+<       IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(10);
+---
+>       IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(10);
+2328c2328
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+2365c2365
+<       IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2);
+---
+>       IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2);
+2424c2424
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+2454c2454
+<           new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2);
+---
+>           new MockAnalyzer()).setMaxBufferedDocs(2);
+2612c2612
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+2636c2636
+<     writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+2673c2673
+<         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer())
+2728c2728
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+2760c2760
+<           TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT))
+---
+>           TEST_VERSION_CURRENT, new MockAnalyzer())
+2793c2793
+<           new StandardAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2)
+---
+>           new MockAnalyzer()).setMaxBufferedDocs(2)
+2811c2811
+<           TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT))
+---
+>           TEST_VERSION_CURRENT, new MockAnalyzer())
+2848c2848
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT))
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer())
+2868c2868
+<         new StandardAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2)
+---
+>         new MockAnalyzer()).setMaxBufferedDocs(2)
+2892c2892
+<         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxFieldLength(100000));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxFieldLength(100000));
+2915c2915
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT))
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer())
+2941c2941
+<     writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+2958c2958
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT))
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer())
+2986c2986
+<         new StandardAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         new MockAnalyzer()));
+3003c3003
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT))
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer())
+3030c3030
+<     writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new StandardAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3045c3045
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3072c3072
+<     MockIndexWriter w = new MockIndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     MockIndexWriter w = new MockIndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3092c3092
+<     MockIndexWriter w = new MockIndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>     MockIndexWriter w = new MockIndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+3142c3142
+<     IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2);
+---
+>     IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2);
+3186c3186
+<     MockIndexWriter3 w = new MockIndexWriter3(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     MockIndexWriter3 w = new MockIndexWriter3(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3243c3243
+<     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3291c3291
+<     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3504c3504
+<     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3536c3536
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+3588c3588
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+3612c3612
+<     writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3640c3640
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3668c3668
+<           TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>           TEST_VERSION_CURRENT, new MockAnalyzer())
+3675c3675
+<       writer2 = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>       writer2 = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3942c3942
+<     MockIndexWriter4 w = new MockIndexWriter4(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     MockIndexWriter4 w = new MockIndexWriter4(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3961c3961
+<     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+3991c3991
+<     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+4003c4003
+<     w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>     w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+4017c4017
+<     w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+4028c4028
+<     IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2);
+---
+>     IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2);
+4037c4037
+<       conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT));
+---
+>       conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer());
+4058,4059c4058
+<         new IndexWriterConfig(TEST_VERSION_CURRENT, new StandardAnalyzer(
+<             TEST_VERSION_CURRENT))) {
+---
+>         new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer())) {
+4085c4084
+<         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()));
+4120c4119
+<     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new SimpleAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+4142c4141
+<     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+4164c4163
+<     Analyzer analyzer = new WhitespaceAnalyzer(TEST_VERSION_CURRENT);
+---
+>     Analyzer analyzer = new MockAnalyzer();
+4212,4213c4211
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(
+<         TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()));
+4244,4245c4242
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(
+<         TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()));
+4273,4274c4270
+<         TEST_VERSION_CURRENT, new StandardAnalyzer(
+<         TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()));
+4316c4312
+<       new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))).close();
+---
+>       new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer())).close();
+4327c4323
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setMaxBufferedDocs(2));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2));
+4338c4334
+<     IndexWriter writer2 = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter writer2 = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+4377,4378c4373
+<                 TEST_VERSION_CURRENT, new WhitespaceAnalyzer(
+<                     TEST_VERSION_CURRENT)).setMaxBufferedDocs(2);
+---
+>                 TEST_VERSION_CURRENT, new MockAnalyzer()).setMaxBufferedDocs(2);
+4487c4482
+<     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+4549c4544
+<     IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+4581c4576
+<     IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+4599c4594
+<         TEST_VERSION_CURRENT, new SimpleAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()));
+4620c4615
+<         TEST_VERSION_CURRENT, new SimpleAnalyzer(TEST_VERSION_CURRENT)));
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer()));
+4742c4737
+<     IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+---
+>     IndexWriter writer = new IndexWriter(dir, new MockAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+4807c4802
+<     IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+---
+>     IndexWriter w = new IndexWriter(dir, new MockAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+4836c4831
+<       IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>       IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+4896c4891
+<         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer())
+4938c4933
+<     FlushCountingIndexWriter w = new FlushCountingIndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)).setRAMBufferSizeMB(0.5));
+---
+>     FlushCountingIndexWriter w = new FlushCountingIndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()).setRAMBufferSizeMB(0.5));
+4972c4967
+<     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT)));
+---
+>     IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+4989c4984
+<     new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))).close();
+---
+>     new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer())).close();
+4998c4993
+<         TEST_VERSION_CURRENT, new WhitespaceAnalyzer(TEST_VERSION_CURRENT))
+---
+>         TEST_VERSION_CURRENT, new MockAnalyzer())

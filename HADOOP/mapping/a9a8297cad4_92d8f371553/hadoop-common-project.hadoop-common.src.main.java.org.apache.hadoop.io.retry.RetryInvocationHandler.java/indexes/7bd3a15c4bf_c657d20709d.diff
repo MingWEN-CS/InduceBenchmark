@@ -1,0 +1,10 @@
+354,356c354,358
+<         LOG.warn("Exception while invoking call #" + callId + " "
+<             + proxyDescriptor.getProxyInfo().getString(method.getName())
+<             + ". Not retrying because " + retryInfo.action.reason, e);
+---
+>         if (LOG.isDebugEnabled()) {
+>           LOG.debug("Exception while invoking call #" + callId + " "
+>               + proxyDescriptor.getProxyInfo().getString(method.getName())
+>               + ". Not retrying because " + retryInfo.action.reason, e);
+>         }

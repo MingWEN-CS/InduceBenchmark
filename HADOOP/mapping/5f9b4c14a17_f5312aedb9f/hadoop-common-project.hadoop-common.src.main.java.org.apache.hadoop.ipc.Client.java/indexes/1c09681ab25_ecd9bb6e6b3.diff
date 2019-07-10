@@ -1,0 +1,54 @@
+93a94
+> import com.google.common.base.Preconditions;
+108a110,121
+>   
+>   private static final AtomicInteger callIdCounter = new AtomicInteger();
+> 
+>   private static final ThreadLocal<Integer> callId = new ThreadLocal<Integer>();
+> 
+>   
+>   public static void setCallId(int cid) {
+>     Preconditions.checkArgument(cid != RpcConstants.INVALID_CALL_ID);
+>     Preconditions.checkState(callId.get() == null);
+>     callId.set(cid);
+>   }
+> 
+113d125
+<   private final AtomicInteger counter = new AtomicInteger(); 
+262c274,278
+<   
+---
+> 
+>   Call createCall(RPC.RpcKind rpcKind, Writable rpcRequest) {
+>     return new Call(rpcKind, rpcRequest);
+>   }
+> 
+266c282
+<   private class Call {
+---
+>   static class Call {
+274c290
+<     protected Call(RPC.RpcKind rpcKind, Writable param) {
+---
+>     private Call(RPC.RpcKind rpcKind, Writable param) {
+277c293,300
+<       this.id = nextCallId();
+---
+> 
+>       final Integer id = callId.get();
+>       if (id == null) {
+>         this.id = nextCallId();
+>       } else {
+>         callId.set(null);
+>         this.id = id;
+>       }
+1349c1372
+<     Call call = new Call(rpcKind, rpcRequest);
+---
+>     final Call call = createCall(rpcKind, rpcRequest);
+1638,1639c1661,1662
+<   private int nextCallId() {
+<     return counter.getAndIncrement() & 0x7FFFFFFF;
+---
+>   public static int nextCallId() {
+>     return callIdCounter.getAndIncrement() & 0x7FFFFFFF;

@@ -1,0 +1,29 @@
+166a167
+>     updateZeppelinConfigs();
+353a355,380
+>   
+> 
+> 
+> 
+> 
+>   protected void updateZeppelinConfigs() throws AmbariException {
+>     AmbariManagementController ambariManagementController = injector.getInstance(AmbariManagementController.class);
+>     Clusters clusters = ambariManagementController.getClusters();
+>     if (clusters != null) {
+>       Map<String, Cluster> clusterMap = clusters.getClusters();
+> 
+>       if (clusterMap != null && !clusterMap.isEmpty()) {
+>         for (final Cluster cluster : clusterMap.values()) {
+>           Config zeppelinEnvProperties = cluster.getDesiredConfigByType("zeppelin-env");
+>           if (zeppelinEnvProperties != null) {
+>             String log4jPropertiesContent = zeppelinEnvProperties.getProperties().get("log4j_properties_content");
+>             String shiroIniContent = zeppelinEnvProperties.getProperties().get("shiro_ini_content");
+> 
+>             updateConfigurationProperties("zeppelin-log4j-properties", Collections.singletonMap("log4j_properties_content", log4jPropertiesContent), true, true);
+>             updateConfigurationProperties("zeppelin-shiro-ini", Collections.singletonMap("shiro_ini_content", shiroIniContent), true, true);
+>           }
+>         }
+>       }
+>     }
+>   }
+> 

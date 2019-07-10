@@ -1,0 +1,99 @@
+196a197
+>         newConf.set("job_prop", "job_prop_val");
+207a209,212
+>                 "        <property>" +
+>                 "          <name>job_prop</name>" +
+>                 "          <value>sub_prop_val</value>" +
+>                 "        </property>" +
+234a240,241
+>         assertEquals("A", childConf.get("a"));
+>         assertEquals("sub_prop_val", childConf.get("job_prop"));
+365a373
+>         assertEquals("A", childConf.get("a"));
+687c695
+< 
+---
+>             createSubWorkflowConfigDefaultXml();
+725c733,736
+< 
+---
+>             assertEquals("subactionconf", actionConf.get("foo4"));
+>             
+>             assertEquals("default", subWorkflowConf.get("parentConfigDefault"));
+>             assertEquals("default", actionConf.get("subwfConfigDefault"));
+747a759,762
+>                 "        <property>" +
+>                 "            <name>foo4</name>" +
+>                 "            <value>actionconf</value>" +
+>                 "        </property>" +
+776,782c791
+<         Path subWorkflowAppPath = getFsTestCaseDir();
+<         FileSystem fs = getFileSystem();
+<         Path subWorkflowPath = new Path(subWorkflowAppPath, "workflow.xml");
+<         Writer writer = new OutputStreamWriter(fs.create(subWorkflowPath));
+<         writer.write(getWorkflow());
+<         writer.close();
+<         return subWorkflowAppPath;
+---
+>         return createSubWorkflowFile(getWorkflow(), "workflow.xml");
+786,791c795,805
+<         String config_defaultUri=getTestCaseFileUri("config-default.xml");
+<         String config_default="<configuration>\n" +
+<                 "<property>\n" +
+<                 "<name>foo</name>\n" +
+<                 "<value>default</value>\n" +
+<                 "</property>\n" +
+---
+>         String config_defaultUri = getTestCaseFileUri("config-default.xml");
+>         String config_default =
+>                 "<configuration>" +
+>                 "    <property>" +
+>                 "      <name>foo</name>" +
+>                 "      <value>default</value>" +
+>                 "    </property>" +
+>                 "    <property>" +
+>                 "      <name>parentConfigDefault</name>" +
+>                 "      <value>default</value>" +
+>                 "    </property>" +
+796a811,835
+>     private void createSubWorkflowConfigDefaultXml() throws IOException {
+>         String config_default = "<configuration>" +
+>                         "    <property>" +
+>                         "      <name>subwfConfigDefault</name>" +
+>                         "      <value>default</value>" +
+>                         "    </property>" +
+>                         "    <property>" +
+>                         "      <name>foo4</name>" +
+>                         "      <value>default</value>" +
+>                         "    </property>" +
+>                         "</configuration>";
+>         createSubWorkflowFile(config_default, "config-default.xml");
+>     }
+> 
+>     private Path createSubWorkflowFile(String content, String fileName) throws IOException
+>     {
+>         Path subWorkflowAppPath = getFsTestCaseDir();
+>         FileSystem fs = getFileSystem();
+>         Path subWorkflowPath = new Path(subWorkflowAppPath, fileName);
+>         Writer writer = new OutputStreamWriter(fs.create(subWorkflowPath));
+>         writer.write(content);
+>         writer.close();
+>         return subWorkflowAppPath;
+>     }
+> 
+814,817c853,862
+<                 "<job-tracker>" + getJobTrackerUri() + "</job-tracker>" +
+<                 "<name-node>" + getNameNodeUri() + "</name-node>" +
+<                 "<main-class>" + LauncherMainTester.class.getName() + "</main-class>" +
+<                 "<arg>exit0</arg>" +
+---
+>                 "    <job-tracker>" + getJobTrackerUri() + "</job-tracker>" +
+>                 "    <name-node>" + getNameNodeUri() + "</name-node>" +
+>                 "        <configuration>" +
+>                 "            <property>" +
+>                 "                <name>foo4</name>" +
+>                 "                <value>subactionconf</value>" +
+>                 "            </property>" +
+>                 "        </configuration>" +
+>                 "    <main-class>" + LauncherMainTester.class.getName() + "</main-class>" +
+>                 "    <arg>exit0</arg>" +

@@ -1,0 +1,439 @@
+24d23
+< import java.io.IOException;
+27d25
+< import java.util.ArrayList;
+48d45
+< import java.util.concurrent.TimeoutException;
+58,59d54
+< import org.apache.solr.cloud.CurrentCoreDescriptorProvider;
+< import org.apache.solr.cloud.SolrZkServer;
+64d58
+< import org.apache.solr.common.cloud.ZkStateReader;
+77d70
+< import org.apache.solr.update.SolrCoreState;
+81d73
+< import org.apache.solr.util.SystemIdResolver;
+100,103c92
+<   
+<   private static final String DEFAULT_HOST_CONTEXT = "solr";
+<   
+<   private static final String DEFAULT_HOST_PORT = "8983";
+---
+> 
+119,121c108
+<   protected String hostPort;
+<   protected String hostContext;
+<   protected String host;
+---
+> 
+135,136c122,123
+<   private ZkController zkController;
+<   private SolrZkServer zkServer;
+---
+>   protected ZkContainer zkSys = new ZkContainer();
+> 
+142,144d128
+<   private String leaderVoteWait = LEADER_VOTE_WAIT;
+<   private int distribUpdateConnTimeout = 0;
+<   private int distribUpdateSoTimeout = 0;
+185,331d168
+<   public SolrConfig getSolrConfigFromZk(String zkConfigName, String solrConfigFileName,
+<       SolrResourceLoader resourceLoader) {
+<     SolrConfig cfg = null;
+<     try {
+<       byte[] config = zkController.getConfigFileData(zkConfigName,
+<           solrConfigFileName);
+<       InputSource is = new InputSource(new ByteArrayInputStream(config));
+<       is.setSystemId(SystemIdResolver
+<           .createSystemIdFromResourceName(solrConfigFileName));
+<       cfg = solrConfigFileName == null ? new SolrConfig(resourceLoader,
+<           SolrConfig.DEFAULT_CONF_FILE, is) : new SolrConfig(resourceLoader,
+<           solrConfigFileName, is);
+<     } catch (Exception e) {
+<       throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,
+<           "getSolrConfigFromZK failed for " + zkConfigName + " "
+<               + solrConfigFileName, e);
+<     }
+<     return cfg;
+<   }
+< 
+<   protected void initZooKeeper(String zkHost, int zkClientTimeout) {
+<     
+<     String zookeeperHost;
+<     if(zkHost == null) {
+<       zookeeperHost = System.getProperty("zkHost");
+<     } else {
+<       zookeeperHost = zkHost;
+<     }
+< 
+<     String zkRun = System.getProperty("zkRun");
+< 
+<     if (zkRun == null && zookeeperHost == null)
+<         return;  
+< 
+<     
+<     if (null == hostPort) {
+<       
+<       
+<       log.warn("Solr 'hostPort' has not be explicitly configured, using hardcoded default of " + DEFAULT_HOST_PORT + ".  This default has been deprecated and will be removed in future versions of Solr, please configure this value explicitly");
+<       hostPort = DEFAULT_HOST_PORT;
+<     }
+<     if (null == hostContext) {
+<       
+<       
+<       log.warn("Solr 'hostContext' has not be explicitly configured, using hardcoded default of " + DEFAULT_HOST_CONTEXT + ".  This default has been deprecated and will be removed in future versions of Solr, please configure this value explicitly");
+<       hostContext = DEFAULT_HOST_CONTEXT;
+<     }
+<     
+< 
+<     
+<     
+<     
+<     System.setProperty("zookeeper.jmx.log4j.disable", "true");
+< 
+<     if (zkRun != null) {
+<       String zkDataHome = System.getProperty("zkServerDataDir", solrHome + "zoo_data");
+<       String zkConfHome = System.getProperty("zkServerConfDir", solrHome);
+<       zkServer = new SolrZkServer(zkRun, zookeeperHost, zkDataHome, zkConfHome, hostPort);
+<       zkServer.parseConfig();
+<       zkServer.start();
+<       
+<       
+<       if (zookeeperHost == null) {
+<         zookeeperHost = zkServer.getClientString();
+<       }
+<     }
+< 
+<     int zkClientConnectTimeout = 15000;
+< 
+<     if (zookeeperHost != null) {
+<       
+<       try {
+<         
+<         if (zkRun != null && zkServer.getServers().size() > 1) {
+<           zkClientConnectTimeout = 24 * 60 * 60 * 1000;  
+<           log.info("Zookeeper client=" + zookeeperHost + "  Waiting for a quorum.");
+<         } else {
+<           log.info("Zookeeper client=" + zookeeperHost);          
+<         }
+<         String confDir = System.getProperty("bootstrap_confdir");
+<         boolean boostrapConf = Boolean.getBoolean("bootstrap_conf");  
+<         
+<         if(!ZkController.checkChrootPath(zookeeperHost, (confDir!=null) || boostrapConf)) {
+<           throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<               "A chroot was specified in ZkHost but the znode doesn't exist. ");
+<         }
+<         zkController = new ZkController(this, zookeeperHost, zkClientTimeout,
+<             zkClientConnectTimeout, host, hostPort, hostContext,
+<             leaderVoteWait, distribUpdateConnTimeout, distribUpdateSoTimeout,
+<             new CurrentCoreDescriptorProvider() {
+< 
+<               @Override
+<               public List<CoreDescriptor> getCurrentDescriptors() {
+<                 List<CoreDescriptor> descriptors = new ArrayList<CoreDescriptor>(
+<                     getCoreNames().size());
+<                 for (SolrCore core : getCores()) {
+<                   descriptors.add(core.getCoreDescriptor());
+<                 }
+<                 return descriptors;
+<               }
+<             });
+< 
+< 
+<         if (zkRun != null && zkServer.getServers().size() > 1 && confDir == null && boostrapConf == false) {
+<           
+<           
+<           Thread.sleep(10000);
+<         }
+<         
+<         if(confDir != null) {
+<           File dir = new File(confDir);
+<           if(!dir.isDirectory()) {
+<             throw new IllegalArgumentException("bootstrap_confdir must be a directory of configuration files");
+<           }
+<           String confName = System.getProperty(ZkController.COLLECTION_PARAM_PREFIX+ZkController.CONFIGNAME_PROP, "configuration1");
+<           zkController.uploadConfigDir(dir, confName);
+<         }
+< 
+< 
+<         
+<         if(boostrapConf) {
+<           ZkController.bootstrapConf(zkController.getZkClient(), cfg, solrHome);
+<         }
+<         
+<       } catch (InterruptedException e) {
+<         
+<         Thread.currentThread().interrupt();
+<         log.error("", e);
+<         throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<             "", e);
+<       } catch (TimeoutException e) {
+<         log.error("Could not connect to ZooKeeper", e);
+<         throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<             "", e);
+<       } catch (IOException e) {
+<         log.error("", e);
+<         throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<             "", e);
+<       } catch (KeeperException e) {
+<         log.error("", e);
+<         throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<             "", e);
+<       }
+<     }
+<     
+<   }
+< 
+408,410d244
+<     
+<     
+<     
+413c247,249
+<       this.origCfg = new Config(loader, null, copyDoc(config.getDocument()));
+---
+> 
+>       
+>       
+416a253,256
+>         
+>         
+>         this.origCfg = new Config(loader, null, copyDoc(config.getDocument()));
+>         
+419a260
+> 
+504,505c345,346
+<     distribUpdateConnTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_DISTRIBUPDATECONNTIMEOUT, 0);
+<     distribUpdateSoTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_DISTRIBUPDATESOTIMEOUT, 0);
+---
+>     int distribUpdateConnTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_DISTRIBUPDATECONNTIMEOUT, 0);
+>     int distribUpdateSoTimeout = cfg.getInt(ConfigSolr.CfgProp.SOLR_DISTRIBUPDATESOTIMEOUT, 0);
+508c349
+<     hostPort = cfg.get(ConfigSolr.CfgProp.SOLR_HOSTPORT, null);
+---
+>     String hostPort = cfg.get(ConfigSolr.CfgProp.SOLR_HOSTPORT, null);
+510c351
+<     hostContext = cfg.get(ConfigSolr.CfgProp.SOLR_HOSTCONTEXT, null);
+---
+>     String hostContext = cfg.get(ConfigSolr.CfgProp.SOLR_HOSTCONTEXT, null);
+512c353
+<     host = cfg.get(ConfigSolr.CfgProp.SOLR_HOST, null);
+---
+>     String host = cfg.get(ConfigSolr.CfgProp.SOLR_HOST, null);
+514c355
+<     leaderVoteWait = cfg.get(ConfigSolr.CfgProp.SOLR_LEADERVOTEWAIT, LEADER_VOTE_WAIT);
+---
+>     String leaderVoteWait = cfg.get(ConfigSolr.CfgProp.SOLR_LEADERVOTEWAIT, LEADER_VOTE_WAIT);
+527c368
+<     initZooKeeper(zkHost, zkClientTimeout);
+---
+>     zkSys.initZooKeeper(this, solrHome, zkHost, zkClientTimeout, hostPort, hostContext, host, leaderVoteWait, distribUpdateConnTimeout, distribUpdateSoTimeout);
+580c421
+<           if (zkController != null) {
+---
+>           if (zkSys.getZkController() != null) {
+737c578
+<         zkController.publishAndWaitForDownStates();
+---
+>         zkSys.getZkController().publishAndWaitForDownStates();
+748c589
+<       publishCoresAsDown();
+---
+>       zkSys.publishCoresAsDown(solrCores.getCores());
+783,788c624,626
+<       if (zkController != null) {
+<         zkController.close();
+<       }
+<       if (zkServer != null) {
+<         zkServer.stop();
+<       }
+---
+> 
+>       zkSys.close();
+> 
+793,794c631,632
+<     ArrayList<SolrCoreState> coreStates = new ArrayList<SolrCoreState>();
+<     solrCores.addCoresToList(coreStates);
+---
+> 
+>     List<SolrCore> cores = solrCores.getCores();
+798c636
+<     for (SolrCoreState coreState : coreStates) {
+---
+>     for (SolrCore core : cores) {
+800c638
+<         coreState.cancelRecovery();
+---
+>         core.getSolrCoreState().cancelRecovery();
+828c666
+<     if (zkController != null) {
+---
+>     if (zkSys.getZkController() != null) {
+831c669
+<         zkController.preRegister(core);
+---
+>         zkSys.getZkController().preRegister(core);
+869c707
+<       registerInZk(core);
+---
+>       zkSys.registerInZk(core);
+877c715
+<       registerInZk(core);
+---
+>       zkSys.registerInZk(core);
+882,913d719
+<   private void registerInZk(SolrCore core) {
+<     if (zkController != null) {
+<       try {
+<         zkController.register(core.getName(), core.getCoreDescriptor());
+<       } catch (InterruptedException e) {
+<         
+<         Thread.currentThread().interrupt();
+<         SolrException.log(log, "", e);
+<         throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR, "",
+<             e);
+<       } catch (Exception e) {
+<         
+<         
+<         try {
+<           zkController.publish(core.getCoreDescriptor(), ZkStateReader.DOWN);
+<         } catch (KeeperException e1) {
+<           log.error("", e);
+<           throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<               "", e);
+<         } catch (InterruptedException e1) {
+<           Thread.currentThread().interrupt();
+<           log.error("", e);
+<           throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<               "", e);
+<         }
+<         SolrException.log(log, "", e);
+<         throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR, "",
+<             e);
+<       }
+<     }
+<   }
+< 
+927,963d732
+< 
+<   
+<   private SolrCore createFromZk(String instanceDir, CoreDescriptor dcore)
+<   {
+<     try {
+<       SolrResourceLoader solrLoader = null;
+<       SolrConfig config = null;
+<       String zkConfigName = null;
+<       IndexSchema schema;
+<       String collection = dcore.getCloudDescriptor().getCollectionName();
+<       zkController.createCollectionZkNode(dcore.getCloudDescriptor());
+< 
+<       zkConfigName = zkController.readConfigName(collection);
+<       if (zkConfigName == null) {
+<         log.error("Could not find config name for collection:" + collection);
+<         throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<             "Could not find config name for collection:" + collection);
+<       }
+<       solrLoader = new ZkSolrResourceLoader(instanceDir, zkConfigName, loader.getClassLoader(),
+<           ConfigSolrXml.getCoreProperties(instanceDir, dcore), zkController);
+<       config = getSolrConfigFromZk(zkConfigName, dcore.getConfigName(), solrLoader);
+<       schema = IndexSchemaFactory.buildIndexSchema(dcore.getSchemaName(), config);
+<       return new SolrCore(dcore.getName(), null, config, schema, dcore);
+< 
+<     } catch (KeeperException e) {
+<       log.error("", e);
+<       throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<           "", e);
+<     } catch (InterruptedException e) {
+<       
+<       Thread.currentThread().interrupt();
+<       log.error("", e);
+<       throw new ZooKeeperException(SolrException.ErrorCode.SERVER_ERROR,
+<           "", e);
+<     }
+<   }
+< 
+1036,1037c805,806
+<       if (zkController != null) {
+<         created = createFromZk(instanceDir, dcore);
+---
+>       if (zkSys.getZkController() != null) {
+>         created = zkSys.createFromZk(instanceDir, dcore, loader);
+1133c902
+<         if(zkController == null) {
+---
+>         if(zkSys.getZkController() == null) {
+1138c907
+<             zkController.createCollectionZkNode(cd.getCloudDescriptor());
+---
+>             zkSys.getZkController().createCollectionZkNode(cd.getCloudDescriptor());
+1140c909
+<             String zkConfigName = zkController.readConfigName(collection);
+---
+>             String zkConfigName = zkSys.getZkController().readConfigName(collection);
+1147c916
+<                 ConfigSolrXml.getCoreProperties(instanceDir.getAbsolutePath(), cd), zkController);
+---
+>                 ConfigSolrXml.getCoreProperties(instanceDir.getAbsolutePath(), cd), zkSys.getZkController());
+1313,1328d1081
+<   public String getHostPort() {
+<     return hostPort;
+<   }
+< 
+<   public String getHostContext() {
+<     return hostContext;
+<   }
+< 
+<   public String getHost() {
+<     return host;
+<   }
+< 
+<   public int getZkClientTimeout() {
+<     return zkClientTimeout;
+<   }
+< 
+1363a1117
+>   @Deprecated
+1380c1134
+<   
+---
+>   @Deprecated
+1401c1155
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOST, "host", this.host, null);
+---
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOST, "host", zkSys.getHost(), null);
+1407c1161
+<     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOSTPORT, "hostPort", this.hostPort, DEFAULT_HOST_PORT);
+---
+>     addCoresAttrib(coresAttribs, ConfigSolr.CfgProp.SOLR_HOSTPORT, "hostPort",zkSys.getHostPort(), ZkContainer.DEFAULT_HOST_PORT);
+1412c1166
+<         this.hostContext, DEFAULT_HOST_CONTEXT);
+---
+>         zkSys.getHostContext(), ZkContainer.DEFAULT_HOST_CONTEXT);
+1414c1168
+<         this.leaderVoteWait, LEADER_VOTE_WAIT);
+---
+>         zkSys.getLeaderVoteWait(), LEADER_VOTE_WAIT);
+1435d1188
+<   
+1461c1214
+<     return zkController != null;
+---
+>     return zkSys.getZkController() != null;
+1465c1218
+<     return zkController;
+---
+>     return zkSys.getZkController();
+1499,1512d1251
+< 
+<   protected void publishCoresAsDown() {
+<     List<SolrCore> cores = solrCores.getCores();
+<     
+<     for (SolrCore core : cores) {
+<       try {
+<         zkController.publish(core.getCoreDescriptor(), ZkStateReader.DOWN);
+<       } catch (KeeperException e) {
+<         CoreContainer.log.error("", e);
+<       } catch (InterruptedException e) {
+<         CoreContainer.log.error("", e);
+<       }
+<     }
+<   }

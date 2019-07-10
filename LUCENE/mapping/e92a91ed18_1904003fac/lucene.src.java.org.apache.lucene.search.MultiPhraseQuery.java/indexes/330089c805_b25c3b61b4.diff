@@ -1,0 +1,10 @@
+502d501
+<       final BytesRef text = new BytesRef(terms[i].text());
+505c504
+<                                                                     text);
+---
+>                                                                     terms[i].bytes());
+509c508
+<         if (MultiFields.getTermDocsEnum(indexReader, delDocs, terms[i].field(), text) != null) {
+---
+>         if (MultiFields.getTermDocsEnum(indexReader, delDocs, terms[i].field(), terms[i].bytes()) != null) {

@@ -1,0 +1,63 @@
+27d26
+< import org.apache.accumulo.master.EventCoordinator.Listener;
+43c42
+<   private boolean force;
+---
+>   private boolean force, requestedShutdown;
+51,56c50
+<   public long isReady(long tid, Master environment) throws Exception {
+<     return 0;
+<   }
+< 
+<   @Override
+<   public Repo<Master> call(long tid, Master master) throws Exception {
+---
+>   public long isReady(long tid, Master master) throws Exception {
+59,64c53
+<       String path = ZooUtil.getRoot(master.getInstance()) + Constants.ZTSERVERS + "/" + server.getLocation();
+<       ZooLock.deleteLock(path);
+<       path = ZooUtil.getRoot(master.getInstance()) + Constants.ZDEADTSERVERS + "/" + server.getLocation();
+<       IZooReaderWriter zoo = ZooReaderWriter.getInstance();
+<       zoo.putPersistentData(path, "forced down".getBytes(UTF_8), NodeExistsPolicy.OVERWRITE);
+<       return null;
+---
+>       return 0;
+68,70c57,63
+<     Listener listener = master.getEventCoordinator().getListener();
+<     master.shutdownTServer(server);
+<     while (master.onlineTabletServers().contains(server)) {
+---
+>     
+>     
+>     if (!requestedShutdown) {
+>       master.shutdownTServer(server);
+>     }
+> 
+>     if (master.onlineTabletServers().contains(server)) {
+79c72
+<             break;
+---
+>             return 0;
+85a79,83
+> 
+>         
+>         
+>         
+>         return 1000;
+87c85,98
+<       listener.waitForEvents(1000);
+---
+>     }
+> 
+>     return 0;
+>   }
+> 
+>   @Override
+>   public Repo<Master> call(long tid, Master master) throws Exception {
+>     
+>     if (force) {
+>       String path = ZooUtil.getRoot(master.getInstance()) + Constants.ZTSERVERS + "/" + server.getLocation();
+>       ZooLock.deleteLock(path);
+>       path = ZooUtil.getRoot(master.getInstance()) + Constants.ZDEADTSERVERS + "/" + server.getLocation();
+>       IZooReaderWriter zoo = ZooReaderWriter.getInstance();
+>       zoo.putPersistentData(path, "forced down".getBytes(UTF_8), NodeExistsPolicy.OVERWRITE);

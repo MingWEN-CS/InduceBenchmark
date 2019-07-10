@@ -1,0 +1,11 @@
+260,262c260,265
+<             if (hasNonVirtualItemState(id)) {
+<                 return getNonVirtualItemState(id);
+<             }
+---
+>             return getNonVirtualItemState(id);
+>         } catch (NoSuchItemStateException e) {
+>             
+>             
+>             
+>             

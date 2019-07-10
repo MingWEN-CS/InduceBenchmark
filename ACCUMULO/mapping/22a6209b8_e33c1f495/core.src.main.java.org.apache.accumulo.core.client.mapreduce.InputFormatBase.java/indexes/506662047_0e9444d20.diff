@@ -1,0 +1,8 @@
+1201,1202c1201,1202
+<           deprecatedOption = setting.getName() + AccumuloIteratorOption.FIELD_SEP + URLEncoder.encode(opt.getKey(), "UTF-8")
+<               + AccumuloIteratorOption.FIELD_SEP + URLEncoder.encode(opt.getValue(), "UTF-8");
+---
+>           deprecatedOption = setting.getName() + AccumuloIteratorOption.FIELD_SEP + URLEncoder.encode(opt.getKey(), "UTF-8") + AccumuloIteratorOption.FIELD_SEP
+>               + URLEncoder.encode(opt.getValue(), "UTF-8");
+1324a1325
+> 

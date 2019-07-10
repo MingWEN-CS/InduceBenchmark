@@ -1,0 +1,38 @@
+46c46,52
+< import org.apache.lucene.util.*;
+---
+> import org.apache.lucene.util.ArrayUtil;
+> import org.apache.lucene.util.Bits;
+> import org.apache.lucene.util.ByteBlockPool;
+> import org.apache.lucene.util.BytesRef;
+> import org.apache.lucene.util.BytesRefArray;
+> import org.apache.lucene.util.BytesRefBuilder;
+> import org.apache.lucene.util.BytesRefHash;
+47a54,55
+> import org.apache.lucene.util.Counter;
+> import org.apache.lucene.util.IntBlockPool;
+49a58,60
+> import org.apache.lucene.util.RecyclingByteBlockAllocator;
+> import org.apache.lucene.util.RecyclingIntBlockAllocator;
+> import org.apache.lucene.util.StringHelper;
+750,751c761,762
+<   @Override
+<   public String toString() {
+---
+> 
+>   public String toStringDebug() {
+755a767
+>     final BytesRefBuilder payloadBuilder = storePayloads ? new BytesRefBuilder() : null;
+780a793,798
+>           if (storePayloads) {
+>             int payloadIndex = postingsReader.readInt();
+>             if (payloadIndex != -1) {
+>                 result.append(", " + payloadsBytesRefs.get(payloadBuilder, payloadIndex));
+>             }
+>           }
+781a800
+> 
+783c802
+<             result.append(",");
+---
+>             result.append(", ");

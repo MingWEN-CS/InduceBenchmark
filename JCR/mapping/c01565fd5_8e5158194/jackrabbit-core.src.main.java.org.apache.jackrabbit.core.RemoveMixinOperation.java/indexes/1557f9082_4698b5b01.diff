@@ -1,0 +1,12 @@
+88c88
+<                     "Mixin " + session.getJCRName(mixinName)
+---
+>                     "Mixin " + context.getJCRName(mixinName)
+180c180
+<                     + session.getJCRName(mixinName), e);
+---
+>                     + context.getJCRName(mixinName), e);
+281c281
+<                     + session.getJCRName(mixinName), e);
+---
+>                     + context.getJCRName(mixinName), e);

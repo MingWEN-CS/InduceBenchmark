@@ -1,0 +1,41 @@
+194a195,200
+>   private static final Class<?> NEGATIVE_CACHE_SENTINEL =
+>     NegativeCacheSentinel.class;
+> 
+>   
+> 
+> 
+1197,1198c1203,1204
+<     Class<?> clazz = null;
+<     if (!map.containsKey(name)) {
+---
+>     Class<?> clazz = map.get(name);
+>     if (clazz == null) {
+1202c1208,1209
+<         map.put(name, null); 
+---
+>         
+>         map.put(name, NEGATIVE_CACHE_SENTINEL);
+1207,1211c1214,1219
+<     } else { 
+<       clazz = map.get(name);
+<       if (clazz == null) { 
+<         return null;
+<       }
+---
+>       return clazz;
+>     } else if (clazz == NEGATIVE_CACHE_SENTINEL) {
+>       return null; 
+>     } else {
+>       
+>       return clazz;
+1213,1214d1220
+< 
+<     return clazz;
+1917a1924,1929
+>   
+>   
+> 
+> 
+> 
+>   private static abstract class NegativeCacheSentinel {}

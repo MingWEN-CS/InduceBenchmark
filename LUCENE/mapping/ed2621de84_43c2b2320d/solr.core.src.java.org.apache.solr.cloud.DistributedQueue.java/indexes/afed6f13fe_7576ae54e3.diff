@@ -1,0 +1,8 @@
+28d27
+< import java.util.function.Function;
+31a31
+> import com.google.common.base.Predicate;
+323c323
+<   Collection<Pair<String, byte[]>> peekElements(int max, long waitMillis, Function<String, Boolean> acceptFilter) throws KeeperException, InterruptedException {
+---
+>   Collection<Pair<String, byte[]>> peekElements(int max, long waitMillis, Predicate<String> acceptFilter) throws KeeperException, InterruptedException {

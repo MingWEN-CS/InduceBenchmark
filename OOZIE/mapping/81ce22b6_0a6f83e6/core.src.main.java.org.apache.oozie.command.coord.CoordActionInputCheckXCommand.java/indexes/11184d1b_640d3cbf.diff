@@ -1,0 +1,363 @@
+23,25d22
+< import java.net.URI;
+< import java.net.URISyntaxException;
+< import java.text.ParseException;
+29d25
+< 
+37d32
+< import org.apache.oozie.client.OozieClient;
+42,44c37
+< import org.apache.oozie.coord.TimeUnit;
+< import org.apache.oozie.dependency.URIHandler;
+< import org.apache.oozie.dependency.URIHandlerException;
+---
+> import org.apache.oozie.coord.input.dependency.CoordInputDependency;
+57d49
+< import org.apache.oozie.service.URIHandlerService;
+161a154,158
+>             CoordInputDependency coordPullInputDependency = coordAction.getPullInputDependencies();
+>             CoordInputDependency coordPushInputDependency = coordAction.getPushInputDependencies();
+> 
+> 
+>             String missingDependencies = coordPullInputDependency.getMissingDependencies();
+163,165d159
+<             String firstMissingDependency = "";
+<             String missingDeps = coordAction.getMissingDependencies();
+<             CoordCommandUtils.getResolvedList(missingDeps, nonExistList, nonResolvedList);
+166a161,162
+>             CoordCommandUtils.getResolvedList(missingDependencies, nonExistList, nonResolvedList);
+>             String firstMissingDependency = "";
+169c165
+<             if(nonExistList.length() > 0) {
+---
+>             if (nonExistList.length() > 0) {
+174,178c170,174
+<             
+<             boolean status = checkInput(actionXml, existList, nonExistList, actionConf);
+<             String pushDeps = coordAction.getPushMissingDependencies();
+<             
+<             
+---
+> 
+> 
+>             boolean status = checkResolvedInput(actionXml, existList, nonExistList, actionConf);
+>             String nonExistListStr = nonExistList.toString();
+>             boolean isPushDependenciesMet = coordPushInputDependency.isDependencyMet();
+180,181c176
+<                 status = (pushDeps == null || pushDeps.length() == 0) ? checkUnResolvedInput(actionXml, actionConf)
+<                         : false;
+---
+>                 status = (isPushDependenciesMet) ? checkUnResolvedInput(actionXml, actionConf) : false;
+185,195c180,185
+<             if (nonResolvedList.length() > 0 && status == false) {
+<                 nonExistList.append(CoordCommandUtils.RESOLVED_UNRESOLVED_SEPARATOR).append(nonResolvedList);
+<             }
+<             String nonExistListStr = nonExistList.toString();
+<             if (!nonExistListStr.equals(missingDeps) || missingDeps.isEmpty()) {
+<                 
+<                 isChangeInDependency = true;
+<                 coordAction.setMissingDependencies(nonExistListStr);
+<             }
+<             if (status && (pushDeps == null || pushDeps.length() == 0)) {
+<                 String newActionXml = resolveCoordConfiguration(actionXml, actionConf, actionId);
+---
+> 
+>             isChangeInDependency = isChangeInDependency(nonExistList, missingDependencies, nonResolvedList, status);
+> 
+>             if (status && isPushDependenciesMet) {
+>                 String newActionXml = resolveCoordConfiguration(actionXml, actionConf, actionId,
+>                         coordPullInputDependency, coordPushInputDependency);
+210c200
+<                 if (!nonExistListStr.isEmpty() && pushDeps == null || pushDeps.length() == 0) {
+---
+>                 if (!nonExistListStr.isEmpty() && isPushDependenciesMet) {
+248a239,251
+>     private boolean isChangeInDependency(StringBuilder nonExistList, String missingDependencies,
+>             StringBuilder nonResolvedList, boolean status) throws IOException {
+>         if (nonResolvedList.length() > 0 && status == false) {
+>             nonExistList.append(CoordCommandUtils.RESOLVED_UNRESOLVED_SEPARATOR).append(nonResolvedList);
+>         }
+>         return coordAction.getPullInputDependencies().isChangeInDependency(nonExistList, missingDependencies,
+>                 nonResolvedList, status);
+>     }
+> 
+>     static String resolveCoordConfiguration(StringBuilder actionXml, Configuration actionConf, String actionId)
+>             throws Exception {
+>         return resolveCoordConfiguration(actionXml, actionConf, actionId, null, null);
+>     }
+250c253,254
+<     static String resolveCoordConfiguration(StringBuilder actionXml, Configuration actionConf, String actionId) throws Exception {
+---
+>     static String resolveCoordConfiguration(StringBuilder actionXml, Configuration actionConf, String actionId,
+>             CoordInputDependency pullDependencies, CoordInputDependency pushDependencies) throws Exception {
+252c256,257
+<         ELEvaluator eval = CoordELEvaluator.createDataEvaluator(eAction, actionConf, actionId);
+---
+>         ELEvaluator eval = CoordELEvaluator.createDataEvaluator(eAction, actionConf, actionId, pullDependencies,
+>                 pushDependencies);
+270a276
+>                     coordAction.setMissingDependencies(coordAction.getPullInputDependencies().serialize());
+284c290
+<             catch (JPAExecutorException jex) {
+---
+>             catch (Exception jex) {
+289d294
+< 
+313c318
+<     protected boolean checkInput(StringBuilder actionXml, StringBuilder existList, StringBuilder nonExistList,
+---
+>     protected boolean checkResolvedInput(StringBuilder actionXml, StringBuilder existList, StringBuilder nonExistList,
+315,316c320,321
+<         Element eAction = XmlUtils.parseXml(actionXml.toString());
+<         return checkResolvedUris(eAction, existList, nonExistList, conf);
+---
+>         return coordAction.getPullInputDependencies().checkPullMissingDependencies(coordAction, existList,
+>                 nonExistList);
+319c324,334
+<     protected boolean checkUnResolvedInput(StringBuilder actionXml, Configuration conf) throws Exception {
+---
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>     protected boolean checkUnResolvedInput(CoordinatorActionBean coordAction, StringBuilder actionXml,
+>             Configuration conf) throws Exception {
+322c337
+<         boolean allExist = checkUnresolvedInstances(eAction, conf);
+---
+>         boolean allExist = checkUnresolvedInstances(coordAction, eAction, conf);
+336a352,363
+>     protected boolean checkUnResolvedInput(StringBuilder actionXml, Configuration conf) throws Exception {
+>         return checkUnResolvedInput(coordAction, actionXml, conf);
+>     }
+> 
+>     
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+381,405c408,411
+<     private boolean checkUnresolvedInstances(Element eAction, Configuration actionConf) throws Exception {
+<         String strAction = XmlUtils.prettyPrint(eAction).toString();
+<         Date nominalTime = DateUtils.parseDateOozieTZ(eAction.getAttributeValue("action-nominal-time"));
+<         String actualTimeStr = eAction.getAttributeValue("action-actual-time");
+<         Date actualTime = null;
+<         if (actualTimeStr == null) {
+<             LOG.debug("Unable to get action-actual-time from action xml, this job is submitted " +
+<             "from previous version. Assign current date to actual time, action = " + actionId);
+<             actualTime = new Date();
+<         } else {
+<             actualTime = DateUtils.parseDateOozieTZ(actualTimeStr);
+<         }
+< 
+<         StringBuffer resultedXml = new StringBuffer();
+< 
+<         boolean ret;
+<         Element inputList = eAction.getChild("input-events", eAction.getNamespace());
+<         if (inputList != null) {
+<             ret = materializeUnresolvedEvent(inputList.getChildren("data-in", eAction.getNamespace()), nominalTime,
+<                     actualTime, actionConf);
+<             if (ret == false) {
+<                 resultedXml.append(strAction);
+<                 return false;
+<             }
+<         }
+---
+>     private boolean checkUnresolvedInstances(CoordinatorActionBean coordAction, Element eAction,
+>             Configuration actionConf) throws Exception {
+> 
+>         boolean ret = coordAction.getPullInputDependencies().checkUnresolved(coordAction, eAction);
+412c418
+<                 if (dEvent.getChild(CoordCommandUtils.UNRESOLVED_INST_TAG, dEvent.getNamespace()) != null) {
+---
+>                 if (dEvent.getChild(CoordCommandUtils.UNRESOLVED_INSTANCES_TAG, dEvent.getNamespace()) != null) {
+418,596c424
+<         return true;
+<     }
+< 
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<     @SuppressWarnings("unchecked")
+<     private boolean materializeUnresolvedEvent(List<Element> eDataEvents, Date nominalTime, Date actualTime,
+<             Configuration conf) throws Exception {
+<         for (Element dEvent : eDataEvents) {
+<             if (dEvent.getChild(CoordCommandUtils.UNRESOLVED_INST_TAG, dEvent.getNamespace()) == null) {
+<                 continue;
+<             }
+<             ELEvaluator eval = CoordELEvaluator.createLazyEvaluator(actualTime, nominalTime, dEvent, conf);
+<             String uresolvedInstance = dEvent.getChild(CoordCommandUtils.UNRESOLVED_INST_TAG, dEvent.getNamespace()).getTextTrim();
+<             String unresolvedList[] = uresolvedInstance.split(CoordELFunctions.INSTANCE_SEPARATOR);
+<             StringBuffer resolvedTmp = new StringBuffer();
+<             for (int i = 0; i < unresolvedList.length; i++) {
+<                 String ret = CoordELFunctions.evalAndWrap(eval, unresolvedList[i]);
+<                 Boolean isResolved = (Boolean) eval.getVariable("is_resolved");
+<                 if (isResolved == false) {
+<                     LOG.info("[" + actionId + "]::Cannot resolve: " + ret);
+<                     return false;
+<                 }
+<                 if (resolvedTmp.length() > 0) {
+<                     resolvedTmp.append(CoordELFunctions.INSTANCE_SEPARATOR);
+<                 }
+<                 resolvedTmp.append((String) eval.getVariable("resolved_path"));
+<             }
+<             if (resolvedTmp.length() > 0) {
+<                 if (dEvent.getChild("uris", dEvent.getNamespace()) != null) {
+<                     resolvedTmp.append(CoordELFunctions.INSTANCE_SEPARATOR).append(
+<                             dEvent.getChild("uris", dEvent.getNamespace()).getTextTrim());
+<                     dEvent.removeChild("uris", dEvent.getNamespace());
+<                 }
+<                 Element uriInstance = new Element("uris", dEvent.getNamespace());
+<                 uriInstance.addContent(resolvedTmp.toString());
+<                 dEvent.getContent().add(1, uriInstance);
+<             }
+<             dEvent.removeChild(CoordCommandUtils.UNRESOLVED_INST_TAG, dEvent.getNamespace());
+<         }
+< 
+<         return true;
+<     }
+< 
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<     private boolean checkResolvedUris(Element eAction, StringBuilder existList, StringBuilder nonExistList,
+<             Configuration conf) throws IOException {
+<         Element inputList = eAction.getChild("input-events", eAction.getNamespace());
+<         if (inputList != null) {
+<             if (nonExistList.length() > 0) {
+<                 checkListOfPaths(existList, nonExistList, conf);
+<             }
+<             return nonExistList.length() == 0;
+<         }
+<         return true;
+<     }
+< 
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<     private boolean checkListOfPaths(StringBuilder existList, StringBuilder nonExistList, Configuration conf)
+<             throws IOException {
+< 
+<         String[] uriList = nonExistList.toString().split(CoordELFunctions.INSTANCE_SEPARATOR);
+<         if (uriList[0] != null) {
+<             LOG.info("[" + actionId + "]::ActionInputCheck:: In checkListOfPaths: " + uriList[0] + " is Missing.");
+<         }
+< 
+<         nonExistList.delete(0, nonExistList.length());
+<         boolean allExists = true;
+<         String existSeparator = "", nonExistSeparator = "";
+<         String user = ParamChecker.notEmpty(conf.get(OozieClient.USER_NAME), OozieClient.USER_NAME);
+<         for (int i = 0; i < uriList.length; i++) {
+<             if (allExists) {
+<                 allExists = pathExists(uriList[i], conf, user);
+<                 LOG.info("[" + actionId + "]::ActionInputCheck:: File:" + uriList[i] + ", Exists? :" + allExists);
+<             }
+<             if (allExists) {
+<                 existList.append(existSeparator).append(uriList[i]);
+<                 existSeparator = CoordELFunctions.INSTANCE_SEPARATOR;
+<             }
+<             else {
+<                 nonExistList.append(nonExistSeparator).append(uriList[i]);
+<                 nonExistSeparator = CoordELFunctions.INSTANCE_SEPARATOR;
+<             }
+<         }
+<         return allExists;
+<     }
+< 
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<     protected boolean pathExists(String sPath, Configuration actionConf, String user) throws IOException {
+<         LOG.debug("checking for the file " + sPath);
+<         try {
+<             URI uri = new URI(sPath);
+<             URIHandlerService service = Services.get().get(URIHandlerService.class);
+<             URIHandler handler = service.getURIHandler(uri);
+<             return handler.exists(uri, actionConf, user);
+<         }
+<         catch (URIHandlerException e) {
+<             coordAction.setErrorCode(e.getErrorCode().toString());
+<             coordAction.setErrorMessage(e.getMessage());
+<             if (e.getCause() != null && e.getCause() instanceof AccessControlException) {
+<                 throw (AccessControlException) e.getCause();
+<             }
+<             else {
+<                 throw new IOException(e);
+<             }
+<         }
+<         catch (URISyntaxException e) {
+<             coordAction.setErrorCode(ErrorCode.E0906.toString());
+<             coordAction.setErrorMessage(e.getMessage());
+<             throw new IOException(e);
+<         }
+<     }
+< 
+<     
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<     @SuppressWarnings("unused")
+<     private String createURIs(Element event, String instances, StringBuilder unresolvedInstances) throws Exception {
+<         if (instances == null || instances.length() == 0) {
+<             return "";
+<         }
+<         String[] instanceList = instances.split(CoordELFunctions.INSTANCE_SEPARATOR);
+<         StringBuilder uris = new StringBuilder();
+< 
+<         for (int i = 0; i < instanceList.length; i++) {
+<             int funcType = CoordCommandUtils.getFuncType(instanceList[i]);
+<             if (funcType == CoordCommandUtils.LATEST || funcType == CoordCommandUtils.FUTURE) {
+<                 if (unresolvedInstances.length() > 0) {
+<                     unresolvedInstances.append(CoordELFunctions.INSTANCE_SEPARATOR);
+<                 }
+<                 unresolvedInstances.append(instanceList[i]);
+<                 continue;
+<             }
+<             ELEvaluator eval = CoordELEvaluator.createURIELEvaluator(instanceList[i]);
+<             if (uris.length() > 0) {
+<                 uris.append(CoordELFunctions.INSTANCE_SEPARATOR);
+<             }
+<             uris.append(CoordELFunctions.evalAndWrap(eval, event.getChild("dataset", event.getNamespace()).getChild(
+<                     "uri-template", event.getNamespace()).getTextTrim()));
+<         }
+<         return uris.toString();
+---
+>         return ret;

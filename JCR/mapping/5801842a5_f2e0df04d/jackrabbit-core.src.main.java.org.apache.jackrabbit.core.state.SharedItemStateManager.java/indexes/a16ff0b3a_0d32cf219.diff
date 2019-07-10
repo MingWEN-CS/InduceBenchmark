@@ -1,0 +1,34 @@
+877c877,885
+<                 addReferences(i.next());
+---
+>                 ItemState state = i.next();
+>                 if (!state.isNode()) {
+>                     
+>                     if (hasItemState(state.getId())) {
+>                         removeReferences(getItemState(state.getId()));
+>                     }
+>                     
+>                     addReferences((PropertyState) state);
+>                 }
+887c895
+<                     addReferences(state);
+---
+>                     addReferences((PropertyState) state);
+897,906c905,910
+<         private void addReferences(ItemState state)
+<                 throws NoSuchItemStateException, ItemStateException {
+<             if (!state.isNode()) {
+<                 PropertyState property = (PropertyState) state;
+<                 if (property.getType() == PropertyType.REFERENCE) {
+<                     InternalValue[] values = property.getValues();
+<                     for (int i = 0; values != null && i < values.length; i++) {
+<                         addReference(
+<                                 property.getPropertyId(), values[i].getUUID());
+<                     }
+---
+>         private void addReferences(PropertyState property) throws NoSuchItemStateException,
+>                 ItemStateException {
+>             if (property.getType() == PropertyType.REFERENCE) {
+>                 InternalValue[] values = property.getValues();
+>                 for (int i = 0; values != null && i < values.length; i++) {
+>                     addReference(property.getPropertyId(), values[i].getUUID());

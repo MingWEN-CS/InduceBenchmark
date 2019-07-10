@@ -1,0 +1,71 @@
+74a75
+> import static org.apache.hadoop.ipc.RpcConstants.CURRENT_VERSION;
+161,163d161
+<   
+<   
+< 
+165d162
+<   public static final ByteBuffer HEADER = ByteBuffer.wrap("hrpc".getBytes());
+183,193d179
+<   
+<   
+<   
+<   
+<   
+<   
+<   
+<   
+<   
+<   
+<   public static final byte CURRENT_VERSION = 9;
+297a284,292
+>   
+> 
+> 
+>   public static byte[] getClientId() {
+>     Call call = CurCall.get();
+>     return call != null ? call.clientId : RpcConstants.DUMMY_CLIENT_ID;
+>   }
+>   
+>   
+456a452
+>     private final byte[] clientId;
+459c455,456
+<       this( id,  param,  connection, RPC.RpcKind.RPC_BUILTIN );    
+---
+>       this(id, param, connection, RPC.RpcKind.RPC_BUILTIN,
+>           RpcConstants.DUMMY_CLIENT_ID);
+461c458,460
+<     public Call(int id, Writable param, Connection connection, RPC.RpcKind kind) { 
+---
+> 
+>     public Call(int id, Writable param, Connection connection,
+>         RPC.RpcKind kind, byte[] clientId) {
+467a467
+>       this.clientId = clientId;
+1433,1434c1433,1435
+<         
+<           if (!HEADER.equals(dataLengthBuffer) || version != CURRENT_VERSION) {
+---
+>           
+>           if (!RpcConstants.HEADER.equals(dataLengthBuffer)
+>               || version != CURRENT_VERSION) {
+1456c1457
+<           if ((dataLength == Client.PING_CALL_ID) && (!useWrap)) {
+---
+>           if ((dataLength == RpcConstants.PING_CALL_ID) && (!useWrap)) {
+1667c1668
+<           if (unwrappedDataLength == Client.PING_CALL_ID) {
+---
+>           if (unwrappedDataLength == RpcConstants.PING_CALL_ID) {
+1776,1777c1777,1779
+<       Call call = new Call(header.getCallId(), rpcRequest, this, 
+<           ProtoUtil.convert(header.getRpcKind()));
+---
+>       Call call = new Call(header.getCallId(), rpcRequest, this,
+>           ProtoUtil.convert(header.getRpcKind()), header.getClientId()
+>               .toByteArray());
+2128c2130
+<     headerBuilder.setServerIpcVersionNum(Server.CURRENT_VERSION);
+---
+>     headerBuilder.setServerIpcVersionNum(CURRENT_VERSION);

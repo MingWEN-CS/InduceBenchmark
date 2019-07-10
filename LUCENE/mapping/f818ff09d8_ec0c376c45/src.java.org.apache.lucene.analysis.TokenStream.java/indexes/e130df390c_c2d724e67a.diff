@@ -1,0 +1,95 @@
+20a21
+> import java.util.IdentityHashMap;
+78,83d78
+<   private static final Class[] METHOD_NO_PARAMS = new Class[0];
+< 
+<   
+<   private static final Class[] METHOD_TOKEN_PARAM = new Class[]{Token.class};
+<   
+<   
+90,94c85,86
+<   private final boolean
+<     hasIncrementToken = isMethodOverridden("incrementToken", METHOD_NO_PARAMS),
+<     hasReusableNext = onlyUseNewAPI ? false : isMethodOverridden("next", METHOD_TOKEN_PARAM),
+<     hasNext = onlyUseNewAPI ? false : isMethodOverridden("next", METHOD_NO_PARAMS);
+<   
+---
+>   private final MethodSupport supportedMethods = getSupportedMethods(this.getClass());
+> 
+96,101c88,94
+<   private boolean isMethodOverridden(String name, Class[] params) {
+<     try {
+<       return this.getClass().getMethod(name, params).getDeclaringClass() != TokenStream.class;
+<     } catch (NoSuchMethodException e) {
+<       
+<       throw new RuntimeException(e);
+---
+>   private static final class MethodSupport {
+>     final boolean hasIncrementToken, hasReusableNext, hasNext;
+> 
+>     MethodSupport(Class clazz) {
+>       hasIncrementToken = isMethodOverridden(clazz, "incrementToken", METHOD_NO_PARAMS);
+>       hasReusableNext = isMethodOverridden(clazz, "next", METHOD_TOKEN_PARAM);
+>       hasNext = isMethodOverridden(clazz, "next", METHOD_NO_PARAMS);
+102a96,107
+>     
+>     private static boolean isMethodOverridden(Class clazz, String name, Class[] params) {
+>       try {
+>         return clazz.getMethod(name, params).getDeclaringClass() != TokenStream.class;
+>       } catch (NoSuchMethodException e) {
+>         
+>         throw new RuntimeException(e);
+>       }
+>     }
+>     
+>     private static final Class[] METHOD_NO_PARAMS = new Class[0];
+>     private static final Class[] METHOD_TOKEN_PARAM = new Class[]{Token.class};
+103a109,112
+>       
+>   
+>   private static final IdentityHashMap knownMethodSupport = new IdentityHashMap();
+>   
+104a114,124
+>   private static MethodSupport getSupportedMethods(Class clazz) {
+>     MethodSupport supportedMethods;
+>     synchronized(knownMethodSupport) {
+>       supportedMethods = (MethodSupport) knownMethodSupport.get(clazz);
+>       if (supportedMethods == null) {
+>         knownMethodSupport.put(clazz, supportedMethods = new MethodSupport(clazz));
+>       }
+>     }
+>     return supportedMethods;
+>   }
+> 
+196c216
+<     if (onlyUseNewAPI && !hasIncrementToken) {
+---
+>     if (onlyUseNewAPI && !supportedMethods.hasIncrementToken) {
+201c221
+<     if (!(hasIncrementToken || hasNext || hasReusableNext)) {
+---
+>     if (!(supportedMethods.hasIncrementToken || supportedMethods.hasNext || supportedMethods.hasReusableNext)) {
+260c280
+<     if (hasReusableNext) {
+---
+>     if (supportedMethods.hasReusableNext) {
+263c283
+<       assert hasNext;
+---
+>       assert supportedMethods.hasNext;
+324c344
+<     if (hasIncrementToken) {
+---
+>     if (supportedMethods.hasIncrementToken) {
+328c348
+<       assert hasNext;
+---
+>       assert supportedMethods.hasNext;
+347c367
+<     if (hasIncrementToken) {
+---
+>     if (supportedMethods.hasIncrementToken) {
+350c370
+<       assert hasReusableNext;
+---
+>       assert supportedMethods.hasReusableNext;

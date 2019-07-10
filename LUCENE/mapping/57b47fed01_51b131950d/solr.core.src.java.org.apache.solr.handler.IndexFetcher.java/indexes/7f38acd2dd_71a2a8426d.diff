@@ -1,0 +1,21 @@
+70a71
+> import org.apache.solr.client.solrj.impl.HttpSolrClient.Builder;
+234c235
+<     try (HttpSolrClient client = new HttpSolrClient(masterUrl, myHttpClient)) {
+---
+>     try (HttpSolrClient client = new Builder(masterUrl).withHttpClient(myHttpClient).build()) {
+256c257
+<     try (HttpSolrClient client = new HttpSolrClient(masterUrl, myHttpClient)) {
+---
+>     try (HttpSolrClient client = new HttpSolrClient.Builder(masterUrl).withHttpClient(myHttpClient).build()) {
+1622c1623,1626
+<       try (HttpSolrClient client = new HttpSolrClient(masterUrl, myHttpClient, null)) {
+---
+>       try (HttpSolrClient client = new Builder(masterUrl)
+>           .withHttpClient(myHttpClient)
+>           .withResponseParser(null)
+>           .build()) {
+1731c1735
+<     try (HttpSolrClient client = new HttpSolrClient(masterUrl, myHttpClient)) {
+---
+>     try (HttpSolrClient client = new HttpSolrClient.Builder(masterUrl).withHttpClient(myHttpClient).build()) {

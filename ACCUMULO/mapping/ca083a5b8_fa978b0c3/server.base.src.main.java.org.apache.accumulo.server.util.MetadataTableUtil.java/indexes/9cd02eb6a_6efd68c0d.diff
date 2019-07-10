@@ -1,0 +1,4 @@
+885c885
+<       String dir = volumeManager.choose(ServerConstants.getBaseUris()) + Constants.HDFS_TABLES_DIR + Path.SEPARATOR + tableId
+---
+>       String dir = volumeManager.choose(ServerConstants.getBaseUris()) + Constants.HDFS_TABLES_DIR + Path.SEPARATOR + tableId + Path.SEPARATOR

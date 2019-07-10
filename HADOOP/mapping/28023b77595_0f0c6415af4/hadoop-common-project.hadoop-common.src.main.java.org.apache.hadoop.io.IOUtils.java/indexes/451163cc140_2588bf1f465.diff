@@ -1,0 +1,6 @@
+264c264,266
+<     cleanup(null, stream);
+---
+>     if (stream != null) {
+>       cleanup(null, stream);
+>     }

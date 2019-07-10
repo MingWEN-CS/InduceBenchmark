@@ -1,0 +1,187 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.solr.search;
+
+import org.apache.lucene.search.ConstantScoreQuery;
+import org.apache.lucene.search.Query;
+import org.apache.solr.SolrTestCaseJ4;
+import org.apache.solr.request.SolrQueryRequest;
+import org.apache.solr.response.transform.ScoreAugmenter;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+
+public class TestSolrQueryParser extends SolrTestCaseJ4 {
+  @BeforeClass
+  public static void beforeClass() throws Exception {
+    System.setProperty("enable.update.log", "false"); 
+    initCore("solrconfig.xml", "schema12.xml");
+    createIndex();
+  }
+
+  public static void createIndex() {
+    String v;
+    v="how now brown cow";
+    assertU(adoc("id","1", "text",v,  "text_np",v));
+    v="now cow";
+    assertU(adoc("id","2", "text",v,  "text_np",v));
+    assertU(adoc("id","3", "foo_s","a ' \" \\ {! ) } ( { z"));  
+
+    assertU(adoc("id","10", "qqq_s","X"));
+    assertU(adoc("id","11", "www_s","X"));
+    assertU(adoc("id","12", "eee_s","X"));
+    assertU(adoc("id","13", "eee_s","'balance'"));
+
+    assertU(commit());
+  }
+
+  @Test
+  public void testPhrase() {
+    
+    assertQ(req("q","text:now-cow", "indent","true")
+        ,"
+    );
+    
+    assertQ(req("q","text_np:now-cow", "indent","true")
+        ,"
+    );
+  }
+
+  @Test
+  public void testLocalParamsInQP() throws Exception {
+    assertJQ(req("q","qaz {!term f=text v=$qq} wsx", "qq","now")
+        ,"/response/numFound==2"
+    );
+
+    assertJQ(req("q","qaz {!term f=text v=$qq} wsx", "qq","nomatch")
+        ,"/response/numFound==0"
+    );
+
+    assertJQ(req("q","qaz {!term f=text}now wsx", "qq","now")
+        ,"/response/numFound==2"
+    );
+
+    assertJQ(req("q","qaz {!term f=foo_s v='a \\' \" \\\\ {! ) } ( { z'} wsx")           
+        ,"/response/numFound==1"
+    );
+
+    assertJQ(req("q","qaz {!term f=foo_s v=\"a ' \\\" \\\\ {! ) } ( { z\"} wsx")         
+        ,"/response/numFound==1"
+    );
+
+    
+    assertJQ(req("q","qaz {!join from=www_s to=eee_s}{!join from=qqq_s to=www_s}id:10" )
+        ,"/response/docs/[0]/id=='12'"
+    );
+  }
+
+  @Test
+  public void testSolr4121() throws Exception {
+    
+    assertJQ(req("q","eee_s:'balance'", "indent","true")
+        ,"/response/numFound==1"
+    );
+  }
+
+  @Test
+  public void testSyntax() throws Exception {
+    
+    assertJQ(req("q","*", "df","doesnotexist_s")
+        ,"/response/docs/[0]=="   
+    );
+    assertJQ(req("q","doesnotexist_s:*")
+        ,"/response/numFound==0"   
+    );
+    assertJQ(req("q","doesnotexist_s:( * * * )")
+        ,"/response/numFound==0"   
+     );
+
+    
+    assertJQ(req("q","foo_dt:\"2013-03-08T00:46:15Z/DAY+000MILLISECONDS+00SECONDS+00MINUTES+00HOURS+0000000000YEARS+6MONTHS+3DAYS\"", "debug","query")
+        ,"/debug/parsedquery=='foo_dt:2013-09-11T00:00:00Z'"
+    );
+  }
+
+  @Test
+  public void testNestedQueryModifiers() throws Exception {
+    
+    
+
+    String subqq="_query_:\"{!v=$qq}\"";
+
+    assertJQ(req("q","_query_:\"\\\"how brown\\\"~2\""
+        , "debug","query"
+    )
+        ,"/response/docs/[0]/id=='1'"
+    );
+
+    assertJQ(req("q",subqq, "qq","\"how brown\"~2"
+        , "debug","query"
+    )
+        ,"/response/docs/[0]/id=='1'"
+    );
+
+    
+    assertJQ(req("q",subqq+"~1", "qq","\"how brown\"~2"
+        , "debug","query"
+    )
+        ,"/response/docs/[0]/id=='1'"
+    );
+
+    
+    assertJQ(req("q","  {!v=$qq}~1", "qq","\"how brown\"~2"
+        , "debug","query"
+    )
+        ,"/response/docs/[0]/id=='1'"
+    );
+
+    
+    assertJQ(req("fq","id:1", "fl","id,score", "q", subqq+"^3", "qq","text:x^2"
+        , "debug","query"
+    )
+        ,"/debug/parsedquery=='text:x^6.0'"
+    );
+
+    
+    assertJQ(req("fq","id:1", "fl","id,score", "q", "  {!v=$qq}^3", "qq","text:x^2"
+        , "debug","query"
+    )
+        ,"/debug/parsedquery=='text:x^6.0'"
+    );
+
+  }
+
+
+
+  @Test
+  public void testCSQ() throws Exception {
+    SolrQueryRequest req = req();
+
+    QParser qParser = QParser.getParser("text:x^=3", "lucene", req);
+    Query q = qParser.getQuery();
+    assertTrue( q instanceof ConstantScoreQuery);
+    assertEquals(3.0, q.getBoost(), 0.0f);
+
+    qParser = QParser.getParser("(text:x text:y)^=-3", "lucene", req);
+    q = qParser.getQuery();
+    assertTrue( q instanceof ConstantScoreQuery );
+    assertEquals(-3.0, q.getBoost(), 0.0f);
+
+    req.close();
+  }
+
+}

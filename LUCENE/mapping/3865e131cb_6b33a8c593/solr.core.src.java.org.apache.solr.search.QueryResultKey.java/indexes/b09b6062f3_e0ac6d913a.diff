@@ -1,0 +1,76 @@
+23a24
+> import java.util.ArrayList;
+49a51,52
+>         
+>         
+81c84
+<     if (!isEqual(this.filters, other.filters)) return false;
+---
+>     if (!unorderedCompare(this.filters, other.filters)) return false;
+92,96d94
+< 
+<   
+<   
+<   
+<   
+98c96,110
+<   private static boolean isEqual(List<Query> fqList1, List<Query> fqList2) {
+---
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   private static boolean unorderedCompare(List<Query> fqList1, List<Query> fqList2) {
+>     
+>     
+>     
+>     
+>     
+102a115
+> 
+110a124,133
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+112,113c135,147
+<     int sz = fqList1.size();
+<     outer:
+---
+>     assert null != fqList1;
+>     assert null != fqList2;
+> 
+>     final int sz = fqList1.size();
+>     assert fqList2.size() == sz;
+> 
+>     
+>     
+>     
+>     
+>     
+> 
+>     final ArrayList<Query> set2 = new ArrayList<Query>(fqList2.subList(start, sz));
+116,118c150,151
+<       for (int j = start; j < sz; j++) {
+<         if (q1.equals(fqList2.get(j)))
+<           continue outer;
+---
+>       if ( ! set2.remove(q1) ) {
+>         return false;
+120d152
+<       return false;
+122c154
+<     return true;
+---
+>     return set2.isEmpty();

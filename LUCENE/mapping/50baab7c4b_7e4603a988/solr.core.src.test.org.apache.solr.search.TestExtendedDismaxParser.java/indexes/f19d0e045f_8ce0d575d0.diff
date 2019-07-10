@@ -1,0 +1,27 @@
+55c55
+<     assertU(adoc("id", "50", "text_sw", "start new big city end"));    
+---
+>     assertU(adoc("id", "50", "text_sw", "start new big city end"));
+354a355
+>     String allr = "*[count(
+368,369d368
+<     assertQ(req("defType","edismax", "uf","*", "q","id:42"),
+<         oner);
+370a370,386
+>     assertQ(req("defType","edismax", "q","( id:42 )"),
+>         oner);
+>     assertQ(req("defType","edismax", "q","(id:42)"),
+>         oner);
+>     assertQ(req("defType","edismax", "q","(+id:42)"),
+>         oner);
+>     assertQ(req("defType","edismax", "q","+(+id:42)"),
+>         oner);
+>     assertQ(req("defType","edismax", "q","+(+((id:42)))"),
+>         oner);
+>     assertQ(req("defType","edismax", "q","+(+((+id:42)))"),
+>         oner);
+>     assertQ(req("defType","edismax", "q"," +( +( ( +id:42) ) ) "),
+>         oner);
+>     assertQ(req("defType","edismax", "q","(id:(*:*)^200)"),
+>         allr);
+> 

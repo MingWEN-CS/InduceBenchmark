@@ -1,0 +1,15 @@
+29a30
+> import java.io.InterruptedIOException;
+300c301,310
+<       Thread.sleep(retryInfo.delay);
+---
+>       try {
+>         Thread.sleep(retryInfo.delay);
+>       } catch (InterruptedException e) {
+>         Thread.currentThread().interrupt();
+>         LOG.warn("Interrupted while waiting to retry", e);
+>         InterruptedIOException intIOE = new InterruptedIOException(
+>             "Retry interrupted");
+>         intIOE.initCause(e);
+>         throw intIOE;
+>       }

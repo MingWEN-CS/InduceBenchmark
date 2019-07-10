@@ -1,0 +1,175 @@
+23a24
+> import org.apache.oozie.lock.TestMemoryLocks;
+135c136
+<             _testWaitWriteLock(zkls, zkls);
+---
+>             checkWaitWriteLock(zkls, zkls);
+149c150
+<             _testWaitWriteLock(zkls1, zkls2);
+---
+>             checkWaitWriteLock(zkls1, zkls2);
+157c158
+<     public void _testWaitWriteLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+---
+>     public void checkWaitWriteLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+177c178
+<             _testNoWaitWriteLock(zkls, zkls);
+---
+>             checkNoWaitWriteLock(zkls, zkls);
+191c192
+<             _testNoWaitWriteLock(zkls1, zkls2);
+---
+>             checkNoWaitWriteLock(zkls1, zkls2);
+199c200
+<     public void _testNoWaitWriteLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+---
+>     public void checkNoWaitWriteLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+219c220
+<             _testTimeoutWaitingWriteLock(zkls, zkls);
+---
+>             checkTimeoutWaitingWriteLock(zkls, zkls);
+233c234
+<             _testTimeoutWaitingWriteLock(zkls1, zkls2);
+---
+>             checkTimeoutWaitingWriteLock(zkls1, zkls2);
+241c242
+<     public void _testTimeoutWaitingWriteLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+---
+>     public void checkTimeoutWaitingWriteLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+261c262
+<             _testTimeoutTimingOutWriteLock(zkls, zkls);
+---
+>             checkTimeoutTimingOutWriteLock(zkls, zkls);
+275c276
+<             _testTimeoutTimingOutWriteLock(zkls1, zkls2);
+---
+>             checkTimeoutTimingOutWriteLock(zkls1, zkls2);
+283c284
+<     public void _testTimeoutTimingOutWriteLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+---
+>     public void checkTimeoutTimingOutWriteLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+303c304
+<             _testReadLock(zkls, zkls);
+---
+>             checkReadLock(zkls, zkls);
+317c318
+<             _testReadLock(zkls1, zkls2);
+---
+>             checkReadLock(zkls1, zkls2);
+325c326
+<     public void _testReadLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+---
+>     public void checkReadLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+345c346
+<             _testReadWriteLock(zkls, zkls);
+---
+>             checkReadWriteLock(zkls, zkls);
+359c360
+<             _testReadWriteLock(zkls1, zkls2);
+---
+>             checkReadWriteLock(zkls1, zkls2);
+367c368
+<     public void _testReadWriteLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+---
+>     public void checkReadWriteLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+387c388
+<             _testWriteReadLock(zkls, zkls);
+---
+>             checkWriteReadLock(zkls, zkls);
+401c402
+<             _testWriteReadLock(zkls1, zkls2);
+---
+>             checkWriteReadLock(zkls1, zkls2);
+409c410
+<     public void _testWriteReadLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+---
+>     public void checkWriteReadLock(ZKLocksService zkls1, ZKLocksService zkls2) throws Exception {
+430c431
+<             ZKLockToken lock = (ZKLockToken) zkls.getWriteLock(path, 5000);
+---
+>             ZKLockToken lock = (ZKLockToken) zkls.getWriteLock(path, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);
+433c434
+<             assertFalse(zkls.getLocks().containsKey(path));
+---
+>             checkLockRelease(path, zkls);
+445,447c446,448
+<             ZKLockToken lock = (ZKLockToken) zkls.getWriteLock(path, 5000);
+<             lock = (ZKLockToken) zkls.getWriteLock(path, 5000);
+<             lock = (ZKLockToken) zkls.getWriteLock(path, 5000);
+---
+>             ZKLockToken lock = (ZKLockToken) zkls.getWriteLock(path, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);
+>             lock = (ZKLockToken) zkls.getWriteLock(path, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);
+>             lock = (ZKLockToken) zkls.getWriteLock(path, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);
+454c455
+<             assertFalse(zkls.getLocks().containsKey(path));
+---
+>             checkLockRelease(path, zkls);
+473c474
+<             assertFalse(zkls.getLocks().containsKey(path));
+---
+>             checkLockRelease(path, zkls);
+476c477
+<             assertFalse(zkls.getLocks().containsKey(path));
+---
+>             checkLockRelease(path, zkls);
+509a511,562
+>     public void testLocksAreGarbageCollected() throws ServiceException, InterruptedException {
+>         String path = new String("a");
+>         String path1 = new String("a");
+>         ZKLocksService lockService = new ZKLocksService();
+>         try {
+>             lockService.init(Services.get());
+>             LockToken lock = lockService.getWriteLock(path, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);
+>             lock.release();
+>             assertEquals(lockService.getLocks().size(), 1);
+>             int oldHash = lockService.getLocks().get(path).hashCode();
+>             lock = lockService.getWriteLock(path1, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);
+>             int newHash = lockService.getLocks().get(path1).hashCode();
+>             assertTrue(oldHash == newHash);
+>             lock = null;
+>             System.gc();
+>             lock = lockService.getWriteLock(path, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);
+>             newHash = lockService.getLocks().get(path).hashCode();
+>             assertFalse(oldHash == newHash);
+>         }
+>         finally {
+>             lockService.destroy();
+>         }
+>     }
+> 
+>     public void testLocksAreReused() throws ServiceException, InterruptedException {
+>         String path = "a";
+>         ZKLocksService lockService = new ZKLocksService();
+>         try {
+>             lockService.init(Services.get());
+>             LockToken lock = lockService.getWriteLock(path, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);
+>             int oldHash = System.identityHashCode(lockService.getLocks().get(path));
+>             System.gc();
+>             lock.release();
+>             lock = lockService.getWriteLock(path, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);
+>             assertEquals(lockService.getLocks().size(), 1);
+>             int newHash = System.identityHashCode(lockService.getLocks().get(path));
+>             assertTrue(oldHash == newHash);
+>         }
+>         finally {
+>             lockService.destroy();
+>         }
+>     }
+> 
+>     private void checkLockRelease(String path, ZKLocksService zkls) {
+>         if (zkls.getLocks().get(path) == null) {
+>             
+>         }
+>         else {
+>             assertFalse(zkls.getLocks().get(path).writeLock().isAcquiredInThisProcess());
+>         }
+>     }
+> 
+523c576
+<                 lock = zkls.getWriteLock(path, 5000);
+---
+>                 lock = zkls.getWriteLock(path, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);
+525c578
+<                     lock = zkls.getWriteLock(path, 5000);
+---
+>                     lock = zkls.getWriteLock(path, TestMemoryLocks.DEFAULT_LOCK_TIMEOUT);

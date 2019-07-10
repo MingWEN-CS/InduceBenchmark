@@ -1,0 +1,46 @@
+19a20,39
+> import java.io.IOException;
+> import java.util.ArrayList;
+> import java.util.Collection;
+> import java.util.Date;
+> import java.util.EnumSet;
+> import java.util.IdentityHashMap;
+> import java.util.List;
+> import java.util.Map;
+> import java.util.Set;
+> import java.util.concurrent.Callable;
+> import java.util.concurrent.ExecutionException;
+> import java.util.concurrent.Executor;
+> import java.util.concurrent.Future;
+> import java.util.concurrent.FutureTask;
+> import java.util.concurrent.RunnableFuture;
+> import java.util.concurrent.Semaphore;
+> import java.util.concurrent.SynchronousQueue;
+> import java.util.concurrent.ThreadPoolExecutor;
+> import java.util.concurrent.TimeUnit;
+> 
+77,96d96
+< import java.io.IOException;
+< import java.util.ArrayList;
+< import java.util.Collection;
+< import java.util.Date;
+< import java.util.EnumSet;
+< import java.util.IdentityHashMap;
+< import java.util.List;
+< import java.util.Map;
+< import java.util.Set;
+< import java.util.concurrent.Callable;
+< import java.util.concurrent.ExecutionException;
+< import java.util.concurrent.Executor;
+< import java.util.concurrent.Future;
+< import java.util.concurrent.FutureTask;
+< import java.util.concurrent.RunnableFuture;
+< import java.util.concurrent.Semaphore;
+< import java.util.concurrent.SynchronousQueue;
+< import java.util.concurrent.ThreadPoolExecutor;
+< import java.util.concurrent.TimeUnit;
+< 
+1436c1436
+<       IntervalFacets intervalFacets = new IntervalFacets(schemaField, searcher, docs, intervalStrs);
+---
+>       IntervalFacets intervalFacets = new IntervalFacets(schemaField, searcher, docs, intervalStrs, params);

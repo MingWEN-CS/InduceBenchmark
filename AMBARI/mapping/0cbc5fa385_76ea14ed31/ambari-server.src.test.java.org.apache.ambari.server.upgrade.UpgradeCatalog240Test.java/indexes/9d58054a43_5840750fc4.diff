@@ -1,0 +1,145 @@
+101a102
+> import org.apache.ambari.server.state.PropertyInfo;
+1408c1409,1412
+<     final AmbariManagementController controller = createNiceMock(AmbariManagementController.class);
+---
+>     final AmbariManagementController controller = createMock(AmbariManagementController.class);
+>     final AmbariMetaInfo metaInfo = createMock(AmbariMetaInfo.class);
+>     final StackInfo stackInfo = createMock(StackInfo.class);
+>     final ServiceInfo serviceInfo = createMock(ServiceInfo.class);
+1438c1442
+<             "  {{domain|trim}} = {{realm}}\n" +
+---
+>             "  {{domain}} = {{realm}}\n" +
+1465,1470c1469
+<     final Cluster cluster = createNiceMock(Cluster.class);
+<     expect(cluster.getDesiredConfigByType("kerberos-env")).andReturn(configKerberosEnv).once();
+<     expect(cluster.getDesiredConfigByType("krb5-conf")).andReturn(configKrb5Conf).once();
+< 
+<     final Clusters clusters = createNiceMock(Clusters.class);
+<     expect(clusters.getClusters()).andReturn(Collections.singletonMap("c1", cluster));
+---
+>     final StackId currentStackVersion = new StackId("HDP", "2.4.2");
+1472c1471,1475
+<     expect(controller.getClusters()).andReturn(clusters).once();
+---
+>     final Cluster cluster = createNiceMock(Cluster.class);
+>     expect(cluster.getClusterName()).andReturn("c1").anyTimes();
+>     expect(cluster.getDesiredConfigByType("kerberos-env")).andReturn(configKerberosEnv).anyTimes();
+>     expect(cluster.getDesiredConfigByType("krb5-conf")).andReturn(configKrb5Conf).anyTimes();
+>     expect(cluster.getCurrentStackVersion()).andReturn(currentStackVersion).once();
+1481,1486c1484,1487
+<     expect(cluster.getDesiredConfigByType("kerberos-env"))
+<         .andReturn(configKerberosEnv)
+<         .once();
+<     expect(cluster.getDesiredConfigByType("krb5-conf"))
+<         .andReturn(configKerberosEnv)
+<         .once();
+---
+>     final Clusters clusters = createNiceMock(Clusters.class);
+>     expect(clusters.getClusters()).andReturn(Collections.singletonMap("c1", cluster));
+> 
+>     expect(controller.getClusters()).andReturn(clusters).once();
+1494d1494
+< 
+1498a1499,1503
+>     expect(controller.getAmbariMetaInfo()).andReturn(metaInfo).once();
+> 
+>     expect(metaInfo.getStack(currentStackVersion.getStackName(), currentStackVersion.getStackVersion()))
+>         .andReturn(stackInfo)
+>         .once();
+1500c1505,1514
+<     replay(controller, dbAccessor, osFamily, cluster, configKerberosEnv, configKrb5Conf, clusters);
+---
+>     expect(stackInfo.getService("KERBEROS")).andReturn(serviceInfo).once();
+> 
+>     final PropertyInfo propertyInfo = new PropertyInfo();
+>     propertyInfo.setFilename("krb5-conf.xml");
+>     propertyInfo.setName("content");
+>     propertyInfo.setValue("new content template");
+> 
+>     expect(serviceInfo.getProperties()).andReturn(Collections.singletonList(propertyInfo)).once();
+> 
+>     replay(controller, metaInfo, stackInfo, serviceInfo, dbAccessor, osFamily, cluster, configKerberosEnv, configKrb5Conf, clusters);
+1515c1529
+<     verify(controller, dbAccessor, osFamily, cluster, configKerberosEnv, configKrb5Conf, clusters);
+---
+>     verify(controller, metaInfo, stackInfo, serviceInfo, dbAccessor, osFamily, cluster, configKerberosEnv, configKrb5Conf, clusters);
+1544c1558
+<     for (String property : propertiesKerberosEnv.keySet()) {
+---
+>     for (String property : propertiesKrb5Conf.keySet()) {
+1546,1581c1560
+<         Assert.assertEquals(property, "[libdefaults]\n" +
+<             "  renew_lifetime = 7d\n" +
+<             "  forwardable = true\n" +
+<             "  default_realm = {{realm}}\n" +
+<             "  ticket_lifetime = 24h\n" +
+<             "  dns_lookup_realm = false\n" +
+<             "  dns_lookup_kdc = false\n" +
+<             "  #default_tgs_enctypes = {{encryption_types}}\n" +
+<             "  #default_tkt_enctypes = {{encryption_types}}\n" +
+<             "{% if domains %}\n" +
+<             "[domain_realm]\n" +
+<             "{%- for domain in domains.split(',') %}\n" +
+<             "  {{domain|trim()}} = {{realm}}\n" +
+<             "{%- endfor %}\n" +
+<             "{% endif %}\n" +
+<             "[logging]\n" +
+<             "  default = FILE:/var/log/krb5kdc.log\n" +
+<             "  admin_server = FILE:/var/log/kadmind.log\n" +
+<             "  kdc = FILE:/var/log/krb5kdc.log\n" +
+<             "\n" +
+<             "[realms]\n" +
+<             "  {{realm}} = {\n" +
+<             "{%- if kdc_hosts > 0 -%}\n" +
+<             "{%- set kdc_host_list = kdc_hosts.split(',')  -%}\n" +
+<             "{%- if kdc_host_list and kdc_host_list|length > 0 %}\n" +
+<             "    admin_server = {{admin_server_host|default(kdc_host_list[0]|trim(), True)}}\n" +
+<             "{%- if kdc_host_list -%}\n" +
+<             "{% for kdc_host in kdc_host_list %}\n" +
+<             "    kdc = {{kdc_host|trim()}}\n" +
+<             "{%- endfor -%}\n" +
+<             "{% endif %}\n" +
+<             "{%- endif %}\n" +
+<             "{%- endif %}\n" +
+<             "  }\n" +
+<             "\n" +
+<             "{# Append additional realm declarations below #}", capturedCRProperties.get("content"));
+---
+>         Assert.assertEquals(property, "new content template", capturedCRProperties.get("content"));
+1590c1569,1572
+<     final AmbariManagementController controller = createNiceMock(AmbariManagementController.class);
+---
+>     final AmbariManagementController controller = createMock(AmbariManagementController.class);
+>     final AmbariMetaInfo metaInfo = createMock(AmbariMetaInfo.class);
+>     final StackInfo stackInfo = createMock(StackInfo.class);
+>     final ServiceInfo serviceInfo = createMock(ServiceInfo.class);
+1625a1608,1623
+>     expect(controller.getAmbariMetaInfo()).andReturn(metaInfo).once();
+> 
+>     final StackId currentStackVersion = new StackId("HDP", "2.4.2");
+> 
+>     expect(metaInfo.getStack(currentStackVersion.getStackName(), currentStackVersion.getStackVersion()))
+>         .andReturn(stackInfo)
+>         .once();
+> 
+>     expect(stackInfo.getService("KERBEROS")).andReturn(serviceInfo).once();
+> 
+>     final PropertyInfo propertyInfo = new PropertyInfo();
+>     propertyInfo.setFilename("krb5-conf.xml");
+>     propertyInfo.setName("content");
+>     propertyInfo.setValue("new content template");
+> 
+>     expect(serviceInfo.getProperties()).andReturn(Collections.singletonList(propertyInfo)).once();
+1634a1633,1634
+>     expect(cluster.getCurrentStackVersion()).andReturn(currentStackVersion).once();
+> 
+1647c1647
+<     replay(controller, dbAccessor, osFamily, cluster, configKerberosEnv, configKrb5Conf, clusters);
+---
+>     replay(controller, metaInfo, stackInfo, serviceInfo, dbAccessor, osFamily, cluster, configKerberosEnv, configKrb5Conf, clusters);
+1662c1662
+<     verify(controller, dbAccessor, osFamily, cluster, configKerberosEnv, configKrb5Conf, clusters);
+---
+>     verify(controller, metaInfo, stackInfo, serviceInfo, dbAccessor, osFamily, cluster, configKerberosEnv, configKrb5Conf, clusters);

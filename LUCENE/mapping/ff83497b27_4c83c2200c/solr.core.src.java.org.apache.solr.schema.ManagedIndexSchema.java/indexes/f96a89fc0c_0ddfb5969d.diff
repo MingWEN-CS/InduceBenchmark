@@ -1,0 +1,28 @@
+452,454c452,461
+<           if (copyFieldsMap.containsKey(name) || isCopyFieldTarget(field)) {
+<             throw new SolrException(ErrorCode.BAD_REQUEST, "Can't delete '" + name
+<                 + "' because it's referred to by at least one copy field directive.");
+---
+>           String message = "Can't delete field '" + name
+>               + "' because it's referred to by at least one copy field directive.";
+>           if (newSchema.copyFieldsMap.containsKey(name) || newSchema.isCopyFieldTarget(field)) {
+>             throw new SolrException(ErrorCode.BAD_REQUEST, message);
+>           }
+>           for (int i = 0 ; i < newSchema.dynamicCopyFields.length ; ++i) {
+>             DynamicCopy dynamicCopy = newSchema.dynamicCopyFields[i];
+>             if (name.equals(dynamicCopy.getRegex())) {
+>               throw new SolrException(ErrorCode.BAD_REQUEST, message);
+>             }
+847c854,857
+<             decrementCopyFieldTargetCount(dynamicCopy.getDestination().getPrototype());
+---
+>             SchemaField destinationPrototype = dynamicCopy.getDestination().getPrototype();
+>             if (copyFieldTargetCounts.containsKey(destinationPrototype)) {
+>               decrementCopyFieldTargetCount(destinationPrototype);
+>             }
+1129c1139,1141
+<           newSchema.decrementCopyFieldTargetCount(destinationPrototype);
+---
+>           if (newSchema.copyFieldTargetCounts.containsKey(destinationPrototype)) {
+>             newSchema.decrementCopyFieldTargetCount(destinationPrototype);
+>           }

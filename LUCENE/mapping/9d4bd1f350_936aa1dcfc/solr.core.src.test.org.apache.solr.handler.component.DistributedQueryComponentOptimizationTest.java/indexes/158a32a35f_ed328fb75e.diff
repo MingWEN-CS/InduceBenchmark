@@ -1,0 +1,14 @@
+23d22
+< import org.apache.solr.cloud.AbstractFullDistribZkTestBase;
+27a27
+> import org.junit.Test;
+43,44d42
+<     fixShardCount = true;
+<     shardCount = 3;
+53,54c51,53
+<   @Override
+<   public void doTest() throws Exception {
+---
+>   @Test
+>   @ShardsFixed(num = 3)
+>   public void test() throws Exception {

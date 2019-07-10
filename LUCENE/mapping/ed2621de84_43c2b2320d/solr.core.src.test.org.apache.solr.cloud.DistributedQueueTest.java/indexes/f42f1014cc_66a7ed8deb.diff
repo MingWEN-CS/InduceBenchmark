@@ -1,0 +1,18 @@
+25a26
+> import com.google.common.base.Predicates;
+33a35,37
+> import static com.google.common.base.Predicates.alwaysFalse;
+> import static com.google.common.base.Predicates.alwaysTrue;
+> 
+153c157
+<       assertEquals(i, dq.peekElements(i, 0, child -> true).size());
+---
+>       assertEquals(i, dq.peekElements(i, 0, alwaysTrue()).size());
+157c161
+<     assertEquals(3, dq.peekElements(4, 0, child -> true).size());
+---
+>     assertEquals(3, dq.peekElements(4, 0, alwaysTrue()).size());
+161c165
+<     assertEquals(0, dq.peekElements(4, 1000, child -> false).size());
+---
+>     assertEquals(0, dq.peekElements(4, 1000, alwaysFalse()).size());

@@ -1,0 +1,653 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+55	fs	VolumeManager	param	569	define	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+55	fs	VolumeManager	param	585	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+55	fs	VolumeManager	param	588	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+57	initializedDirs	HashSet<String>	variable	570	define	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+58	uinitializedDirs	HashSet<String>	variable	574	define	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+54	aBasePath	Path	variable	578	define	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+56	iidPath	Path	variable	579	define	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+60	versionPath	Path	variable	580	define	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+59	uuid	UUID	variable	582	define	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+57	initializedDirs	HashSet<String>	variable	570	set	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+58	uinitializedDirs	HashSet<String>	variable	574	set	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+54	aBasePath	Path	variable	578	set	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+56	iidPath	Path	variable	579	set	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+60	versionPath	Path	variable	580	set	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+59	uuid	UUID	variable	582	set	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+57	initializedDirs	HashSet<String>	variable	571	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+58	uinitializedDirs	HashSet<String>	variable	575	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+58	uinitializedDirs	HashSet<String>	variable	576	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+57	initializedDirs	HashSet<String>	variable	576	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+57	initializedDirs	HashSet<String>	variable	578	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+54	aBasePath	Path	variable	579	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+51	INSTANCE_ID_DIR		variable	579	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+54	aBasePath	Path	variable	580	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+53	VERSION_DIR		variable	580	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+56	iidPath	Path	variable	582	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+50	DATA_VERSION		variable	584	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+60	versionPath	Path	variable	584	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+60	versionPath	Path	variable	584	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+52	VERSION		variable	585	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+59	uuid	UUID	variable	588	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+58	uinitializedDirs	HashSet<String>	variable	588	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+58	uinitializedDirs	HashSet<String>	variable	588	use	org.apache.accumulo.server.init.Initialize.addVolumes	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	569	588
+77	conf	Configuration	param	148	define	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+78	fs	VolumeManager	param	148	define	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+80	sconf	SiteConfiguration	param	148	define	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+72	e	IOException	param	178	define	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+80	sconf	SiteConfiguration	param	150	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+77	conf	Configuration	param	152	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+80	sconf	SiteConfiguration	param	155	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+80	sconf	SiteConfiguration	param	161	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+78	fs	VolumeManager	param	174	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+80	sconf	SiteConfiguration	param	175	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+72	e	IOException	param	179	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+79	fsUri	String	variable	150	define	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	162	define	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+79	fsUri	String	variable	150	set	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+79	fsUri	String	variable	152	set	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	162	set	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+73	INSTANCE_DFS_URI		variable	150	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+79	fsUri	String	variable	151	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+292	Initialize.log	Logger	variable	153	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+79	fsUri	String	variable	153	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+292	Initialize.log	Logger	variable	154	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+292	Initialize.log	Logger	variable	155	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+75	INSTANCE_ZK_HOST		variable	155	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+292	Initialize.log	Logger	variable	156	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+292	Initialize.log	Logger	variable	158	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+74	INSTANCE_SECRET		variable	161	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	163	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	164	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	165	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	166	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	167	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	168	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	169	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	170	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+76	c	ConsoleReader	variable	171	use	org.apache.accumulo.server.init.Initialize.checkInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	148	182
+86	opts	Opts	param	206	define	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+83	conf	Configuration	param	206	define	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+84	fs	VolumeManager	param	206	define	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+82	e	Exception	param	216	define	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+86	opts	Opts	param	220	set	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+83	conf	Configuration	param	207	use	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+84	fs	VolumeManager	param	207	use	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+86	opts	Opts	param	215	use	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+82	e	Exception	param	217	use	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+86	opts	Opts	param	220	use	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+86	opts	Opts	param	221	use	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+84	fs	VolumeManager	param	221	use	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+85	instanceNamePath	String	variable	213	define	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+85	instanceNamePath	String	variable	215	set	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+33	Opts.rootpass	byte[]	variable	220	set	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+292	Initialize.log	Logger	variable	217	use	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+85	instanceNamePath	String	variable	221	use	org.apache.accumulo.server.init.Initialize.doInit	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	206	221
+293	Initialize.reader	ConsoleReader	variable	99	set	org.apache.accumulo.server.init.Initialize.getConsoleReader	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	97	101
+293	Initialize.reader	ConsoleReader	variable	98	use	org.apache.accumulo.server.init.Initialize.getConsoleReader	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	97	101
+293	Initialize.reader	ConsoleReader	variable	100	use	org.apache.accumulo.server.init.Initialize.getConsoleReader	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	97	101
+104	opts	Opts	param	464	define	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+104	opts	Opts	param	488	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+104	opts	Opts	param	469	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+104	opts	Opts	param	472	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+104	opts	Opts	param	480	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+102	instanceName	String	variable	466	define	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+103	instanceNamePath	String	variable	466	define	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+101	exists	boolean	variable	467	define	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+100	decision	String	variable	484	define	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+103	instanceNamePath	String	variable	466	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+101	exists	boolean	variable	467	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+102	instanceName	String	variable	470	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+102	instanceName	String	variable	472	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+102	instanceName	String	variable	476	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+103	instanceNamePath	String	variable	479	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+101	exists	boolean	variable	481	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+101	exists	boolean	variable	483	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+100	decision	String	variable	484	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+29	Opts.clearInstanceName	boolean	variable	488	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+101	exists	boolean	variable	489	set	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+30	Opts.cliInstanceName	String	variable	469	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+30	Opts.cliInstanceName	String	variable	472	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+102	instanceName	String	variable	474	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+102	instanceName	String	variable	476	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+102	instanceName	String	variable	477	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+99	ZROOT		variable	479	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+98	ZINSTANCES		variable	479	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+102	instanceName	String	variable	479	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+29	Opts.clearInstanceName	boolean	variable	480	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+294	Initialize.zoo	IZooReaderWriter	variable	483	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+103	instanceNamePath	String	variable	483	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+102	instanceName	String	variable	484	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+100	decision	String	variable	485	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+100	decision	String	variable	487	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+100	decision	String	variable	487	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+97	ENGLISH		variable	487	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+101	exists	boolean	variable	492	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+103	instanceNamePath	String	variable	493	use	org.apache.accumulo.server.init.Initialize.getInstanceNamePath	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	464	493
+112	opts	Opts	param	496	define	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+112	opts	Opts	param	497	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+112	opts	Opts	param	498	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+113	rootpass	String	variable	500	define	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+111	confirmpass	String	variable	501	define	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+113	rootpass	String	variable	503	set	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+111	confirmpass	String	variable	507	set	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+31	Opts.cliPassword	String	variable	497	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+31	Opts.cliPassword	String	variable	498	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+110	UTF_8		variable	498	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+288	Initialize.DEFAULT_ROOT_USER	String	variable	504	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+113	rootpass	String	variable	505	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+288	Initialize.DEFAULT_ROOT_USER	String	variable	507	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+111	confirmpass	String	variable	508	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+113	rootpass	String	variable	510	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+111	confirmpass	String	variable	510	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+292	Initialize.log	Logger	variable	511	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+113	rootpass	String	variable	512	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+111	confirmpass	String	variable	512	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+113	rootpass	String	variable	513	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+110	UTF_8		variable	513	use	org.apache.accumulo.server.init.Initialize.getRootPassword	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	496	514
+294	Initialize.zoo	IZooReaderWriter	variable	119	use	org.apache.accumulo.server.init.Initialize.getZooReaderWriter	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	118	120
+121	fs	VolumeManager	param	286	define	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+123	uuid	UUID	param	286	define	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+120	baseDirs	String[]	param	286	define	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+122	print	boolean	param	286	define	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+120	baseDirs	String[]	param	287	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+121	fs	VolumeManager	param	288	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+121	fs	VolumeManager	param	292	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+121	fs	VolumeManager	param	293	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+123	uuid	UUID	param	293	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+122	print	boolean	param	294	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+118	baseDir	String	variable	287	define	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+119	iidLocation	Path	variable	291	define	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+119	iidLocation	Path	variable	291	set	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+118	baseDir	String	variable	288	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+53	VERSION_DIR		variable	288	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+50	DATA_VERSION		variable	288	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+118	baseDir	String	variable	291	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+51	INSTANCE_ID_DIR		variable	291	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+119	iidLocation	Path	variable	292	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+119	iidLocation	Path	variable	293	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+292	Initialize.log	Logger	variable	295	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+118	baseDir	String	variable	295	use	org.apache.accumulo.server.init.Initialize.initDirs	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	286	295
+166	opts	Opts	param	301	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	301	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+173	uuid	UUID	param	301	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+167	rootTablet	Path	param	301	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+145	fnfe	FileNotFoundException	param	338	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+146	fnfe	FileNotFoundException	param	323	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+149	fnfe	FileNotFoundException	param	399	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+148	fnfe2	FileNotFoundException	param	406	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	304	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+173	uuid	UUID	param	304	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	309	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	310	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	318	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	324	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	333	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+167	rootTablet	Path	param	333	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+167	rootTablet	Path	param	335	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	339	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+167	rootTablet	Path	param	339	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+167	rootTablet	Path	param	340	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+167	rootTablet	Path	param	348	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	349	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	394	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	401	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	408	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+160	fs	VolumeManager	param	415	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+161	fstat	FileStatus	variable	302	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+163	metadataTableDirs	Path[]	variable	307	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+170	tableMetadataTabletDir	String	variable	309	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+157	defaultMetadataTabletDir	String	variable	310	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+162	initRootTabFile	String	variable	348	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+165	ns	FileSystem	variable	349	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+164	mfw	FileSKVWriter	variable	350	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+169	tableExtent	Text	variable	353	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+168	tableDirKey	Key	variable	356	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+172	tableTimeKey	Key	variable	361	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+171	tablePrevRowKey	Key	variable	366	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+156	defaultExtent	Text	variable	371	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+155	defaultDirKey	Key	variable	374	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+159	defaultTimeKey	Key	variable	379	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+158	defaultPrevRowKey	Key	variable	384	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+147	mtd	Path	variable	316	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+151	s	String	variable	391	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+150	dir	Path	variable	392	define	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+163	metadataTableDirs	Path[]	variable	307	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+170	tableMetadataTabletDir	String	variable	309	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+157	defaultMetadataTabletDir	String	variable	310	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+161	fstat	FileStatus	variable	318	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+161	fstat	FileStatus	variable	333	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+162	initRootTabFile	String	variable	348	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+165	ns	FileSystem	variable	349	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+164	mfw	FileSKVWriter	variable	350	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+169	tableExtent	Text	variable	353	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+168	tableDirKey	Key	variable	356	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+172	tableTimeKey	Key	variable	361	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+171	tablePrevRowKey	Key	variable	366	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+156	defaultExtent	Text	variable	371	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+155	defaultDirKey	Key	variable	374	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+159	defaultTimeKey	Key	variable	379	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+158	defaultPrevRowKey	Key	variable	384	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+150	dir	Path	variable	392	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+161	fstat	FileStatus	variable	394	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+161	fstat	FileStatus	variable	401	set	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+289	Initialize.TABLE_TABLETS_TABLET_DIR	String	variable	309	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+152	DEFAULT_TABLET_LOCATION		variable	310	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+163	metadataTableDirs	Path[]	variable	316	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+147	mtd	Path	variable	318	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+161	fstat	FileStatus	variable	319	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+292	Initialize.log	Logger	variable	320	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+147	mtd	Path	variable	320	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+147	mtd	Path	variable	324	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+292	Initialize.log	Logger	variable	325	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+147	mtd	Path	variable	325	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+161	fstat	FileStatus	variable	334	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+292	Initialize.log	Logger	variable	335	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+292	Initialize.log	Logger	variable	340	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+162	initRootTabFile	String	variable	349	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+162	initRootTabFile	String	variable	350	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+165	ns	FileSystem	variable	350	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+165	ns	FileSystem	variable	350	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+164	mfw	FileSKVWriter	variable	351	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+153	ID		variable	353	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+169	tableExtent	Text	variable	356	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+164	mfw	FileSKVWriter	variable	358	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+168	tableDirKey	Key	variable	358	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+170	tableMetadataTabletDir	String	variable	358	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+110	UTF_8		variable	358	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+169	tableExtent	Text	variable	361	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+164	mfw	FileSKVWriter	variable	363	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+172	tableTimeKey	Key	variable	363	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+154	LOGICAL_TIME_ID		variable	363	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+110	UTF_8		variable	363	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+169	tableExtent	Text	variable	366	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+164	mfw	FileSKVWriter	variable	368	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+171	tablePrevRowKey	Key	variable	368	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+153	ID		variable	371	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+156	defaultExtent	Text	variable	374	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+164	mfw	FileSKVWriter	variable	376	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+155	defaultDirKey	Key	variable	376	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+157	defaultMetadataTabletDir	String	variable	376	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+110	UTF_8		variable	376	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+156	defaultExtent	Text	variable	379	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+164	mfw	FileSKVWriter	variable	381	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+159	defaultTimeKey	Key	variable	381	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+154	LOGICAL_TIME_ID		variable	381	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+110	UTF_8		variable	381	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+156	defaultExtent	Text	variable	384	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+164	mfw	FileSKVWriter	variable	386	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+158	defaultPrevRowKey	Key	variable	386	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+164	mfw	FileSKVWriter	variable	388	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+170	tableMetadataTabletDir	String	variable	391	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+157	defaultMetadataTabletDir	String	variable	391	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+151	s	String	variable	392	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+150	dir	Path	variable	394	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+161	fstat	FileStatus	variable	395	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+292	Initialize.log	Logger	variable	396	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+150	dir	Path	variable	396	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+150	dir	Path	variable	401	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+161	fstat	FileStatus	variable	402	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+292	Initialize.log	Logger	variable	403	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+150	dir	Path	variable	403	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+150	dir	Path	variable	408	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+292	Initialize.log	Logger	variable	409	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+150	dir	Path	variable	409	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+150	dir	Path	variable	415	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+292	Initialize.log	Logger	variable	416	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+150	dir	Path	variable	416	use	org.apache.accumulo.server.init.Initialize.initFileSystem	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	301	417
+250	opts	Opts	param	224	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+249	instanceNamePath	String	param	224	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+248	fs	VolumeManager	param	224	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+237	e	Exception	param	233	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+240	e	Exception	param	240	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+244	e	Exception	param	261	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+248	fs	VolumeManager	param	230	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+250	opts	Opts	param	232	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+249	instanceNamePath	String	param	232	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+237	e	Exception	param	234	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+250	opts	Opts	param	239	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+248	fs	VolumeManager	param	239	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+240	e	Exception	param	241	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+250	opts	Opts	param	260	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+244	e	Exception	param	262	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+252	uuid	UUID	variable	226	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+247	configuredTableDirs	String[]	variable	228	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+251	rootTablet	Path	variable	230	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+241	fsConf	Configuration	variable	244	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+239	defaultFsUri	String	variable	246	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+243	fsDefaultName	String	variable	247	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+242	fsDefaultFS	String	variable	247	define	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+252	uuid	UUID	variable	226	set	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+247	configuredTableDirs	String[]	variable	228	set	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+251	rootTablet	Path	variable	230	set	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+241	fsConf	Configuration	variable	244	set	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+239	defaultFsUri	String	variable	246	set	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+243	fsDefaultName	String	variable	247	set	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+242	fsDefaultFS	String	variable	247	set	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+246	TABLE_DIR		variable	229	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+247	configuredTableDirs	String[]	variable	230	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+153	ID		variable	230	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+245	ROOT_TABLET_LOCATION		variable	230	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+252	uuid	UUID	variable	232	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+251	rootTablet	Path	variable	232	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+292	Initialize.log	Logger	variable	234	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+252	uuid	UUID	variable	239	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+251	rootTablet	Path	variable	239	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+292	Initialize.log	Logger	variable	241	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+238	INSTANCE_VOLUMES		variable	243	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+241	fsConf	Configuration	variable	247	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+239	defaultFsUri	String	variable	247	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+241	fsConf	Configuration	variable	247	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+239	defaultFsUri	String	variable	247	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+239	defaultFsUri	String	variable	250	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+243	fsDefaultName	String	variable	250	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+239	defaultFsUri	String	variable	250	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+242	fsDefaultFS	String	variable	250	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+292	Initialize.log	Logger	variable	251	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+292	Initialize.log	Logger	variable	252	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+252	uuid	UUID	variable	260	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+292	Initialize.log	Logger	variable	262	use	org.apache.accumulo.server.init.Initialize.initialize	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	224	265
+185	tableId	String	param	521	define	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+177	e	Exception	param	537	define	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+177	e	Exception	param	538	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+177	e	Exception	param	539	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+182	conf	Configuration	variable	523	define	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+183	max	int	variable	524	define	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+184	min	int	variable	526	define	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+181	entry	Entry<String,String>	variable	531	define	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+182	conf	Configuration	variable	523	set	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+183	max	int	variable	524	set	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+184	min	int	variable	526	set	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+182	conf	Configuration	variable	524	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+182	conf	Configuration	variable	526	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+182	conf	Configuration	variable	526	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+183	max	int	variable	527	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+183	max	int	variable	528	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+184	min	int	variable	529	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+184	min	int	variable	530	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+291	Initialize.initialMetadataConf	HashMap<String,String>	variable	531	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+153	ID		variable	532	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+181	entry	Entry<String,String>	variable	532	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+181	entry	Entry<String,String>	variable	532	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+181	entry	Entry<String,String>	variable	533	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+153	ID		variable	534	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+181	entry	Entry<String,String>	variable	534	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+181	entry	Entry<String,String>	variable	534	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+181	entry	Entry<String,String>	variable	535	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+292	Initialize.log	Logger	variable	538	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	521	540
+153	ID		variable	544	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	543	546
+153	ID		variable	545	use	org.apache.accumulo.server.init.Initialize.initMetadataConfig	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	543	546
+191	opts	Opts	param	516	define	org.apache.accumulo.server.init.Initialize.initSecurity	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	516	519
+190	iid	String	param	516	define	org.apache.accumulo.server.init.Initialize.initSecurity	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	516	519
+190	iid	String	param	517	use	org.apache.accumulo.server.init.Initialize.initSecurity	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	516	519
+191	opts	Opts	param	518	use	org.apache.accumulo.server.init.Initialize.initSecurity	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	516	519
+288	Initialize.DEFAULT_ROOT_USER	String	variable	517	use	org.apache.accumulo.server.init.Initialize.initSecurity	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	516	519
+33	Opts.rootpass	byte[]	variable	518	use	org.apache.accumulo.server.init.Initialize.initSecurity	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	516	519
+231	opts	Opts	param	423	define	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+233	uuid	String	param	423	define	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+230	instanceNamePath	String	param	423	define	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+232	rootTablet	Path	param	423	define	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+231	opts	Opts	param	429	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+230	instanceNamePath	String	param	430	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+230	instanceNamePath	String	param	431	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+233	uuid	String	param	431	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+233	uuid	String	param	436	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+233	uuid	String	param	440	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+233	uuid	String	param	441	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+233	uuid	String	param	442	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+233	uuid	String	param	443	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+232	rootTablet	Path	param	448	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	433	define	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+209	ZERO_CHAR_ARRAY	byte[]	variable	433	define	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	436	define	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	433	set	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+209	ZERO_CHAR_ARRAY	byte[]	variable	433	set	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	436	set	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	425	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+99	ZROOT		variable	425	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+207	SKIP		variable	425	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+206	OPEN_ACL_UNSAFE		variable	425	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	426	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+99	ZROOT		variable	426	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+98	ZINSTANCES		variable	426	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+207	SKIP		variable	426	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+206	OPEN_ACL_UNSAFE		variable	426	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+29	Opts.clearInstanceName	boolean	variable	429	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	430	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+207	SKIP		variable	430	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	431	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+110	UTF_8		variable	431	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	431	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+99	ZROOT		variable	436	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	437	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	437	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	437	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	437	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	438	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	438	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+225	ZTABLES		variable	438	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+226	ZTABLES_INITIAL_ID		variable	438	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	438	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	439	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	439	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+218	ZNAMESPACES		variable	439	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	439	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+201	DEFAULT_NAMESPACE_ID		variable	440	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+200	DEFAULT_NAMESPACE		variable	440	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	440	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+199	ACCUMULO_NAMESPACE_ID		variable	441	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+198	ACCUMULO_NAMESPACE		variable	441	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	441	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+153	ID		variable	442	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+199	ACCUMULO_NAMESPACE_ID		variable	442	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+204	NAME		variable	442	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+205	ONLINE		variable	442	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	442	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+153	ID		variable	443	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+199	ACCUMULO_NAMESPACE_ID		variable	443	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+204	NAME		variable	443	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+205	ONLINE		variable	443	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	443	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	444	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	444	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+229	ZTSERVERS		variable	444	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	444	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	444	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	445	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	445	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+220	ZPROBLEMS		variable	445	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	445	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	445	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	446	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	446	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+222	ZROOT_TABLET		variable	446	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	446	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	446	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	447	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	447	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+224	ZROOT_TABLET_WALOGS		variable	447	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	447	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	447	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	448	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	448	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+223	ZROOT_TABLET_PATH		variable	448	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	448	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	449	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	449	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+228	ZTRACERS		variable	449	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	449	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	449	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	450	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	450	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+213	ZMASTERS		variable	450	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	450	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	450	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	451	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	451	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+215	ZMASTER_LOCK		variable	451	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	451	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	451	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	452	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	452	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+214	ZMASTER_GOAL_STATE		variable	452	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+110	UTF_8		variable	452	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	452	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	453	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	453	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+210	ZGC		variable	453	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	453	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	453	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	454	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	454	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+211	ZGC_LOCK		variable	454	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	454	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	454	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	455	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	455	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+208	ZCONFIG		variable	455	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	455	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	455	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	456	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	456	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+227	ZTABLE_LOCKS		variable	456	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	456	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	456	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	457	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	457	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+212	ZHDFS_RESERVATIONS		variable	457	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	457	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	457	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	458	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	458	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+219	ZNEXT_FILE		variable	458	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+209	ZERO_CHAR_ARRAY	byte[]	variable	458	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	458	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	459	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	459	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+221	ZRECOVERY		variable	459	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+209	ZERO_CHAR_ARRAY	byte[]	variable	459	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	459	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	460	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	460	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+216	ZMONITOR		variable	460	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	460	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	460	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+294	Initialize.zoo	IZooReaderWriter	variable	461	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+234	zkInstanceRoot	String	variable	461	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+217	ZMONITOR_LOCK		variable	461	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+202	EMPTY_BYTE_ARRAY	byte[]	variable	461	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+203	FAIL		variable	461	use	org.apache.accumulo.server.init.Initialize.initZooKeeper	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	423	461
+255	fs	VolumeManager	param	560	define	org.apache.accumulo.server.init.Initialize.isInitialized	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	560	566
+255	fs	VolumeManager	param	562	use	org.apache.accumulo.server.init.Initialize.isInitialized	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	560	566
+255	fs	VolumeManager	param	562	use	org.apache.accumulo.server.init.Initialize.isInitialized	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	560	566
+254	baseDir	String	variable	561	define	org.apache.accumulo.server.init.Initialize.isInitialized	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	560	566
+254	baseDir	String	variable	562	use	org.apache.accumulo.server.init.Initialize.isInitialized	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	560	566
+51	INSTANCE_ID_DIR		variable	562	use	org.apache.accumulo.server.init.Initialize.isInitialized	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	560	566
+254	baseDir	String	variable	562	use	org.apache.accumulo.server.init.Initialize.isInitialized	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	560	566
+53	VERSION_DIR		variable	562	use	org.apache.accumulo.server.init.Initialize.isInitialized	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	560	566
+262	args	String[]	param	606	define	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+260	e	Exception	param	633	define	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+262	args	String[]	param	608	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+260	e	Exception	param	634	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+260	e	Exception	param	634	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+260	e	Exception	param	635	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	607	define	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+261	acuConf	AccumuloConfiguration	variable	611	define	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+263	conf	Configuration	variable	613	define	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+264	fs	VolumeManager	variable	615	define	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	607	set	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+261	acuConf	AccumuloConfiguration	variable	611	set	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+263	conf	Configuration	variable	613	set	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+264	fs	VolumeManager	variable	615	set	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	619	set	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+33	Opts.rootpass	byte[]	variable	619	set	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	608	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+290	class		variable	608	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+261	acuConf	AccumuloConfiguration	variable	612	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+261	acuConf	AccumuloConfiguration	variable	615	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	617	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+32	Opts.resetSecurity	boolean	variable	617	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+264	fs	VolumeManager	variable	618	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	619	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	620	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+292	Initialize.log	Logger	variable	622	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	626	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+28	Opts.addVolumes	boolean	variable	626	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+264	fs	VolumeManager	variable	627	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	630	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+32	Opts.resetSecurity	boolean	variable	630	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	630	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+28	Opts.addVolumes	boolean	variable	630	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+265	opts	Opts	variable	631	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+263	conf	Configuration	variable	631	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+264	fs	VolumeManager	variable	631	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+292	Initialize.log	Logger	variable	634	use	org.apache.accumulo.server.init.Initialize.main	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	606	635
+268	paths	String[]	param	278	define	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+268	paths	String[]	param	279	use	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+268	paths	String[]	param	280	use	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+268	paths	String[]	param	281	use	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+269	result	Path[]	variable	279	define	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+267	i	int	variable	280	define	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+269	result	Path[]	variable	279	set	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+267	i	int	variable	280	set	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+269	result	Path[]	variable	281	set	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+387	length		variable	279	use	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+267	i	int	variable	280	use	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+387	length		variable	280	use	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+267	i	int	variable	281	use	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+267	i	int	variable	281	use	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+269	result	Path[]	variable	283	use	org.apache.accumulo.server.init.Initialize.paths	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	278	284
+276	sconf	SiteConfiguration	param	186	define	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+276	sconf	SiteConfiguration	param	187	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+276	sconf	SiteConfiguration	param	190	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+276	sconf	SiteConfiguration	param	191	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+273	instanceDfsDir	String	variable	187	define	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+275	instanceVolumes	String	variable	190	define	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+274	instanceDfsUri	String	variable	191	define	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+273	instanceDfsDir	String	variable	187	set	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+275	instanceVolumes	String	variable	190	set	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+274	instanceDfsUri	String	variable	191	set	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+272	INSTANCE_DFS_DIR		variable	187	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+292	Initialize.log	Logger	variable	188	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+238	INSTANCE_VOLUMES		variable	190	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+73	INSTANCE_DFS_URI		variable	191	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+275	instanceVolumes	String	variable	193	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+292	Initialize.log	Logger	variable	194	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+238	INSTANCE_VOLUMES		variable	194	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+273	instanceDfsDir	String	variable	195	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+292	Initialize.log	Logger	variable	196	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+73	INSTANCE_DFS_URI		variable	196	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+292	Initialize.log	Logger	variable	198	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+238	INSTANCE_VOLUMES		variable	198	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+292	Initialize.log	Logger	variable	200	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+272	INSTANCE_DFS_DIR		variable	200	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+292	Initialize.log	Logger	variable	201	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+73	INSTANCE_DFS_URI		variable	201	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+274	instanceDfsUri	String	variable	201	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+292	Initialize.log	Logger	variable	202	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+272	INSTANCE_DFS_DIR		variable	202	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+273	instanceDfsDir	String	variable	202	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+292	Initialize.log	Logger	variable	203	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+238	INSTANCE_VOLUMES		variable	203	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+275	instanceVolumes	String	variable	203	use	org.apache.accumulo.server.init.Initialize.printInitializeFailureMessages	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	186	203
+282	replication	int	param	548	define	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+280	reason	String	param	548	define	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+280	reason	String	param	550	use	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+282	replication	int	param	551	use	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+282	replication	int	param	553	use	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+281	rep	String	variable	549	define	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+281	rep	String	variable	549	set	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+281	rep	String	variable	553	set	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+204	NAME		variable	550	use	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+204	NAME		variable	551	use	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+281	rep	String	variable	552	use	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+281	rep	String	variable	552	use	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+281	rep	String	variable	556	use	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+291	Initialize.initialMetadataConf	HashMap<String,String>	variable	557	use	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+281	rep	String	variable	557	use	org.apache.accumulo.server.init.Initialize.setMetadataReplication	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	548	557
+284	izoo	IZooReaderWriter	param	109	define	org.apache.accumulo.server.init.Initialize.setZooReaderWriter	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	109	111
+284	izoo	IZooReaderWriter	param	110	use	org.apache.accumulo.server.init.Initialize.setZooReaderWriter	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	109	111
+294	Initialize.zoo	IZooReaderWriter	variable	110	set	org.apache.accumulo.server.init.Initialize.setZooReaderWriter	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	109	111
+286	e	KeeperException	param	271	define	org.apache.accumulo.server.init.Initialize.zookeeperAvailable	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	268	276
+287	e	InterruptedException	param	273	define	org.apache.accumulo.server.init.Initialize.zookeeperAvailable	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	268	276
+294	Initialize.zoo	IZooReaderWriter	variable	270	use	org.apache.accumulo.server.init.Initialize.zookeeperAvailable	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/7980fd75b/10cdce6cd.java	268	276

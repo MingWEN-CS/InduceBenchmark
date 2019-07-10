@@ -1,0 +1,97 @@
+22a23
+> import java.io.IOException;
+24a26
+> import java.text.ParseException;
+26c28
+< import java.util.Calendar;
+---
+> import java.util.ArrayList;
+27a30
+> import java.util.List;
+35c38,49
+<     public static void main(String[] args) throws Exception {
+---
+>     public static void main(String[] args) throws IOException, ParseException {
+>         if (!checkArgsOk(args)) {
+>             System.exit(1);
+>         }
+> 
+>         String dateList = createDateListFromArgs(args);
+> 
+>         System.out.println("datelist :" + dateList+ ":");
+>         writeWorkflowOutput(dateList);
+>     }
+> 
+>     private static boolean checkArgsOk(final String[] args) {
+41c55
+<             System.exit(1);
+---
+>             return false;
+43,44c57,73
+<         Date startTime = parseDateUTC(args[0]);
+<         Date endTime = parseDateUTC(args[1]);
+---
+> 
+>         return true;
+>     }
+> 
+>     private static String createDateListFromArgs(final String[] args) throws ParseException {
+>         final Date startTime = parseDateUTC(args[0]);
+>         final Date endTime = parseDateUTC(args[1]);
+>         final int frequency = Integer.parseInt(args[2]);
+>         final TimeUnit timeUnit = TimeUnit.valueOf(args[3]);
+>         final TimeZone timeZone = getTimeZone(args[4]);
+>         final Repeatable rep = createRepeatable(startTime, frequency, timeUnit, timeZone);
+> 
+>         return getDateList(startTime, endTime, rep);
+>     }
+> 
+>     private static Repeatable createRepeatable(final Date startTime, final int frequency,
+>                                                final TimeUnit timeUnit, final TimeZone timeZone) {
+47,49c76,83
+<         rep.setFrequency(Integer.parseInt(args[2]));
+<         rep.setTimeUnit(TimeUnit.valueOf(args[3]));
+<         rep.setTimeZone(getTimeZone(args[4]));
+---
+>         rep.setFrequency(frequency);
+>         rep.setTimeUnit(timeUnit);
+>         rep.setTimeZone(timeZone);
+> 
+>         return rep;
+>     }
+> 
+>     private static String getDateList(final Date startTime, final Date endTime, final Repeatable rep) {
+50a85
+>         List<String> dates = new ArrayList<>();
+52c87
+<         StringBuilder dateList = new StringBuilder();
+---
+> 
+53a89
+>             dates.add(formatDateUTC(date));
+55,58d90
+<             if (occurrence > 1) {
+<                 dateList.append(DATE_LIST_SEPARATOR);
+<             }
+<             dateList.append(formatDateUTC(date));
+61c93,96
+<         System.out.println("datelist :" + dateList+ ":");
+---
+>         return String.join(DATE_LIST_SEPARATOR, dates);
+>     }
+> 
+>     private static void writeWorkflowOutput(final String dateList) throws IOException {
+65c100
+<         props.setProperty("datelist", dateList.toString());
+---
+>         props.setProperty("datelist", dateList);
+69a105
+> 
+85c121
+<     private static Date parseDateUTC(String s) throws Exception {
+---
+>     private static Date parseDateUTC(String s) throws ParseException {
+89c125
+<     private static String formatDateUTC(Date d) throws Exception {
+---
+>     private static String formatDateUTC(Date d) {

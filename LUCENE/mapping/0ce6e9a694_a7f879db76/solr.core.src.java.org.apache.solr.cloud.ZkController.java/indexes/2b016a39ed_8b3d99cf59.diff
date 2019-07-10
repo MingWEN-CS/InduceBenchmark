@@ -1,0 +1,68 @@
+25a26
+> import org.apache.solr.common.cloud.BeforeReconnect;
+26a28
+> import org.apache.solr.common.cloud.DefaultConnectionStrategy;
+28,29d29
+< import org.apache.solr.common.cloud.DocRouter;
+< import org.apache.solr.common.cloud.ImplicitDocRouter;
+206c206,207
+<     zkClient = new SolrZkClient(zkServerAddress, zkClientTimeout, zkClientConnectTimeout,
+---
+>     zkClient = new SolrZkClient(zkServerAddress, zkClientTimeout,
+>         zkClientConnectTimeout, new DefaultConnectionStrategy(),
+209c210
+< 
+---
+>           
+218c219,221
+<             
+---
+>               
+>               
+>               
+227c230
+< 
+---
+>               
+231,233c234,237
+< 
+<               ZkController.this.overseer = new Overseer(shardHandler, adminPath, zkStateReader);
+<               ElectionContext context = new OverseerElectionContext(zkClient, overseer, getNodeName());
+---
+>               
+>               ElectionContext context = new OverseerElectionContext(zkClient,
+>                   overseer, getNodeName());
+>               
+240c244,245
+<               List<CoreDescriptor> descriptors = registerOnReconnect.getCurrentDescriptors();
+---
+>               List<CoreDescriptor> descriptors = registerOnReconnect
+>                   .getCurrentDescriptors();
+242c247
+<               if (descriptors  != null) {
+---
+>               if (descriptors != null) {
+246a252,253
+>                   
+>                   
+254c261
+<   
+---
+>               
+265d271
+< 
+267,268c273,283
+< 
+<  
+---
+>           
+>         }, new BeforeReconnect() {
+>           
+>           @Override
+>           public void command() {
+>             try {
+>               ZkController.this.overseer.close();
+>             } catch (Exception e) {
+>               log.error("Error trying to stop any Overseer threads", e);
+>             }
+>           }

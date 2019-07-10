@@ -1,0 +1,24 @@
+20d19
+< import org.apache.lucene.index.IndexWriterConfig;
+28d26
+< import org.apache.lucene.analysis.MockAnalyzer;
+49,50c47
+<     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore,
+<         new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+---
+>     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore);
+155,156c152
+<     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore,
+<         new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+---
+>     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore);
+188,189c184
+<     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore,
+<         new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+---
+>     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore);
+217,218c212
+<     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore,
+<         new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer()));
+---
+>     RandomIndexWriter writer = new RandomIndexWriter(newRandom(), indexStore);

@@ -1,0 +1,246 @@
+20,39d19
+< import java.io.IOException;
+< import java.util.ArrayList;
+< import java.util.Collection;
+< import java.util.Date;
+< import java.util.EnumSet;
+< import java.util.IdentityHashMap;
+< import java.util.List;
+< import java.util.Map;
+< import java.util.Set;
+< import java.util.concurrent.Callable;
+< import java.util.concurrent.ExecutionException;
+< import java.util.concurrent.Executor;
+< import java.util.concurrent.Future;
+< import java.util.concurrent.FutureTask;
+< import java.util.concurrent.RunnableFuture;
+< import java.util.concurrent.Semaphore;
+< import java.util.concurrent.SynchronousQueue;
+< import java.util.concurrent.ThreadPoolExecutor;
+< import java.util.concurrent.TimeUnit;
+< 
+99a80,99
+> import java.io.IOException;
+> import java.util.ArrayList;
+> import java.util.Collection;
+> import java.util.Date;
+> import java.util.EnumSet;
+> import java.util.IdentityHashMap;
+> import java.util.List;
+> import java.util.Map;
+> import java.util.Set;
+> import java.util.concurrent.Callable;
+> import java.util.concurrent.ExecutionException;
+> import java.util.concurrent.Executor;
+> import java.util.concurrent.Future;
+> import java.util.concurrent.FutureTask;
+> import java.util.concurrent.RunnableFuture;
+> import java.util.concurrent.Semaphore;
+> import java.util.concurrent.SynchronousQueue;
+> import java.util.concurrent.ThreadPoolExecutor;
+> import java.util.concurrent.TimeUnit;
+> 
+292d291
+<     
+385,386c384,386
+<     String prefix = params.getFieldParam(field,FacetParams.FACET_PREFIX);
+< 
+---
+>     String prefix = params.getFieldParam(field, FacetParams.FACET_PREFIX);
+>     String contains = params.getFieldParam(field, FacetParams.FACET_CONTAINS);
+>     boolean ignoreCase = params.getFieldBool(field, FacetParams.FACET_CONTAINS_IGNORE_CASE, false);
+438c438
+<       counts = getGroupedCounts(searcher, base, field, multiToken, offset,limit, mincount, missing, sort, prefix);
+---
+>       counts = getGroupedCounts(searcher, base, field, multiToken, offset,limit, mincount, missing, sort, prefix, contains, ignoreCase);
+444c444
+<           counts = getFacetTermEnumCounts(searcher, base, field, offset, limit, mincount,missing,sort,prefix);
+---
+>           counts = getFacetTermEnumCounts(searcher, base, field, offset, limit, mincount, missing, sort, prefix, contains, ignoreCase);
+452a453,455
+>             if (contains != null && !contains.isEmpty()) {
+>               throw new SolrException(ErrorCode.BAD_REQUEST, FacetParams.FACET_CONTAINS + " is not supported on numeric types");
+>             }
+455c458
+<             PerSegmentSingleValuedFaceting ps = new PerSegmentSingleValuedFaceting(searcher, base, field, offset,limit, mincount, missing, sort, prefix);
+---
+>             PerSegmentSingleValuedFaceting ps = new PerSegmentSingleValuedFaceting(searcher, base, field, offset,limit, mincount, missing, sort, prefix, contains, ignoreCase);
+462c465
+<           counts = DocValuesFacets.getCounts(searcher, base, field, offset,limit, mincount, missing, sort, prefix);
+---
+>           counts = DocValuesFacets.getCounts(searcher, base, field, offset,limit, mincount, missing, sort, prefix, contains, ignoreCase);
+481c484,486
+<                                              String prefix) throws IOException {
+---
+>                                              String prefix,
+>                                              String contains,
+>                                              boolean ignoreCase) throws IOException {
+491,492c496,498
+<     BytesRef prefixBR = prefix != null ? new BytesRef(prefix) : null;
+<     final TermGroupFacetCollector collector = TermGroupFacetCollector.createTermGroupFacetCollector(groupField, field, multiToken, prefixBR, 128);
+---
+>     BytesRef prefixBytesRef = prefix != null ? new BytesRef(prefix) : null;
+>     BytesRef containsRef = contains != null ? new BytesRef(contains) : null;
+>     final TermGroupFacetCollector collector = TermGroupFacetCollector.createTermGroupFacetCollector(groupField, field, multiToken, prefixBytesRef, 128);
+521a528,531
+>       
+>       if (containsRef != null && !StringHelper.contains(facetEntry.getValue(), containsRef, ignoreCase)) {
+>         continue;
+>       }
+686c696
+<   public NamedList<Integer> getFacetTermEnumCounts(SolrIndexSearcher searcher, DocSet docs, String field, int offset, int limit, int mincount, boolean missing, String sort, String prefix)
+---
+>   public NamedList<Integer> getFacetTermEnumCounts(SolrIndexSearcher searcher, DocSet docs, String field, int offset, int limit, int mincount, boolean missing, String sort, String prefix, String contains, boolean ignoreCase)
+718c728
+<     BytesRef startTermBytes = null;
+---
+>     BytesRef prefixTermBytes = null;
+721c731,737
+<       startTermBytes = new BytesRef(indexedPrefix);
+---
+>       prefixTermBytes = new BytesRef(indexedPrefix);
+>     }
+>     
+>     BytesRef containsTermBytes = null;
+>     if (contains != null) {
+>       String indexedContains = ft.toInternal(contains);
+>       containsTermBytes = new BytesRef(indexedContains);
+735,736c751,752
+<       if (startTermBytes != null) {
+<         if (termsEnum.seekCeil(startTermBytes) == TermsEnum.SeekStatus.END) {
+---
+>       if (prefixTermBytes != null) {
+>         if (termsEnum.seekCeil(prefixTermBytes) == TermsEnum.SeekStatus.END) {
+753c769
+<         if (startTermBytes != null && !StringHelper.startsWith(term, startTermBytes))
+---
+>         if (prefixTermBytes != null && !StringHelper.startsWith(term, prefixTermBytes))
+756c772,773
+<         int df = termsEnum.docFreq();
+---
+>         if (containsTermBytes == null || StringHelper.contains(term, containsTermBytes, ignoreCase)) {
+>           int df = termsEnum.docFreq();
+758,765c775,779
+<         
+<         
+<         
+<         if (df>0 && df>min) {
+<           int c;
+< 
+<           if (df >= minDfFilterCache) {
+<             
+---
+>           
+>           
+>           
+>           if (df > 0 && df > min) {
+>             int c;
+767,773c781,782
+<             if (deState==null) {
+<               deState = new SolrIndexSearcher.DocsEnumState();
+<               deState.fieldName = field;
+<               deState.liveDocs = r.getLiveDocs();
+<               deState.termsEnum = termsEnum;
+<               deState.postingsEnum = postingsEnum;
+<             }
+---
+>             if (df >= minDfFilterCache) {
+>               
+775c784,790
+<             c = searcher.numDocs(docs, deState);
+---
+>               if (deState == null) {
+>                 deState = new SolrIndexSearcher.DocsEnumState();
+>                 deState.fieldName = field;
+>                 deState.liveDocs = r.getLiveDocs();
+>                 deState.termsEnum = termsEnum;
+>                 deState.postingsEnum = postingsEnum;
+>               }
+777,779c792
+<             postingsEnum = deState.postingsEnum;
+<           } else {
+<             
+---
+>               c = searcher.numDocs(docs, deState);
+781,785c794,796
+<             
+<             
+<             
+<             postingsEnum = termsEnum.postings(null, postingsEnum, PostingsEnum.NONE);
+<             c=0;
+---
+>               postingsEnum = deState.postingsEnum;
+>             } else {
+>               
+787,793c798,816
+<             if (postingsEnum instanceof MultiPostingsEnum) {
+<               MultiPostingsEnum.EnumWithSlice[] subs = ((MultiPostingsEnum) postingsEnum).getSubs();
+<               int numSubs = ((MultiPostingsEnum) postingsEnum).getNumSubs();
+<               for (int subindex = 0; subindex<numSubs; subindex++) {
+<                 MultiPostingsEnum.EnumWithSlice sub = subs[subindex];
+<                 if (sub.postingsEnum == null) continue;
+<                 int base = sub.slice.start;
+---
+>               
+>               
+>               
+>               postingsEnum = termsEnum.postings(null, postingsEnum, PostingsEnum.NONE);
+>               c = 0;
+> 
+>               if (postingsEnum instanceof MultiPostingsEnum) {
+>                 MultiPostingsEnum.EnumWithSlice[] subs = ((MultiPostingsEnum) postingsEnum).getSubs();
+>                 int numSubs = ((MultiPostingsEnum) postingsEnum).getNumSubs();
+>                 for (int subindex = 0; subindex < numSubs; subindex++) {
+>                   MultiPostingsEnum.EnumWithSlice sub = subs[subindex];
+>                   if (sub.postingsEnum == null) continue;
+>                   int base = sub.slice.start;
+>                   int docid;
+>                   while ((docid = sub.postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
+>                     if (fastForRandomSet.exists(docid + base)) c++;
+>                   }
+>                 }
+>               } else {
+795,796c818,819
+<                 while ((docid = sub.postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
+<                   if (fastForRandomSet.exists(docid+base)) c++;
+---
+>                 while ((docid = postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
+>                   if (fastForRandomSet.exists(docid)) c++;
+799,807d821
+<             } else {
+<               int docid;
+<               while ((docid = postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
+<                 if (fastForRandomSet.exists(docid)) c++;
+<               }
+<             }
+<             
+< 
+<           }
+809,813d822
+<           if (sortByCount) {
+<             if (c>min) {
+<               BytesRef termCopy = BytesRef.deepCopyOf(term);
+<               queue.add(new CountPair<>(termCopy, c));
+<               if (queue.size()>=maxsize) min=queue.last().val;
+815,819c824,836
+<           } else {
+<             if (c >= mincount && --off<0) {
+<               if (--lim<0) break;
+<               ft.indexedToReadable(term, charsRef);
+<               res.add(charsRef.toString(), c);
+---
+> 
+>             if (sortByCount) {
+>               if (c > min) {
+>                 BytesRef termCopy = BytesRef.deepCopyOf(term);
+>                 queue.add(new CountPair<>(termCopy, c));
+>                 if (queue.size() >= maxsize) min = queue.last().val;
+>               }
+>             } else {
+>               if (c >= mincount && --off < 0) {
+>                 if (--lim < 0) break;
+>                 ft.indexedToReadable(term, charsRef);
+>                 res.add(charsRef.toString(), c);
+>               }
+823d839
+< 

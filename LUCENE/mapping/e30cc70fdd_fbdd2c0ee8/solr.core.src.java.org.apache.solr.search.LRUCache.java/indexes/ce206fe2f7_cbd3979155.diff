@@ -1,0 +1,4 @@
+378c378
+<     return name() + cacheMap != null ? cacheMap.getValue().toString() : "";
+---
+>     return name() + (cacheMap != null ? cacheMap.getValue().toString() : "");

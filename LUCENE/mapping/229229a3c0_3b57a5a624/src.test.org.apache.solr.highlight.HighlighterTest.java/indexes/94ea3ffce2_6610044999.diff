@@ -1,0 +1,29 @@
+187a188,207
+>   
+>   public void testMultiValueBestFragmentHighlight() {
+>     HashMap<String,String> args = new HashMap<String,String>();
+>     args.put("hl", "true");
+>     args.put("hl.fl", "textgap");
+>     args.put("df", "textgap");
+>     TestHarness.LocalRequestFactory sumLRF = h.getRequestFactory(
+>         "standard", 0, 200, args);
+>     
+>     assertU(adoc("textgap", "first entry has one word foo", 
+>         "textgap", "second entry has both words foo bar",
+>         "id", "1"));
+>     assertU(commit());
+>     assertU(optimize());
+>     assertQ("Best fragment summarization",
+>         sumLRF.makeRequest("foo bar"),
+>         "
+>         "
+>     );
+>   }
+363a384,390
+>     args.put("hl.maxAnalyzedChars", "-1");
+>     sumLRF = h.getRequestFactory("standard", 0, 200, args);
+>     assertQ("token at start of text",
+>         sumLRF.makeRequest("t_text:disjoint"),
+>         "
+>         "
+>     );

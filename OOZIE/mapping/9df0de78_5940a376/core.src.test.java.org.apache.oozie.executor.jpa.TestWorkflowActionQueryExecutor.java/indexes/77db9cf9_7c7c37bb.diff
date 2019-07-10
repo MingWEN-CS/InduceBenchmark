@@ -1,0 +1,93 @@
+194c194,195
+<         WorkflowActionBean bean = addRecordToWfActionTable("workflowId","testAction", WorkflowAction.Status.PREP);
+---
+>         WorkflowActionBean bean = addRecordToWfActionTable("workflowId", "testAction", WorkflowAction.Status.PREP, "",
+>                 true);
+201a203
+>         assertEquals(bean.getLastCheckTime(), retBean.getLastCheckTime());
+227a230
+>         assertEquals(bean.getPendingAge().getTime(), retBean.getPendingAge().getTime());
+258a262,263
+>         assertEquals(bean.getExternalId(), retBean.getExternalId());
+>         assertEquals(bean.getExternalStatus(), retBean.getExternalStatus());
+271a277
+>         assertEquals(bean.getPendingAge().getTime(), retBean.getPendingAge().getTime());
+275a282,284
+>         assertEquals(bean.getUserRetryCount(), retBean.getUserRetryCount());
+>         assertEquals(bean.getUserRetryMax(), retBean.getUserRetryMax());
+>         assertEquals(bean.getUserRetryInterval(), retBean.getUserRetryInterval());
+291c300
+<         retBean = WorkflowActionQueryExecutor.getInstance().get(WorkflowActionQuery.GET_ACTION_END, bean.getId());
+---
+>         retBean = WorkflowActionQueryExecutor.getInstance().get(WorkflowActionQuery.GET_ACTION_COMPLETED, bean.getId());
+294d302
+<         assertEquals(bean.getName(), retBean.getName());
+296d303
+<         assertEquals(bean.getPending(), retBean.getPending());
+299,314d305
+<         assertEquals(bean.getTransition(), retBean.getTransition());
+<         assertEquals(bean.getRetries(), retBean.getRetries());
+<         assertEquals(bean.getTrackerUri(), retBean.getTrackerUri());
+<         assertEquals(bean.getUserRetryCount(), retBean.getUserRetryCount());
+<         assertEquals(bean.getUserRetryMax(), retBean.getUserRetryMax());
+<         assertEquals(bean.getUserRetryInterval(), retBean.getUserRetryInterval());
+<         assertEquals(bean.getExternalId(), retBean.getExternalId());
+<         assertEquals(bean.getExternalStatus(), retBean.getExternalStatus());
+<         assertEquals(bean.getExternalChildIDs(), retBean.getExternalChildIDs());
+<         assertEquals(bean.getStartTime().getTime(), retBean.getStartTime().getTime());
+<         assertEquals(bean.getEndTime().getTime(), retBean.getEndTime().getTime());
+<         assertEquals(bean.getErrorCode(), retBean.getErrorCode());
+<         assertEquals(bean.getErrorMessage(), retBean.getErrorMessage());
+<         assertEquals(bean.getConf(), retBean.getConf());
+<         assertEquals(bean.getData(), retBean.getData());
+<         assertEquals(bean.getStats(), retBean.getStats());
+315a307,310
+>         assertNull(retBean.getConf());
+>         assertNull(retBean.getData());
+>         assertNull(retBean.getStats());
+>         assertNull(retBean.getExternalChildIDs());
+318c313
+<         retBean = WorkflowActionQueryExecutor.getInstance().get(WorkflowActionQuery.GET_ACTION_KILL, bean.getId());
+---
+>         retBean = WorkflowActionQueryExecutor.getInstance().get(WorkflowActionQuery.GET_ACTION, bean.getId());
+323a319
+>         assertEquals(bean.getPendingAge().getTime(), retBean.getPendingAge().getTime());
+328,329c324,326
+<         assertEquals(bean.getTrackerUri(), retBean.getTrackerUri());
+<         assertEquals(bean.getErrorCode(), retBean.getErrorCode());
+---
+>         assertEquals(bean.getUserRetryCount(), retBean.getUserRetryCount());
+>         assertEquals(bean.getUserRetryMax(), retBean.getUserRetryMax());
+>         assertEquals(bean.getUserRetryInterval(), retBean.getUserRetryInterval());
+331a329,331
+>         assertEquals(bean.getCreatedTime().getTime(), retBean.getCreatedTime().getTime());
+>         assertEquals(bean.getLastCheckTime().getTime(), retBean.getLastCheckTime().getTime());
+>         assertEquals(bean.getErrorCode(), retBean.getErrorCode());
+333c333,335
+<         assertEquals(bean.getExternalId(), retBean.getExternalId());
+---
+>         assertEquals(bean.getExecutionPath(), retBean.getExecutionPath());
+>         assertEquals(bean.getSignalValue(), retBean.getSignalValue());
+>         assertEquals(bean.getCred(), retBean.getCred());
+334a337
+>         assertEquals(bean.getSlaXml(), retBean.getSlaXml());
+336,351c339,340
+<         assertNull(retBean.getExternalChildIDs());
+<         assertNull(retBean.getStats());
+<         assertNull(retBean.getSlaXml());
+< 
+<         
+<         retBean = WorkflowActionQueryExecutor.getInstance().get(WorkflowActionQuery.GET_ACTION_COMPLETED, bean.getId());
+<         assertEquals(bean.getId(), retBean.getId());
+<         assertEquals(bean.getJobId(), retBean.getJobId());
+<         assertEquals(bean.getStatusStr(), retBean.getStatusStr());
+<         assertEquals(bean.getType(), retBean.getType());
+<         assertEquals(bean.getLogToken(), retBean.getLogToken());
+<         assertNull(retBean.getSlaXml());
+<         assertNull(retBean.getConf());
+<         assertNull(retBean.getData());
+<         assertNull(retBean.getStats());
+<         assertNull(retBean.getExternalChildIDs());
+---
+>         assertEquals(bean.getStats(), retBean.getStats());
+>         assertEquals(bean.getExternalChildIDs(), retBean.getExternalChildIDs());

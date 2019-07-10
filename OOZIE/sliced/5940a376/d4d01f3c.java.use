@@ -1,0 +1,114 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+13	actionId	String	param	73	define	org.apache.oozie.command.wf.ActionKillXCommand.ActionKillXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	73	75
+13	actionId	String	param	74	use	org.apache.oozie.command.wf.ActionKillXCommand.ActionKillXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	73	75
+9	actionId	String	param	67	define	org.apache.oozie.command.wf.ActionKillXCommand.ActionKillXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	67	71
+11	type	String	param	67	define	org.apache.oozie.command.wf.ActionKillXCommand.ActionKillXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	67	71
+11	type	String	param	68	use	org.apache.oozie.command.wf.ActionKillXCommand.ActionKillXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	67	71
+9	actionId	String	param	69	use	org.apache.oozie.command.wf.ActionKillXCommand.ActionKillXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	67	71
+9	actionId	String	param	70	use	org.apache.oozie.command.wf.ActionKillXCommand.ActionKillXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	67	71
+71	ActionKillXCommand.actionId	String	variable	69	set	org.apache.oozie.command.wf.ActionKillXCommand.ActionKillXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	67	71
+73	ActionKillXCommand.jobId	String	variable	70	set	org.apache.oozie.command.wf.ActionKillXCommand.ActionKillXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	67	71
+10	class		variable	70	use	org.apache.oozie.command.wf.ActionKillXCommand.ActionKillXCommand	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	67	71
+46	ex	ActionExecutorException	param	154	define	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+48	e	JPAExecutorException	param	181	define	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+46	ex	ActionExecutorException	param	157	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+46	ex	ActionExecutorException	param	172	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+46	ex	ActionExecutorException	param	172	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+46	ex	ActionExecutorException	param	172	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+48	e	JPAExecutorException	param	182	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+53	executor	ActionExecutor	variable	124	define	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+54	isRetry	boolean	variable	127	define	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+55	isUserRetry	boolean	variable	128	define	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+51	context	ActionExecutorContext	variable	129	define	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+52	cron	Instrumentation.Cron	variable	133	define	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+56	slaEvent	SLAEventBean	variable	147	define	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+47	slaEvent	SLAEventBean	variable	166	define	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+53	executor	ActionExecutor	variable	124	set	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+54	isRetry	boolean	variable	127	set	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+55	isUserRetry	boolean	variable	128	set	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+51	context	ActionExecutorContext	variable	129	set	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+52	cron	Instrumentation.Cron	variable	133	set	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+56	slaEvent	SLAEventBean	variable	147	set	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+47	slaEvent	SLAEventBean	variable	166	set	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+71	ActionKillXCommand.actionId	String	variable	121	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	123	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+10	class		variable	124	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	124	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+53	executor	ActionExecutor	variable	125	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+77	ActionKillXCommand.wfJob	WorkflowJobBean	variable	129	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	129	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+54	isRetry	boolean	variable	130	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+55	isUserRetry	boolean	variable	130	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	131	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+52	cron	Instrumentation.Cron	variable	134	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+53	executor	ActionExecutor	variable	135	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+51	context	ActionExecutorContext	variable	135	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	135	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+52	cron	Instrumentation.Cron	variable	136	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	137	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+52	cron	Instrumentation.Cron	variable	137	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	139	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	140	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	141	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+75	ActionKillXCommand.updateList	List<UpdateEntry>	variable	143	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+43	UPDATE_ACTION_END		variable	143	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	143	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+77	ActionKillXCommand.wfJob	WorkflowJobBean	variable	144	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+75	ActionKillXCommand.updateList	List<UpdateEntry>	variable	145	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+50	UPDATE_WORKFLOW_MODTIME		variable	145	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+77	ActionKillXCommand.wfJob	WorkflowJobBean	variable	145	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	147	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	147	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+49	KILLED		variable	147	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+45	WORKFLOW_ACTION		variable	148	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+56	slaEvent	SLAEventBean	variable	149	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+72	ActionKillXCommand.insertList	List<JsonBean>	variable	150	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+56	slaEvent	SLAEventBean	variable	150	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+77	ActionKillXCommand.wfJob	WorkflowJobBean	variable	152	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	152	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	155	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	156	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	157	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	159	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+77	ActionKillXCommand.wfJob	WorkflowJobBean	variable	161	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+75	ActionKillXCommand.updateList	List<UpdateEntry>	variable	162	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+43	UPDATE_ACTION_END		variable	162	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	162	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+77	ActionKillXCommand.wfJob	WorkflowJobBean	variable	163	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+75	ActionKillXCommand.updateList	List<UpdateEntry>	variable	164	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+44	UPDATE_WORKFLOW_STATUS_MODTIME		variable	164	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+77	ActionKillXCommand.wfJob	WorkflowJobBean	variable	164	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	166	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	166	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+42	FAILED		variable	166	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+45	WORKFLOW_ACTION		variable	167	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+47	slaEvent	SLAEventBean	variable	168	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+72	ActionKillXCommand.insertList	List<JsonBean>	variable	169	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+47	slaEvent	SLAEventBean	variable	169	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+72	ActionKillXCommand.insertList	List<JsonBean>	variable	176	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+75	ActionKillXCommand.updateList	List<UpdateEntry>	variable	176	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+53	executor	ActionExecutor	variable	177	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	178	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+77	ActionKillXCommand.wfJob	WorkflowJobBean	variable	178	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+71	ActionKillXCommand.actionId	String	variable	187	use	org.apache.oozie.command.wf.ActionKillXCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	120	188
+73	ActionKillXCommand.jobId	String	variable	84	use	org.apache.oozie.command.wf.ActionKillXCommand.getEntityKey	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	83	85
+71	ActionKillXCommand.actionId	String	variable	89	use	org.apache.oozie.command.wf.ActionKillXCommand.getKey	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	88	90
+63	ex	XException	param	107	define	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+63	ex	XException	param	108	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+74	ActionKillXCommand.jpaService	JPAService	variable	95	set	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+77	ActionKillXCommand.wfJob	WorkflowJobBean	variable	98	set	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	99	set	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+10	class		variable	95	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+74	ActionKillXCommand.jpaService	JPAService	variable	97	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+66	GET_WORKFLOW_ACTION_OP		variable	98	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+73	ActionKillXCommand.jobId	String	variable	98	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+65	GET_ACTION_KILL		variable	99	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+71	ActionKillXCommand.actionId	String	variable	99	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+77	ActionKillXCommand.wfJob	WorkflowJobBean	variable	100	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+67	logInfo		variable	100	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	101	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+67	logInfo		variable	101	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+64	E0610		variable	104	use	org.apache.oozie.command.wf.ActionKillXCommand.loadState	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	93	109
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	114	use	org.apache.oozie.command.wf.ActionKillXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	113	117
+70	E0726		variable	115	use	org.apache.oozie.command.wf.ActionKillXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	113	117
+76	ActionKillXCommand.wfAction	WorkflowActionBean	variable	115	use	org.apache.oozie.command.wf.ActionKillXCommand.verifyPrecondition	/Users/justin/Java/Dataset_InducingBenchmark/OOZIE/sliced/5940a376/d4d01f3c.java	113	117

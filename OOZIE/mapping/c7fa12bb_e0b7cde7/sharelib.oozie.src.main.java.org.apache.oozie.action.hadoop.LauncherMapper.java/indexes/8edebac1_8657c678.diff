@@ -1,0 +1,42 @@
+65a66
+>     static final String CONF_OOZIE_NULL_ARGS_ALLOWED = ACTION_PREFIX + "null.args.allowed";
+500,504c501,505
+<         int pos = 0;
+<         for (int i = 0; i < args.length; i++) {
+<             String arg = conf.get(CONF_OOZIE_ACTION_MAIN_ARG_PREFIX + i);
+<             if (!Strings.isNullOrEmpty(arg)) {
+<                 args[pos++] = conf.get(CONF_OOZIE_ACTION_MAIN_ARG_PREFIX + i);
+---
+>         String[] retArray;
+> 
+>         if (conf.getBoolean(CONF_OOZIE_NULL_ARGS_ALLOWED, true)) {
+>             for (int i = 0; i < args.length; i++) {
+>                 args[i] = conf.get(CONF_OOZIE_ACTION_MAIN_ARG_PREFIX + i);
+506d506
+<         }
+508,511c508,522
+<         
+<         
+<         String[] retArray = new String[pos];
+<         System.arraycopy(args, 0, retArray, 0, pos);
+---
+>             retArray = args;
+>         } else {
+>             int pos = 0;
+>             for (int i = 0; i < args.length; i++) {
+>                 String arg = conf.get(CONF_OOZIE_ACTION_MAIN_ARG_PREFIX + i);
+>                 if (!Strings.isNullOrEmpty(arg)) {
+>                     args[pos++] = conf.get(CONF_OOZIE_ACTION_MAIN_ARG_PREFIX + i);
+>                 }
+>             }
+> 
+>             
+>             
+>             retArray = new String[pos];
+>             System.arraycopy(args, 0, retArray, 0, pos);
+>         }
+634a646,649
+>             if (arg == null) {
+>                 arg = "null"; 
+>             }
+> 

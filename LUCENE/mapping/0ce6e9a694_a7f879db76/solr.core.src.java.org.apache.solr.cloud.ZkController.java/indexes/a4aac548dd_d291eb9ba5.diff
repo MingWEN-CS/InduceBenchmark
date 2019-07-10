@@ -1,0 +1,37 @@
+1336,1341d1335
+< 
+<     
+<     if (cd.getCloudDescriptor().getCoreNodeName() == null) {
+<       cd.getCloudDescriptor().setCoreNodeName(coreNodeName);
+<     }
+< 
+1345c1339,1340
+<       if(cd.getCloudDescriptor().getCollectionName() !=null && cd.getCloudDescriptor().getCoreNodeName() != null ) {
+---
+>       CloudDescriptor cloudDesc = cd.getCloudDescriptor();
+>       if(cd.getCloudDescriptor().getCollectionName() !=null && cloudDesc.getCoreNodeName() != null ) {
+1347,1348c1342,1343
+<         if(zkStateReader.getClusterState().hasCollection(cd.getCloudDescriptor().getCollectionName())){
+<         DocCollection coll = zkStateReader.getClusterState().getCollection(cd.getCloudDescriptor().getCollectionName());
+---
+>         if(zkStateReader.getClusterState().hasCollection(cloudDesc.getCollectionName())){
+>         DocCollection coll = zkStateReader.getClusterState().getCollection(cloudDesc.getCollectionName());
+1350c1345
+<            Slice slice = coll.getSlice(cd.getCloudDescriptor().getShardId());
+---
+>            Slice slice = coll.getSlice(cloudDesc.getShardId());
+1352c1347
+<              if(slice.getReplica(cd.getCloudDescriptor().getCoreNodeName()) == null) {
+---
+>              if(slice.getReplica(cloudDesc.getCoreNodeName()) == null) {
+1354c1349
+<                throw new SolrException(ErrorCode.NOT_FOUND,coreNodeName +" is removed");
+---
+>                throw new SolrException(ErrorCode.NOT_FOUND,cloudDesc.getCoreNodeName() +" is removed");
+1359a1355,1360
+> 
+>       
+>       if (cloudDesc.getCoreNodeName() == null) {
+>         cloudDesc.setCoreNodeName(coreNodeName);
+>       }
+> 

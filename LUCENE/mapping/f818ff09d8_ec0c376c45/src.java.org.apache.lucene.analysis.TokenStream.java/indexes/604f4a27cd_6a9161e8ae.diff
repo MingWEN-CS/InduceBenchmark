@@ -1,0 +1,164 @@
+19a20,22
+> import java.io.IOException;
+> import java.util.Iterator;
+> 
+20a24,52
+> import org.apache.lucene.util.Attribute;
+> import org.apache.lucene.util.AttributeSource;
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+22d53
+< import java.io.IOException;
+39d69
+< public abstract class TokenStream {
+40a71,170
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> public abstract class TokenStream extends AttributeSource {
+>   private static boolean useNewAPIDefault = false;
+>   private boolean useNewAPI = useNewAPIDefault;
+>   
+>   protected TokenStream() {
+>     super();
+>   }
+>   
+>   protected TokenStream(AttributeSource input) {
+>     super(input);
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+>   public static boolean useNewAPIDefault() {
+>     return useNewAPIDefault;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public static void setUseNewAPIDefault(boolean use) {
+>     useNewAPIDefault = use;
+>   }
+>   
+>   
+> 
+> 
+> 
+> 
+>   public boolean useNewAPI() {
+>     return useNewAPI;
+>   }
+> 
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public void setUseNewAPI(boolean use) {
+>     useNewAPI = use;
+>   }
+>     	
+> 	
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 	public boolean incrementToken() throws IOException {
+> 	  
+> 	  return false;
+> 	}
+> 	
+87a218,219
+> 
+> 
+109a242,262
+>   
+>   public String toString() {
+>     StringBuffer sb = new StringBuffer();
+>     sb.append('(');
+>     
+>     if (hasAttributes()) {
+>       
+>       
+>       Iterator it = getAttributesIterator();
+>       if (it.hasNext()) {
+>         sb.append(it.next().toString());
+>       }
+>       while (it.hasNext()) {
+>         sb.append(',');
+>         sb.append(it.next().toString());
+>       }
+>     }
+>     sb.append(')');
+>     return sb.toString();
+>   }
+> 

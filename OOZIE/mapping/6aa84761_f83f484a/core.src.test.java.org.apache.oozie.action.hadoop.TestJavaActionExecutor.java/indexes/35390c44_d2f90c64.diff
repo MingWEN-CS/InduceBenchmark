@@ -1,0 +1,90 @@
+186a187,189
+>         os = getFileSystem().create(new Path(getFsTestCaseDir(), new Path("app", "job.xml")));
+>         conf.writeXml(os);
+>         os.close();
+193a197,199
+>         os = getFileSystem().create(new Path(getFsTestCaseDir(), new Path("app", "job2.xml")));
+>         conf.writeXml(os);
+>         os.close();
+205,206c211,214
+<         assertNull(conf.get("oozie.launcher.d"));
+<         assertNull(conf.get("d"));
+---
+>         assertEquals("D", conf.get("oozie.launcher.d"));
+>         assertEquals("D", conf.get("d"));
+>         assertEquals("F", conf.get("oozie.launcher.f"));
+>         assertEquals("F", conf.get("f"));
+216a225
+>         assertNull(conf.get("d"));
+218a228
+>         assertNull(conf.get("f"));
+1219c1229
+<                 + getNameNodeUri() + "</name-node>" + "<job-xml>job.xml</job-xml>" + "<job-xml>job2.xml</job-xml>"
+---
+>                 + getNameNodeUri() + "</name-node>"
+1245c1255
+<                 + getNameNodeUri() + "</name-node>" + "<job-xml>job.xml</job-xml>" + "<job-xml>job2.xml</job-xml>"
+---
+>                 + getNameNodeUri() + "</name-node>"
+1270c1280
+<                 + getNameNodeUri() + "</name-node>" + "<job-xml>job.xml</job-xml>" + "<job-xml>job2.xml</job-xml>"
+---
+>                 + getNameNodeUri() + "</name-node>"
+1297c1307
+<                 + getNameNodeUri() + "</name-node>" + "<job-xml>job.xml</job-xml>" + "<job-xml>job2.xml</job-xml>"
+---
+>                 + getNameNodeUri() + "</name-node>"
+1324c1334
+<                 + getNameNodeUri() + "</name-node>" + "<job-xml>job.xml</job-xml>" + "<job-xml>job2.xml</job-xml>"
+---
+>                 + getNameNodeUri() + "</name-node>"
+1362,1363c1372
+<                 "<name-node>" + getNameNodeUri() + "</name-node>" +
+<                 "<job-xml>job.xml</job-xml>" + "<job-xml>job2.xml</job-xml>" + "<configuration>" +
+---
+>                 "<name-node>" + getNameNodeUri() + "</name-node>" + "<configuration>" +
+1386,1387c1395
+<                 "<name-node>" + getNameNodeUri() + "</name-node>" +
+<                 "<job-xml>job.xml</job-xml>" + "<job-xml>job2.xml</job-xml>" + "<configuration>" +
+---
+>                 "<name-node>" + getNameNodeUri() + "</name-node>" + "<configuration>" +
+1406,1407c1414
+<                 "<name-node>" + getNameNodeUri() + "</name-node>" +
+<                 "<job-xml>job.xml</job-xml>" + "<job-xml>job2.xml</job-xml>" + "<configuration>" +
+---
+>                 "<name-node>" + getNameNodeUri() + "</name-node>" + "<configuration>" +
+1457d1463
+<                 "<job-xml>job.xml</job-xml>" + "<job-xml>job2.xml</job-xml>" +
+1784a1791,1822
+>     public void testJobXmlWithOozieLauncher() throws Exception {
+>         String str = "<java>"
+>                 + "<job-xml>job.xml</job-xml>"
+>                 + "<configuration>"
+>                 + "<property><name>oozie.launcher.p2</name><value>v2b</value></property>"
+>                 + "<property><name>p4</name><value>v4</value></property>"
+>                 + "</configuration>"
+>                 + "</java>";
+>         Element xml = XmlUtils.parseXml(str);
+>         Path appPath = new Path(getFsTestCaseDir(), "app");
+>         getFileSystem().mkdirs(appPath);
+> 
+>         XConfiguration jConf = new XConfiguration();
+>         jConf.set("oozie.launcher.p1", "v1");
+>         jConf.set("oozie.launcher.p2", "v2a");
+>         jConf.set("p3", "v3");
+>         OutputStream os = getFileSystem().create(new Path(appPath, "job.xml"));
+>         jConf.writeXml(os);
+>         os.close();
+> 
+>         Configuration conf = new XConfiguration();
+>         assertEquals(0, conf.size());
+>         JavaActionExecutor jae = new JavaActionExecutor("java");
+>         jae.setupLauncherConf(conf, xml, appPath, createContext("<java/>", null));
+>         assertEquals(5, conf.size());
+>         assertEquals("true", conf.get("mapreduce.job.ubertask.enable"));
+>         assertEquals("v1", conf.get("oozie.launcher.p1"));
+>         assertEquals("v1", conf.get("p1"));
+>         assertEquals("v2b", conf.get("oozie.launcher.p2"));
+>         assertEquals("v2b", conf.get("p2"));
+>     }
+> 

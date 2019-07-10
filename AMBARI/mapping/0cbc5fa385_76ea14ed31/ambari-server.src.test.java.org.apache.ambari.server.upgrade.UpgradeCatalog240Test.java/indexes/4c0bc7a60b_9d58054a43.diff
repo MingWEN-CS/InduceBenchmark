@@ -1,0 +1,20 @@
+780a781
+>     propertiesExpectedFalconEnv.put("content", "# content");
+835a837,840
+>     Capture<Map<String, String>> falconCapture2 =  newCapture();
+>     expect(mockAmbariManagementController.createConfig(eq(mockClusterExpected), eq("falcon-env"),
+>         capture(falconCapture2), anyString(), (Map<String, Map<String, String>>) anyObject())).andReturn(null).once();
+> 
+843a849,855
+>     final String expectredEnvContent = "# content\n" +
+>                                        "\n" +
+>                                        "{% if falcon_atlas_support %}\n" +
+>                                        "# Add the Atlas Falcon hook to the Falcon classpath\n" +
+>                                        "export FALCON_EXTRA_CLASS_PATH={{atlas_hook_cp}}${FALCON_EXTRA_CLASS_PATH}\n" +
+>                                        "{% endif %}";
+> 
+844a857
+>     assertEquals("# content", falconCapture.getValue().get("content"));
+846a860,861
+>     assertEquals(expectredEnvContent, falconCapture2.getValue().get("content"));
+> 

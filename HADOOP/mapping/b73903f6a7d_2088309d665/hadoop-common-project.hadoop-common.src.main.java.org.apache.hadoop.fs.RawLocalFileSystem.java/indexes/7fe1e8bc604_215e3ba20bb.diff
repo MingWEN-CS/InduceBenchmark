@@ -1,0 +1,24 @@
+620a621,643
+>  
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   @Override
+>   public void setTimes(Path p, long mtime, long atime) throws IOException {
+>     File f = pathToFile(p);
+>     if(mtime >= 0) {
+>       if(!f.setLastModified(mtime)) {
+>         throw new IOException(
+>           "couldn't set last-modified time to " +
+>           mtime +
+>           " for " +
+>           f.getAbsolutePath());
+>       }
+>     }
+>   }
+> 

@@ -1,0 +1,25 @@
+60a61,64
+>   protected static final String SERVICE_DESIRED_STATE_TABLE = "servicedesiredstate";
+>   protected static final String CREDENTIAL_STORE_SUPPORTED_COL = "credential_store_supported";
+>   protected static final String CREDENTIAL_STORE_ENABLED_COL = "credential_store_enabled";
+> 
+113c117
+< 
+---
+>     updateServiceDesiredStateTable();
+257a262,276
+> 
+>   
+> 
+> 
+> 
+>   private void updateServiceDesiredStateTable() throws SQLException {
+>     
+>     
+>     
+>     dbAccessor.addColumn(SERVICE_DESIRED_STATE_TABLE,
+>             new DBColumnInfo(CREDENTIAL_STORE_SUPPORTED_COL, Short.class, null, 0, false));
+> 
+>     dbAccessor.addColumn(SERVICE_DESIRED_STATE_TABLE,
+>             new DBColumnInfo(CREDENTIAL_STORE_ENABLED_COL, Short.class, null, 0, false));
+>   }

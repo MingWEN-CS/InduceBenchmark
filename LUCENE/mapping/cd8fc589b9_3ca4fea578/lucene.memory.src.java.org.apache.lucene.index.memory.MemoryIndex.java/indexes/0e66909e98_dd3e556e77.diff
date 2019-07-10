@@ -1,0 +1,8 @@
+456d455
+<       BytesRef ref = termAtt.getBytesRef();
+460d458
+<         termAtt.fillBytesRef();
+467c465
+<         int ord = terms.add(ref);
+---
+>         int ord = terms.add(termAtt.getBytesRef());

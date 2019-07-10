@@ -1,0 +1,893 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.orm.entities;
+
+import org.apache.ambari.server.configuration.Configuration;
+import org.apache.ambari.server.controller.spi.Resource;
+import org.apache.ambari.server.controller.spi.ResourceProvider;
+import org.apache.ambari.server.view.ViewSubResourceDefinition;
+import org.apache.ambari.server.view.configuration.ParameterConfig;
+import org.apache.ambari.server.view.configuration.ResourceConfig;
+import org.apache.ambari.server.view.configuration.ViewConfig;
+import org.apache.ambari.view.validation.Validator;
+import org.apache.ambari.view.View;
+import org.apache.ambari.view.ViewDefinition;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+
+
+
+@Table(name = "viewmain")
+@NamedQuery(name = "allViews",
+    query = "SELECT view FROM ViewEntity view")
+@Entity
+public class ViewEntity implements ViewDefinition {
+  
+
+
+  @Id
+  @Column(name = "view_name", nullable = false, insertable = true,
+      updatable = false, unique = true, length = 100)
+  private String name;
+
+  
+
+
+  @Column
+  @Basic
+  private String label;
+
+  
+
+
+  @Column
+  @Basic
+  private String description;
+
+  
+
+
+  @Column
+  @Basic
+  private String icon;
+
+  
+
+
+  @Column
+  @Basic
+  private String icon64;
+
+  
+
+
+  @Column
+  @Basic
+  private String version;
+
+  
+
+
+  @Column
+  @Basic
+  private String build;
+
+  
+
+
+  @Column
+  @Basic
+  private String archive;
+
+  
+
+
+  @Column
+  @Basic
+  private String mask;
+
+  
+
+
+  @Column(name = "system_view")
+  @Basic
+  private Integer system;
+
+  
+
+
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "view")
+  private Collection<ViewParameterEntity> parameters = new HashSet<ViewParameterEntity>();
+
+  
+
+
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "view")
+  private Collection<ViewResourceEntity> resources = new HashSet<ViewResourceEntity>();
+
+   
+
+
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "view")
+  private Collection<ViewInstanceEntity> instances = new HashSet<ViewInstanceEntity>();
+
+  
+
+
+  @OneToMany(cascade = CascadeType.ALL)
+  @JoinColumns({
+      @JoinColumn(name = "resource_type_id", referencedColumnName = "resource_type_id", nullable = false)
+  })
+  private Collection<PermissionEntity> permissions = new HashSet<PermissionEntity>();
+
+  
+
+
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumns({
+      @JoinColumn(name = "resource_type_id", referencedColumnName = "resource_type_id", nullable = false)
+  })
+  private ResourceTypeEntity resourceType;
+
+  
+
+  
+
+
+  @Transient
+  private ViewConfig configuration;
+
+  
+
+
+  @Transient
+  private final Configuration ambariConfiguration;
+
+  
+
+
+  @Transient
+  private final Resource.Type externalResourceType;
+
+  
+
+
+  @Transient
+  private ClassLoader classLoader = null;
+
+  
+
+
+  @Transient
+  private final Map<Resource.Type, ResourceProvider> resourceProviders = new HashMap<Resource.Type, ResourceProvider>();
+
+  
+
+
+  @Transient
+  private final Map<Resource.Type, ViewSubResourceDefinition> resourceDefinitions = new HashMap<Resource.Type, ViewSubResourceDefinition>();
+
+  
+
+
+  @Transient
+  private final Map<Resource.Type, ResourceConfig> resourceConfigurations = new HashMap<Resource.Type, ResourceConfig>();
+
+  
+
+
+  @Transient
+  private String commonName = null;
+
+  
+
+
+  @Transient
+  private View view = null;
+
+  
+
+
+  @Transient
+  private Validator validator = null;
+
+  
+
+
+  @Transient
+  private ViewStatus status = ViewStatus.PENDING;
+
+  
+
+
+  @Transient
+  private String statusDetail;
+
+  
+
+
+  @Transient
+  private boolean clusterConfigurable;
+
+
+  
+
+  
+
+
+  public ViewEntity() {
+    this.configuration        = null;
+    this.ambariConfiguration  = null;
+    this.archive              = null;
+    this.externalResourceType = null;
+    this.system               = 0;
+    this.clusterConfigurable  = false;
+  }
+
+  
+
+
+
+
+
+
+  public ViewEntity(ViewConfig configuration, Configuration ambariConfiguration,
+                    String archivePath) {
+    setConfiguration(configuration);
+
+    this.ambariConfiguration = ambariConfiguration;
+    this.archive             = archivePath;
+
+    String version = configuration.getVersion();
+
+    this.name        = getViewName(configuration.getName(), version);
+    this.label       = configuration.getLabel();
+    this.description = configuration.getDescription();
+    this.version     = version;
+    this.build       = configuration.getBuild();
+
+    this.mask        = configuration.getMasker();
+    this.icon        = configuration.getIcon();
+    this.icon64      = configuration.getIcon64();
+    this.system      = configuration.isSystem() ? 1 : 0;
+
+    this.externalResourceType =
+        new Resource.Type(getQualifiedResourceTypeName(ResourceConfig.EXTERNAL_RESOURCE_PLURAL_NAME));
+  }
+
+
+  
+
+  @Override
+  public String getViewName() {
+    return getCommonName();
+  }
+
+  @Override
+  public String getLabel() {
+    return label;
+  }
+
+  @Override
+  public String getDescription() {
+    return description;
+  }
+
+  @Override
+  public String getVersion() {
+    return version;
+  }
+
+  @Override
+  public String getBuild() {
+    return build;
+  }
+
+  @Override
+  public ViewStatus getStatus() {
+    return status;
+  }
+
+  @Override
+  public String getStatusDetail() {
+    return statusDetail;
+  }
+
+
+  
+
+  
+
+
+
+
+  public String getName() {
+    return name;
+  }
+
+  
+
+
+
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  
+
+
+
+
+
+  public synchronized String getCommonName() {
+    if (commonName == null) {
+      
+      commonName = name.replaceAll("\\{(.+)\\}", "");
+    }
+    return commonName;
+  }
+
+  
+
+
+
+
+  public void setLabel(String label) {
+    this.label = label;
+  }
+
+  
+
+
+
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  
+
+
+
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  
+
+
+
+
+  public void setBuild(String build) {
+    this.build = build;
+  }
+
+  
+
+
+
+
+  public String getIcon() {
+    return icon;
+  }
+
+  
+
+
+
+
+  public void setIcon(String icon) {
+    this.icon = icon;
+  }
+
+  
+
+
+
+
+  public String getIcon64() {
+    return icon64;
+  }
+
+  
+
+
+
+
+  public void setIcon64(String icon64) {
+    this.icon64 = icon64;
+  }
+
+  
+
+
+
+
+  public Collection<ViewParameterEntity> getParameters() {
+    return parameters;
+  }
+
+  
+
+
+
+
+  public void setParameters(Collection<ViewParameterEntity> parameters) {
+    this.parameters = parameters;
+  }
+
+  
+
+
+
+
+  public Collection<PermissionEntity> getPermissions() {
+    return permissions;
+  }
+
+  
+
+
+
+
+  public void setPermissions(Collection<PermissionEntity> permissions) {
+    this.permissions = permissions;
+  }
+
+  
+
+
+
+
+
+
+  public PermissionEntity getPermission(String permissionName) {
+
+    for (PermissionEntity permissionEntity : permissions) {
+      if (permissionEntity.getPermissionName().equals(permissionName)) {
+        return permissionEntity;
+      }
+    }
+    return null;
+  }
+
+  
+
+
+
+
+  public Collection<ViewResourceEntity> getResources() {
+    return resources;
+  }
+
+  
+
+
+
+
+  public void setResources(Collection<ViewResourceEntity> resources) {
+    this.resources = resources;
+  }
+
+  
+
+
+
+
+  public Collection<ViewInstanceEntity> getInstances() {
+    return instances;
+  }
+
+  
+
+
+
+
+  public void setInstances(Collection<ViewInstanceEntity> instances) {
+    this.instances = instances;
+  }
+
+  
+
+
+
+
+  public void addInstanceDefinition(ViewInstanceEntity viewInstanceDefinition) {
+    removeInstanceDefinition(viewInstanceDefinition.getName());
+    instances.add(viewInstanceDefinition);
+  }
+
+  
+
+
+
+
+  public void removeInstanceDefinition(String instanceName) {
+    ViewInstanceEntity entity = getInstanceDefinition(instanceName);
+    if (entity != null) {
+      instances.remove(entity);
+    }
+  }
+
+  
+
+
+
+
+
+
+  public ViewInstanceEntity getInstanceDefinition(String instanceName) {
+    for (ViewInstanceEntity viewInstanceEntity : instances) {
+      if (viewInstanceEntity.getName().equals(instanceName)) {
+        return viewInstanceEntity;
+      }
+    }
+    return null;
+  }
+
+  
+
+
+
+
+  public String getArchive() {
+    return archive;
+  }
+
+  
+
+
+
+
+  public void setArchive(String archive) {
+    this.archive = archive;
+  }
+
+  
+
+
+
+
+
+
+  public String getAmbariProperty(String key) {
+    return ambariConfiguration.getProperty(key);
+  }
+
+  
+
+
+
+
+  public Configuration getAmbariConfiguration() {
+    return ambariConfiguration;
+  }
+
+  
+
+
+
+
+
+
+  public String getQualifiedResourceTypeName(String resourceTypeName) {
+    return getName() + "/" + resourceTypeName;
+  }
+
+  
+
+
+
+
+  public Resource.Type getExternalResourceType() {
+    return externalResourceType;
+  }
+
+  
+
+
+
+
+  public ClassLoader getClassLoader() {
+    return classLoader;
+  }
+
+  
+
+
+
+
+  public void setClassLoader(ClassLoader classLoader) {
+    this.classLoader = classLoader;
+  }
+
+  
+
+
+
+
+
+  public void addResourceProvider(Resource.Type type, ResourceProvider provider) {
+    resourceProviders.put(type, provider);
+  }
+
+  
+
+
+
+
+
+
+  public ResourceProvider getResourceProvider(Resource.Type type) {
+    return resourceProviders.get(type);
+  }
+
+  
+
+
+
+
+  public void addResourceDefinition(ViewSubResourceDefinition definition) {
+    resourceDefinitions.put(definition.getType(), definition);
+  }
+
+  
+
+
+
+
+
+
+  public ViewSubResourceDefinition getResourceDefinition(Resource.Type type) {
+    return resourceDefinitions.get(type);
+  }
+
+  
+
+
+
+
+  public Map<Resource.Type, ViewSubResourceDefinition> getResourceDefinitions() {
+    return resourceDefinitions;
+  }
+
+  
+
+
+
+
+
+  public void addResourceConfiguration(Resource.Type type, ResourceConfig config) {
+    resourceConfigurations.put(type, config);
+  }
+
+  
+
+
+
+
+  public Map<Resource.Type, ResourceConfig> getResourceConfigurations() {
+    return resourceConfigurations;
+  }
+
+  
+
+
+
+
+  public Set<Resource.Type> getViewResourceTypes() {
+    return resourceProviders.keySet();
+  }
+
+  
+
+
+
+
+  public void setConfiguration(ViewConfig configuration) {
+    this.configuration       = configuration;
+    this.clusterConfigurable = false;
+
+    
+    for (ParameterConfig parameterConfig : configuration.getParameters()) {
+      String clusterConfig = parameterConfig.getClusterConfig();
+      if (clusterConfig != null && !clusterConfig.isEmpty()) {
+        this.clusterConfigurable = true;
+        return;
+      }
+    }
+  }
+
+  
+
+
+
+
+  public ViewConfig getConfiguration() {
+    return configuration;
+  }
+
+  
+
+
+
+
+  public void setView(View view) {
+    this.view = view;
+  }
+
+  
+
+
+
+
+  public View getView() {
+    return view;
+  }
+
+  
+
+
+
+
+  public void setValidator(Validator validator) {
+    this.validator = validator;
+  }
+
+  
+
+
+
+
+  public Validator getValidator() {
+    return validator;
+  }
+
+  
+
+
+
+
+  public boolean hasValidator() {
+    return validator != null;
+  }
+
+  
+
+
+
+
+  public void setMask(String mask) {
+    this.mask = mask;
+  }
+
+  
+
+
+
+
+  @Override
+  public String getMask() {
+    return mask;
+  }
+
+  
+
+
+
+
+  public boolean isSystem() {
+    return system == 1;
+  }
+
+  
+
+
+
+
+  public void setSystem(boolean required) {
+    this.system = required ? 1 : 0;
+  }
+
+  
+
+
+
+
+  public ResourceTypeEntity getResourceType() {
+    return resourceType;
+  }
+
+  
+
+
+
+
+  public void setResourceType(ResourceTypeEntity resourceType) {
+    this.resourceType = resourceType;
+  }
+
+  
+
+
+
+
+  public void setStatus(ViewStatus status) {
+    this.status = status;
+  }
+
+  
+
+
+
+
+  public void setStatusDetail(String statusDetail) {
+    this.statusDetail = statusDetail;
+  }
+
+  
+
+
+
+
+  public boolean isClusterConfigurable() {
+    return clusterConfigurable;
+  }
+
+  
+
+
+
+
+  public boolean isDeployed() {
+    return status.equals(ViewStatus.DEPLOYED);
+  }
+
+  
+
+
+
+
+
+
+
+  public static String getViewName(String name, String version) {
+    return name + "{" + version + "}";
+  }
+}

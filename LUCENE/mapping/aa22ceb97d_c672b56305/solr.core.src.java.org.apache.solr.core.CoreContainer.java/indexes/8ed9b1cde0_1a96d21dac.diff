@@ -1,0 +1,4 @@
+636c636
+<         zkSys.getZkController().preRegister(core);
+---
+>         zkSys.getZkController().preRegister(core.getCoreDescriptor());

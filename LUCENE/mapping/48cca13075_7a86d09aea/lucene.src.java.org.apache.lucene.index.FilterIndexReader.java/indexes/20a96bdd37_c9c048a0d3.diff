@@ -1,0 +1,19 @@
+122c122
+<     return in.getDeletedDocs();
+---
+>     return MultiFields.getDeletedDocs(in);
+294c294,305
+<     return in.getSequentialSubReaders();
+---
+>     return null;
+>   }
+> 
+>   
+>   @Override
+>   public Fields fields() throws IOException {
+>     return new LegacyFields(this);
+>   }
+> 
+>   @Override
+>   public Terms terms(String field) throws IOException {
+>     return new LegacyTerms(this, field);

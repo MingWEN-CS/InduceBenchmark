@@ -1,0 +1,8 @@
+97a98
+> import org.apache.ambari.server.controller.logging.LoggingSearchPropertyProvider;
+4874a4876,4880
+>   @Override
+>   public LoggingSearchPropertyProvider getLoggingSearchPropertyProvider() {
+>     return injector.getInstance(LoggingSearchPropertyProvider.class);
+>   }
+> 

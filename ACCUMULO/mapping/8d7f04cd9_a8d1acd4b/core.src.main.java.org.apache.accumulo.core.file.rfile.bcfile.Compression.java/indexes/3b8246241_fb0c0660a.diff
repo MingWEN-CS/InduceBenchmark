@@ -1,0 +1,5 @@
+158,159c158
+<           codec = (CompressionCodec) ReflectionUtils.newInstance(Class.forName(clazz), myConf);
+<           return codec;
+---
+>           return (CompressionCodec) ReflectionUtils.newInstance(Class.forName(clazz), myConf);

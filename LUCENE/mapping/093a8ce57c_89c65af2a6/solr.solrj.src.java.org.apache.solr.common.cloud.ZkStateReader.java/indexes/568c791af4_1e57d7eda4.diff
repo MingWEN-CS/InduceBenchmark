@@ -1,0 +1,8 @@
+266c266
+<       if (ref == null) {
+---
+>       if (ref == null || legacyCollectionStates.containsKey(collection)) {
+286,288d285
+<       } else if (legacyCollectionStates.containsKey(collection)) {
+<         
+<         refreshLegacyClusterState(null);

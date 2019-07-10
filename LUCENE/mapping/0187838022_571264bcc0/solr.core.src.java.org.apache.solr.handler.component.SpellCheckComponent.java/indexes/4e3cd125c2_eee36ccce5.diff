@@ -1,0 +1,22 @@
+202c202,203
+<         response.add("suggestions", toNamedList(shardRequest, spellingResult, q, extendedResults));
+---
+>         NamedList suggestions = toNamedList(shardRequest, spellingResult, q, extendedResults);
+>         response.add("suggestions", suggestions);
+302c303
+<     NamedList collationList = new SimpleOrderedMap();
+---
+>     NamedList collationList = new NamedList();
+426c427,428
+<     response.add("suggestions", toNamedList(false, result, origQuery, extendedResults));
+---
+>     NamedList suggestions = toNamedList(false, result, origQuery, extendedResults);
+>     response.add("suggestions", suggestions);
+437c439
+<       NamedList collations = new SimpleOrderedMap();
+---
+>       NamedList collations = new NamedList();
+637c639
+<     NamedList result = new SimpleOrderedMap();
+---
+>     NamedList result = new NamedList();

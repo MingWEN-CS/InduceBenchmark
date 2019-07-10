@@ -1,0 +1,14 @@
+1310,1314c1310,1316
+<             LOG.debug("Get credential '" + credsInAction + "' properties for action : " + action.getId());
+<             String[] credNames = credsInAction.split(",");
+<             for (String credName : credNames) {
+<                 CredentialsProperties credProps = getCredProperties(context, credName);
+<                 props.put(credName, credProps);
+---
+>             if (credsInAction != null) {
+>                 LOG.debug("Get credential '" + credsInAction + "' properties for action : " + action.getId());
+>                 String[] credNames = credsInAction.split(",");
+>                 for (String credName : credNames) {
+>                     CredentialsProperties credProps = getCredProperties(context, credName);
+>                     props.put(credName, credProps);
+>                 }

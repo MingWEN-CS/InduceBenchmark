@@ -1,0 +1,17 @@
+101a102
+> import org.apache.lucene.util.Version;
+1887a1889
+> 
+1889,1894c1891
+<         try {
+<             Class<?> analyzerClass = Class.forName(analyzerClassName);
+<             analyzer.setDefaultAnalyzer((Analyzer) analyzerClass.newInstance());
+<         } catch (Exception e) {
+<             log.warn("Invalid Analyzer class: " + analyzerClassName, e);
+<         }
+---
+>         analyzer.setDefaultAnalyzerClass(analyzerClassName);
+1903c1900
+<         return analyzer.getClass().getName();
+---
+>         return analyzer.getDefaultAnalyzerClass();

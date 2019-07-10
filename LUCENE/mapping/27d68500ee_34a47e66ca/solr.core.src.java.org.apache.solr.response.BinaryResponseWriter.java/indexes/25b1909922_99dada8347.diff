@@ -1,0 +1,4 @@
+145c145
+<       boolean onlyPseudoFields = (fnames == null && !returnFields.wantsAllFields())
+---
+>       boolean onlyPseudoFields = (fnames == null && !returnFields.wantsAllFields() && !returnFields.hasPatternMatching())

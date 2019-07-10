@@ -1,0 +1,8 @@
+21c21
+< import org.apache.ambari.server.events.AmbariLdapConfigChangedEvent;
+---
+> import org.apache.ambari.server.events.AmbariConfigurationChangedEvent;
+106c106
+<   public void onConfigChange(AmbariLdapConfigChangedEvent event) throws AmbariLdapException {
+---
+>   public void onConfigChange(AmbariConfigurationChangedEvent event) throws AmbariLdapException {

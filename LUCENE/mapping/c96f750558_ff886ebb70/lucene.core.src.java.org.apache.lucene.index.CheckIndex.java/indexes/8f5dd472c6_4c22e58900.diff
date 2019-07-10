@@ -1,0 +1,52 @@
+33d32
+< import org.apache.lucene.codecs.blocktree.BlockTreeTermsReader;
+302a302,304
+>       public long totalSortedNumericFields;
+>       
+>       
+1382a1385
+>                              + status.totalSortedNumericFields + " SORTED_NUMERIC; "
+1512a1516,1539
+>   
+>   private static void checkSortedNumericDocValues(String fieldName, AtomicReader reader, SortedNumericDocValues ndv, Bits docsWithField) {
+>     for (int i = 0; i < reader.maxDoc(); i++) {
+>       ndv.setDocument(i);
+>       int count = ndv.count();
+>       if (docsWithField.get(i)) {
+>         if (count == 0) {
+>           throw new RuntimeException("dv for field: " + fieldName + " is not marked missing but has zero count for doc: " + i);
+>         }
+>         long previous = Long.MIN_VALUE;
+>         for (int j = 0; j < count; j++) {
+>           long value = ndv.valueAt(j);
+>           if (value < previous) {
+>             throw new RuntimeException("values out of order: " + value + " < " + previous + " for doc: " + i);
+>           }
+>           previous = value;
+>         }
+>       } else {
+>         if (count != 0) {
+>           throw new RuntimeException("dv for field: " + fieldName + " is marked missing but has count=" + count + " for doc: " + i);
+>         }
+>       }
+>     }
+>   }
+1535a1563
+>             reader.getSortedNumericDocValues(fi.name) != null ||
+1539a1568,1577
+>       case SORTED_NUMERIC:
+>         status.totalSortedNumericFields++;
+>         checkSortedNumericDocValues(fi.name, reader, reader.getSortedNumericDocValues(fi.name), docsWithField);
+>         if (reader.getBinaryDocValues(fi.name) != null ||
+>             reader.getNumericDocValues(fi.name) != null ||
+>             reader.getSortedSetDocValues(fi.name) != null ||
+>             reader.getSortedDocValues(fi.name) != null) {
+>           throw new RuntimeException(fi.name + " returns multiple docvalues types!");
+>         }
+>         break;
+1544a1583
+>             reader.getSortedNumericDocValues(fi.name) != null ||
+1553a1593
+>             reader.getSortedNumericDocValues(fi.name) != null ||
+1562a1603
+>             reader.getSortedNumericDocValues(fi.name) != null ||

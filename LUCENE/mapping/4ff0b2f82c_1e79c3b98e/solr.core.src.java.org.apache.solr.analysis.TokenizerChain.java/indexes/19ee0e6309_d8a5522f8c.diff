@@ -1,0 +1,26 @@
+21a22
+> import java.io.IOException;
+50a52,66
+>   class SolrTokenStreamComponents extends TokenStreamComponents {
+>     public SolrTokenStreamComponents(final Tokenizer source, final TokenStream result) {
+>       super(source, result);
+>     }
+> 
+>     @Override
+>     protected void reset(Reader reader) throws IOException {
+>       
+>       
+>       Reader r = initReader(reader);
+>       super.reset(r);
+>     }
+>   }
+>   
+>   
+65c81
+<     Tokenizer tk = tokenizer.create(aReader);
+---
+>     Tokenizer tk = tokenizer.create( initReader(aReader) );
+70c86
+<     return new TokenStreamComponents(tk, ts);
+---
+>     return new SolrTokenStreamComponents(tk, ts);

@@ -1,0 +1,10 @@
+49a50
+> import org.apache.lucene.util.StringHelper;
+517c518
+<         + " " + versionString + " id=" + sis.getId() + " format=" + sFormat + userDataString);
+---
+>         + " " + versionString + " id=" + StringHelper.idToString(sis.getId()) + " format=" + sFormat + userDataString);
+568c569
+<         msg(infoStream, "    id=" + info.info.getId());
+---
+>         msg(infoStream, "    id=" + StringHelper.idToString(info.info.getId()));

@@ -1,0 +1,629 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.hadoop.security.authentication.server;
+
+import org.apache.hadoop.classification.InterfaceAudience;
+import org.apache.hadoop.classification.InterfaceStability;
+import org.apache.hadoop.security.authentication.client.AuthenticatedURL;
+import org.apache.hadoop.security.authentication.client.AuthenticationException;
+import org.apache.hadoop.security.authentication.util.Signer;
+import org.apache.hadoop.security.authentication.util.SignerException;
+import org.apache.hadoop.security.authentication.util.RandomSignerSecretProvider;
+import org.apache.hadoop.security.authentication.util.SignerSecretProvider;
+import org.apache.hadoop.security.authentication.util.StringSignerSecretProvider;
+import org.apache.hadoop.security.authentication.util.ZKSignerSecretProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@InterfaceAudience.Private
+@InterfaceStability.Unstable
+public class AuthenticationFilter implements Filter {
+
+  private static Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
+
+  
+
+
+  public static final String CONFIG_PREFIX = "config.prefix";
+
+  
+
+
+  public static final String AUTH_TYPE = "type";
+
+  
+
+
+  public static final String SIGNATURE_SECRET = "signature.secret";
+
+  
+
+
+  public static final String AUTH_TOKEN_VALIDITY = "token.validity";
+
+  
+
+
+  public static final String COOKIE_DOMAIN = "cookie.domain";
+
+  
+
+
+  public static final String COOKIE_PATH = "cookie.path";
+
+  
+
+
+
+
+
+
+
+  public static final String SIGNER_SECRET_PROVIDER =
+          "signer.secret.provider";
+
+  
+
+
+
+
+
+  public static final String SIGNER_SECRET_PROVIDER_ATTRIBUTE =
+      "signer.secret.provider.object";
+
+  private Properties config;
+  private Signer signer;
+  private SignerSecretProvider secretProvider;
+  private AuthenticationHandler authHandler;
+  private boolean randomSecret;
+  private boolean customSecretProvider;
+  private long validity;
+  private String cookieDomain;
+  private String cookiePath;
+
+  
+
+
+
+
+
+
+
+
+
+  @Override
+  public void init(FilterConfig filterConfig) throws ServletException {
+    String configPrefix = filterConfig.getInitParameter(CONFIG_PREFIX);
+    configPrefix = (configPrefix != null) ? configPrefix + "." : "";
+    config = getConfiguration(configPrefix, filterConfig);
+    String authHandlerName = config.getProperty(AUTH_TYPE, null);
+    String authHandlerClassName;
+    if (authHandlerName == null) {
+      throw new ServletException("Authentication type must be specified: " +
+          PseudoAuthenticationHandler.TYPE + "|" + 
+          KerberosAuthenticationHandler.TYPE + "|<class>");
+    }
+    if (authHandlerName.toLowerCase(Locale.ENGLISH).equals(
+        PseudoAuthenticationHandler.TYPE)) {
+      authHandlerClassName = PseudoAuthenticationHandler.class.getName();
+    } else if (authHandlerName.toLowerCase(Locale.ENGLISH).equals(
+        KerberosAuthenticationHandler.TYPE)) {
+      authHandlerClassName = KerberosAuthenticationHandler.class.getName();
+    } else {
+      authHandlerClassName = authHandlerName;
+    }
+
+    validity = Long.parseLong(config.getProperty(AUTH_TOKEN_VALIDITY, "36000"))
+        * 1000; 
+    initializeSecretProvider(filterConfig);
+
+    initializeAuthHandler(authHandlerClassName, filterConfig);
+
+
+    cookieDomain = config.getProperty(COOKIE_DOMAIN, null);
+    cookiePath = config.getProperty(COOKIE_PATH, null);
+  }
+
+  protected void initializeAuthHandler(String authHandlerClassName, FilterConfig filterConfig)
+      throws ServletException {
+    try {
+      Class<?> klass = Thread.currentThread().getContextClassLoader().loadClass(authHandlerClassName);
+      authHandler = (AuthenticationHandler) klass.newInstance();
+      authHandler.init(config);
+    } catch (ClassNotFoundException ex) {
+      throw new ServletException(ex);
+    } catch (InstantiationException ex) {
+      throw new ServletException(ex);
+    } catch (IllegalAccessException ex) {
+      throw new ServletException(ex);
+    }
+  }
+
+  protected void initializeSecretProvider(FilterConfig filterConfig)
+      throws ServletException {
+    secretProvider = (SignerSecretProvider) filterConfig.getServletContext().
+        getAttribute(SIGNER_SECRET_PROVIDER_ATTRIBUTE);
+    if (secretProvider == null) {
+      Class<? extends SignerSecretProvider> providerClass
+              = getProviderClass(config);
+      try {
+        secretProvider = providerClass.newInstance();
+      } catch (InstantiationException ex) {
+        throw new ServletException(ex);
+      } catch (IllegalAccessException ex) {
+        throw new ServletException(ex);
+      }
+      try {
+        secretProvider.init(config, filterConfig.getServletContext(), validity);
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+    } else {
+      customSecretProvider = true;
+    }
+    signer = new Signer(secretProvider);
+  }
+
+  @SuppressWarnings("unchecked")
+  private Class<? extends SignerSecretProvider> getProviderClass(Properties config)
+          throws ServletException {
+    String providerClassName;
+    String signerSecretProviderName
+            = config.getProperty(SIGNER_SECRET_PROVIDER, null);
+    
+    if (signerSecretProviderName == null) {
+      String signatureSecret = config.getProperty(SIGNATURE_SECRET, null);
+      if (signatureSecret != null) {
+        providerClassName = StringSignerSecretProvider.class.getName();
+      } else {
+        providerClassName = RandomSignerSecretProvider.class.getName();
+        randomSecret = true;
+      }
+    } else {
+      if ("random".equals(signerSecretProviderName)) {
+        providerClassName = RandomSignerSecretProvider.class.getName();
+        randomSecret = true;
+      } else if ("string".equals(signerSecretProviderName)) {
+        providerClassName = StringSignerSecretProvider.class.getName();
+      } else if ("zookeeper".equals(signerSecretProviderName)) {
+        providerClassName = ZKSignerSecretProvider.class.getName();
+      } else {
+        providerClassName = signerSecretProviderName;
+        customSecretProvider = true;
+      }
+    }
+    try {
+      return (Class<? extends SignerSecretProvider>) Thread.currentThread().
+              getContextClassLoader().loadClass(providerClassName);
+    } catch (ClassNotFoundException ex) {
+      throw new ServletException(ex);
+    }
+  }
+
+  
+
+
+
+
+
+
+  protected Properties getConfiguration() {
+    return config;
+  }
+
+  
+
+
+
+
+  protected AuthenticationHandler getAuthenticationHandler() {
+    return authHandler;
+  }
+
+  
+
+
+
+
+  protected boolean isRandomSecret() {
+    return randomSecret;
+  }
+
+  
+
+
+
+
+  protected boolean isCustomSignerSecretProvider() {
+    return customSecretProvider;
+  }
+
+  
+
+
+
+
+  protected long getValidity() {
+    return validity / 1000;
+  }
+
+  
+
+
+
+
+  protected String getCookieDomain() {
+    return cookieDomain;
+  }
+
+  
+
+
+
+
+  protected String getCookiePath() {
+    return cookiePath;
+  }
+
+  
+
+
+
+
+  @Override
+  public void destroy() {
+    if (authHandler != null) {
+      authHandler.destroy();
+      authHandler = null;
+    }
+    if (secretProvider != null) {
+      secretProvider.destroy();
+    }
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  protected Properties getConfiguration(String configPrefix, FilterConfig filterConfig) throws ServletException {
+    Properties props = new Properties();
+    Enumeration<?> names = filterConfig.getInitParameterNames();
+    while (names.hasMoreElements()) {
+      String name = (String) names.nextElement();
+      if (name.startsWith(configPrefix)) {
+        String value = filterConfig.getInitParameter(name);
+        props.put(name.substring(configPrefix.length()), value);
+      }
+    }
+    return props;
+  }
+
+  
+
+
+
+
+
+
+
+
+  protected String getRequestURL(HttpServletRequest request) {
+    StringBuffer sb = request.getRequestURL();
+    if (request.getQueryString() != null) {
+      sb.append("?").append(request.getQueryString());
+    }
+    return sb.toString();
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  protected AuthenticationToken getToken(HttpServletRequest request) throws IOException, AuthenticationException {
+    AuthenticationToken token = null;
+    String tokenStr = null;
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if (cookie.getName().equals(AuthenticatedURL.AUTH_COOKIE)) {
+          tokenStr = cookie.getValue();
+          try {
+            tokenStr = signer.verifyAndExtract(tokenStr);
+          } catch (SignerException ex) {
+            throw new AuthenticationException(ex);
+          }
+          break;
+        }
+      }
+    }
+    if (tokenStr != null) {
+      token = AuthenticationToken.parse(tokenStr);
+      if (!token.getType().equals(authHandler.getType())) {
+        throw new AuthenticationException("Invalid AuthenticationToken type");
+      }
+      if (token.isExpired()) {
+        throw new AuthenticationException("AuthenticationToken expired");
+      }
+    }
+    return token;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+      throws IOException, ServletException {
+    boolean unauthorizedResponse = true;
+    int errCode = HttpServletResponse.SC_UNAUTHORIZED;
+    AuthenticationException authenticationEx = null;
+    HttpServletRequest httpRequest = (HttpServletRequest) request;
+    HttpServletResponse httpResponse = (HttpServletResponse) response;
+    boolean isHttps = "https".equals(httpRequest.getScheme());
+    try {
+      boolean newToken = false;
+      AuthenticationToken token;
+      try {
+        token = getToken(httpRequest);
+      }
+      catch (AuthenticationException ex) {
+        LOG.warn("AuthenticationToken ignored: " + ex.getMessage());
+        
+        authenticationEx = ex;
+        token = null;
+      }
+      if (authHandler.managementOperation(token, httpRequest, httpResponse)) {
+        if (token == null) {
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Request [{}] triggering authentication", getRequestURL(httpRequest));
+          }
+          token = authHandler.authenticate(httpRequest, httpResponse);
+          if (token != null && token.getExpires() != 0 &&
+              token != AuthenticationToken.ANONYMOUS) {
+            token.setExpires(System.currentTimeMillis() + getValidity() * 1000);
+          }
+          newToken = true;
+        }
+        if (token != null) {
+          unauthorizedResponse = false;
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Request [{}] user [{}] authenticated", getRequestURL(httpRequest), token.getUserName());
+          }
+          final AuthenticationToken authToken = token;
+          httpRequest = new HttpServletRequestWrapper(httpRequest) {
+
+            @Override
+            public String getAuthType() {
+              return authToken.getType();
+            }
+
+            @Override
+            public String getRemoteUser() {
+              return authToken.getUserName();
+            }
+
+            @Override
+            public Principal getUserPrincipal() {
+              return (authToken != AuthenticationToken.ANONYMOUS) ? authToken : null;
+            }
+          };
+          if (newToken && !token.isExpired() && token != AuthenticationToken.ANONYMOUS) {
+            String signedToken = signer.sign(token.toString());
+            createAuthCookie(httpResponse, signedToken, getCookieDomain(),
+                    getCookiePath(), token.getExpires(), isHttps);
+          }
+          doFilter(filterChain, httpRequest, httpResponse);
+        }
+      } else {
+        unauthorizedResponse = false;
+      }
+    } catch (AuthenticationException ex) {
+      
+      errCode = HttpServletResponse.SC_FORBIDDEN;
+      authenticationEx = ex;
+      LOG.warn("Authentication exception: " + ex.getMessage(), ex);
+    }
+    if (unauthorizedResponse) {
+      if (!httpResponse.isCommitted()) {
+        createAuthCookie(httpResponse, "", getCookieDomain(),
+                getCookiePath(), 0, isHttps);
+        if (authenticationEx == null) {
+          httpResponse.sendError(errCode, "Authentication required");
+        } else {
+          httpResponse.sendError(errCode, authenticationEx.getMessage());
+        }
+      }
+    }
+  }
+
+  
+
+
+
+  protected void doFilter(FilterChain filterChain, HttpServletRequest request,
+      HttpServletResponse response) throws IOException, ServletException {
+    filterChain.doFilter(request, response);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+  public static void createAuthCookie(HttpServletResponse resp, String token,
+                                      String domain, String path, long expires,
+                                      boolean isSecure) {
+    StringBuilder sb = new StringBuilder(AuthenticatedURL.AUTH_COOKIE)
+                           .append("=");
+    if (token != null && token.length() > 0) {
+      sb.append("\"").append(token).append("\"");
+    }
+
+    if (path != null) {
+      sb.append("; Path=").append(path);
+    }
+
+    if (domain != null) {
+      sb.append("; Domain=").append(domain);
+    }
+
+    if (expires >= 0) {
+      Date date = new Date(expires);
+      SimpleDateFormat df = new SimpleDateFormat("EEE, " +
+              "dd-MMM-yyyy HH:mm:ss zzz");
+      df.setTimeZone(TimeZone.getTimeZone("GMT"));
+      sb.append("; Expires=").append(df.format(date));
+    }
+
+    if (isSecure) {
+      sb.append("; Secure");
+    }
+
+    sb.append("; HttpOnly");
+    resp.addHeader("Set-Cookie", sb.toString());
+  }
+}

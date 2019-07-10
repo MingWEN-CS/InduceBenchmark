@@ -1,0 +1,13 @@
+1099,1100c1099,1100
+< 
+<     if (!containsKmsDt(actualUgi) &&
+---
+>     if (UserGroupInformation.isSecurityEnabled() &&
+>         !containsKmsDt(actualUgi) &&
+1104,1105c1104,1106
+<       LOG.debug("using loginUser no KMS Delegation Token "
+<           + "no Kerberos Credentials");
+---
+>       
+>       LOG.debug("Using loginUser when Kerberos is enabled but the actual user" +
+>           " does not have either KMS Delegation Token or Kerberos Credentials");

@@ -1,0 +1,57 @@
+338a339,344
+>     
+>     
+>     
+>     
+>     
+>     
+1367,1384d1372
+<     processDeprecation();
+<   }
+<   
+<   
+< 
+< 
+< 
+< 
+<   private static AtomicBoolean loadedDeprecation = new AtomicBoolean(false);
+<   
+<   private static final String extraConfKey = "hadoop.conf.extra.classes";
+< 
+<   
+< 
+< 
+< 
+<   private void processDeprecation() {
+<     populateDeprecationMapping();
+1388,1417d1375
+<   
+< 
+< 
+< 
+<   private synchronized void populateDeprecationMapping() {
+<     if (!loadedDeprecation.get()) {
+<       
+<       
+<       String classnames = substituteVars(properties.getProperty(extraConfKey));
+<       if (classnames == null) {
+<         return;
+<       }
+<       String[] classes = StringUtils.getStrings(classnames);
+<       for (String className : classes) {
+<         try {
+<           Class.forName(className);
+<         } catch (ClassNotFoundException e) {
+<           LOG.warn(className + " is not in the classpath");
+<         }
+<       }
+<       
+<       
+<       deprecatedKeyMap = Collections.unmodifiableMap(deprecatedKeyMap);
+<       
+<       
+<       loadedDeprecation.set(true);
+<     }
+<   }
+< 
+<   

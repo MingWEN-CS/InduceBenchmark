@@ -1,0 +1,26 @@
+20a21
+> import java.util.Arrays;
+25d25
+< import org.apache.lucene.index.IndexFileNames;
+99,114c99,102
+<     
+<     
+<     
+<     
+<     try {
+<       for(String f : in.listAll()) {
+<         
+<         
+<         
+<         files.add(f);
+<       }
+<     } catch (NoSuchDirectoryException ex) {
+<       
+<       
+<       if (files.isEmpty()) {
+<         throw ex;
+---
+>     for(String f : in.listAll()) {
+>       if (!files.add(f)) {
+>         throw new IllegalStateException("file: " + in + " appears both in delegate and in cache: " +
+>                                         "cache=" + Arrays.toString(cache.listAll()) + ",delegate=" + Arrays.toString(in.listAll()));

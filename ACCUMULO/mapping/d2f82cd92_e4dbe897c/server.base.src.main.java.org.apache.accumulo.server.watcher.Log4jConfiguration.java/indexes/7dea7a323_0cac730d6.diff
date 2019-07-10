@@ -1,0 +1,22 @@
+18a19,20
+> import java.io.File;
+> 
+29a32
+>   private final File log4jFile;
+33a37
+>     log4jFile = new File(filename);
+42,46c46,53
+<     LogManager.resetConfiguration();
+<     if (usingProperties) {
+<       new PropertyConfigurator().doConfigure(filename, LogManager.getLoggerRepository());
+<     } else {
+<       new DOMConfigurator().doConfigure(filename, LogManager.getLoggerRepository());
+---
+>     
+>     if (log4jFile.exists() && log4jFile.isFile() && log4jFile.canRead()) {
+>       LogManager.resetConfiguration();
+>       if (usingProperties) {
+>         new PropertyConfigurator().doConfigure(filename, LogManager.getLoggerRepository());
+>       } else {
+>         new DOMConfigurator().doConfigure(filename, LogManager.getLoggerRepository());
+>       }

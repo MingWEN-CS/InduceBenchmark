@@ -1,0 +1,20 @@
+83a84
+> 
+91c92,93
+<     LOG.info("FairCallQueue is in use with " + numQueues + " queues.");
+---
+>     LOG.info("FairCallQueue is in use with " + numQueues +
+>         " queues with total capacity of " + capacity);
+95c97,98
+< 
+---
+>     int queueCapacity = capacity / numQueues;
+>     int capacityForFirstQueue = queueCapacity + (capacity % numQueues);
+97c100,104
+<       this.queues.add(new LinkedBlockingQueue<E>(capacity));
+---
+>       if (i == 0) {
+>         this.queues.add(new LinkedBlockingQueue<E>(capacityForFirstQueue));
+>       } else {
+>         this.queues.add(new LinkedBlockingQueue<E>(queueCapacity));
+>       }

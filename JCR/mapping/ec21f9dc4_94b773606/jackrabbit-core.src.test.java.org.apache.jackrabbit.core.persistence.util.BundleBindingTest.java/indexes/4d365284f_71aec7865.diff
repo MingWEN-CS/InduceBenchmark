@@ -1,0 +1,52 @@
+57c57
+<                 "created", 
+---
+>                 "created",
+90c90
+<         NodePropBundle bundle = new NodePropBundle(new NodeId());
+---
+>         NodePropBundle bundle = new NodePropBundle(NodeId.randomId());
+289,290c289,290
+<         NodePropBundle bundle = new NodePropBundle(new NodeId());
+<         bundle.setParentId(new NodeId());
+---
+>         NodePropBundle bundle = new NodePropBundle(NodeId.randomId());
+>         bundle.setParentId(NodeId.randomId());
+295,309c295,309
+<         bundle.addChildNodeEntry(factory.create("ns1", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns2", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns3", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns4", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns5", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns6", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns7", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns8", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns1", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns1", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns2", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns3", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns1", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns2", "test"), new NodeId());
+<         bundle.addChildNodeEntry(factory.create("ns3", "test"), new NodeId());
+---
+>         bundle.addChildNodeEntry(factory.create("ns1", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns2", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns3", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns4", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns5", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns6", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns7", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns8", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns1", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns1", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns2", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns3", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns1", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns2", "test"), NodeId.randomId());
+>         bundle.addChildNodeEntry(factory.create("ns3", "test"), NodeId.randomId());
+347,348c347,348
+<         NodePropBundle bundle = new NodePropBundle(new NodeId());
+<         bundle.setParentId(new NodeId());
+---
+>         NodePropBundle bundle = new NodePropBundle(NodeId.randomId());
+>         bundle.setParentId(NodeId.randomId());

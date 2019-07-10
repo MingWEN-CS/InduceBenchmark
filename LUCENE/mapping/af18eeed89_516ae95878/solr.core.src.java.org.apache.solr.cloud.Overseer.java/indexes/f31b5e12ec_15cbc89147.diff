@@ -1,0 +1,167 @@
+24a25,26
+> import java.io.Closeable;
+> import java.io.IOException;
+41d42
+< import org.apache.solr.common.cloud.ClosableThread;
+52a54
+> import org.apache.solr.core.ConfigSolr;
+53a56,57
+> import org.apache.solr.update.UpdateShardHandler;
+> import org.apache.solr.util.IOUtils;
+65c69
+< public class Overseer {
+---
+> public class Overseer implements Closeable {
+85c89
+<   private class ClusterStateUpdater implements Runnable, ClosableThread {
+---
+>   private class ClusterStateUpdater implements Runnable, Closeable {
+1115,1119d1118
+<       @Override
+<       public boolean isClosed() {
+<         return this.isClosed;
+<       }
+< 
+1144c1143
+<   class OverseerThread extends Thread implements ClosableThread {
+---
+>   class OverseerThread extends Thread implements Closeable {
+1147c1146
+<     private ClosableThread thread;
+---
+>     private Closeable thread;
+1149c1148
+<     public OverseerThread(ThreadGroup tg, ClosableThread thread) {
+---
+>     public OverseerThread(ThreadGroup tg, Closeable thread) {
+1154c1153
+<     public OverseerThread(ThreadGroup ccTg, ClosableThread thread, String name) {
+---
+>     public OverseerThread(ThreadGroup ccTg, Closeable thread, String name) {
+1160c1159
+<     public void close() {
+---
+>     public void close() throws IOException {
+1165d1163
+<     @Override
+1172c1170
+<   private volatile OverseerThread ccThread;
+---
+>   private OverseerThread ccThread;
+1174c1172,1174
+<   private volatile OverseerThread updaterThread;
+---
+>   private OverseerThread updaterThread;
+>   
+>   private OverseerThread arfoThread;
+1176c1176
+<   private ZkStateReader reader;
+---
+>   private final ZkStateReader reader;
+1178c1178,1180
+<   private ShardHandler shardHandler;
+---
+>   private final ShardHandler shardHandler;
+>   
+>   private final UpdateShardHandler updateShardHandler;
+1180c1182
+<   private String adminPath;
+---
+>   private final String adminPath;
+1186a1189,1191
+>   private String id;
+>   private boolean closed;
+>   private ConfigSolr config;
+1189c1194,1197
+<   public Overseer(ShardHandler shardHandler, String adminPath, final ZkStateReader reader, ZkController zkController) throws KeeperException, InterruptedException {
+---
+>   public Overseer(ShardHandler shardHandler,
+>       UpdateShardHandler updateShardHandler, String adminPath,
+>       final ZkStateReader reader, ZkController zkController, ConfigSolr config)
+>       throws KeeperException, InterruptedException {
+1191a1200
+>     this.updateShardHandler = updateShardHandler;
+1194a1204
+>     this.config = config;
+1197,1198c1207,1210
+<   public void start(String id) {
+<     close();
+---
+>   public synchronized void start(String id) {
+>     this.id = id;
+>     closed = false;
+>     doClose();
+1203c1215
+<     updaterThread = new OverseerThread(tg, new ClusterStateUpdater(reader, id, stats));
+---
+>     updaterThread = new OverseerThread(tg, new ClusterStateUpdater(reader, id, stats), "OverseerStateUpdate-" + id);
+1209c1221
+<     ccThread = new OverseerThread(ccTg, overseerCollectionProcessor, "Overseer-" + id);
+---
+>     ccThread = new OverseerThread(ccTg, overseerCollectionProcessor, "OverseerCollectionProcessor-" + id);
+1211a1224,1229
+>     ThreadGroup ohcfTg = new ThreadGroup("Overseer Hdfs SolrCore Failover Thread.");
+> 
+>     OverseerAutoReplicaFailoverThread autoReplicaFailoverThread = new OverseerAutoReplicaFailoverThread(config, reader, updateShardHandler);
+>     arfoThread = new OverseerThread(ohcfTg, autoReplicaFailoverThread, "OverseerHdfsCoreFailoverThread-" + id);
+>     arfoThread.setDaemon(true);
+>     
+1213a1232
+>     arfoThread.start();
+1216c1235,1242
+<   public OverseerThread getUpdaterThread() {
+---
+>   
+>   
+> 
+> 
+> 
+> 
+> 
+>   public synchronized OverseerThread getUpdaterThread() {
+1220,1238c1246,1266
+<   public void close() {
+<     try {
+<       if (updaterThread != null) {
+<         try {
+<           updaterThread.close();
+<           updaterThread.interrupt();
+<         } catch (Exception e) {
+<           log.error("Error closing updaterThread", e);
+<         }
+<       }
+<     } finally {
+<       if (ccThread != null) {
+<         try {
+<           ccThread.close();
+<           ccThread.interrupt();
+<         } catch (Exception e) {
+<           log.error("Error closing ccThread", e);
+<         }
+<       }
+---
+>   public synchronized void close() {
+>     if (closed) return;
+>     log.info("Overseer (id=" + id + ") closing");
+>     
+>     doClose();
+>     this.closed = true;
+>   }
+> 
+>   private void doClose() {
+>     
+>     if (updaterThread != null) {
+>       IOUtils.closeQuietly(updaterThread);
+>       updaterThread.interrupt();
+>     }
+>     if (ccThread != null) {
+>       IOUtils.closeQuietly(ccThread);
+>       ccThread.interrupt();
+>     }
+>     if (arfoThread != null) {
+>       IOUtils.closeQuietly(arfoThread);
+>       arfoThread.interrupt();
+1239a1268
+>     
+1241a1271
+>     arfoThread = null;

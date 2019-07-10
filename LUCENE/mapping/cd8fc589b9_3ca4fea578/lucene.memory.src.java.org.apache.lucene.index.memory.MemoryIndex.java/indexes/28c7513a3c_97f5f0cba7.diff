@@ -1,0 +1,10 @@
+287,293c287
+<     TokenStream stream;
+<     try {
+<       stream = analyzer.tokenStream(fieldName, text);
+<     } catch (IOException ex) {
+<       throw new RuntimeException(ex);
+<     }
+< 
+---
+>     TokenStream stream = analyzer.tokenStream(fieldName, text);

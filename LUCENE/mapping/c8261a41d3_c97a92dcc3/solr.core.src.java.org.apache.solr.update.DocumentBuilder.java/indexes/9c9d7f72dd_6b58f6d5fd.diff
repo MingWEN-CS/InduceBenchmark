@@ -1,0 +1,85 @@
+20a21
+> import java.util.Set;
+32a34,35
+> import com.google.common.collect.Sets;
+> 
+77a81
+>     Set<String> usedFields = Sets.newHashSet();
+105a110,112
+>       List<CopyField> copyFields = schema.getCopyFieldsList(name);
+>       if( copyFields.size() == 0 ) copyFields = null;
+> 
+116a124,125
+>             
+>             usedFields.add(sfield.getName());
+121,133c130,132
+<           List<CopyField> copyFields = schema.getCopyFieldsList(name);
+<           for (CopyField cf : copyFields) {
+<             SchemaField destinationField = cf.getDestination();
+< 
+<             final boolean destHasValues = 
+<               (null != out.getField(destinationField.getName()));
+< 
+<             
+<             if (!destinationField.multiValued() && destHasValues) {
+<               throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+<                       "ERROR: "+getID(doc, schema)+"multiple values encountered for non multiValued copy field " +
+<                               destinationField.getName() + ": " + v);
+<             }
+---
+>           if( copyFields != null ){
+>             for (CopyField cf : copyFields) {
+>               SchemaField destinationField = cf.getDestination();
+135,140c134,161
+<             used = true;
+<             
+<             
+<             Object val = v;
+<             if( val instanceof String && cf.getMaxChars() > 0 ) {
+<               val = cf.getLimitedValue((String)val);
+---
+>               final boolean destHasValues = usedFields.contains(destinationField.getName());
+>   
+>               
+>               if (!destinationField.multiValued() && destHasValues) {
+>                 throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+>                         "ERROR: "+getID(doc, schema)+"multiple values encountered for non multiValued copy field " +
+>                                 destinationField.getName() + ": " + v);
+>               }
+>     
+>               used = true;
+>               
+>               
+>               Object val = v;
+>               if( val instanceof String && cf.getMaxChars() > 0 ) {
+>                 val = cf.getLimitedValue((String)val);
+>               }
+>   
+>               
+>               
+>               
+>               
+>               final float destBoost = 
+>                 (destinationField.indexed() && !destinationField.omitNorms()) ?
+>                 (destHasValues ? fieldBoost : compoundBoost) : 1.0F;
+>               
+>               addField(out, destinationField, val, destBoost);
+>               
+>               usedFields.add(destinationField.getName());
+142d162
+< 
+147,149d166
+<             final float destBoost = 
+<               (destinationField.indexed() && !destinationField.omitNorms()) ?
+<               (destHasValues ? fieldBoost : compoundBoost) : 1.0F;
+151c168
+<             addField(out, destinationField, val, destBoost);
+---
+>             fieldBoost = compoundBoost = 1.0f;
+153,158d169
+<           
+<           
+<           
+<           
+<           
+<           fieldBoost = compoundBoost = 1.0f;

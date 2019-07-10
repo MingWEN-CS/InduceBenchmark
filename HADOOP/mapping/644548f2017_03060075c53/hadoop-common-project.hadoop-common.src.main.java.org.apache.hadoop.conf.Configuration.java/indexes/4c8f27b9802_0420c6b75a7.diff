@@ -1,0 +1,22 @@
+2538a2539,2559
+>   
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   public Map<String, String> getPropsWithPrefix(String confPrefix) {
+>     Map<String, String> configMap = new HashMap<>();
+>     for (Map.Entry<String, String> entry : this) {
+>       String name = entry.getKey();
+>       if (name.startsWith(confPrefix)) {
+>         String value = this.get(name);
+>         name = name.substring(confPrefix.length());
+>         configMap.put(name, value);
+>       }
+>     }
+>     return configMap;
+>   }
+> 

@@ -1,0 +1,10 @@
+20a21,22
+> import org.apache.hadoop.security.authentication.util.SignerSecretProvider;
+> import org.apache.hadoop.security.authentication.util.StringSignerSecretProviderCreator;
+71d72
+< import org.apache.hadoop.security.authentication.util.StringSignerSecretProvider;
+690c691,692
+<     StringSignerSecretProvider secretProvider = new StringSignerSecretProvider();
+---
+>     SignerSecretProvider secretProvider =
+>         StringSignerSecretProviderCreator.newStringSignerSecretProvider();

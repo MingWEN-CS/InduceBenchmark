@@ -1,0 +1,29 @@
+20a21
+> import org.apache.oozie.util.ELUtils;
+30a32
+> import org.apache.commons.lang.StringUtils;
+155c157
+<             LiteWorkflowApp app = parse(strDef, wfDefElement, configDefault);
+---
+>             LiteWorkflowApp app = parse(strDef, wfDefElement, configDefault, jobConf);
+381a384,385
+> 
+> 
+383c387,388
+<     private LiteWorkflowApp parse(String strDef, Element root, Configuration configDefault) throws WorkflowException {
+---
+>     private LiteWorkflowApp parse(String strDef, Element root, Configuration configDefault, Configuration jobConf)
+>             throws WorkflowException {
+453a459,470
+>                                         try {
+>                                             if (!StringUtils.isEmpty(userRetryMaxStr)) {
+>                                                 userRetryMaxStr = ELUtils.resolveAppName(userRetryMaxStr, jobConf);
+>                                             }
+>                                             if (!StringUtils.isEmpty(userRetryIntervalStr)) {
+>                                                 userRetryIntervalStr = ELUtils.resolveAppName(userRetryIntervalStr,
+>                                                         jobConf);
+>                                             }
+>                                         }
+>                                         catch (Exception e) {
+>                                             throw new WorkflowException(ErrorCode.E0703, e.getMessage());
+>                                         }

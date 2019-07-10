@@ -1,0 +1,47 @@
+87a88,97
+>     private static final Iterator<NodeState> EMPTY_NODESTATE_ITERATOR;
+>     static {
+>         Collection<NodeState> empty = Collections.emptyList();
+>         EMPTY_NODESTATE_ITERATOR = empty.iterator();
+>     }
+> 
+>     
+>     
+> 
+> 
+933c943
+<             Iterator nodeStates;
+---
+>             Iterator<NodeState> nodeStates;
+937c947
+<                 nodeStates = new AbstractIteratorDecorator(
+---
+>                 nodeStates = (Iterator<NodeState>) new AbstractIteratorDecorator(
+953c963
+<                     nodeStates = new Iterator() {
+---
+>                     nodeStates = new Iterator<NodeState>() {
+966c976
+<                         public Object next() {
+---
+>                         public NodeState next() {
+981c991
+<                     nodeStates = Collections.EMPTY_LIST.iterator();
+---
+>                     nodeStates = EMPTY_NODESTATE_ITERATOR;
+989c999
+<                         nodeStates = Collections.EMPTY_LIST.iterator();
+---
+>                         nodeStates = EMPTY_NODESTATE_ITERATOR;
+992c1002
+<                     nodeStates = Collections.EMPTY_LIST.iterator();
+---
+>                     nodeStates = EMPTY_NODESTATE_ITERATOR;
+996c1006
+<                 nodeStates = Collections.EMPTY_LIST.iterator();
+---
+>                 nodeStates = EMPTY_NODESTATE_ITERATOR;
+1002c1012
+<                     NodeState current = (NodeState) nodeStates.next();
+---
+>                     NodeState current = nodeStates.next();

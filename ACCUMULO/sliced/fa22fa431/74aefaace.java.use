@@ -1,0 +1,29 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+24	fullCommand	String	param	37	define	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+23	cl	CommandLine	param	37	define	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+26	shellState	Shell	param	37	define	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+23	cl	CommandLine	param	38	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+26	shellState	Shell	param	38	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+26	shellState	Shell	param	40	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+26	shellState	Shell	param	45	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+27	user	String	variable	38	define	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+22	auths	Authorizations	variable	40	define	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+25	set	SortedSet<String>	variable	41	define	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+20	auth	byte[]	variable	42	define	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+27	user	String	variable	38	set	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+22	auths	Authorizations	variable	40	set	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+25	set	SortedSet<String>	variable	41	set	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+33	GetAuthsCommand.userOpt	Option	variable	38	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+27	user	String	variable	40	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+21	CASE_INSENSITIVE_ORDER		variable	41	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+22	auths	Authorizations	variable	42	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+25	set	SortedSet<String>	variable	43	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+20	auth	byte[]	variable	43	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+25	set	SortedSet<String>	variable	45	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.execute	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	37	46
+31	o	Options	variable	56	define	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.getOptions	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	55	61
+31	o	Options	variable	56	set	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.getOptions	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	55	61
+33	GetAuthsCommand.userOpt	Option	variable	57	set	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.getOptions	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	55	61
+33	GetAuthsCommand.userOpt	Option	variable	58	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.getOptions	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	55	61
+31	o	Options	variable	59	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.getOptions	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	55	61
+33	GetAuthsCommand.userOpt	Option	variable	59	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.getOptions	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	55	61
+31	o	Options	variable	60	use	org.apache.accumulo.core.util.shell.commands.GetAuthsCommand.getOptions	/Users/justin/Java/Dataset_InducingBenchmark/ACCUMULO/sliced/fa22fa431/74aefaace.java	55	61

@@ -1,0 +1,58 @@
+488d487
+<             directoryFactory.release(dir);
+984a984
+>     boolean coreStateClosed = false;
+988c988
+<           solrCoreState.decrefSolrCoreState((IndexWriterCloser) updateHandler);
+---
+>           coreStateClosed = solrCoreState.decrefSolrCoreState((IndexWriterCloser) updateHandler);
+990c990
+<           solrCoreState.decrefSolrCoreState(null);
+---
+>           coreStateClosed = solrCoreState.decrefSolrCoreState(null);
+1016,1022c1016,1021
+<     if (solrCoreState != null) { 
+<       if (solrCoreState.getSolrCoreStateRefCnt() == 0) {
+<         try {
+<           directoryFactory.close();
+<         } catch (Throwable t) {
+<           SolrException.log(log, t);
+<         }
+---
+>     if (coreStateClosed) {
+>       
+>       try {
+>         directoryFactory.close();
+>       } catch (Throwable t) {
+>         SolrException.log(log, t);
+1365,1370c1364,1379
+<         if (updateHandlerReopens) {
+<           
+<           RefCounted<IndexWriter> writer = getUpdateHandler().getSolrCoreState().getIndexWriter(this);
+<           try {
+<             newReader = DirectoryReader.openIfChanged(currentReader, writer.get(), true);
+<           } finally {
+---
+>         
+>         
+>         RefCounted<IndexWriter> writer = getUpdateHandler().getSolrCoreState()
+>             .getIndexWriter(null);
+>         try {
+>           if (writer != null) {
+>             newReader = DirectoryReader.openIfChanged(currentReader,
+>                 writer.get(), true);
+>           } else {
+>             
+>             newReader = DirectoryReader.openIfChanged(currentReader);
+>             
+>             
+>           }
+>         } finally {
+>           if (writer != null) {
+1373,1378d1381
+< 
+<         } else {
+<           
+<           newReader = DirectoryReader.openIfChanged(currentReader);
+<      
+<           

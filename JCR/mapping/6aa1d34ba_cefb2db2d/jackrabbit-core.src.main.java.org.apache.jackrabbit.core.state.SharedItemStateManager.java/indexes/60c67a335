@@ -1,0 +1,1861 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.jackrabbit.core.state;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.jcr.PropertyType;
+import javax.jcr.ReferentialIntegrityException;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+
+import org.apache.jackrabbit.core.RepositoryImpl;
+import org.apache.jackrabbit.core.cluster.UpdateEventChannel;
+import org.apache.jackrabbit.core.id.ItemId;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.NodeIdFactory;
+import org.apache.jackrabbit.core.id.PropertyId;
+import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
+import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
+import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.observation.EventState;
+import org.apache.jackrabbit.core.observation.EventStateCollection;
+import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
+import org.apache.jackrabbit.core.persistence.CachingPersistenceManager;
+import org.apache.jackrabbit.core.persistence.PersistenceManager;
+import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.core.virtual.VirtualItemStateProvider;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.QNodeDefinition;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class SharedItemStateManager
+        implements ItemStateManager, ItemStateListener {
+
+    
+
+
+    private static Logger log = LoggerFactory.getLogger(SharedItemStateManager.class);
+
+    
+
+
+
+    private static final boolean VALIDATE_HIERARCHY =
+        Boolean.getBoolean("org.apache.jackrabbit.core.state.validatehierarchy");
+
+    
+
+
+
+    private final ItemStateCache cache;
+
+    
+
+
+    private final PersistenceManager persistMgr;
+
+    
+
+
+    private final NodeTypeRegistry ntReg;
+
+    
+
+
+
+    private final boolean usesReferences;
+
+    
+
+
+
+
+
+
+
+    private boolean checkReferences = true;
+
+    
+
+
+    private final NodeId rootNodeId;
+
+    
+
+
+    private VirtualItemStateProvider[] virtualProviders =
+            new VirtualItemStateProvider[0];
+
+    
+
+
+    private final transient StateChangeDispatcher dispatcher = new StateChangeDispatcher();
+
+    
+
+
+    private ISMLocking ismLocking;
+
+    
+
+
+    private UpdateEventChannel eventChannel;
+
+    private final NodeIdFactory nodeIdFactory;
+
+    
+
+
+
+
+
+
+    public SharedItemStateManager(PersistenceManager persistMgr,
+                                  NodeId rootNodeId,
+                                  NodeTypeRegistry ntReg,
+                                  boolean usesReferences,
+                                  ItemStateCacheFactory cacheFactory,
+                                  ISMLocking locking,
+                                  NodeIdFactory nodeIdFactory)
+            throws ItemStateException {
+        cache = new ItemStateReferenceCache(cacheFactory);
+        this.persistMgr = persistMgr;
+        this.ntReg = ntReg;
+        this.usesReferences = usesReferences;
+        this.rootNodeId = rootNodeId;
+        this.ismLocking = locking;
+        this.nodeIdFactory = nodeIdFactory;
+        
+        if (!hasNonVirtualItemState(rootNodeId)) {
+            createRootNodeState(rootNodeId, ntReg);
+        }
+        ensureActivitiesNode();
+    }
+
+    
+
+
+
+
+
+
+    public void setCheckReferences(boolean checkReferences) {
+        this.checkReferences = checkReferences;
+    }
+
+    
+
+
+
+
+    public void setEventChannel(UpdateEventChannel eventChannel) {
+        this.eventChannel = eventChannel;
+    }
+
+    
+
+
+
+
+    public void setISMLocking(ISMLocking ismLocking) {
+        if (ismLocking == null) {
+            throw new NullPointerException();
+        }
+        this.ismLocking = ismLocking;
+    }
+
+    
+    
+
+
+    public ItemState getItemState(ItemId id)
+            throws NoSuchItemStateException, ItemStateException {
+        
+        for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+            if (virtualProvider.isVirtualRoot(id)) {
+                return virtualProvider.getItemState(id);
+            }
+        }
+
+        ISMLocking.ReadLock readLock = acquireReadLock(id);
+        try {
+            
+            return getNonVirtualItemState(id);
+        } catch (NoSuchItemStateException e) {
+            
+            
+            
+            
+        } finally {
+            readLock.release();
+        }
+
+        
+        for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+            if (virtualProvider.hasItemState(id)) {
+                return virtualProvider.getItemState(id);
+            }
+        }
+
+        throw new NoSuchItemStateException(id.toString());
+    }
+
+    
+
+
+    public boolean hasItemState(ItemId id) {
+        
+        for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+            if (virtualProvider.isVirtualRoot(id)) {
+                return true;
+            }
+        }
+
+        ISMLocking.ReadLock readLock;
+        try {
+            readLock = acquireReadLock(id);
+        } catch (ItemStateException e) {
+            return false;
+        }
+
+        try {
+            if (cache.isCached(id)) {
+                return true;
+            }
+
+            
+            if (hasNonVirtualItemState(id)) {
+                return true;
+            }
+        } finally {
+            readLock.release();
+        }
+
+        
+        for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+            if (virtualProvider.hasItemState(id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    
+
+
+    public NodeReferences getNodeReferences(NodeId id)
+            throws NoSuchItemStateException, ItemStateException {
+        ISMLocking.ReadLock readLock = acquireReadLock(id);
+        try {
+            
+            try {
+                return persistMgr.loadReferencesTo(id);
+            } catch (NoSuchItemStateException e) {
+                
+            }
+        } finally {
+            readLock.release();
+        }
+
+        
+        for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+            try {
+                return virtualProvider.getNodeReferences(id);
+            } catch (NoSuchItemStateException e) {
+                
+            }
+        }
+
+        
+        throw new NoSuchItemStateException(id.toString());
+    }
+
+    
+
+
+    public boolean hasNodeReferences(NodeId id) {
+        ISMLocking.ReadLock readLock;
+        try {
+            readLock = acquireReadLock(id);
+        } catch (ItemStateException e) {
+            return false;
+        }
+        try {
+            
+            try {
+                if (persistMgr.existsReferencesTo(id)) {
+                    return true;
+                }
+            } catch (ItemStateException e) {
+                
+            }
+        } finally {
+            readLock.release();
+        }
+
+        
+        for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+            if (virtualProvider.hasNodeReferences(id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    
+
+    
+
+
+
+
+
+    public void stateCreated(ItemState created) {
+        if (created.getContainer() == this) {
+            
+            cache.cache(created);
+        }
+        dispatcher.notifyStateCreated(created);
+    }
+
+    
+
+
+
+
+
+    public void stateModified(ItemState modified) {
+        dispatcher.notifyStateModified(modified);
+    }
+
+    
+
+
+
+
+
+    public void stateDestroyed(ItemState destroyed) {
+        if (destroyed.getContainer() == this) {
+            
+            cache.evict(destroyed.getId());
+        }
+        dispatcher.notifyStateDestroyed(destroyed);
+    }
+
+    
+
+
+
+
+
+    public void stateDiscarded(ItemState discarded) {
+        if (discarded.getContainer() == this) {
+            
+            cache.evict(discarded.getId());
+        }
+        dispatcher.notifyStateDiscarded(discarded);
+    }
+
+    
+
+    
+
+
+    public String toString() {
+        return "SharedItemStateManager (" + super.toString() + ")\n"
+            + "[referenceCache]\n" + cache;
+    }
+
+    
+    
+
+
+    public void dispose() {
+        
+        for (VirtualItemStateProvider virtualProvider : virtualProviders) {
+            virtualProvider.removeListener(this);
+        }
+        virtualProviders = new VirtualItemStateProvider[0];
+
+        
+        cache.evictAll();
+    }
+
+    
+
+
+
+
+
+
+
+
+    public void addVirtualItemStateProvider(VirtualItemStateProvider prov) {
+        VirtualItemStateProvider[] provs =
+                new VirtualItemStateProvider[virtualProviders.length + 1];
+        System.arraycopy(virtualProviders, 0, provs, 0, virtualProviders.length);
+        provs[virtualProviders.length] = prov;
+        virtualProviders = provs;
+
+        prov.addListener(this);
+    }
+
+    
+
+
+    class Update implements org.apache.jackrabbit.core.cluster.Update {
+
+        
+
+
+        private final ChangeLog local;
+
+        
+
+
+        private final EventStateCollectionFactory factory;
+
+        
+
+
+
+        private final VirtualItemStateProvider virtualProvider;
+
+        
+
+
+        private ChangeLog shared;
+
+        
+
+
+        private ChangeLog[] virtualNodeReferences;
+
+        
+
+
+        private EventStateCollection events;
+
+        
+
+
+
+        private ISMLocking.WriteLock writeLock;
+
+        
+
+
+        private HashMap<String, Object> attributes;
+
+        
+
+
+        private long timestamp = System.currentTimeMillis();
+
+        
+
+
+        public Update(ChangeLog local, EventStateCollectionFactory factory,
+                      VirtualItemStateProvider virtualProvider) {
+            this.local = local;
+            this.factory = factory;
+            this.virtualProvider = virtualProvider;
+        }
+
+        
+
+
+
+
+
+
+        public void begin() throws ItemStateException, ReferentialIntegrityException {
+            shared = new ChangeLog();
+
+            virtualNodeReferences = new ChangeLog[virtualProviders.length];
+
+            
+            if (eventChannel != null) {
+                eventChannel.updateCreated(this);
+            }
+
+            try {
+                writeLock = acquireWriteLock(local);
+            } finally {
+                if (writeLock == null && eventChannel != null) {
+                    eventChannel.updateCancelled(this);
+                }
+            }
+
+            boolean succeeded = false;
+
+            try {
+                if (usesReferences) {
+                    
+                    
+                    updateReferences();
+                }
+
+                
+                
+                if (checkReferences) {
+                    checkReferentialIntegrity();
+                }
+
+                
+
+
+
+
+                try {
+                    events = factory.createEventStateCollection();
+                } catch (RepositoryException e) {
+                    String msg = "Unable to create event state collection.";
+                    log.error(msg);
+                    throw new ItemStateException(msg, e);
+                }
+
+                
+
+
+
+
+                for (ItemState state : local.modifiedStates()) {
+                    state.connect(getItemState(state.getId()));
+                    if (state.isStale()) {
+                        boolean merged = false;
+                        if (state.isNode()) {
+                            NodeStateMerger.MergeContext context =
+                                    new NodeStateMerger.MergeContext() {
+                                        public boolean isAdded(ItemId id) {
+                                            try {
+                                                ItemState is = local.get(id);
+                                                return is != null
+                                                        && is.getStatus() == ItemState.STATUS_NEW;
+                                            } catch (NoSuchItemStateException e) {
+                                                return false;
+                                            }
+                                        }
+
+                                        public boolean isDeleted(ItemId id) {
+                                            return local.deleted(id);
+                                        }
+
+                                        public boolean isModified(ItemId id) {
+                                            return local.isModified(id);
+                                        }
+
+                                        public boolean allowsSameNameSiblings(NodeId id) {
+                                            try {
+                                                NodeState ns = getNodeState(id);
+                                                NodeState parent = getNodeState(ns.getParentId());
+                                                Name name = parent.getChildNodeEntry(id).getName();
+                                                EffectiveNodeType ent = ntReg.getEffectiveNodeType(
+                                                        parent.getNodeTypeName(),
+                                                        parent.getMixinTypeNames());
+                                                QNodeDefinition def = ent.getApplicableChildNodeDef(name, ns.getNodeTypeName(), ntReg);
+                                                return def != null ? def.allowsSameNameSiblings() : false;
+                                            } catch (Exception e) {
+                                                log.warn("Unable to get node definition", e);
+                                                return false;
+                                            }
+                                        }
+
+                                        public EffectiveNodeType getEffectiveNodeType(Name ntName) throws NoSuchNodeTypeException {
+                                            return ntReg.getEffectiveNodeType(ntName);
+                                        }
+
+                                        protected NodeState getNodeState(NodeId id)
+                                                throws ItemStateException {
+                                            if (local.has(id)) {
+                                                return (NodeState) local.get(id);
+                                            } else {
+                                                return (NodeState) getItemState(id);
+                                            }
+                                        }
+                                    };
+
+                            merged = NodeStateMerger.merge((NodeState) state, context);
+                        }
+                        if (!merged) {
+                            String msg = state.getId() + " has been modified externally";
+                            log.debug(msg);
+                            throw new StaleItemStateException(msg);
+                        }
+                        
+                    }
+
+                    
+                    state.getOverlayedState().touch();
+
+                    shared.modified(state.getOverlayedState());
+                }
+                for (ItemState state : local.deletedStates()) {
+                    state.connect(getItemState(state.getId()));
+                    if (state.isStale()) {
+                        String msg = state.getId() + " has been modified externally";
+                        log.debug(msg);
+                        throw new StaleItemStateException(msg);
+                    }
+                    shared.deleted(state.getOverlayedState());
+                }
+                for (ItemState state : local.addedStates()) {
+                    state.connect(createInstance(state));
+                    shared.added(state.getOverlayedState());
+                }
+
+                
+                
+                for (NodeReferences refs : local.modifiedRefs()) {
+                    boolean virtual = false;
+                    NodeId id = refs.getTargetId();
+                    for (int i = 0; i < virtualProviders.length; i++) {
+                        if (virtualProviders[i].hasItemState(id)) {
+                            ChangeLog virtualRefs = virtualNodeReferences[i];
+                            if (virtualRefs == null) {
+                                virtualRefs = new ChangeLog();
+                                virtualNodeReferences[i] = virtualRefs;
+                            }
+                            virtualRefs.modified(refs);
+                            virtual = true;
+                            break;
+                        }
+                    }
+                    if (!virtual) {
+                        
+                        
+                        shared.modified(refs);
+                    }
+                }
+
+                checkAddedChildNodes();
+
+                
+                events.createEventStates(rootNodeId, local, SharedItemStateManager.this);
+
+                
+                if (eventChannel != null) {
+                    eventChannel.updatePrepared(this);
+                }
+
+                if (VALIDATE_HIERARCHY) {
+                    log.info("Validating change-set hierarchy");
+                    try {
+                        validateHierarchy(local);
+                    } catch (ItemStateException e) {
+                        throw e;
+                    } catch (RepositoryException e) {
+                        throw new ItemStateException("Invalid hierarchy", e);
+                    }
+                }
+
+                
+                local.push();
+
+                succeeded = true;
+
+            } finally {
+                if (!succeeded) {
+                    cancel();
+                }
+            }
+        }
+
+        
+
+
+
+
+
+
+        public void end() throws ItemStateException {
+            boolean succeeded = false;
+
+            try {
+                
+                long t0 = System.currentTimeMillis();
+                persistMgr.store(shared);
+                succeeded = true;
+                if (log.isDebugEnabled()) {
+                    long t1 = System.currentTimeMillis();
+                    log.debug("persisting change log " + shared + " took " + (t1 - t0) + "ms");
+                }
+            } finally {
+                if (!succeeded) {
+                    cancel();
+                }
+            }
+
+            ISMLocking.ReadLock readLock = null;
+            try {
+                
+                readLock = writeLock.downgrade();
+                writeLock = null;
+
+                
+                
+                shared.persisted();
+
+                
+                for (int i = 0; i < virtualNodeReferences.length; i++) {
+                    ChangeLog virtualRefs = virtualNodeReferences[i];
+                    if (virtualRefs != null) {
+                        virtualProviders[i].setNodeReferences(virtualRefs);
+                    }
+                }
+
+                
+                events.dispatch();
+
+                
+                if (eventChannel != null) {
+                    String path = events.getSession().getUserID() + "@" + events.getCommonPath();
+                    eventChannel.updateCommitted(this, path);
+                }
+            } finally {
+                if (writeLock != null) {
+                    
+                    writeLock.release();
+                    writeLock = null;
+                } else if (readLock != null) {
+                    readLock.release();
+                }
+            }
+        }
+
+        
+
+
+
+        public void cancel() {
+            try {
+                
+                if (eventChannel != null) {
+                    eventChannel.updateCancelled(this);
+                }
+
+                local.disconnect();
+
+                for (ItemState state : shared.modifiedStates()) {
+                    try {
+                        state.copy(loadItemState(state.getId()), false);
+                    } catch (ItemStateException e) {
+                        state.discard();
+                    }
+                }
+                for (ItemState state : shared.deletedStates()) {
+                    try {
+                        state.copy(loadItemState(state.getId()), false);
+                    } catch (ItemStateException e) {
+                        state.discard();
+                    }
+                }
+                for (ItemState state : shared.addedStates()) {
+                    state.discard();
+                }
+            } finally {
+                if (writeLock != null) {
+                    writeLock.release();
+                    writeLock = null;
+                }
+            }
+        }
+
+        
+
+
+        public void setAttribute(String name, Object value) {
+            if (attributes == null) {
+                attributes = new HashMap<String, Object>();
+            }
+            attributes.put(name, value);
+        }
+
+        
+
+
+        public Object getAttribute(String name) {
+            if (attributes != null) {
+                return attributes.get(name);
+            }
+            return null;
+        }
+
+        
+
+
+        public ChangeLog getChanges() {
+            return local;
+        }
+
+        
+
+
+        public List<EventState> getEvents() {
+            return events.getEvents();
+        }
+
+        
+
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public String getUserData() {
+            return events.getUserData();
+        }
+
+        
+
+
+
+
+
+
+
+
+
+
+        private void updateReferences() throws ItemStateException {
+            
+            for (ItemState state : local.addedStates()) {
+                if (!state.isNode()) {
+                    
+                    addReferences((PropertyState) state);
+                }
+            }
+
+            
+            for (ItemState state : local.modifiedStates()) {
+                if (!state.isNode()) {
+                    
+                    removeReferences(getItemState(state.getId()));
+                    
+                    addReferences((PropertyState) state);
+                }
+            }
+
+            
+            for (ItemState state : local.deletedStates()) {
+                removeReferences(state);
+            }
+        }
+
+        private void addReferences(PropertyState property) throws NoSuchItemStateException,
+                ItemStateException {
+            if (property.getType() == PropertyType.REFERENCE) {
+                InternalValue[] values = property.getValues();
+                for (int i = 0; values != null && i < values.length; i++) {
+                    addReference(property.getPropertyId(), values[i].getNodeId());
+                }
+            }
+        }
+
+        private void addReference(PropertyId id, NodeId target)
+                throws ItemStateException {
+            if (virtualProvider == null
+                    || !virtualProvider.hasNodeReferences(target)) {
+                
+                NodeReferences refs = local.getReferencesTo(target);
+                if (refs == null) {
+                    if (hasNodeReferences(target)) {
+                        refs = getNodeReferences(target);
+                    } else {
+                        refs = new NodeReferences(target);
+                    }
+                }
+                
+                refs.addReference(id);
+                
+                local.modified(refs);
+            }
+        }
+
+        private void removeReferences(ItemState state)
+                throws NoSuchItemStateException, ItemStateException {
+            if (!state.isNode()) {
+                PropertyState property = (PropertyState) state;
+                if (property.getType() == PropertyType.REFERENCE) {
+                    InternalValue[] values = property.getValues();
+                    for (int i = 0; values != null && i < values.length; i++) {
+                        removeReference(
+                                property.getPropertyId(), values[i].getNodeId());
+                    }
+                }
+            }
+        }
+
+        private void removeReference(PropertyId id, NodeId target)
+                throws ItemStateException {
+            if (virtualProvider == null
+                    || !virtualProvider.hasNodeReferences(target)) {
+                
+                
+                NodeReferences refs = local.getReferencesTo(target);
+                if (refs == null && hasNodeReferences(target)) {
+                    refs = getNodeReferences(target);
+                }
+                if (refs != null) {
+                    
+                    refs.removeReference(id);
+                    
+                    local.modified(refs);
+                }
+            }
+        }
+
+        
+
+
+
+
+        private void checkAddedChildNodes() throws ItemStateException {
+            for (ItemState state : local.addedStates()) {
+                checkAddedChildNode(state);
+            }
+            for (ItemState state : local.modifiedStates()) {
+                checkAddedChildNode(state);
+            }
+        }
+
+        private void checkAddedChildNode(ItemState state) throws ItemStateException {
+            if (state.isNode()) {
+                NodeState node = (NodeState) state;
+                for (ChildNodeEntry child : node.getAddedChildNodeEntries()) {
+                    NodeId id = child.getId();
+                    if (local.get(id) == null &&
+                            !id.equals(RepositoryImpl.VERSION_STORAGE_NODE_ID) &&
+                            !id.equals(RepositoryImpl.ACTIVITIES_NODE_ID) &&
+                            !id.equals(RepositoryImpl.NODETYPES_NODE_ID) &&
+                            !cache.isCached(id) &&
+                            !persistMgr.exists(id)) {
+                        String msg = "Trying to add a non-existing child node: " + id;
+                        log.debug(msg);
+                        throw new ItemStateException(msg);
+                    }
+                }
+            }
+        }
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        private void checkReferentialIntegrity()
+                throws ReferentialIntegrityException, ItemStateException {
+
+            
+            for (ItemState state : local.deletedStates()) {
+                if (state.isNode()) {
+                    NodeState node = (NodeState) state;
+                    if (isReferenceable(node)) {
+                        NodeId targetId = node.getNodeId();
+                        
+                        
+                        NodeReferences refs = local.getReferencesTo(targetId);
+                        if (refs == null) {
+                            if (!hasNodeReferences(targetId)) {
+                                continue;
+                            }
+                            refs = getNodeReferences(targetId);
+                        }
+                        
+                        
+                        
+                        if (refs.hasReferences() && !local.has(targetId)) {
+                            String msg = node.getNodeId()
+                                    + ": the node cannot be removed because it is still being referenced.";
+                            log.debug(msg);
+                            throw new ReferentialIntegrityException(msg);
+                        }
+                    }
+                }
+            }
+
+            
+            for (NodeReferences refs : local.modifiedRefs()) {
+                
+                if (refs.hasReferences()) {
+                    
+                    
+                    NodeId id = refs.getTargetId();
+                    if (!local.has(id) && !hasItemState(id)) {
+                        String msg = "Target node " + id
+                                + " of REFERENCE property does not exist";
+                        log.debug(msg);
+                        throw new ReferentialIntegrityException(msg);
+                    }
+                }
+            }
+        }
+
+        
+
+
+
+
+
+
+
+
+        private boolean isReferenceable(NodeState state) throws ItemStateException {
+            
+            Name primary = state.getNodeTypeName();
+            Set<Name> mixins = state.getMixinTypeNames();
+            if (mixins.contains(NameConstants.MIX_REFERENCEABLE)
+                    || mixins.contains(NameConstants.MIX_VERSIONABLE)
+                    || primary.equals(NameConstants.NT_RESOURCE)) {
+                return true;
+            }
+
+            
+            try {
+                EffectiveNodeType type = ntReg.getEffectiveNodeType(primary, mixins);
+                return type.includesNodeType(NameConstants.MIX_REFERENCEABLE);
+            } catch (NodeTypeConflictException ntce) {
+                String msg = "internal error: failed to build effective node type for node "
+                        + state.getNodeId();
+                log.debug(msg);
+                throw new ItemStateException(msg, ntce);
+            } catch (NoSuchNodeTypeException nsnte) {
+                String msg = "internal error: failed to build effective node type for node "
+                        + state.getNodeId();
+                log.debug(msg);
+                throw new ItemStateException(msg, nsnte);
+            }
+        }
+
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+    private void validateHierarchy(ChangeLog changeLog) throws ItemStateException, RepositoryException {
+
+        
+        validateDeleted(changeLog);
+
+        
+        validateAdded(changeLog);
+
+        
+        validateModified(changeLog);
+    }
+
+    
+
+
+
+
+
+
+
+    private void validateDeleted(ChangeLog changeLog) throws ItemStateException {
+
+        
+        for (ItemState removedState : changeLog.deletedStates()) {
+            if (removedState instanceof NodeState) {
+
+                
+                NodeState removedNodeState = (NodeState) removedState;
+                NodeId id = removedNodeState.getNodeId();
+
+                
+                NodeState overlayedState = (NodeState) removedState.getOverlayedState();
+                if (overlayedState == null) {
+                    String message = "Unable to load persistent state for removed node " + id;
+                    overlayedState = (NodeState) SharedItemStateManager.this.getItemState(id);
+                    if (overlayedState == null) {
+                        log.error(message);
+                        throw new ItemStateException(message);
+                    }
+                }
+
+                
+                boolean addedAndRemoved = changeLog.has(removedNodeState.getId());
+                if (!addedAndRemoved) {
+
+                    
+                    NodeId oldParentId = overlayedState.getParentId();
+                    if (changeLog.deleted(oldParentId)) {
+                        
+                    } else if (changeLog.isModified(oldParentId)) {
+                        
+                    } else {
+                        String message = "Node with id " + id
+                                + " has been removed, but the parent node isn't part of the changelog " + oldParentId;
+                        log.error(message);
+                        throw new ItemStateException(message);
+                    }
+
+                    
+                    for (ChildNodeEntry entry : overlayedState.getChildNodeEntries()) {
+
+                        
+                        NodeId childId = entry.getId();
+
+                        if (changeLog.deleted(childId)) {
+                            
+                        } else if (changeLog.isModified(childId)) {
+
+                            
+                        } else {
+                            String message = "Node with id " + id
+                                    + " has been removed, but the old child node isn't part of the changelog "
+                                    + childId;
+                            log.error(message);
+                            throw new ItemStateException(message);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    private void validateAdded(ChangeLog changeLog) throws ItemStateException {
+
+        
+        for (ItemState state : changeLog.addedStates()) {
+            if (state instanceof NodeState) {
+
+                
+                NodeState addedNodeState = (NodeState) state;
+                NodeId id = addedNodeState.getNodeId();
+
+                
+                NodeId parentId = addedNodeState.getParentId();
+                if (changeLog.has(parentId)) { 
+                    
+                    checkParent(changeLog, addedNodeState, parentId);
+                } else {
+                    String message = "Node with id " + id
+                            + " has been added, but the parent node isn't part of the changelog " + parentId;
+                    log.error(message);
+                    throw new ItemStateException(message);
+                }
+
+                
+                for (ChildNodeEntry entry : addedNodeState.getChildNodeEntries()) {
+
+                    
+                    NodeId childId = entry.getId();
+
+                    if (changeLog.has(childId)) {
+                        NodeState childState = (NodeState) changeLog.get(childId);
+                        checkParent(changeLog, childState, id);
+                        
+
+                    } else {
+                        String message = "Node with id " + id
+                                + " has been added, but the child node isn't part of the changelog " + childId;
+                        log.error(message);
+                        throw new ItemStateException(message);
+                    }
+                }
+            }
+        }
+    }
+
+    
+
+
+
+
+
+
+
+    private void validateModified(ChangeLog changeLog) throws ItemStateException, RepositoryException {
+
+        
+        for (ItemState state : changeLog.modifiedStates()) {
+            if (state instanceof NodeState) {
+
+                
+                NodeState modifiedNodeState = (NodeState) state;
+                NodeId id = modifiedNodeState.getNodeId();
+
+                
+                NodeState overlayedState = (NodeState) modifiedNodeState.getOverlayedState();
+                if (overlayedState == null) {
+                    String message = "Unable to load persistent state for modified node " + id;
+                    log.error(message);
+                    throw new ItemStateException(message);
+                }
+
+                
+                NodeId parentId = modifiedNodeState.getParentId();
+                NodeId oldParentId = overlayedState.getParentId();
+
+                
+                if (parentId != null && changeLog.deleted(parentId)) {
+                    String message = "Parent of node with id " + id + " has been deleted";
+                    log.error(message);
+                    throw new ItemStateException(message);
+                }
+
+                if (parentId != null && changeLog.has(parentId)) {
+                    checkParent(changeLog, modifiedNodeState, parentId);
+                }
+
+                
+                if (parentId == null && oldParentId == null) {
+                    
+
+                } else if (!parentId.equals(oldParentId)) {
+
+                    
+                    if (changeLog.has(parentId)) {
+                        checkParent(changeLog, modifiedNodeState, parentId);
+                    } else if (!isShareable(modifiedNodeState)) {
+                        String message = "New parent of node " + id + " is not present in the changelog " + id;
+                        log.error(message);
+                        throw new ItemStateException(message);
+                    }
+
+                    
+                    if (!changeLog.isModified(oldParentId) && !changeLog.deleted(oldParentId)) {
+                        String message = "Node with id " + id
+                                + " has been move, but the original parent is not part of the changelog: "
+                                + oldParentId;
+                        log.error(message);
+                        throw new ItemStateException(message);
+                    }
+                }
+
+                
+                for (ChildNodeEntry entry : modifiedNodeState.getChildNodeEntries()) {
+
+                    NodeId childId = entry.getId();
+
+                    
+                    if (changeLog.deleted(childId) && !changeLog.has(childId)) { 
+                        String message = "Node with id " + id + " has a deleted childid: " + childId;
+                        log.error(message);
+                        throw new ItemStateException(message);
+                    }
+
+                    if (changeLog.has(childId)) {
+                        NodeState childState = (NodeState) changeLog.get(childId);
+                        checkParent(changeLog, childState, id);
+                    }
+                }
+
+                
+                for (ChildNodeEntry entry : modifiedNodeState.getAddedChildNodeEntries()) {
+                    NodeId childId = entry.getId();
+                    if (!changeLog.has(childId)) {
+                        String message = "ChildId " + childId + " has been added to parent " + id
+                                + ", but is not present in the changelog";
+                        log.error(message);
+                        throw new ItemStateException(message);
+                    }
+                }
+
+                
+                for (ChildNodeEntry entry : modifiedNodeState.getRemovedChildNodeEntries()) {
+                    NodeId childId = entry.getId();
+                    if (!changeLog.isModified(childId) && !changeLog.deleted(childId)) {
+                        String message = "Child node entry with id " + childId
+                                + " has been removed, but is not present in the changelog";
+                        log.error(message);
+                        throw new ItemStateException(message);
+                    }
+                }
+            }
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    void checkParent(ChangeLog changeLog, NodeState childState, NodeId expectedParent) throws ItemStateException {
+
+        
+        NodeId parentId = childState.getParentId();
+        if (!parentId.equals(expectedParent)) {
+            Set sharedSet = childState.getSharedSet();
+            if (sharedSet.contains(expectedParent)) {
+                return;
+            }
+            String message = "Child node has another parent id " + parentId + ", expected " + expectedParent;
+            log.error(message);
+            throw new ItemStateException(message);
+        }
+
+        if (!changeLog.has(parentId)) {
+            String message = "Parent not part of changelog";
+            log.error(message);
+            throw new ItemStateException(message);
+        }
+
+        
+        NodeState parent = (NodeState) changeLog.get(parentId);
+
+        
+        NodeId childId = childState.getNodeId();
+        ChildNodeEntry childNodeEntry = parent.getChildNodeEntry(childId);
+        if (childNodeEntry == null) {
+            String message = "Child not present in parent";
+            log.error(message);
+            throw new ItemStateException(message);
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+    private boolean isShareable(NodeState state) throws RepositoryException {
+        
+        Name primary = state.getNodeTypeName();
+        Set<Name> mixins = state.getMixinTypeNames();
+        if (mixins.contains(NameConstants.MIX_SHAREABLE)) {
+            return true;
+        }
+
+        try {
+            EffectiveNodeType type = ntReg.getEffectiveNodeType(primary, mixins);
+            return type.includesNodeType(NameConstants.MIX_SHAREABLE);
+        } catch (NodeTypeConflictException ntce) {
+            String msg = "internal error: failed to build effective node type for node " + state.getNodeId();
+            log.debug(msg);
+            throw new RepositoryException(msg, ntce);
+        }
+    }
+
+    
+
+
+
+    public Update beginUpdate(ChangeLog local, EventStateCollectionFactory factory,
+                              VirtualItemStateProvider virtualProvider)
+            throws ReferentialIntegrityException, StaleItemStateException,
+                   ItemStateException {
+
+        Update update = new Update(local, factory, virtualProvider);
+        update.begin();
+        return update;
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void update(ChangeLog local, EventStateCollectionFactory factory)
+            throws ReferentialIntegrityException, StaleItemStateException,
+                   ItemStateException {
+
+        beginUpdate(local, factory, null).end();
+    }
+
+    
+
+
+
+
+
+    public void externalUpdate(ChangeLog external, EventStateCollection events) {
+        boolean holdingWriteLock = false;
+
+        ISMLocking.WriteLock wLock = null;
+        try {
+            wLock = acquireWriteLock(external);
+            holdingWriteLock = true;
+
+            doExternalUpdate(external);
+        } catch (ItemStateException e) {
+            String msg = "Unable to acquire write lock.";
+            log.error(msg);
+        }
+
+        ISMLocking.ReadLock rLock = null;
+        try {
+            if (wLock != null) {
+                rLock = wLock.downgrade();
+                holdingWriteLock = false;
+                events.dispatch();
+            }
+        } finally {
+            if (holdingWriteLock) {
+                if (wLock != null) {
+                    wLock.release();
+                }
+            } else {
+                if (rLock != null) {
+                    rLock.release();
+                }
+            }
+        }
+
+    }
+
+    
+
+
+
+
+
+    protected void doExternalUpdate(ChangeLog external) {
+        
+        if (persistMgr instanceof CachingPersistenceManager) {
+            ((CachingPersistenceManager) persistMgr).onExternalUpdate(external);
+        }
+
+        ChangeLog shared = new ChangeLog();
+
+        
+        
+        
+        for (ItemState state : external.modifiedStates()) {
+            state = cache.retrieve(state.getId());
+            if (state != null) {
+                try {
+                    ItemState currentState = loadItemState(state.getId());
+                    state.copy(currentState, true);
+                    shared.modified(state);
+                } catch (NoSuchItemStateException e) {
+                    
+                    
+                    String msg = "Unable to retrieve state: " + state.getId() + ", ignored.";
+                    log.info(msg);
+                    state.discard();
+                } catch (ItemStateException e) {
+                    String msg = "Unable to retrieve state: " + state.getId();
+                    log.warn(msg);
+                    state.discard();
+                }
+            }
+        }
+        for (ItemState state : external.deletedStates()) {
+            state = cache.retrieve(state.getId());
+            if (state != null) {
+                shared.deleted(state);
+            }
+        }
+        shared.persisted();
+    }
+
+    
+
+
+
+    public void addListener(ItemStateListener listener) {
+        dispatcher.addListener(listener);
+    }
+
+    
+
+
+
+    public void removeListener(ItemStateListener listener) {
+        dispatcher.removeListener(listener);
+    }
+
+    
+
+    
+
+
+
+
+
+
+
+    private NodeState createInstance(NodeId id, Name nodeTypeName,
+                                     NodeId parentId) {
+
+        NodeState state = persistMgr.createNew(id);
+        state.setNodeTypeName(nodeTypeName);
+        state.setParentId(parentId);
+        state.setStatus(ItemState.STATUS_NEW);
+        state.setContainer(this);
+
+        return state;
+    }
+
+    
+
+
+
+
+
+
+
+    private NodeState createRootNodeState(NodeId rootNodeId,
+                                          NodeTypeRegistry ntReg)
+            throws ItemStateException {
+
+        NodeState rootState = createInstance(rootNodeId, NameConstants.REP_ROOT, null);
+        NodeState jcrSystemState = createInstance(RepositoryImpl.SYSTEM_ROOT_NODE_ID, NameConstants.REP_SYSTEM, rootNodeId);
+
+        
+        
+
+        
+        rootState.addPropertyName(NameConstants.JCR_PRIMARYTYPE);
+
+        PropertyState prop = createInstance(NameConstants.JCR_PRIMARYTYPE, rootNodeId);
+        prop.setValues(new InternalValue[]{InternalValue.create(NameConstants.REP_ROOT)});
+        prop.setType(PropertyType.NAME);
+        prop.setMultiValued(false);
+
+        
+        jcrSystemState.addPropertyName(NameConstants.JCR_PRIMARYTYPE);
+
+        PropertyState primaryTypeProp = createInstance(NameConstants.JCR_PRIMARYTYPE, jcrSystemState.getNodeId());
+        primaryTypeProp.setValues(new InternalValue[]{InternalValue.create(NameConstants.REP_SYSTEM)});
+        primaryTypeProp.setType(PropertyType.NAME);
+        primaryTypeProp.setMultiValued(false);
+
+        
+        rootState.addChildNodeEntry(NameConstants.JCR_SYSTEM, RepositoryImpl.SYSTEM_ROOT_NODE_ID);
+
+        
+        jcrSystemState.addChildNodeEntry(NameConstants.JCR_VERSIONSTORAGE, RepositoryImpl.VERSION_STORAGE_NODE_ID);
+
+        
+        jcrSystemState.addChildNodeEntry(NameConstants.JCR_ACTIVITIES, RepositoryImpl.ACTIVITIES_NODE_ID);
+
+        
+        jcrSystemState.addChildNodeEntry(NameConstants.JCR_NODETYPES, RepositoryImpl.NODETYPES_NODE_ID);
+
+
+        ChangeLog changeLog = new ChangeLog();
+        changeLog.added(rootState);
+        changeLog.added(prop);
+        changeLog.added(jcrSystemState);
+        changeLog.added(primaryTypeProp);
+
+        persistMgr.store(changeLog);
+        changeLog.persisted();
+
+        return rootState;
+    }
+
+    
+
+
+
+
+
+
+
+
+    private void ensureActivitiesNode() throws ItemStateException {
+        NodeState jcrSystemState = (NodeState) getNonVirtualItemState(RepositoryImpl.SYSTEM_ROOT_NODE_ID);
+        if (!jcrSystemState.hasChildNodeEntry(RepositoryImpl.ACTIVITIES_NODE_ID)) {
+            jcrSystemState.addChildNodeEntry(NameConstants.JCR_ACTIVITIES, RepositoryImpl.ACTIVITIES_NODE_ID);
+
+            ChangeLog changeLog = new ChangeLog();
+            changeLog.modified(jcrSystemState);
+
+            persistMgr.store(changeLog);
+            changeLog.persisted();
+        }
+    }
+
+    
+
+
+
+
+
+    private final Set<ItemId> currentlyLoading = new HashSet<ItemId>();
+
+    
+
+
+
+    private ItemState getNonVirtualItemState(ItemId id)
+            throws NoSuchItemStateException, ItemStateException {
+        
+        ItemState state = cache.retrieve(id);
+        if (state != null) {
+            return state;
+        }
+
+        
+        synchronized (this) {
+            while (currentlyLoading.contains(id)) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    throw new ItemStateException(
+                            "Interrupted while waiting for " + id, e);
+                }
+            }
+
+            state = cache.retrieve(id);
+            if (state != null) {
+                return state;
+            }
+
+            
+            currentlyLoading.add(id);
+        }
+
+        try {
+            
+            
+            state = loadItemState(id);
+            state.setStatus(ItemState.STATUS_EXISTING);
+            state.setContainer(this);
+
+            
+            cache.cache(state);
+
+            return state;
+        } finally {
+            
+            
+            synchronized (this) {
+                currentlyLoading.remove(id);
+                notifyAll();
+            }
+        }
+    }
+
+    
+
+
+
+    protected boolean hasNonVirtualItemState(ItemId id) {
+        if (cache.isCached(id)) {
+            return true;
+        }
+
+        try {
+            if (id.denotesNode()) {
+                return persistMgr.exists((NodeId) id);
+            } else {
+                return persistMgr.exists((PropertyId) id);
+            }
+        } catch (ItemStateException ise) {
+            return false;
+        }
+    }
+
+    
+
+
+
+
+
+    private ItemState createInstance(ItemState other) {
+        if (other.isNode()) {
+            NodeState ns = (NodeState) other;
+            return createInstance(ns.getNodeId(), ns.getNodeTypeName(), ns.getParentId());
+        } else {
+            PropertyState ps = (PropertyState) other;
+            return createInstance(ps.getName(), ps.getParentId());
+        }
+    }
+
+    
+
+
+
+
+
+
+    private PropertyState createInstance(Name propName, NodeId parentId) {
+        PropertyState state = persistMgr.createNew(new PropertyId(parentId, propName));
+        state.setStatus(ItemState.STATUS_NEW);
+        state.setContainer(this);
+
+        return state;
+    }
+
+    
+
+
+
+
+
+    private ItemState loadItemState(ItemId id)
+            throws NoSuchItemStateException, ItemStateException {
+
+        ItemState state;
+        if (id.denotesNode()) {
+            state = persistMgr.load((NodeId) id);
+        } else {
+            state = persistMgr.load((PropertyId) id);
+        }
+        return state;
+    }
+
+    
+
+
+
+
+
+    private ISMLocking.ReadLock acquireReadLock(ItemId id) throws ItemStateException {
+        try {
+            return ismLocking.acquireReadLock(id);
+        } catch (InterruptedException e) {
+            throw new ItemStateException("Interrupted while acquiring read lock");
+        }
+    }
+
+    
+
+
+
+
+
+    private ISMLocking.WriteLock acquireWriteLock(ChangeLog changeLog) throws ItemStateException {
+        try {
+            return ismLocking.acquireWriteLock(changeLog);
+        } catch (InterruptedException e) {
+            throw new ItemStateException("Interrupted while acquiring write lock");
+        }
+    }
+
+    public NodeIdFactory getNodeIdFactory() {
+        return this.nodeIdFactory;
+    }
+
+}

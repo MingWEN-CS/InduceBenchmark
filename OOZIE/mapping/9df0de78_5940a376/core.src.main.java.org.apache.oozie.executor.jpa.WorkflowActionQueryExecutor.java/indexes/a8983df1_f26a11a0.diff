@@ -1,0 +1,25 @@
+60c60,61
+<         GET_RUNNING_ACTIONS
+---
+>         GET_RUNNING_ACTIONS,
+>         GET_PENDING_ACTIONS
+219c220
+<                 Timestamp ts = new Timestamp(System.currentTimeMillis() - (Integer)parameters[0] * 1000);
+---
+>                 Timestamp ts = new Timestamp(System.currentTimeMillis() - (Integer) parameters[0] * 1000);
+221a223,227
+>             case GET_PENDING_ACTIONS:
+>                 Long minimumPendingAgeSecs = (Long) parameters[0];
+>                 Timestamp pts = new Timestamp(System.currentTimeMillis() - minimumPendingAgeSecs * 1000);
+>                 query.setParameter("pendingAge", pts);
+>                 break;
+381a388,396
+>             case GET_PENDING_ACTIONS:
+>                 bean = new WorkflowActionBean();
+>                 arr = (Object[]) ret;
+>                 bean.setId((String) arr[0]);
+>                 bean.setJobId((String) arr[1]);
+>                 bean.setStatusStr((String) arr[2]);
+>                 bean.setType((String) arr[3]);
+>                 bean.setPendingAge(DateUtils.toDate((Timestamp) arr[4]));
+>                 break;

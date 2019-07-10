@@ -1,0 +1,20 @@
+260a261
+>       int lastStateFormat = -1; 
+295a297,313
+> 
+>                 
+>                 
+>                 
+>                 String collection = message.getStr(ZkStateReader.COLLECTION_PROP);
+>                 if (collection == null) collection = message.getStr("name");
+>                 if (collection != null) {
+>                   DocCollection docCollection = clusterState.getCollectionOrNull(collection);
+>                   if (lastStateFormat != -1 && docCollection != null && docCollection.getStateFormat() != lastStateFormat)  {
+>                     lastStateFormat = docCollection.getStateFormat();
+>                     break;
+>                   }
+>                   if (docCollection != null)  {
+>                     lastStateFormat = docCollection.getStateFormat();
+>                   }
+>                 }
+> 

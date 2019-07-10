@@ -1,0 +1,37 @@
+150a151,152
+>     
+>     doAddDoc("f1!f2!doc5/5");
+156a159
+>     doRTG("f1!f2!doc5/5");
+162,164c165,167
+<     doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*");
+<     doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*", "shards","shard1,shard2,shard3,shard4");
+<     doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*", shardKeys,"b!,c!,d!,e!,f1!f2!");
+---
+>     doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5,f1!f2!doc5/5", "q","*:*");
+>     doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5,f1!f2!doc5/5", "q","*:*", "shards","shard1,shard2,shard3,shard4");
+>     doQuery("b!doc1,c!doc2,d!doc3,e!doc4,f1!f2!doc5,f1!f2!doc5/5", "q","*:*", shardKeys,"b!,c!,d!,e!,f1!f2!");
+167c170
+<     doQuery("d!doc3,f1!f2!doc5", "q","*:*", shardKeys,"d!");
+---
+>     doQuery("d!doc3,f1!f2!doc5,f1!f2!doc5/5", "q","*:*", shardKeys,"d!");
+169c172
+<     doQuery("f1!f2!doc5,d!doc3", "q","*:*", shardKeys,"f1/8!");
+---
+>     doQuery("f1!f2!doc5,d!doc3,f1!f2!doc5/5", "q","*:*", shardKeys,"f1/8!");
+174c177
+<     doQuery("d!doc3,f1!f2!doc5", "q","*:*", "shards",bucket3);
+---
+>     doQuery("d!doc3,f1!f2!doc5,f1!f2!doc5/5", "q","*:*", "shards",bucket3);
+184c187
+<     doQuery("d!doc3,e!doc4,f1!f2!doc5", "q","*:*", shardKeys,"d/1!");   
+---
+>     doQuery("d!doc3,e!doc4,f1!f2!doc5,f1!f2!doc5/5", "q","*:*", shardKeys,"d/1!");   
+188c191
+<     doQuery("b!doc1,f1!f2!doc5,c!doc2,d!doc3,e!doc4", "q","*:*", shardKeys,"foo/0!");
+---
+>     doQuery("b!doc1,f1!f2!doc5,c!doc2,d!doc3,e!doc4,f1!f2!doc5/5", "q","*:*", shardKeys,"foo/0!");
+193c196
+<     doQuery("c!doc2,d!doc3,e!doc4,f1!f2!doc5", "q","*:*");
+---
+>     doQuery("c!doc2,d!doc3,e!doc4,f1!f2!doc5,f1!f2!doc5/5", "q","*:*");

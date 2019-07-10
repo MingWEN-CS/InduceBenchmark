@@ -1,0 +1,8 @@
+563c563,567
+<       LOG.warn("Authentication exception: " + ex.getMessage(), ex);
+---
+>       if (LOG.isDebugEnabled()) {
+>         LOG.debug("Authentication exception: " + ex.getMessage(), ex);
+>       } else {
+>         LOG.warn("Authentication exception: " + ex.getMessage());
+>       }

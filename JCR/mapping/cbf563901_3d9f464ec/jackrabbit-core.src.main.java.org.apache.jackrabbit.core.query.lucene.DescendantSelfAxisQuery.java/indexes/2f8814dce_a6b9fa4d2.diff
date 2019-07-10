@@ -1,0 +1,106 @@
+28a29
+> import org.apache.jackrabbit.core.ItemManager;
+271a273,274
+>                 private ItemManager itemMgr = session.getItemManager();
+> 
+423a427,436
+>         private int[] pDocs = new int[1];
+> 
+>         
+> 
+> 
+>         private final int[] singleDoc = new int[1];
+> 
+>         
+> 
+> 
+479,484c492
+<                 if (isValid(subScorer.doc())) {
+<                     return true;
+<                 } else {
+<                     
+<                     return next();
+<                 }
+---
+>                 return isValid(subScorer.doc()) || next();
+535c543,547
+<             int parentDoc = hResolver.getParent(doc);
+---
+>             pDocs = hResolver.getParents(doc, pDocs);
+> 
+>             if (pDocs.length == 0) {
+>                 return false;
+>             }
+538c550,551
+<             ancestorDocs[ancestorCount++] = parentDoc;
+---
+>             
+>             ancestorDocs[ancestorCount++] = pDocs[0];
+541,544c554,566
+<             while (parentDoc != -1 && (!contextHits.get(parentDoc) || ancestorCount < minLevels)) {
+<                 parentDoc = hResolver.getParent(parentDoc);
+<                 
+<                 if (ancestorCount == ancestorDocs.length) {
+---
+>             while (pDocs.length != 0) {
+>                 boolean valid = false;
+>                 for (int i = 0; i < pDocs.length; i++) {
+>                     if (ancestorCount >= minLevels && contextHits.get(pDocs[i])) {
+>                         valid = true;
+>                         break;
+>                     }
+>                 }
+>                 if (valid) {
+>                     break;
+>                 } else {
+>                     
+>                     pDocs = getParents(pDocs, singleDoc);
+546,548c568,577
+<                     int[] copy = new int[ancestorDocs.length * 2];
+<                     System.arraycopy(ancestorDocs, 0, copy, 0, ancestorDocs.length);
+<                     ancestorDocs = copy;
+---
+>                     if (ancestorCount == ancestorDocs.length) {
+>                         
+>                         int[] copy = new int[ancestorDocs.length * 2];
+>                         System.arraycopy(ancestorDocs, 0, copy, 0, ancestorDocs.length);
+>                         ancestorDocs = copy;
+>                     }
+>                     if (pDocs.length != 0) {
+>                         
+>                         ancestorDocs[ancestorCount++] = pDocs[0];
+>                     }
+550d578
+<                 ancestorDocs[ancestorCount++] = parentDoc;
+552c580,581
+<             if (parentDoc != -1) {
+---
+> 
+>             if (pDocs.length > 0) {
+561a591,616
+> 
+>         
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>         private int[] getParents(int[] docs, int[] pDocs) throws IOException {
+>             
+>             if (docs.length == 1) {
+>                 return hResolver.getParents(docs[0], pDocs);
+>             } else {
+>                 pDocs = new int[0];
+>                 for (int i = 0; i < docs.length; i++) {
+>                     int[] p = hResolver.getParents(docs[i], new int[0]);
+>                     int[] tmp = new int[p.length + pDocs.length];
+>                     System.arraycopy(pDocs, 0, tmp, 0, pDocs.length);
+>                     System.arraycopy(p, 0, tmp, pDocs.length, p.length);
+>                     pDocs = tmp;
+>                 }
+>                 return pDocs;
+>             }
+>         }

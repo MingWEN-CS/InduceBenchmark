@@ -1,0 +1,30 @@
+837,839c837,851
+<     Map<String, Map<String, String>> propertiesAttributes = request.getPropertiesAttributes();
+<     if (null == propertiesAttributes) {
+<       propertiesAttributes = new HashMap<String, Map<String,String>>();
+---
+>     
+>     Map<String, Map<String, String>> requestPropertiesAttributes = request.getPropertiesAttributes();
+> 
+>     Map<String, Map<String, String>> propertiesAttributes = new HashMap<String, Map<String,String>>();
+> 
+>     StackId currentStackId = cluster.getCurrentStackVersion();
+>     StackInfo currentStackInfo = ambariMetaInfo.getStack(currentStackId.getStackName(), currentStackId.getStackVersion());
+>     Map<String, Map<String, String>> defaultConfigAttributes = currentStackInfo.getDefaultConfigAttributesForConfigType(configType);
+> 
+>     if(defaultConfigAttributes != null){
+>       ConfigHelper.mergeConfigAttributes(propertiesAttributes, defaultConfigAttributes);
+>     }
+>     
+>     if(requestPropertiesAttributes != null){
+>       ConfigHelper.mergeConfigAttributes(propertiesAttributes, requestPropertiesAttributes);
+2870,2876c2882
+<     
+<     if ((ec.getRole().equals(Role.HIVE_CLIENT.toString()) ||
+<             ec.getRole().equals(Role.WEBHCAT_SERVER.toString()) ||
+<             ec.getRole().equals(Role.HCAT.toString())) &&
+<         ec.getConfigurations().containsKey(Configuration.HIVE_CONFIG_TAG)) {
+<       ec.getConfigurations().get(Configuration.HIVE_CONFIG_TAG).remove(Configuration.HIVE_METASTORE_PASSWORD_PROPERTY);
+<     }
+---
+>     ConfigHelper.processHiddenAttribute(ec.getConfigurations(), ec.getConfigurationAttributes(), ec.getRole(), false);

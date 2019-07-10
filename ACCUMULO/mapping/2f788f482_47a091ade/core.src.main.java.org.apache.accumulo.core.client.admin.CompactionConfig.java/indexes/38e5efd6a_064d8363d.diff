@@ -1,0 +1,13 @@
+23d22
+< import java.util.Map;
+25a25
+> import org.apache.accumulo.core.client.impl.CompactionStrategyConfigUtil;
+42,47c42
+<   private CompactionStrategyConfig compactionStrategy = new CompactionStrategyConfig("org.apache.accumulo.tserver.compaction.EverythingCompactionStrategy") {
+<     @Override
+<     public CompactionStrategyConfig setOptions(Map<String,String> opts) {
+<       throw new UnsupportedOperationException();
+<     }
+<   };
+---
+>   private CompactionStrategyConfig compactionStrategy = CompactionStrategyConfigUtil.DEFAULT_STRATEGY;

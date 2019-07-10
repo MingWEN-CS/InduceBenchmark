@@ -1,0 +1,43 @@
+778,787c778,789
+<           Map<String, String> hsiSiteConfigProperties = hsiSiteConfig.getProperties();
+<           if (hsiSiteConfigProperties != null &&
+<                   hsiSiteConfigProperties.containsKey(HIVE_LLAP_DAEMON_KEYTAB_FILE)) {
+<             String[] identities = {HIVE_LLAP_ZK_SM_KEYTAB_FILE, HIVE_LLAP_TASK_KEYTAB_FILE};
+<             Map<String, String> newProperties = new HashMap<>();
+<             for (String identity : identities) {
+<               
+<               
+<               if (getYarnKerberosDescUpdatedList().contains(identity) && hsiSiteConfigProperties.containsKey(identity)) {
+<                 newProperties.put(identity, hsiSiteConfigProperties.get(HIVE_LLAP_DAEMON_KEYTAB_FILE));
+---
+>           if (hsiSiteConfig != null) {
+>             Map<String, String> hsiSiteConfigProperties = hsiSiteConfig.getProperties();
+>             if (hsiSiteConfigProperties != null &&
+>                     hsiSiteConfigProperties.containsKey(HIVE_LLAP_DAEMON_KEYTAB_FILE)) {
+>               String[] identities = {HIVE_LLAP_ZK_SM_KEYTAB_FILE, HIVE_LLAP_TASK_KEYTAB_FILE};
+>               Map<String, String> newProperties = new HashMap<>();
+>               for (String identity : identities) {
+>                 
+>                 
+>                 if (getYarnKerberosDescUpdatedList().contains(identity) && hsiSiteConfigProperties.containsKey(identity)) {
+>                   newProperties.put(identity, hsiSiteConfigProperties.get(HIVE_LLAP_DAEMON_KEYTAB_FILE));
+>                 }
+789d790
+<             }
+791,797c792,799
+<             
+<             if (newProperties.size() > 0) {
+<               try {
+<                 updateConfigurationPropertiesForCluster(cluster, HIVE_INTERACTIVE_SITE, newProperties, true, false);
+<                 LOG.info("Updated HSI config(s) : " + newProperties.keySet() + " with value(s) = " + newProperties.values()+" respectively.");
+<               } catch (AmbariException e) {
+<                 e.printStackTrace();
+---
+>               
+>               if (newProperties.size() > 0) {
+>                 try {
+>                   updateConfigurationPropertiesForCluster(cluster, HIVE_INTERACTIVE_SITE, newProperties, true, false);
+>                   LOG.info("Updated HSI config(s) : " + newProperties.keySet() + " with value(s) = " + newProperties.values() + " respectively.");
+>                 } catch (AmbariException e) {
+>                   e.printStackTrace();
+>                 }

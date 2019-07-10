@@ -1,0 +1,368 @@
+variable ID 	 variable name 	 variable type 	 reference kind (param or variable) 	 reference line 	 define or set or use? 	 method name 	 source file 	 start line 	 end line
+154	core	SolrCore	param	164	define	org.apache.solr.handler.component.SearchHandler.inform.(Anon_1).postClose	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	164	165
+157	core	SolrCore	param	160	define	org.apache.solr.handler.component.SearchHandler.inform.(Anon_1).preClose	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	160	162
+188	SearchHandler.shardHandlerFactory	ShardHandlerFactory	variable	161	use	org.apache.solr.handler.component.SearchHandler.inform.(Anon_1).preClose	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	160	162
+186	SearchHandler.components	List<SearchComponent>	variable	172	use	org.apache.solr.handler.component.SearchHandler.getComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	171	173
+29	names	ArrayList<String>	variable	77	define	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+29	names	ArrayList<String>	variable	77	set	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+29	names	ArrayList<String>	variable	78	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+29	names	ArrayList<String>	variable	79	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+29	names	ArrayList<String>	variable	80	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+28	COMPONENT_NAME		variable	80	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+29	names	ArrayList<String>	variable	81	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+29	names	ArrayList<String>	variable	82	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+29	names	ArrayList<String>	variable	83	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+29	names	ArrayList<String>	variable	84	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+28	COMPONENT_NAME		variable	84	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+29	names	ArrayList<String>	variable	85	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+29	names	ArrayList<String>	variable	86	use	org.apache.solr.handler.component.SearchHandler.getDefaultComponents	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	75	87
+35	sb	StringBuilder	variable	405	define	org.apache.solr.handler.component.SearchHandler.getDescription	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	404	414
+34	c	SearchComponent	variable	408	define	org.apache.solr.handler.component.SearchHandler.getDescription	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	404	414
+35	sb	StringBuilder	variable	405	set	org.apache.solr.handler.component.SearchHandler.getDescription	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	404	414
+35	sb	StringBuilder	variable	406	use	org.apache.solr.handler.component.SearchHandler.getDescription	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	404	414
+186	SearchHandler.components	List<SearchComponent>	variable	407	use	org.apache.solr.handler.component.SearchHandler.getDescription	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	404	414
+186	SearchHandler.components	List<SearchComponent>	variable	408	use	org.apache.solr.handler.component.SearchHandler.getDescription	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	404	414
+35	sb	StringBuilder	variable	409	use	org.apache.solr.handler.component.SearchHandler.getDescription	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	404	414
+34	c	SearchComponent	variable	409	use	org.apache.solr.handler.component.SearchHandler.getDescription	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	404	414
+35	sb	StringBuilder	variable	410	use	org.apache.solr.handler.component.SearchHandler.getDescription	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	404	414
+35	sb	StringBuilder	variable	413	use	org.apache.solr.handler.component.SearchHandler.getDescription	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	404	414
+134	req	SolrQueryRequest	param	176	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+136	rsp	SolrQueryResponse	param	176	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+77	ex	ExitableDirectoryReader.ExitingReaderException	param	241	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+134	req	SolrQueryRequest	param	178	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+136	rsp	SolrQueryResponse	param	178	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+134	req	SolrQueryRequest	param	183	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+134	req	SolrQueryRequest	param	186	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+134	req	SolrQueryRequest	param	189	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+134	req	SolrQueryRequest	param	213	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+134	req	SolrQueryRequest	param	242	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+77	ex	ExitableDirectoryReader.ExitingReaderException	param	242	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+134	req	SolrQueryRequest	param	310	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+134	req	SolrQueryRequest	param	311	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+136	rsp	SolrQueryResponse	param	346	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+136	rsp	SolrQueryResponse	param	347	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+134	req	SolrQueryRequest	param	370	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+136	rsp	SolrQueryResponse	param	373	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+136	rsp	SolrQueryResponse	param	374	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+134	req	SolrQueryRequest	param	392	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+136	rsp	SolrQueryResponse	param	397	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	178	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+126	dbg	boolean	variable	183	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+148	timer	RTimer	variable	189	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+137	shardHandler1	ShardHandler	variable	191	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+145	subt	RTimer	variable	201	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+147	timeAllowed	long	variable	213	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+146	subt	RTimer	variable	228	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+129	nextStage	int	variable	265	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	282	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+149	tolerant	boolean	variable	328	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+143	srsp	ShardResponse	variable	330	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+138	shardInfo	NamedList<Object>	variable	371	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+130	nl	SimpleOrderedMap<Object>	variable	372	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+125	cause	Throwable	variable	374	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+150	trace	StringWriter	variable	383	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+132	pos	int	variable	394	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+139	shardInfoName	String	variable	395	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+78	r	SolrDocumentList	variable	243	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+76	debug	NamedList	variable	249	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+80	c	SearchComponent	variable	361	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+82	c	SearchComponent	variable	196	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+85	c	SearchComponent	variable	202	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+87	c	SearchComponent	variable	222	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+88	c	SearchComponent	variable	229	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+91	c	SearchComponent	variable	271	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+114	shard	String	variable	290	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	291	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+115	shardQt	String	variable	303	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+112	reqPath	String	variable	311	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+117	c	SearchComponent	variable	355	define	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	178	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+126	dbg	boolean	variable	183	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+148	timer	RTimer	variable	189	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+137	shardHandler1	ShardHandler	variable	191	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+145	subt	RTimer	variable	201	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+147	timeAllowed	long	variable	213	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+146	subt	RTimer	variable	228	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+78	r	SolrDocumentList	variable	243	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+78	r	SolrDocumentList	variable	245	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+76	debug	NamedList	variable	249	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	261	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	263	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+129	nextStage	int	variable	265	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	267	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+129	nextStage	int	variable	268	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+129	nextStage	int	variable	273	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	282	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	283	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	285	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	287	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	291	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+115	shardQt	String	variable	303	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+112	reqPath	String	variable	311	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+149	tolerant	boolean	variable	328	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+143	srsp	ShardResponse	variable	330	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+138	shardInfo	NamedList<Object>	variable	371	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+130	nl	SimpleOrderedMap<Object>	variable	372	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+125	cause	Throwable	variable	374	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+125	cause	Throwable	variable	376	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+125	cause	Throwable	variable	379	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+150	trace	StringWriter	variable	383	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+132	pos	int	variable	394	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+139	shardInfoName	String	variable	395	set	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+186	SearchHandler.components	List<SearchComponent>	variable	178	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	179	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+113	requestInfo		variable	179	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	180	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	180	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+120	DEBUG_QUERY		variable	183	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	184	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+126	dbg	boolean	variable	184	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+126	dbg	boolean	variable	185	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+119	DEBUG		variable	186	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	186	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	189	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+188	SearchHandler.shardHandlerFactory	ShardHandlerFactory	variable	191	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+137	shardHandler1	ShardHandler	variable	192	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	192	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+148	timer	RTimer	variable	194	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+186	SearchHandler.components	List<SearchComponent>	variable	196	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+82	c	SearchComponent	variable	197	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	197	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+148	timer	RTimer	variable	201	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+186	SearchHandler.components	List<SearchComponent>	variable	202	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	203	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+145	subt	RTimer	variable	203	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+85	c	SearchComponent	variable	203	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+85	c	SearchComponent	variable	204	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	204	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	205	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+145	subt	RTimer	variable	207	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	210	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+128	isDistrib		variable	210	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+124	TIME_ALLOWED		variable	213	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+147	timeAllowed	long	variable	214	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+147	timeAllowed	long	variable	215	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	220	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+186	SearchHandler.components	List<SearchComponent>	variable	222	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+87	c	SearchComponent	variable	223	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	223	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+148	timer	RTimer	variable	228	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+186	SearchHandler.components	List<SearchComponent>	variable	229	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	230	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+146	subt	RTimer	variable	230	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+88	c	SearchComponent	variable	230	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+88	c	SearchComponent	variable	231	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	231	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	232	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+146	subt	RTimer	variable	234	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	237	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	238	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+148	timer	RTimer	variable	238	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+187	SearchHandler.log	Logger	variable	242	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	243	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+78	r	SolrDocumentList	variable	244	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+78	r	SolrDocumentList	variable	246	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	247	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+78	r	SolrDocumentList	variable	247	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	248	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+76	debug	NamedList	variable	250	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	251	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+76	debug	NamedList	variable	251	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	253	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	260	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+131	outgoing		variable	260	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+131	outgoing		variable	261	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+127	finished		variable	263	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+144	stage		variable	267	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+129	nextStage	int	variable	267	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+123	STAGE_DONE		variable	268	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+186	SearchHandler.components	List<SearchComponent>	variable	271	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+129	nextStage	int	variable	273	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+91	c	SearchComponent	variable	273	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	273	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	278	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	281	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	282	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+108	actualShards		variable	283	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	283	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+140	shards		variable	283	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	284	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+108	actualShards		variable	284	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+118	ALL_SHARDS		variable	284	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+108	actualShards		variable	285	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	285	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+140	shards		variable	285	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+135	responses		variable	287	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	290	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+108	actualShards		variable	290	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	291	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+110	params		variable	291	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	292	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+104	SHARDS		variable	292	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	293	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+98	DISTRIB		variable	293	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	294	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	295	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+99	HEADER_ECHO_PARAMS		variable	295	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	296	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+100	IS_SHARD		variable	296	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	297	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+105	SHARDS_PURPOSE		variable	297	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	297	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+111	purpose		variable	297	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	298	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+107	SHARD_URL		variable	298	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+114	shard	String	variable	298	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	299	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+113	requestInfo		variable	299	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	301	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	301	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	303	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+106	SHARDS_QT		variable	303	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+115	shardQt	String	variable	304	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	305	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+103	QT		variable	305	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+115	shardQt	String	variable	305	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+101	LUCENE_5_1_0		variable	310	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+102	PATH		variable	311	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+112	reqPath	String	variable	312	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	313	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+103	QT		variable	313	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+112	reqPath	String	variable	313	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	317	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+103	QT		variable	317	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+137	shardHandler1	ShardHandler	variable	320	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+142	sreq	ShardRequest	variable	320	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+114	shard	String	variable	320	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+109	params	ModifiableSolrParams	variable	320	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	328	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+122	SHARDS_TOLERANT		variable	328	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	329	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+149	tolerant	boolean	variable	330	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+137	shardHandler1	ShardHandler	variable	331	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+137	shardHandler1	ShardHandler	variable	332	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+143	srsp	ShardResponse	variable	333	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+143	srsp	ShardResponse	variable	336	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+149	tolerant	boolean	variable	338	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+137	shardHandler1	ShardHandler	variable	339	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+143	srsp	ShardResponse	variable	340	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+143	srsp	ShardResponse	variable	341	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+143	srsp	ShardResponse	variable	343	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	352	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+143	srsp	ShardResponse	variable	352	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+186	SearchHandler.components	List<SearchComponent>	variable	355	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+117	c	SearchComponent	variable	356	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	356	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+143	srsp	ShardResponse	variable	356	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+186	SearchHandler.components	List<SearchComponent>	variable	361	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+80	c	SearchComponent	variable	362	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	362	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+129	nextStage	int	variable	366	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	370	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+128	isDistrib		variable	370	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+121	SHARDS_INFO		variable	370	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	370	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+141	shortCircuitedURL		variable	370	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+125	cause	Throwable	variable	375	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+125	cause	Throwable	variable	376	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+125	cause	Throwable	variable	378	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+125	cause	Throwable	variable	379	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+130	nl	SimpleOrderedMap<Object>	variable	382	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+125	cause	Throwable	variable	382	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+125	cause	Throwable	variable	384	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+150	trace	StringWriter	variable	384	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+130	nl	SimpleOrderedMap<Object>	variable	385	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+150	trace	StringWriter	variable	385	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+130	nl	SimpleOrderedMap<Object>	variable	388	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	388	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+130	nl	SimpleOrderedMap<Object>	variable	389	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	389	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+130	nl	SimpleOrderedMap<Object>	variable	391	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	391	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+141	shortCircuitedURL		variable	391	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+130	nl	SimpleOrderedMap<Object>	variable	392	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	394	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+132	pos	int	variable	395	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	395	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+132	pos	int	variable	395	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+133	rb	ResponseBuilder	variable	395	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+141	shortCircuitedURL		variable	395	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+138	shardInfo	NamedList<Object>	variable	396	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+139	shardInfoName	String	variable	396	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+130	nl	SimpleOrderedMap<Object>	variable	396	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+121	SHARDS_INFO		variable	397	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+138	shardInfo	NamedList<Object>	variable	397	use	org.apache.solr.handler.component.SearchHandler.handleRequestBody	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	176	397
+170	core	SolrCore	param	107	define	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+170	core	SolrCore	param	142	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+170	core	SolrCore	param	155	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+170	core	SolrCore	param	157	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+170	core	SolrCore	param	158	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+172	declaredComponents	Object	variable	109	define	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+173	first	List<String>	variable	110	define	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+174	last	List<String>	variable	111	define	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+175	list	List<String>	variable	113	define	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+176	makeDebugLast	boolean	variable	114	define	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+169	clist	List<String>	variable	120	define	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+171	dbgCmp	DebugComponent	variable	140	define	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+166	c	String	variable	141	define	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+167	comp	SearchComponent	variable	142	define	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+172	declaredComponents	Object	variable	109	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+173	first	List<String>	variable	110	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+174	last	List<String>	variable	111	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+175	list	List<String>	variable	113	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+176	makeDebugLast	boolean	variable	114	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+175	list	List<String>	variable	117	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+169	clist	List<String>	variable	120	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+175	list	List<String>	variable	122	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+175	list	List<String>	variable	130	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+176	makeDebugLast	boolean	variable	135	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+186	SearchHandler.components	List<SearchComponent>	variable	139	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+171	dbgCmp	DebugComponent	variable	140	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+167	comp	SearchComponent	variable	142	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+171	dbgCmp	DebugComponent	variable	144	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+188	SearchHandler.shardHandlerFactory	ShardHandlerFactory	variable	155	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+188	SearchHandler.shardHandlerFactory	ShardHandlerFactory	variable	157	set	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+183	SearchHandler.INIT_COMPONENTS	String	variable	109	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+184	SearchHandler.INIT_FIRST_COMPONENTS	String	variable	110	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+185	SearchHandler.INIT_LAST_COMPONENTS	String	variable	111	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+172	declaredComponents	Object	variable	115	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+173	first	List<String>	variable	119	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+173	first	List<String>	variable	120	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+169	clist	List<String>	variable	121	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+175	list	List<String>	variable	121	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+169	clist	List<String>	variable	122	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+174	last	List<String>	variable	125	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+175	list	List<String>	variable	126	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+174	last	List<String>	variable	126	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+172	declaredComponents	Object	variable	130	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+173	first	List<String>	variable	131	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+174	last	List<String>	variable	131	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+175	list	List<String>	variable	139	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+175	list	List<String>	variable	141	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+166	c	String	variable	142	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+167	comp	SearchComponent	variable	143	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+176	makeDebugLast	boolean	variable	143	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+167	comp	SearchComponent	variable	144	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+186	SearchHandler.components	List<SearchComponent>	variable	146	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+167	comp	SearchComponent	variable	146	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+187	SearchHandler.log	Logger	variable	147	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+167	comp	SearchComponent	variable	147	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+176	makeDebugLast	boolean	variable	150	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+171	dbgCmp	DebugComponent	variable	150	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+186	SearchHandler.components	List<SearchComponent>	variable	151	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+171	dbgCmp	DebugComponent	variable	151	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+187	SearchHandler.log	Logger	variable	152	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+171	dbgCmp	DebugComponent	variable	152	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+189	SearchHandler.shfInfo	PluginInfo	variable	154	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+189	SearchHandler.shfInfo	PluginInfo	variable	157	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+168	class		variable	157	use	org.apache.solr.handler.component.SearchHandler.inform	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	107	166
+181	info	PluginInfo	param	90	define	org.apache.solr.handler.component.SearchHandler.init	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	90	98
+181	info	PluginInfo	param	91	use	org.apache.solr.handler.component.SearchHandler.init	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	90	98
+181	info	PluginInfo	param	92	use	org.apache.solr.handler.component.SearchHandler.init	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	90	98
+178	child	PluginInfo	variable	92	define	org.apache.solr.handler.component.SearchHandler.init	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	90	98
+189	SearchHandler.shfInfo	PluginInfo	variable	94	set	org.apache.solr.handler.component.SearchHandler.init	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	90	98
+182	initArgs		variable	91	use	org.apache.solr.handler.component.SearchHandler.init	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	90	98
+179	children		variable	92	use	org.apache.solr.handler.component.SearchHandler.init	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	90	98
+178	child	PluginInfo	variable	93	use	org.apache.solr.handler.component.SearchHandler.init	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	90	98
+180	type		variable	93	use	org.apache.solr.handler.component.SearchHandler.init	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	90	98
+178	child	PluginInfo	variable	94	use	org.apache.solr.handler.component.SearchHandler.init	/Users/justin/Java/Dataset_InducingBenchmark/LUCENE/sliced/9ba13dea31/b2b0579e91.java	90	98

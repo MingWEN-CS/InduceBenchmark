@@ -1,0 +1,23 @@
+281c281
+<       public Map<String,Stats> blockTreeStats = null;
+---
+>       public Map<String,Object> blockTreeStats = null;
+1292,1298c1292,1295
+<         if (fieldTerms instanceof FieldReader) {
+<           final Stats stats = ((FieldReader) fieldTerms).computeStats();
+<           assert stats != null;
+<           if (status.blockTreeStats == null) {
+<             status.blockTreeStats = new HashMap<>();
+<           }
+<           status.blockTreeStats.put(field, stats);
+---
+>         final Object stats = fieldTerms.getStats();
+>         assert stats != null;
+>         if (status.blockTreeStats == null) {
+>           status.blockTreeStats = new HashMap<>();
+1299a1297
+>         status.blockTreeStats.put(field, stats);
+1426c1424
+<       for(Map.Entry<String,Stats> ent : status.blockTreeStats.entrySet()) {
+---
+>       for(Map.Entry<String, Object> ent : status.blockTreeStats.entrySet()) {

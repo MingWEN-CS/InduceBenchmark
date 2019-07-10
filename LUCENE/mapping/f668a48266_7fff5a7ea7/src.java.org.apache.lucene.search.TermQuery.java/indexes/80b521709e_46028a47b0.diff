@@ -1,0 +1,40 @@
+34c34
+<   private class TermWeight extends QueryWeight {
+---
+>   private class TermWeight extends Weight {
+72c72
+<     public Explanation explain(IndexReader reader, int doc)
+---
+>     public Explanation explain(Searcher searcher, IndexReader reader, int doc)
+78,80c78,84
+<       Explanation idfExpl =
+<         new Explanation(idf, "idf(docFreq=" + reader.docFreq(term) +
+<             ", numDocs=" + reader.numDocs() + ")");
+---
+>       Explanation expl;
+>       if(searcher == null) {
+>         expl = new Explanation(idf, "idf(" + idf + ")");
+>       } else {
+>         expl = new Explanation(idf, "idf(docFreq=" + searcher.docFreq(term) +
+>             ", maxDocs=" + searcher.maxDoc() + ")");
+>       }
+89c93
+<       queryExpl.addDetail(idfExpl);
+---
+>       queryExpl.addDetail(expl);
+95c99
+<                          idfExpl.getValue() *
+---
+>                          expl.getValue() *
+108c112
+<       fieldExpl.addDetail(idfExpl);
+---
+>       fieldExpl.addDetail(expl);
+120c124
+<                          idfExpl.getValue() *
+---
+>                          expl.getValue() *
+144c148
+<   public QueryWeight createQueryWeight(Searcher searcher) throws IOException {
+---
+>   public Weight createWeight(Searcher searcher) throws IOException {

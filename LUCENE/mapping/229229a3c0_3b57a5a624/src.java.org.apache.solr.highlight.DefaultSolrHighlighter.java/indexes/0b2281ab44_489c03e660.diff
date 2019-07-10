@@ -1,0 +1,204 @@
+22a23
+> import java.util.Comparator;
+30d30
+< import java.util.logging.Logger;
+111,113d110
+<     highlighter.setMaxDocBytesToAnalyze(params.getFieldInt(
+<         fieldName, HighlightParams.MAX_CHARS, 
+<         Highlighter.DEFAULT_MAX_DOC_BYTES_TO_ANALYZE));
+130,132d126
+<      highlighter.setMaxDocBytesToAnalyze(params.getFieldInt(
+<            fieldName, HighlightParams.MAX_CHARS, 
+<            Highlighter.DEFAULT_MAX_DOC_BYTES_TO_ANALYZE));
+274a269,270
+>           int numFragments = getMaxSnippets(fieldName, params);
+>           boolean mergeContiguousFragments = isMergeContiguousFragments(fieldName, params);
+276,277c272,274
+<           
+<           if (docTexts.length == 1) {
+---
+>           String[] summaries = null;
+>           List<TextFragment> frags = new ArrayList<TextFragment>();
+>           for (int j = 0; j < docTexts.length; j++) {
+285c282,298
+<               tstream = new TokenOrderingFilter(schema.getAnalyzer().tokenStream(fieldName, new StringReader(docTexts[0])), 10);
+---
+>               tstream = new TokenOrderingFilter(schema.getAnalyzer().tokenStream(fieldName, new StringReader(docTexts[j])), 10);
+>             }
+>              
+>             Highlighter highlighter;
+>             if (Boolean.valueOf(req.getParams().get(HighlightParams.USE_PHRASE_HIGHLIGHTER))) {
+>               
+>               tstream = new CachingTokenFilter(tstream);
+>               
+>               
+>               highlighter = getPhraseHighlighter(query, fieldName, req, (CachingTokenFilter) tstream);
+>                
+>               
+>               tstream.reset();
+>             }
+>             else {
+>               
+>               highlighter = getHighlighter(query, fieldName, req);
+287,288d299
+<           }
+<           else {
+290c301,315
+<             tstream = new MultiValueTokenStream(fieldName, docTexts, schema.getAnalyzer(), true);
+---
+>             int maxCharsToAnalyze = params.getFieldInt(fieldName,
+>                 HighlightParams.MAX_CHARS,
+>                 Highlighter.DEFAULT_MAX_CHARS_TO_ANALYZE);
+>             if (maxCharsToAnalyze < 0) {
+>               highlighter.setMaxDocCharsToAnalyze(docTexts[j].length());
+>             } else {
+>               highlighter.setMaxDocCharsToAnalyze(maxCharsToAnalyze);
+>             }
+>             
+>             TextFragment[] bestTextFragments = highlighter.getBestTextFragments(tstream, docTexts[j], mergeContiguousFragments, numFragments);
+>             for (int k = 0; k < bestTextFragments.length; k++) {
+>               if ((bestTextFragments[k] != null) && (bestTextFragments[k].getScore() > 0)) {
+>                 frags.add(bestTextFragments[k]);
+>               }
+>             }
+293c318,322
+<           Highlighter highlighter;
+---
+>           Collections.sort(frags, new Comparator<TextFragment>() {
+>             public int compare(TextFragment arg0, TextFragment arg1) {
+>               return Math.round(arg1.getScore() - arg0.getScore());
+>             }
+>           });
+295,326d323
+<           if (Boolean.valueOf(req.getParams().get(HighlightParams.USE_PHRASE_HIGHLIGHTER))) {
+<             
+<             tstream = new CachingTokenFilter(tstream);
+<             
+<             
+<             highlighter = getPhraseHighlighter(query, fieldName, req, (CachingTokenFilter) tstream);
+<             
+<             
+<             tstream.reset();
+<           }
+<           else {
+<             
+<             highlighter = getHighlighter(query, fieldName, req);
+<           }
+< 
+<           int numFragments = getMaxSnippets(fieldName, params);
+<           boolean mergeContiguousFragments = isMergeContiguousFragments(fieldName, params);
+< 
+<            String[] summaries = null;
+<            TextFragment[] frag;
+<            if (docTexts.length == 1) {
+<               frag = highlighter.getBestTextFragments(tstream, docTexts[0], mergeContiguousFragments, numFragments);
+<            }
+<            else {
+<                StringBuilder singleValue = new StringBuilder();
+<                
+<                for (String txt:docTexts) {
+<              	  singleValue.append(txt);
+<                }
+<              
+<               frag = highlighter.getBestTextFragments(tstream, singleValue.toString(), false, numFragments);
+<            }
+329,334c326,330
+<            if (frag.length > 0) {
+<               ArrayList<String> fragTexts = new ArrayList<String>();
+<               for (int j = 0; j < frag.length; j++) {
+<                  if ((frag[j] != null) && (frag[j].getScore() > 0)) {
+<                     fragTexts.add(frag[j].toString());
+<                  }
+---
+>           if (frags.size() > 0) {
+>             ArrayList<String> fragTexts = new ArrayList<String>();
+>             for (TextFragment fragment: frags) {
+>               if ((fragment != null) && (fragment.getScore() > 0)) {
+>                 fragTexts.add(fragment.toString());
+336,339c332,337
+<               summaries = fragTexts.toArray(new String[0]);
+<               if (summaries.length > 0) 
+<                 docSummaries.add(fieldName, summaries);
+<            }
+---
+>               if (fragTexts.size() >= numFragments) break;
+>             }
+>             summaries = fragTexts.toArray(new String[0]);
+>             if (summaries.length > 0) 
+>             docSummaries.add(fieldName, summaries);
+>           }
+376,449d373
+< class MultiValueTokenStream extends TokenStream {
+<   private String fieldName;
+<   private String[] values;
+<   private Analyzer analyzer;
+<   private int curIndex;                  
+<   private int curOffset;                 
+<   private TokenStream currentStream;     
+<   private boolean orderTokenOffsets;
+< 
+<   
+< 
+< 
+< 
+< 
+< 
+<   public MultiValueTokenStream(String fieldName, String[] values, 
+<                                Analyzer analyzer, boolean orderTokenOffsets) {
+<     this.fieldName = fieldName;
+<     this.values = values;
+<     this.analyzer = analyzer;
+<     curIndex = -1;
+<     curOffset = 0;
+<     currentStream = null;
+<     this.orderTokenOffsets=orderTokenOffsets;
+<   }
+< 
+<   
+<   @Override
+<   public Token next() throws IOException {
+<     int extra = 0;
+<     if(currentStream == null) {
+<       curIndex++;        
+<       if(curIndex < values.length) {
+<         currentStream = analyzer.tokenStream(fieldName, 
+<                                              new StringReader(values[curIndex]));
+<         if (orderTokenOffsets) currentStream = new TokenOrderingFilter(currentStream,10);
+<         
+<         if(curIndex > 0) 
+<           extra = analyzer.getPositionIncrementGap(fieldName);
+<       } else {
+<         return null;
+<       }
+<     }
+<     Token nextToken = currentStream.next();
+<     if(nextToken == null) {
+<       curOffset += values[curIndex].length();
+<       currentStream = null;
+<       return next();
+<     }
+<     
+<     
+<     Token offsetToken = new Token(nextToken.termText(), 
+<                                   nextToken.startOffset() + curOffset,
+<                                   nextToken.endOffset() + curOffset);
+<     offsetToken.setPositionIncrement(nextToken.getPositionIncrement() + extra*10);
+<     return offsetToken;
+<   }
+< 
+<   
+< 
+< 
+< 
+<   public String asSingleValue() {
+<     StringBuilder sb = new StringBuilder();
+<     for(String str : values)
+<       sb.append(str);
+<     return sb.toString();
+<   }
+< }
+< 
+< 
+< 
+< 
+< 

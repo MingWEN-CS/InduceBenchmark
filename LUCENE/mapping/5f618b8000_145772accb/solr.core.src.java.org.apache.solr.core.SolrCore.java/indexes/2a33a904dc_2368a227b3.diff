@@ -1,0 +1,4 @@
+412c412
+<     core.getUpdateHandler().getSolrCoreState().newIndexWriter(core, false, false);
+---
+>     core.getUpdateHandler().getSolrCoreState().newIndexWriter(core, false);

@@ -1,0 +1,78 @@
+197a198,201
+>   
+> 
+> 
+>   @Deprecated
+267c271,274
+<     if(builder.lbClientBuilder != null) builder.loadBalancedSolrClient = builder.lbClientBuilder.build();
+---
+>     if(builder.lbClientBuilder != null) {
+>       propagateLBClientConfigOptions(builder);
+>       builder.loadBalancedSolrClient = builder.lbClientBuilder.build();
+>     }
+270c277
+<     if (builder.loadBalancedSolrClient == null) builder.loadBalancedSolrClient = createLBHttpSolrClient(myClient);
+---
+>     if (builder.loadBalancedSolrClient == null) builder.loadBalancedSolrClient = createLBHttpSolrClient(builder, myClient);
+274a282,293
+>   
+>   private void propagateLBClientConfigOptions(Builder builder) {
+>     final LBHttpSolrClient.Builder lbBuilder = builder.lbClientBuilder;
+>     
+>     if (builder.connectionTimeoutMillis != null) {
+>       lbBuilder.withConnectionTimeout(builder.connectionTimeoutMillis);
+>     }
+>     
+>     if (builder.socketTimeoutMillis != null) {
+>       lbBuilder.withSocketTimeout(builder.socketTimeoutMillis);
+>     }
+>   }
+1294a1314,1317
+>   
+> 
+> 
+>   @Deprecated
+1328,1331c1351,1360
+<   private static LBHttpSolrClient createLBHttpSolrClient(HttpClient httpClient) {
+<     final LBHttpSolrClient lbClient = new LBHttpSolrClient.Builder()
+<         .withHttpClient(httpClient)
+<         .build();
+---
+>   private static LBHttpSolrClient createLBHttpSolrClient(Builder cloudSolrClientBuilder, HttpClient httpClient) {
+>     final LBHttpSolrClient.Builder lbBuilder = new LBHttpSolrClient.Builder();
+>     lbBuilder.withHttpClient(httpClient);
+>     if (cloudSolrClientBuilder.connectionTimeoutMillis != null) {
+>       lbBuilder.withConnectionTimeout(cloudSolrClientBuilder.connectionTimeoutMillis);
+>     }
+>     if (cloudSolrClientBuilder.socketTimeoutMillis != null) {
+>       lbBuilder.withSocketTimeout(cloudSolrClientBuilder.socketTimeoutMillis);
+>     }
+>     final LBHttpSolrClient lbClient = lbBuilder.build();
+1350a1380,1381
+>     protected Integer connectionTimeoutMillis;
+>     protected Integer socketTimeoutMillis;
+1485a1517,1540
+>     
+>     
+> 
+> 
+>     public Builder withConnectionTimeout(int connectionTimeoutMillis) {
+>       if (connectionTimeoutMillis <= 0) {
+>         throw new IllegalArgumentException("connectionTimeoutMillis must be a positive integer.");
+>       }
+>       
+>       this.connectionTimeoutMillis = connectionTimeoutMillis;
+>       return this;
+>     }
+>     
+>     
+> 
+> 
+>     public Builder withSocketTimeout(int socketTimeoutMillis) {
+>       if (socketTimeoutMillis <= 0) {
+>         throw new IllegalArgumentException("socketTimeoutMillis must be a positive integer.");
+>       }
+>       
+>       this.socketTimeoutMillis = socketTimeoutMillis;
+>       return this;
+>     }

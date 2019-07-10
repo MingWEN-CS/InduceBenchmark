@@ -1,0 +1,14 @@
+62,64d61
+<     
+<     
+<     cluster.getFileSystem().allowSnapshot(defaultWorkingDirectory);
+79,81d75
+<     
+<     
+<     cluster.getFileSystem().allowSnapshot(defaultWorkingDirectory);
+102,106d95
+<   protected Path getHiddenPathForTest() {
+<     return new Path(defaultWorkingDirectory, ".snapshot");
+<   }
+<   
+<   @Override

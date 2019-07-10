@@ -1,0 +1,4 @@
+595c595
+<       if (info.info.getDocCount() <= 0 && version != null && version.onOrAfter(Version.LUCENE_4_5_0)) {
+---
+>       if (info.info.getDocCount() <= 0) {

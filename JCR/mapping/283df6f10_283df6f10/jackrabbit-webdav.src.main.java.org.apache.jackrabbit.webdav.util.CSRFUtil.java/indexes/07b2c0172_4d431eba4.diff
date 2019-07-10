@@ -1,0 +1,44 @@
+19d18
+< import org.apache.jackrabbit.webdav.DavMethods;
+26d24
+< import java.util.Arrays;
+44,57d41
+<     public static final Set<String> CONTENT_TYPES = Collections.unmodifiableSet(new HashSet<String>(
+<             Arrays.asList(
+<                     new String[] {
+<                             "application/x-www-form-urlencoded",
+<                             "multipart/form-data",
+<                             "text/plain",
+<                             null 
+<                     }
+<             )
+<     ));
+< 
+<     
+< 
+< 
+112,113c96
+<         int methodCode = DavMethods.getMethodCode(request.getMethod());
+<         if (disabled || DavMethods.DAV_POST != methodCode || !CONTENT_TYPES.contains(request.getContentType())) {
+---
+>         if (disabled) {
+116d98
+< 
+118d99
+<             
+120c101,107
+<                 return false;
+---
+>                 
+>                 return true;
+>             } else {
+>                 String host = new URL(refHeader).getHost();
+>                 
+>                 
+>                 return host.equals(request.getServerName()) || allowedReferrerHosts.contains(host);
+122,126d108
+< 
+<             String host = new URL(refHeader).getHost();
+<             
+<             
+<             return host.equals(request.getServerName()) || allowedReferrerHosts.contains(host);

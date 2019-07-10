@@ -1,0 +1,12 @@
+70,80d69
+<     Configuration setupLauncherConf(Configuration conf, Element actionXml, Path appPath, Context context)
+<             throws ActionExecutorException {
+<         super.setupLauncherConf(conf, actionXml, appPath, context);
+< 
+<         HiveActionExecutor hiveAE = new HiveActionExecutor();
+<         hiveAE.setupHiveDefault(conf, appPath, actionXml);
+< 
+<         return conf;
+<     }
+< 
+<     @Override

@@ -1,0 +1,33 @@
+20a21
+> import org.apache.solr.common.util.StrUtils;
+25a27
+> import java.util.HashSet;
+26a29
+> import java.io.File;
+27a31
+> import java.io.File;
+36c40
+<     String stopWordFile = args.get("words");
+---
+>     String stopWordFiles = args.get("words");
+40c44,46
+<     if (stopWordFile != null) {
+---
+>     if (stopWordFiles != null) {
+>       if (stopWords == null)
+>         stopWords = new HashSet<String>();
+42,43c48,58
+<         List<String> wlist = loader.getLines(stopWordFile);
+<         stopWords = StopFilter.makeStopSet((String[])wlist.toArray(new String[0]), ignoreCase);
+---
+>         java.io.File keepWordsFile = new File(stopWordFiles);
+>         if (keepWordsFile.exists()) {
+>           List<String> wlist = loader.getLines(stopWordFiles);
+>           stopWords = StopFilter.makeStopSet((String[])wlist.toArray(new String[0]), ignoreCase);
+>         } else  {
+>           List<String> files = StrUtils.splitFileNames(stopWordFiles);
+>           for (String file : files) {
+>             List<String> wlist = loader.getLines(file.trim());
+>             stopWords.addAll(StopFilter.makeStopSet((String[])wlist.toArray(new String[0]), ignoreCase));
+>           }
+>         }

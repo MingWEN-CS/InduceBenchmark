@@ -1,0 +1,37 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+package org.apache.ambari.server.api.services;
+
+import java.util.Map;
+
+import org.apache.ambari.server.controller.ApiModel;
+
+import io.swagger.annotations.ApiModelProperty;
+
+
+
+
+public interface AmbariConfigurationRequestSwagger extends ApiModel {
+
+  @ApiModelProperty(name = "AmbariConfiguration")
+  AmbariConfigurationRequestInfo getAmbariConfiguration();
+
+  interface AmbariConfigurationRequestInfo {
+    @ApiModelProperty
+    String getCategoryName();
+
+    @ApiModelProperty
+    Map<String, Object> getProperties();
+  }
+}

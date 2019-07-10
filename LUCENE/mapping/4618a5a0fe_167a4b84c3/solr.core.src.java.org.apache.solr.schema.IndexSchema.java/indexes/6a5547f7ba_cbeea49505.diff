@@ -1,0 +1,29 @@
+743,744c743,757
+<     
+<     if (null == sourceSchemaField && isValidFieldGlob(source)) {
+---
+> 
+> 
+>     final String invalidGlobMessage = "is an invalid glob: either it contains more than one asterisk,"
+>                                     + " or the asterisk occurs neither at the start nor at the end.";
+>     final boolean sourceIsGlob = isValidFieldGlob(source);
+>     if (source.contains("*") && ! sourceIsGlob) {
+>       String msg = "copyField source :'" + source + "' " + invalidGlobMessage;
+>       throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+>     }
+>     if (dest.contains("*") && ! isValidFieldGlob(dest)) {
+>       String msg = "copyField dest :'" + dest + "' " + invalidGlobMessage;
+>       throw new SolrException(ErrorCode.SERVER_ERROR, msg);
+>     }
+> 
+>     if (null == sourceSchemaField && sourceIsGlob) {
+781,782c794,795
+<     if (null == sourceSchemaField && ! sourceIsDynamicFieldReference && ! sourceIsExplicitFieldGlob) {
+<       String msg = "copyField source :'" + source + "' doesn't match any explicit field or dynamicField.";
+---
+>     if (null == sourceSchemaField && ! sourceIsGlob && ! sourceIsDynamicFieldReference) {
+>       String msg = "copyField source :'" + source + "' is not a glob and doesn't match any explicit field or dynamicField.";
+789c802
+<     if (sourceIsDynamicFieldReference || sourceIsExplicitFieldGlob) {
+---
+>     if (sourceIsDynamicFieldReference || sourceIsGlob) {
