@@ -24,6 +24,8 @@ Similar cases for the other projects `AMBARI`, `HADOOP`, `JCR`, `LUCENE`, and `O
 
 `./ACCUMULO:` this folder contains the results of the project ACCUMULO, including the `FileCoverage`, `LineCoverage`, `ActionCoverage` and the results of SZZ. It also contains the information of our experimental data, including the code evolution between bug-inducing commits and bug-fixing commits. 
 
+Similar cases for the other projects `AMBARI`, `HADOOP`, `JCR`, `LUCENE`, and `OOZIE`.
+
 `./Statistical Testing of Previous Studies:` this folder contains the results of `revisting previous studies`. Using R to run the script of `test.R` will generate the results of Table 2. 
 
 `./Defects4J:` this folder contains the results of the FL on Defects4J. Each subfolder in this folder contains the information of a bug. Specifically, `ochiai.txt` contains the results of SBFL, and `induced.txt` contains the results of the boosting model using the information of bug-inducing commits. 
