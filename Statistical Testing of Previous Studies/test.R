@@ -6,7 +6,7 @@ library(effsize)
 statisticalTest <- function() {
   
   projects = c("ACCUMULO","AMBARI","LUCENE","HADOOP","JCR","OOZIE")
-  types = c("sizeCompare.csv", "fileNumCompare.csv","hourCompare.csv","weekdayCompare.csv","experienceCompare2.csv","timeCompare.csv","scatterCompare.csv","codeAddCompare.csv","codeDeleteCompare.csv","entropyCompare.csv")
+  types = c("sizeCompare.csv", "fileNumCompare.csv","hourCompare.csv","weekdayCompare.csv","experienceCompare.csv","timeCompare.csv","scatterCompare.csv","codeAddCompare.csv","codeDeleteCompare.csv","entropyCompare.csv")
   for (type in types) {
     df = read.csv(type)
     for (project in projects) {
